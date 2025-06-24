@@ -1,0 +1,20 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+FLUTTER DEVELOPMENT RULES:
+
+You must develop new UI elements in flutter_styleguide according to flutter_styleguide/README.md rules
+
+run "flutter test" from flutter_styleguide directory when you're changing flutter code and fix issues before you stop with response.
+
+Create golden tests for all new UI elements and review output image result to be sure that you developed UI elements correctly.
+
+
+Use "temp" folder for temporary scripts
+Use "prototyping" folder for prototypes
+
+Commands to execute: "cd flutter_styleguide && flutter run -d chrome --web-experimental-hot-reloadter run -d chrome --web-experimental-hot-reload"
+
+Use README.MD to understand process of development in flutter styleguide.
