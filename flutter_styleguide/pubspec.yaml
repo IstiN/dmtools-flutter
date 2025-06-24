@@ -1,0 +1,55 @@
+name: dmtools_styleguide
+description: Flutter implementation of DMTools design system components and style guidelines
+version: 0.1.0
+homepage: https://github.com/yourusername/dmtools-flutter
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.0.0
+  flutter_svg: ^2.0.7
+  google_fonts: ^4.0.0
+  url_launcher: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  golden_toolkit: ^0.15.0
+  flutter_launcher_icons: ^0.13.1
+
+# We need to manually copy the icon file to web/favicon.png
+# flutter_launcher_icons:
+#   web:
+#     generate: true
+#     image_path: "assets/img/dmtools-icon.svg"
+#     background_color: "#FFFFFF"
+#     theme_color: "#FFFFFF"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/img/
+  
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+
+  # To add assets to your application, add an assets section, like this:
+  # assets:
+    # - assets/images/
+    # - assets/icons/

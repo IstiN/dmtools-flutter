@@ -1,0 +1,350 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_dimensions.dart';
+import '../../widgets/styleguide/component_display.dart';
+import '../../widgets/styleguide/component_item.dart';
+import '../../widgets/molecules/agent_card.dart';
+import '../../widgets/molecules/application_item.dart';
+import '../../widgets/molecules/chat_input_group.dart';
+import '../../widgets/molecules/custom_card.dart';
+import '../../widgets/molecules/empty_state.dart';
+import '../../widgets/molecules/login_provider_selector.dart';
+import '../../widgets/molecules/search_form.dart';
+import '../../widgets/molecules/user_profile_button.dart';
+import '../../widgets/molecules/action_button_group.dart';
+import '../../widgets/atoms/buttons/app_buttons.dart';
+import '../../widgets/styleguide/theme_switch.dart';
+import '../../widgets/molecules/chat_message.dart';
+import '../../widgets/atoms/status_dot.dart';
+import '../../widgets/molecules/headers/headers.dart';
+
+class MoleculesPage extends StatelessWidget {
+  const MoleculesPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
+    return ListView(
+      padding: EdgeInsets.all(AppDimensions.spacingM),
+      children: [
+        ComponentDisplay(
+          title: 'Theme Switch',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('The theme switch component allows users to toggle between light and dark modes.'),
+              SizedBox(height: AppDimensions.spacingM),
+              ThemeSwitch(
+                isDarkMode: themeProvider.isDarkMode,
+                onToggle: () {
+                  Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+                },
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Card',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Cards are used to group related information. The base style provides background, border, shadow, and rounded corners.'),
+              SizedBox(height: AppDimensions.spacingM),
+              SizedBox(
+                width: 300,
+                child: CustomCard(
+                  child: Padding(
+                    padding: AppDimensions.cardPaddingM,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Card Title', style: Theme.of(context).textTheme.titleLarge),
+                        SizedBox(height: AppDimensions.spacingXs),
+                        Text('This is some content within a basic card.', style: Theme.of(context).textTheme.bodyMedium),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Search Form',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('A common molecule for search functionality, combining an input field and a button.'),
+              SizedBox(height: AppDimensions.spacingM),
+              const SearchForm(),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Section Header',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('A common pattern for section headers with a title and a "view all" link.'),
+              SizedBox(height: AppDimensions.spacingM),
+              Text(
+                'Section Title',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Agent Card',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Cards specifically designed for displaying agent information with status, description, and actions.'),
+              SizedBox(height: AppDimensions.spacingM),
+              SizedBox(
+                width: 400,
+                child: AgentCard(
+                  title: 'Sample Agent',
+                  description: 'This is a sample agent description that explains what the agent does and its capabilities.',
+                  status: StatusType.online,
+                  statusLabel: 'Active',
+                  tags: const ['Category'],
+                  runCount: 5,
+                  lastRunTime: 'Today',
+                  onRun: () {},
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Login Provider Selector',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('A component that allows users to choose from multiple authentication providers.'),
+              SizedBox(height: AppDimensions.spacingM),
+              const LoginProviderSelector(),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Application Item',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('List items specifically designed for displaying application information with metadata.'),
+              SizedBox(height: AppDimensions.spacingM),
+              ApplicationItem(onOpen: () {}),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Empty State',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('A pattern for displaying empty states or call-to-action areas when no content is available.'),
+              SizedBox(height: AppDimensions.spacingM),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: EmptyState(
+                      icon: Icons.add,
+                      title: 'Create New Agent',
+                      message: 'Configure automation for your tasks',
+                      onPressed: () {},
+                    ),
+                  ),
+                  SizedBox(width: AppDimensions.spacingM),
+                  Expanded(
+                    child: EmptyState(
+                      icon: Icons.add,
+                      title: 'Create New Item',
+                      message: 'Get started by creating your first item',
+                      onPressed: () {},
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Chat Message',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Displays a single message in a chat interface, with variations for sender.'),
+              SizedBox(height: AppDimensions.spacingM),
+              const ChatMessage(
+                text: 'This is a message from the user.',
+                sender: MessageSender.user,
+              ),
+              SizedBox(height: AppDimensions.spacingXs),
+              const ChatMessage(
+                text: 'This is a message from the agent.',
+                sender: MessageSender.agent,
+              ),
+              SizedBox(height: AppDimensions.spacingXs),
+              const ChatMessage(
+                text: 'This is a system notification.',
+                sender: MessageSender.system,
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Chat Input Group',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('A group containing a textarea for message input and action buttons like send or attach.'),
+              SizedBox(height: AppDimensions.spacingM),
+              ChatInputGroup(
+                controller: TextEditingController(),
+                onSend: () {},
+                onClear: () {},
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Action Button Group',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('A simple horizontal group of action buttons, typically used for form submissions or main actions in a section.'),
+              SizedBox(height: AppDimensions.spacingM),
+              ActionButtonGroup(
+                buttons: [
+                  SecondaryButton(
+                    text: 'Cancel',
+                    onPressed: () {},
+                  ),
+                  PrimaryButton(
+                    text: 'Submit',
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Notification Message',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Floating messages to provide feedback to the user (success, error, info, warning).'),
+              SizedBox(height: AppDimensions.spacingM),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.green),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.check_circle, color: Colors.green),
+                    SizedBox(width: 8),
+                    Text('Success message'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.red),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.error, color: Colors.red),
+                    SizedBox(width: 8),
+                    Text('Error message'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.blue),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.info, color: Colors.blue),
+                    SizedBox(width: 8),
+                    Text('Info message'),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.orange),
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.warning, color: Colors.orange),
+                    SizedBox(width: 8),
+                    Text('Warning message'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'User Profile Button',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Displays user information with avatar, name, and optional dropdown indicator.'),
+              SizedBox(height: AppDimensions.spacingM),
+              Row(
+                children: [
+                  UserProfileButton(
+                    userName: 'John Doe',
+                    avatarUrl: 'https://ui-avatars.com/api/?name=John+Doe&background=667eea&color=fff&size=48',
+                    onPressed: () {},
+                  ),
+                  SizedBox(width: AppDimensions.spacingM),
+                  UserProfileButton(
+                    userName: 'Jane Smith',
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+} 

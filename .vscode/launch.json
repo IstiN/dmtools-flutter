@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter Styleguide (Web)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/flutter_styleguide",
+      "program": "lib/main.dart",
+      "args": [
+        "--web-port=8888",
+        "-d",
+        "chrome",
+        "--web-experimental-hot-reload"
+      ],
+      "console": "terminal"
+    },
+    {
+      "name": "Main App (Web)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}",
+      "program": "lib/main.dart",
+      "args": [
+        "--web-port=8080",
+        "-d",
+        "chrome",
+        "--web-experimental-hot-reload"
+      ],
+      "console": "terminal"
+    }
+  ]
+} 
