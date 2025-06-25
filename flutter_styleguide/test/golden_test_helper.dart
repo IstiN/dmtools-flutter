@@ -137,14 +137,14 @@ Future<void> loadAppFonts() async {
 }
 
 /// Create a test app with the given child widget
-Widget createTestApp(Widget child, {bool darkMode = false, bool useMaterial3 = true}) {
+Widget createTestApp(Widget child, {bool darkMode = false}) {
   final themeProvider = ThemeProvider();
   themeProvider.setTestMode(true, darkMode: darkMode);
   
   return MaterialApp(
     theme: darkMode 
-        ? AppTheme.darkTheme.copyWith(useMaterial3: useMaterial3)
-        : AppTheme.lightTheme.copyWith(useMaterial3: useMaterial3),
+        ? AppTheme.darkTheme
+        : AppTheme.lightTheme,
     debugShowCheckedModeBanner: false,
     home: ChangeNotifierProvider<ThemeProvider>.value(
       value: themeProvider,

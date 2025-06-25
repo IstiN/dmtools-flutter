@@ -272,16 +272,4 @@ class ColorsTypographyPage extends StatelessWidget {
   }
 }
 
-class _ColorInfo {
-  final String name;
-  final Color color;
-  final String hexCode;
-  final String description;
-  
-  _ColorInfo({
-    required this.name,
-    required this.color,
-    required this.hexCode,
-    required this.description,
-  });
-} 
+// Removed unused _ColorInfo class 
