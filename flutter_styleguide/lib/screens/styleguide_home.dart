@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
-import '../theme/app_colors.dart';
-import '../widgets/styleguide/theme_switch.dart';
 import '../widgets/molecules/user_profile_button.dart';
-import '../widgets/molecules/search/search_forms.dart';
 import '../widgets/atoms/logos/logos.dart';
 import '../widgets/molecules/headers/app_header.dart';
-import 'styleguide_pages/welcome_page.dart';
 import 'styleguide_pages/colors_typography_page.dart';
 import 'styleguide_pages/atoms_page.dart';
 import 'styleguide_pages/molecules_page.dart';
@@ -30,12 +25,10 @@ class StyleguideHome extends StatefulWidget {
 class _NavigationItem {
   final IconData icon;
   final String label;
-  final int? badgeCount;
 
   const _NavigationItem({
     required this.icon, 
-    required this.label, 
-    this.badgeCount,
+    required this.label,
   });
 }
 
@@ -54,31 +47,18 @@ class _StyleguideHomeState extends State<StyleguideHome> {
     const ProfilePage(),
     const AuthPage(),
   ];
-  
-  final List<String> _pageTitles = [
-    'Welcome',
-    'Colors & Typography',
-    'Atoms',
-    'Molecules',
-    'Organisms',
-    'Icons & Logos',
-    'Logos Components',
-    'Headers',
-    'User Profile',
-    'Authentication',
-  ];
 
   final List<_NavigationItem> _navItems = [
-    _NavigationItem(icon: Icons.home_outlined, label: 'Welcome'),
-    _NavigationItem(icon: Icons.palette_outlined, label: 'Colors & Typography'),
-    _NavigationItem(icon: Icons.grain_outlined, label: 'Atoms'),
-    _NavigationItem(icon: Icons.view_module_outlined, label: 'Molecules'),
-    _NavigationItem(icon: Icons.view_quilt_outlined, label: 'Organisms'),
-    _NavigationItem(icon: Icons.image_outlined, label: 'Icons & Logos'),
-    _NavigationItem(icon: Icons.branding_watermark_outlined, label: 'Logos Components'),
-    _NavigationItem(icon: Icons.view_headline_outlined, label: 'Headers'),
-    _NavigationItem(icon: Icons.person_outlined, label: 'User Profile'),
-    _NavigationItem(icon: Icons.login_outlined, label: 'Authentication'),
+    const _NavigationItem(icon: Icons.home_outlined, label: 'Welcome'),
+    const _NavigationItem(icon: Icons.palette_outlined, label: 'Colors & Typography'),
+    const _NavigationItem(icon: Icons.grain_outlined, label: 'Atoms'),
+    const _NavigationItem(icon: Icons.view_module_outlined, label: 'Molecules'),
+    const _NavigationItem(icon: Icons.view_quilt_outlined, label: 'Organisms'),
+    const _NavigationItem(icon: Icons.image_outlined, label: 'Icons & Logos'),
+    const _NavigationItem(icon: Icons.branding_watermark_outlined, label: 'Logos Components'),
+    const _NavigationItem(icon: Icons.view_headline_outlined, label: 'Headers'),
+    const _NavigationItem(icon: Icons.person_outlined, label: 'User Profile'),
+    const _NavigationItem(icon: Icons.login_outlined, label: 'Authentication'),
   ];
 
   @override
@@ -97,7 +77,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
   }
 
   Widget _buildDesktopLayout() {
-    final theme = Theme.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
 
@@ -174,7 +153,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
   }
   
   Widget _buildSidebar(BuildContext context, {required bool isMobile}) {
-    final theme = Theme.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
     
@@ -185,10 +163,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
     final Color textColor = isDarkMode 
         ? Colors.white70
         : const Color(0xFF495057);
-    
-    final Color headerColor = isDarkMode 
-        ? Colors.white 
-        : const Color(0xFF212529);
     
     final Color dividerColor = isDarkMode
         ? const Color(0xFF2A2A2A) 
@@ -240,7 +214,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
   }
   
   Widget _buildNavItem(int index, BuildContext context, {required bool isMobile}) {
-    final theme = Theme.of(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
     final isSelected = _selectedIndex == index;
@@ -249,8 +222,8 @@ class _StyleguideHomeState extends State<StyleguideHome> {
     final Color selectedTextColor = Colors.white;
     final Color selectedBgColor = const Color(0xFF6078F0);
     final Color hoverBgColor = isDarkMode 
-        ? const Color(0xFF5B7BF0).withOpacity(0.15)
-        : const Color(0xFF466AF1).withOpacity(0.08);
+        ? const Color(0xFF5B7BF0).withValues(alpha: 0.15)
+        : const Color(0xFF466AF1).withValues(alpha: 0.08);
 
     return Container(
       margin: EdgeInsets.zero,
@@ -293,22 +266,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
                     ),
                   ),
                 ),
-                if (_navItems[index].badgeCount != null)
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF5B7BF0),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      '${_navItems[index].badgeCount}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
               ],
             ),
           ),

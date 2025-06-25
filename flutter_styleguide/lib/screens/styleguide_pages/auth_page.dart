@@ -30,12 +30,6 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 
-  void _handleLoginSuccess(String user) {
-    setState(() {
-      _loggedInUser = user;
-    });
-  }
-
   void _handleLogout() {
     final authService = Provider.of<AuthService>(context, listen: false);
     authService.logout();
