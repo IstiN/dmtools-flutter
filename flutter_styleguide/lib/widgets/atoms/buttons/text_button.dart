@@ -141,7 +141,7 @@ class AppTextButtonState extends State<AppTextButton> {
         children: [
           if (widget.icon != null) ...[
             Icon(widget.icon, size: iconSizes[widget.size], color: isHovering ? hoverTextColor : textColor),
-            SizedBox(width: AppDimensions.spacingXs),
+            const SizedBox(width: AppDimensions.spacingXs),
           ],
           Text(
             widget.text,

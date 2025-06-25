@@ -43,14 +43,14 @@ class BaseSectionHeader extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppDimensions.spacingM),
+      padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacingM),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Leading widget (if provided)
           if (leading != null) ...[
             leading!,
-            SizedBox(width: AppDimensions.spacingM),
+            const SizedBox(width: AppDimensions.spacingM),
           ],
           
           // Title and subtitle
@@ -66,7 +66,7 @@ class BaseSectionHeader extends StatelessWidget {
                   ),
                 ),
                 if (subtitle != null) ...[
-                  SizedBox(height: AppDimensions.spacingXs),
+                  const SizedBox(height: AppDimensions.spacingXs),
                   Text(
                     subtitle!,
                     style: TextStyle(

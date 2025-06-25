@@ -25,11 +25,11 @@ class ColorsTypographyPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 MediumHeadlineText('Color Palette (from CSS Variables)'),
-                SizedBox(height: AppDimensions.spacingL),
+                const SizedBox(height: AppDimensions.spacingL),
                 
                 // Base Colors
                 LargeTitleText('Base Colors'),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
                   runSpacing: AppDimensions.spacingM,
@@ -67,11 +67,11 @@ class ColorsTypographyPage extends StatelessWidget {
                   ],
                 ),
                 
-                SizedBox(height: AppDimensions.spacingXl),
+                const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Accent Colors
                 LargeTitleText('Accent Colors'),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
                   runSpacing: AppDimensions.spacingM,
@@ -94,11 +94,11 @@ class ColorsTypographyPage extends StatelessWidget {
                   ],
                 ),
                 
-                SizedBox(height: AppDimensions.spacingXl),
+                const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Button & Interaction Colors
                 LargeTitleText('Button & Interaction Colors'),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
                   runSpacing: AppDimensions.spacingM,
@@ -121,11 +121,11 @@ class ColorsTypographyPage extends StatelessWidget {
                   ],
                 ),
                 
-                SizedBox(height: AppDimensions.spacingXl),
+                const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Feedback Colors
                 LargeTitleText('Feedback Colors'),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
                   runSpacing: AppDimensions.spacingM,
@@ -153,11 +153,11 @@ class ColorsTypographyPage extends StatelessWidget {
                   ],
                 ),
                 
-                SizedBox(height: AppDimensions.spacingXl),
+                const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Input Colors
                 LargeTitleText('Input Colors'),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
                   runSpacing: AppDimensions.spacingM,
@@ -175,13 +175,13 @@ class ColorsTypographyPage extends StatelessWidget {
                   ],
                 ),
                 
-                SizedBox(height: AppDimensions.spacingXxl),
+                const SizedBox(height: AppDimensions.spacingXxl),
                 
                 // Typography Section
                 MediumHeadlineText('Typography'),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 MediumBodyText('Base font family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'),
-                SizedBox(height: AppDimensions.spacingXl),
+                const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Heading Examples
                 Card(
