@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../theme/app_theme.dart';
 import '../../../theme/app_colors.dart';
-import '../../../theme/app_dimensions.dart';
 import '../../atoms/logos/logos.dart';
 import '../user_profile_button.dart';
 import '../search/search_forms.dart';
-import 'package:provider/provider.dart';
-import '../../../theme/app_theme.dart';
 
 class AppHeader extends StatelessWidget {
   final String title;
@@ -62,7 +61,7 @@ class AppHeader extends StatelessWidget {
         color: theme.appBarTheme.backgroundColor ?? colors.cardBg,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

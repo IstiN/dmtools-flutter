@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
+import '../../../theme/app_colors.dart';
 
 enum StatusDotType {
   success,
@@ -48,8 +48,6 @@ class StatusDot extends StatelessWidget {
         return colors.textMuted;
       case StatusDotType.processing:
         return colors.accentColor;
-      default:
-        return colors.successColor;
     }
   }
 } 

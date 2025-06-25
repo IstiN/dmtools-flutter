@@ -15,7 +15,7 @@ class TagChip extends StatelessWidget {
     
     return Chip(
       label: Text(label),
-      backgroundColor: isDark ? Colors.white.withOpacity(0.1) : Colors.black.withOpacity(0.05),
+      backgroundColor: isDark ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
       labelStyle: TextStyle(
         color: theme.textTheme.bodyLarge?.color,
         fontWeight: FontWeight.w500,
@@ -24,7 +24,7 @@ class TagChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: Colors.transparent),
+        side: const BorderSide(color: Colors.transparent),
       ),
     );
   }

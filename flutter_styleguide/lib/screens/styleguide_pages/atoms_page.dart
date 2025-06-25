@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
 import '../../widgets/styleguide/component_display.dart';
 import '../../widgets/styleguide/component_item.dart';
 import '../../widgets/atoms/buttons/app_buttons.dart';
+import '../../widgets/atoms/form_elements.dart';
 import '../../widgets/atoms/status_dot.dart';
 import '../../widgets/atoms/tag_chip.dart';
-import '../../widgets/atoms/form_elements.dart';
-import '../../widgets/atoms/view_all_link.dart';
 import '../../widgets/atoms/texts/app_text.dart';
 import '../../widgets/atoms/buttons/oauth_provider_button.dart';
 

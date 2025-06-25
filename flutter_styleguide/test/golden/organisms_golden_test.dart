@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../../lib/widgets/organisms/chat_module.dart';
-import '../../lib/widgets/organisms/page_header.dart';
-import '../../lib/widgets/organisms/welcome_banner.dart';
-import '../../lib/widgets/organisms/panel_base.dart';
-import '../../lib/widgets/organisms/workspace_management.dart';
+import 'package:dmtools_styleguide/widgets/organisms/chat_module.dart';
+import 'package:dmtools_styleguide/widgets/organisms/page_header.dart';
+import 'package:dmtools_styleguide/widgets/organisms/welcome_banner.dart';
+import 'package:dmtools_styleguide/widgets/organisms/panel_base.dart';
+import 'package:dmtools_styleguide/widgets/organisms/workspace_management.dart';
 import '../golden_test_helper.dart';
 
 void main() {
