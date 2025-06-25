@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../theme/app_theme.dart';
 import '../../theme/app_dimensions.dart';
 import '../../widgets/styleguide/component_display.dart';
 import '../../widgets/styleguide/component_item.dart';
@@ -27,7 +25,7 @@ class _AtomsPageState extends State<AtomsPage> {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         ComponentDisplay(
           title: 'Buttons',

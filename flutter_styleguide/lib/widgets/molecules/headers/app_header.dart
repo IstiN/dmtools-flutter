@@ -149,9 +149,9 @@ class AppHeader extends StatelessWidget {
               CircleAvatar(
                 radius: 16,
                 backgroundColor: Theme.of(context).primaryColor,
-                child: Text(
+                child: const Text(
                   'VK',
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                  style: TextStyle(color: Colors.white, fontSize: 12),
                 ),
               ),
         ],

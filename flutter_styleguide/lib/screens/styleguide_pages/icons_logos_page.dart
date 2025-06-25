@@ -14,7 +14,7 @@ class IconsLogosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         const ComponentDisplay(
           title: 'Logo Usage Guidelines',
@@ -23,7 +23,7 @@ class IconsLogosPage extends StatelessWidget {
             child: LogoUsageGuide(),
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Original Concepts',
           child: ComponentItem(
@@ -36,7 +36,7 @@ class IconsLogosPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'New AI & Themed Concepts',
           child: Column(
@@ -49,7 +49,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-connected-dots.svg',
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - JAI Circuitry Monogram',
                 child: LogoDisplay(
@@ -61,7 +61,7 @@ class IconsLogosPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Dark Theme Enhanced Variants',
           child: Column(
@@ -74,7 +74,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-connected-dots-dark-enhanced.svg',
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - JAI Circuitry Dark Enhanced',
                 child: LogoDisplay(
@@ -83,7 +83,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-jai-circuitry-dark-enhanced.svg',
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - Hybrid Dark Matrix',
                 child: LogoDisplay(
@@ -92,7 +92,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-hybrid-dark-matrix.svg',
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - Connected JAI Dark Fusion',
                 child: LogoDisplay(
@@ -105,7 +105,7 @@ class IconsLogosPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Merged Concept Variants',
           child: Column(
@@ -119,7 +119,7 @@ class IconsLogosPage extends StatelessWidget {
                   maxWidth: 320,
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - Intelligent Network Fusion (White Version)',
                 child: CustomLogoPreview(
@@ -144,7 +144,7 @@ class IconsLogosPage extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - Intelligent Network Fusion (Dark Version)',
                 child: CustomLogoPreview(
@@ -167,7 +167,7 @@ class IconsLogosPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Wordmark Variants (New)',
           child: Column(
@@ -183,7 +183,7 @@ class IconsLogosPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Experimental Wordmark Concepts',
           child: Column(
@@ -196,7 +196,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-mono-tech.svg',
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Minimalist Bold Circle',
                 child: LogoDisplay(
@@ -205,7 +205,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-bold-circle.svg',
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Network Nodes',
                 child: LogoDisplay(

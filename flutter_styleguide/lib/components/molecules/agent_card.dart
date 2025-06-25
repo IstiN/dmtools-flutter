@@ -23,12 +23,12 @@ class AgentCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
         side: BorderSide(color: AppColors.lightBorderColor),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -43,11 +43,11 @@ class AgentCard extends StatelessWidget {
                     height: 48,
                     decoration: BoxDecoration(
                       color: AppColors.accentColor.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: const BorderRadius.all(Radius.circular(8)),
                     ),
                     child: agent.avatarUrl != null
                         ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: const BorderRadius.all(Radius.circular(8)),
                             child: Image.network(
                               agent.avatarUrl!,
                               fit: BoxFit.cover,

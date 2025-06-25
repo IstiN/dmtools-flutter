@@ -10,7 +10,7 @@ class HeadersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         ComponentDisplay(
           title: 'App Header - With Title',
@@ -60,7 +60,7 @@ class HeadersPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'App Header - Without Title',
           description: 'App header with logo only (no title text)',
@@ -109,7 +109,7 @@ class HeadersPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'App Header - Without Search',
           description: 'App header without search bar',
@@ -135,7 +135,7 @@ class HeadersPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'App Header - With Custom Profile Button',
           description: 'App header with a custom profile button',
@@ -181,7 +181,7 @@ class HeadersPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'App Header - Logged Out State',
           description: 'App header with logged out profile button',

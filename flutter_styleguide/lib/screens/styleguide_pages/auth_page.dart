@@ -19,11 +19,11 @@ class _AuthPageState extends State<AuthPage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Dialog(
+        return const Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(16),
+          insetPadding: EdgeInsets.all(16),
           elevation: 0,
-          child: const LoginProviderSelector(
+          child: LoginProviderSelector(
           ),
         );
       },
@@ -80,7 +80,7 @@ class _AuthPageState extends State<AuthPage> {
                     const SizedBox(height: 24),
                     
                     if (_loggedInUser != null) ...[
-                      Icon(
+                      const Icon(
                         Icons.check_circle,
                         color: Colors.green,
                         size: 64,
@@ -122,14 +122,14 @@ class _AuthPageState extends State<AuthPage> {
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 32),
-              Center(
+              const Center(
                 child: LoginProviderSelector(
                   title: 'Sign In',
                   subtitle: 'Select your authentication method',
                 ),
               ),
               const SizedBox(height: 48),
-              Center(
+              const Center(
                 child: LoginProviderSelector(
                   title: 'Create Account',
                   subtitle: 'Choose how you want to register',
