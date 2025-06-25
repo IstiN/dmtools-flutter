@@ -68,7 +68,7 @@ class AppButton extends StatelessWidget {
         button = ElevatedButton(
           onPressed: isDisabled || isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors.accentColor,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             shape: RoundedRectangleBorder(
@@ -82,7 +82,7 @@ class AppButton extends StatelessWidget {
         button = ElevatedButton(
           onPressed: isDisabled || isLoading ? null : onPressed,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.secondary,
+            backgroundColor: AppColors.secondaryColor,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             shape: RoundedRectangleBorder(
@@ -96,8 +96,8 @@ class AppButton extends StatelessWidget {
         button = OutlinedButton(
           onPressed: isDisabled || isLoading ? null : onPressed,
           style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.primary,
-            side: BorderSide(color: isDisabled ? AppColors.textDisabled : AppColors.primary),
+            foregroundColor: AppColors.accentColor,
+            side: BorderSide(color: isDisabled ? AppColors.disabledLightText : AppColors.accentColor),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -110,7 +110,7 @@ class AppButton extends StatelessWidget {
         button = TextButton(
           onPressed: isDisabled || isLoading ? null : onPressed,
           style: TextButton.styleFrom(
-            foregroundColor: AppColors.primary,
+            foregroundColor: AppColors.accentColor,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -133,7 +133,7 @@ class AppButton extends StatelessWidget {
 
   Color _getContentColor() {
     if (isDisabled) {
-      return AppColors.textDisabled;
+      return AppColors.disabledLightText;
     }
 
     switch (style) {
@@ -142,7 +142,7 @@ class AppButton extends StatelessWidget {
         return Colors.white;
       case ButtonStyle.outline:
       case ButtonStyle.tertiary:
-        return AppColors.primary;
+        return AppColors.accentColor;
     }
   }
 } 

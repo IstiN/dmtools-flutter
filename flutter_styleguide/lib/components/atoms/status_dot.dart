@@ -34,15 +34,15 @@ class StatusDot extends StatelessWidget {
   Color _getColorForStatus() {
     switch (status) {
       case StatusType.success:
-        return AppColors.success;
+        return AppColors.successColor;
       case StatusType.warning:
-        return AppColors.warning;
+        return AppColors.warningColor;
       case StatusType.error:
-        return AppColors.error;
+        return AppColors.dangerColor;
       case StatusType.info:
-        return AppColors.info;
+        return AppColors.infoColor;
       case StatusType.neutral:
-        return AppColors.textSecondary;
+        return AppColors.lightTextSecondary;
     }
   }
 } 
