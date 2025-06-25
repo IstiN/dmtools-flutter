@@ -29,7 +29,7 @@ class ColorSwatchItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimensions.radiusM),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -60,9 +60,12 @@ class ColorSwatchItem extends StatelessWidget {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: AppDimensions.spacingXxs),
-                SmallBodyText(
-                  hexCode,
-                  color: contrastColor.withOpacity(0.8),
+                Text(
+                  'RGB(${(color.r * 255.0).round()}, ${(color.g * 255.0).round()}, ${(color.b * 255.0).round()})',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: contrastColor.withValues(alpha: 0.8),
+                  ),
                 ),
               ],
             ),
@@ -74,9 +77,9 @@ class ColorSwatchItem extends StatelessWidget {
   
   Color _getContrastColor(Color backgroundColor) {
     // Calculate relative luminance
-    double luminance = 0.299 * backgroundColor.red + 
-                       0.587 * backgroundColor.green + 
-                       0.114 * backgroundColor.blue;
+    double luminance = 0.299 * (backgroundColor.r * 255.0).round() + 
+                       0.587 * (backgroundColor.g * 255.0).round() + 
+                       0.114 * (backgroundColor.b * 255.0).round();
     
     // Use white text on dark backgrounds and black text on light backgrounds
     return luminance > 128 ? Colors.black : Colors.white;

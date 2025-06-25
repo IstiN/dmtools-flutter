@@ -27,7 +27,7 @@ class CodeText extends BaseText {
   TextStyle getBaseStyle(ThemeData theme) {
     return theme.textTheme.bodyMedium!.copyWith(
       fontFamily: 'Courier',
-      backgroundColor: theme.colorScheme.surfaceVariant,
+      backgroundColor: theme.colorScheme.surfaceContainerHighest,
       letterSpacing: -0.5,
     );
   }

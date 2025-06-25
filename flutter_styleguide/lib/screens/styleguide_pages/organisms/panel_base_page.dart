@@ -4,7 +4,6 @@ import '../../../theme/app_theme.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_dimensions.dart';
 import '../../../widgets/styleguide/component_display.dart';
-import '../../../widgets/styleguide/component_item.dart';
 import '../../../widgets/organisms/panel_base.dart';
 
 class PanelBasePage extends StatelessWidget {

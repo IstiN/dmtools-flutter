@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../widgets/atoms/texts/app_text.dart';
 import '../../theme/app_dimensions.dart';
 
 class WelcomePage extends StatelessWidget {

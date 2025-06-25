@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_colors.dart';
+import '../../../theme/app_colors.dart';
 
 enum AppButtonStyle {
   primary,
@@ -48,7 +48,6 @@ class AppButton extends StatelessWidget {
 
   ButtonStyle _getButtonStyle(BuildContext context) {
     final theme = Theme.of(context);
-    final bool isDark = theme.brightness == Brightness.dark;
 
     final double verticalPadding = isSmall ? 8 : 12;
     final double horizontalPadding = isSmall ? 16 : 24;

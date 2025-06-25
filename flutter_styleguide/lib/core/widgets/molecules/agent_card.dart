@@ -1,9 +1,26 @@
-import 'package:dmtools_mobile/core/models/agent.dart';
-import 'package:dmtools_mobile/core/widgets/atoms/app_button.dart';
-import 'package:dmtools_mobile/core/widgets/atoms/status_dot.dart';
-import 'package:dmtools_mobile/core/widgets/atoms/tag_chip.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../atoms/app_button.dart';
+import '../atoms/status_dot.dart';
+import '../atoms/tag_chip.dart';
+
+// Simple Agent model for this widget
+class Agent {
+  final String title;
+  final String description;
+  final bool isActive;
+  final List<String> tags;
+  final int runCount;
+  final String lastRun;
+
+  const Agent({
+    required this.title,
+    required this.description,
+    required this.isActive,
+    required this.tags,
+    required this.runCount,
+    required this.lastRun,
+  });
+}
 
 class AgentCard extends StatelessWidget {
   final Agent agent;
@@ -28,10 +45,10 @@ class AgentCard extends StatelessWidget {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: theme.primaryColor.withOpacity(0.1),
+                    color: theme.primaryColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(FontAwesomeIcons.robot, color: theme.primaryColor, size: 22),
+                  child: Icon(Icons.smart_toy, color: theme.primaryColor, size: 22),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -77,11 +94,11 @@ class AgentCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Icon(FontAwesomeIcons.checkToSlot, size: 14, color: theme.hintColor),
+                    Icon(Icons.check_box, size: 14, color: theme.hintColor),
                     const SizedBox(width: 8),
                     Text('${agent.runCount} runs', style: theme.textTheme.bodySmall),
                     const SizedBox(width: 16),
-                    Icon(FontAwesomeIcons.clock, size: 14, color: theme.hintColor),
+                    Icon(Icons.access_time, size: 14, color: theme.hintColor),
                     const SizedBox(width: 8),
                     Text(agent.lastRun, style: theme.textTheme.bodySmall),
                   ],
@@ -89,7 +106,7 @@ class AgentCard extends StatelessWidget {
                 AppButton(
                   onPressed: () {},
                   text: 'Run',
-                  icon: const Icon(FontAwesomeIcons.play, size: 12),
+                  icon: const Icon(Icons.play_arrow, size: 12),
                   isSmall: true,
                 ),
               ],

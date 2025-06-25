@@ -52,7 +52,7 @@ class AgentCard extends StatelessWidget {
                               agent.avatarUrl!,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
-                                return Icon(
+                                return const Icon(
                                   Icons.person,
                                   color: AppColors.accentColor,
                                   size: 24,
@@ -60,7 +60,7 @@ class AgentCard extends StatelessWidget {
                               },
                             ),
                           )
-                        : Icon(
+                        : const Icon(
                             Icons.person,
                             color: AppColors.accentColor,
                             size: 24,
@@ -96,7 +96,7 @@ class AgentCard extends StatelessWidget {
                                 const SizedBox(width: 6),
                                 Text(
                                   agent.status,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.lightTextSecondary,
                                   ),
@@ -108,7 +108,7 @@ class AgentCard extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           agent.description,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.lightTextSecondary,
                           ),
@@ -136,7 +136,7 @@ class AgentCard extends StatelessWidget {
                 children: [
                   Text(
                     'Created: ${_formatDate(agent.createdAt)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.lightTextSecondary,
                     ),
@@ -144,7 +144,7 @@ class AgentCard extends StatelessWidget {
                   if (agent.lastActive != null)
                     Text(
                       'Last active: ${_formatDate(agent.lastActive!)}',
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.lightTextSecondary,
                       ),
@@ -159,7 +159,7 @@ class AgentCard extends StatelessWidget {
                     if (onEdit != null)
                       IconButton(
                         onPressed: onEdit,
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.edit,
                           size: 20,
                           color: AppColors.accentColor,
@@ -171,7 +171,7 @@ class AgentCard extends StatelessWidget {
                     if (onDelete != null)
                       IconButton(
                         onPressed: onDelete,
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.delete,
                           size: 20,
                           color: AppColors.dangerColor,
