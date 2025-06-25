@@ -81,7 +81,7 @@ class StatusDot extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: statusColor.withOpacity(0.4),
+                color: statusColor.withValues(alpha: 0.4),
                 blurRadius: 4,
                 spreadRadius: 1,
               ),
@@ -95,7 +95,7 @@ class StatusDot extends StatelessWidget {
             style: TextStyle(
               fontSize: size * 1.2,
               fontWeight: FontWeight.w500,
-              color: isDarkMode ? statusColor : statusColor.withOpacity(0.9),
+              color: isDarkMode ? statusColor : statusColor.withValues(alpha: 0.9),
             ),
           ),
         ],

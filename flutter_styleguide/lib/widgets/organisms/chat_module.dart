@@ -121,7 +121,7 @@ class _ChatModuleState extends State<ChatModule> {
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -234,7 +234,7 @@ class _ChatModuleState extends State<ChatModule> {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -257,7 +257,7 @@ class _ChatModuleState extends State<ChatModule> {
               _formatTime(message.timestamp),
               style: TextStyle(
                 fontSize: 10,
-                color: message.isUser ? Colors.white.withOpacity(0.7) : colors.textSecondary,
+                color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
               ),
             ),
           ],

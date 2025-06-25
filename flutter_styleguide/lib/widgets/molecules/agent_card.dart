@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../theme/app_theme.dart';
-import '../../theme/app_colors.dart';
 import '../atoms/buttons/app_buttons.dart';
 import '../atoms/status_dot.dart';
 import '../atoms/tag_chip.dart';
-import '../../models/agent.dart';
 import '../../theme/app_dimensions.dart';
 
 class AgentCard extends StatelessWidget {
@@ -43,11 +39,11 @@ class AgentCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: theme.shadowColor.withOpacity(0.1),
-            blurRadius: 8,
+            color: theme.shadowColor.withValues(alpha: 0.1),
+            blurRadius: 6,
             offset: const Offset(0, 2),
           ),
         ],
@@ -59,7 +55,7 @@ class AgentCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary.withOpacity(0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.1),
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(8),
                 topRight: Radius.circular(8),
@@ -93,8 +89,8 @@ class AgentCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       statusLabel,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -111,7 +107,7 @@ class AgentCard extends StatelessWidget {
                 Text(
                   description,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,

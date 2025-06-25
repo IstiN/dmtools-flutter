@@ -42,12 +42,12 @@ class OutlineButtonState extends BaseButtonState<OutlineButton> {
 
   @override
   Color getTextColor(ThemeColorSet colors, bool isDarkMode) {
-    return isDarkMode ? Colors.white.withOpacity(0.9) : colors.accentColor;
+    return _getTextColor(isDarkMode, colors);
   }
 
   @override
   Color getHoverBackgroundColor(ThemeColorSet colors, bool isDarkMode) {
-    return isDarkMode ? Colors.white.withOpacity(0.15) : colors.hoverBg;
+    return _getHoverColor(isDarkMode, colors);
   }
 
   @override
@@ -58,7 +58,7 @@ class OutlineButtonState extends BaseButtonState<OutlineButton> {
   @override
   BorderSide getBorderSide(ThemeColorSet colors, bool isDarkMode) {
     return BorderSide(
-      color: isDarkMode ? Colors.white.withOpacity(0.8) : colors.accentColor, 
+      color: isDarkMode ? Colors.white.withValues(alpha: 0.8) : colors.accentColor, 
       width: AppDimensions.borderWidthRegular
     );
   }
@@ -66,5 +66,13 @@ class OutlineButtonState extends BaseButtonState<OutlineButton> {
   @override
   BorderSide getHoverBorderSide(ThemeColorSet colors, bool isDarkMode) {
     return getBorderSide(colors, isDarkMode);
+  }
+
+  Color _getTextColor(bool isDarkMode, ThemeColorSet colors) {
+    return isDarkMode ? Colors.white.withValues(alpha: 0.9) : colors.accentColor;
+  }
+
+  Color _getHoverColor(bool isDarkMode, ThemeColorSet colors) {
+    return isDarkMode ? Colors.white.withValues(alpha: 0.15) : colors.hoverBg;
   }
 } 

@@ -24,7 +24,7 @@ class AgentCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: AppColors.border),
+        side: BorderSide(color: AppColors.lightBorderColor),
       ),
       child: InkWell(
         onTap: onTap,
@@ -42,7 +42,7 @@ class AgentCard extends StatelessWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.accentColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: agent.avatarUrl != null
@@ -54,7 +54,7 @@ class AgentCard extends StatelessWidget {
                               errorBuilder: (context, error, stackTrace) {
                                 return Icon(
                                   Icons.person,
-                                  color: AppColors.primary,
+                                  color: AppColors.accentColor,
                                   size: 24,
                                 );
                               },
@@ -62,7 +62,7 @@ class AgentCard extends StatelessWidget {
                           )
                         : Icon(
                             Icons.person,
-                            color: AppColors.primary,
+                            color: AppColors.accentColor,
                             size: 24,
                           ),
                   ),
@@ -80,7 +80,7 @@ class AgentCard extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                                  color: AppColors.lightTextColor,
                                 ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -98,7 +98,7 @@ class AgentCard extends StatelessWidget {
                                   agent.status,
                                   style: TextStyle(
                                     fontSize: 12,
-                                    color: AppColors.textSecondary,
+                                    color: AppColors.lightTextSecondary,
                                   ),
                                 ),
                               ],
@@ -110,7 +110,7 @@ class AgentCard extends StatelessWidget {
                           agent.description,
                           style: TextStyle(
                             fontSize: 14,
-                            color: AppColors.textSecondary,
+                            color: AppColors.lightTextSecondary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -138,7 +138,7 @@ class AgentCard extends StatelessWidget {
                     'Created: ${_formatDate(agent.createdAt)}',
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: AppColors.lightTextSecondary,
                     ),
                   ),
                   if (agent.lastActive != null)
@@ -146,7 +146,7 @@ class AgentCard extends StatelessWidget {
                       'Last active: ${_formatDate(agent.lastActive!)}',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppColors.textSecondary,
+                        color: AppColors.lightTextSecondary,
                       ),
                     ),
                 ],
@@ -162,7 +162,7 @@ class AgentCard extends StatelessWidget {
                         icon: Icon(
                           Icons.edit,
                           size: 20,
-                          color: AppColors.primary,
+                          color: AppColors.accentColor,
                         ),
                         tooltip: 'Edit',
                         constraints: const BoxConstraints(),
@@ -174,7 +174,7 @@ class AgentCard extends StatelessWidget {
                         icon: Icon(
                           Icons.delete,
                           size: 20,
-                          color: AppColors.error,
+                          color: AppColors.dangerColor,
                         ),
                         tooltip: 'Delete',
                         constraints: const BoxConstraints(),

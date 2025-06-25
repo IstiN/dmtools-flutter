@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Let's continue with other fixes
+
+Your task will be to check flutter_styleguide folder and fix erorrs from problems screen in VS Code.
+RULES:  the current functionallity must stay same
+YOU MUST NOT REMOVE ANY ELEMENTS!!! MUST TO FIX THE ERRORS AND MISTAKES ONLY.
+Let's do it portions. Let's choose 10 most critical errors for now and fix them.
+I will test in between to be sure that you don't break anything!

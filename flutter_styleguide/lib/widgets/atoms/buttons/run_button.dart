@@ -75,7 +75,7 @@ class RunButtonState extends BaseButtonState<RunButton> {
   List<BoxShadow> getHoverBoxShadows(ThemeColorSet colors, bool isDarkMode) {
     return [
       BoxShadow(
-        color: Colors.black.withOpacity(0.15),
+        color: Colors.black.withValues(alpha: 0.15),
         blurRadius: 12,
         offset: const Offset(0, 4),
       )

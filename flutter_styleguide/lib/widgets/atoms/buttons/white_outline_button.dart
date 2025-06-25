@@ -47,7 +47,7 @@ class WhiteOutlineButtonState extends BaseButtonState<WhiteOutlineButton> {
 
   @override
   Color getHoverBackgroundColor(ThemeColorSet colors, bool isDarkMode) {
-    return Colors.white.withOpacity(0.15);
+    return Colors.white.withValues(alpha: 0.15);
   }
 
   @override

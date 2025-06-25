@@ -55,33 +55,33 @@ class TagChip extends StatelessWidget {
     
     switch (variant) {
       case TagChipVariant.primary:
-        bgColor = isOutlined ? Colors.transparent : colors.accentColor.withOpacity(0.1);
         textColor = colors.accentColor;
+        bgColor = isOutlined ? Colors.transparent : colors.accentColor.withValues(alpha: 0.1);
         borderColor = colors.accentColor;
         break;
       case TagChipVariant.secondary:
-        bgColor = isOutlined ? Colors.transparent : colors.textMuted.withOpacity(0.1);
         textColor = colors.textMuted;
+        bgColor = isOutlined ? Colors.transparent : colors.textMuted.withValues(alpha: 0.1);
         borderColor = colors.textMuted;
         break;
       case TagChipVariant.success:
-        bgColor = isOutlined ? Colors.transparent : colors.successColor.withOpacity(0.1);
         textColor = colors.successColor;
+        bgColor = isOutlined ? Colors.transparent : colors.successColor.withValues(alpha: 0.1);
         borderColor = colors.successColor;
         break;
       case TagChipVariant.warning:
-        bgColor = isOutlined ? Colors.transparent : colors.warningColor.withOpacity(0.1);
         textColor = colors.warningColor;
+        bgColor = isOutlined ? Colors.transparent : colors.warningColor.withValues(alpha: 0.1);
         borderColor = colors.warningColor;
         break;
       case TagChipVariant.danger:
-        bgColor = isOutlined ? Colors.transparent : colors.dangerColor.withOpacity(0.1);
         textColor = colors.dangerColor;
+        bgColor = isOutlined ? Colors.transparent : colors.dangerColor.withValues(alpha: 0.1);
         borderColor = colors.dangerColor;
         break;
       case TagChipVariant.info:
-        bgColor = isOutlined ? Colors.transparent : colors.infoColor.withOpacity(0.1);
         textColor = colors.infoColor;
+        bgColor = isOutlined ? Colors.transparent : colors.infoColor.withValues(alpha: 0.1);
         borderColor = colors.infoColor;
         break;
     }
