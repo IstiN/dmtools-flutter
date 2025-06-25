@@ -25,7 +25,6 @@ void main() {
             isTestMode: true,
             testDarkMode: false,
           ),
-          useMaterial3: false,
         ),
       );
       await expectLater(
@@ -50,7 +49,6 @@ void main() {
             isTestMode: true,
             testDarkMode: true,
           ),
-          useMaterial3: false,
           darkMode: true,
         ),
       );
@@ -77,7 +75,6 @@ void main() {
               testDarkMode: false,
             ),
           ),
-          useMaterial3: false,
         ),
       );
       await expectLater(
@@ -103,7 +100,6 @@ void main() {
               testDarkMode: true,
             ),
           ),
-          useMaterial3: false,
           darkMode: true,
         ),
       );
@@ -139,7 +135,6 @@ void main() {
               testDarkMode: false,
             ),
           ),
-          useMaterial3: false,
         ),
       );
       await expectLater(
@@ -174,7 +169,6 @@ void main() {
               testDarkMode: true,
             ),
           ),
-          useMaterial3: false,
           darkMode: true,
         ),
       );
@@ -207,7 +201,6 @@ void main() {
               ),
             ),
           ),
-          useMaterial3: false,
         ),
       );
       await expectLater(
@@ -239,8 +232,6 @@ void main() {
               ),
             ),
           ),
-          useMaterial3: false,
-          darkMode: true,
         ),
       );
       await expectLater(
@@ -271,7 +262,6 @@ void main() {
               testDarkMode: false,
             ),
           ),
-          useMaterial3: false,
         ),
       );
       await expectLater(
@@ -302,8 +292,6 @@ void main() {
               testDarkMode: true,
             ),
           ),
-          useMaterial3: false,
-          darkMode: true,
         ),
       );
       await expectLater(
@@ -382,7 +370,6 @@ void main() {
               ),
             ),
           ),
-          useMaterial3: false,
         ),
       );
       await expectLater(
@@ -461,8 +448,6 @@ void main() {
               ),
             ),
           ),
-          useMaterial3: false,
-          darkMode: true,
         ),
       );
       await expectLater(

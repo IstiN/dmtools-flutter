@@ -79,9 +79,9 @@ class AppColors {
   // Button & Interaction Colors
   static const Color buttonBg = Color(0xFF466AF1);         // #466af1 (same as accent)
   static const Color buttonHover = Color(0xFF3155DB);      // #3155db (same as accent-hover)
-  static final Color hoverBg = Color(0xFF466AF1).withOpacity(0.08); // rgba(70,106,241,0.08)
-  static final Color hoverBgLight = const Color(0xFF000000).withOpacity(0.04);
-  static final Color hoverBgDark = const Color(0xFFFFFFFF).withOpacity(0.08);
+  static final Color hoverBg = Color(0xFF466AF1).withValues(alpha: 0.08); // rgba(70,106,241,0.08)
+  static final Color hoverBgLight = const Color(0xFF000000).withValues(alpha: 0.04);
+  static final Color hoverBgDark = const Color(0xFFFFFFFF).withValues(alpha: 0.08);
   
   // Disabled Button Colors
   static const Color disabledDarkBg = Color(0xFF2A2A2A);   // #2A2A2A

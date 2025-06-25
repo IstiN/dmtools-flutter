@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
+// import 'package:google_fonts/google_fonts.dart'; // Unused
+// import 'package:provider/provider.dart'; // Unused
 import 'app_colors.dart';
 
 class ThemeProvider with ChangeNotifier {
@@ -44,8 +44,6 @@ class AppTheme {
         onSecondary: Colors.white,
         error: colors.dangerColor,
         onError: Colors.white,
-        background: colors.bgColor,
-        onBackground: colors.textColor,
         surface: colors.cardBg,
         onSurface: colors.textColor,
       ),

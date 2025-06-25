@@ -37,7 +37,7 @@ class AgentCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+    // final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode; // Unused variable
     // final colors = isDarkMode ? AppColors.dark : AppColors.light; // Unused variable
 
     return Container(
