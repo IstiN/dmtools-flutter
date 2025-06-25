@@ -7,16 +7,16 @@ import 'package:dmtools_styleguide/widgets/molecules/agent_card.dart';
 import 'package:dmtools_styleguide/widgets/molecules/section_header.dart';
 import 'package:dmtools_styleguide/widgets/molecules/user_profile_button.dart';
 import 'package:dmtools_styleguide/widgets/atoms/status_dot.dart';
-import '../golden_test_helper.dart';
+import '../golden_test_helper.dart' as helper;
 
 void main() {
   setUpAll(() async {
-    await loadAppFonts();
+    await helper.loadAppFonts();
   });
 
   group('Molecules Golden Tests - Individual Components', () {
     testGoldens('Empty State', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
+      await helper.GoldenTestHelper.testWidgetInBothThemes(
         tester: tester,
         name: 'empty_state',
         widget: EmptyState(
@@ -31,7 +31,7 @@ void main() {
     });
 
     testGoldens('Search Form', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
+      await helper.GoldenTestHelper.testWidgetInBothThemes(
         tester: tester,
         name: 'search_form',
         widget: SearchForm(
@@ -46,7 +46,7 @@ void main() {
     });
 
     testGoldens('Agent Card', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
+      await helper.GoldenTestHelper.testWidgetInBothThemes(
         tester: tester,
         name: 'agent_card',
         widget: AgentCard(
@@ -67,7 +67,7 @@ void main() {
     });
 
     testGoldens('Section Header', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
+      await helper.GoldenTestHelper.testWidgetInBothThemes(
         tester: tester,
         name: 'section_header',
         widget: SectionHeader(
@@ -81,7 +81,7 @@ void main() {
     });
 
     testGoldens('User Profile Button', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
+      await helper.GoldenTestHelper.testWidgetInBothThemes(
         tester: tester,
         name: 'user_profile_button',
         widget: UserProfileButton(
@@ -96,7 +96,7 @@ void main() {
 
   group('Molecules Golden Tests - Collection', () {
     testGoldens('All Molecules', (tester) async {
-      final builder = GoldenTestHelper.createDeviceBuilder(
+      final builder = helper.GoldenTestHelper.createDeviceBuilder(
         widgets: [
           const Text('Empty State', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
@@ -158,7 +158,7 @@ void main() {
       await screenMatchesGolden(tester, 'molecules_collection_light');
 
       // Dark theme
-      final darkBuilder = GoldenTestHelper.createDeviceBuilder(
+      final darkBuilder = helper.GoldenTestHelper.createDeviceBuilder(
         widgets: [
           const Text('Empty State', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),

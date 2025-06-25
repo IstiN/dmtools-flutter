@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_colors.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
 import '../styleguide/theme_switch.dart';
 
 class PageHeader extends StatelessWidget {
@@ -23,7 +23,7 @@ class PageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -41,51 +41,41 @@ class PageHeader extends StatelessWidget {
     }
     
     return Container(
-      width: double.infinity,
-      height: 64,
-      color: colors.accentColor,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          // Logo/Title
-          Expanded(
-            child: Row(
-              children: [
-                Icon(
-                  Icons.auto_awesome,
-                  color: Colors.white,
-                  size: 24,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
+      height: 80,
+      decoration: BoxDecoration(
+        color: colors.cardBg,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-          
-          const Spacer(),
-          
-          // Theme toggle
-          ThemeSwitch(
-            isDarkMode: isDarkMode,
-            onToggle: onThemeToggle,
-          ),
-          
-          // Actions
-          if (actions.isNotEmpty) ...[
-            const SizedBox(width: 8),
-            ...actions,
-          ],
         ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Row(
+          children: [
+            // Title
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: colors.textColor,
+              ),
+            ),
+            const Spacer(),
+            // Actions
+            ...actions,
+            const SizedBox(width: 16),
+            // Theme toggle
+            ThemeSwitch(
+              isDarkMode: isDarkMode,
+              onToggle: onThemeToggle,
+            ),
+          ],
+        ),
       ),
     );
   }

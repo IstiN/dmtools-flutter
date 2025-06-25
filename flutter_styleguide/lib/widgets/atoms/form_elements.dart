@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_colors.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
 
 /// Form Group wrapper that provides consistent styling for form elements
 class FormGroup extends StatelessWidget {
@@ -23,7 +23,7 @@ class FormGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -90,7 +90,7 @@ class TextInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -163,7 +163,7 @@ class _PasswordInputState extends State<PasswordInput> {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (widget.isTestMode == true) {
       isDarkMode = widget.testDarkMode ?? false;
@@ -241,7 +241,7 @@ class NumberInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -312,7 +312,7 @@ class TextArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -380,7 +380,7 @@ class SelectDropdown<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -444,7 +444,7 @@ class CheckboxInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -504,7 +504,7 @@ class RadioInput<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -559,7 +559,7 @@ class ViewAllLink extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -599,6 +599,84 @@ class ViewAllLink extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class FormElementsWidget extends StatelessWidget {
+  final bool? isTestMode;
+  final bool? testDarkMode;
+
+  const FormElementsWidget({
+    Key? key,
+    this.isTestMode = false,
+    this.testDarkMode = false,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    bool isDarkMode;
+    ThemeColorSet colors;
+    
+    if (isTestMode == true) {
+      isDarkMode = testDarkMode ?? false;
+      colors = isDarkMode ? AppColors.dark : AppColors.light;
+    } else {
+      try {
+        final themeProvider = Provider.of<ThemeProvider>(context);
+        isDarkMode = themeProvider.isDarkMode;
+        colors = isDarkMode ? AppColors.dark : AppColors.light;
+      } catch (e) {
+        // Fallback for tests
+        isDarkMode = false;
+        colors = AppColors.light;
+      }
+    }
+
+    return Column(
+      children: [
+        // Basic text input
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Text Input',
+            hintText: 'Enter text here',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // Password input
+        TextFormField(
+          obscureText: true,
+          decoration: InputDecoration(
+            labelText: 'Password',
+            hintText: 'Enter password',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            suffixIcon: const Icon(Icons.visibility_off),
+          ),
+        ),
+        const SizedBox(height: 16),
+        
+        // Dropdown
+        DropdownButtonFormField<String>(
+          decoration: InputDecoration(
+            labelText: 'Select Option',
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          items: const [
+            DropdownMenuItem(value: 'option1', child: Text('Option 1')),
+            DropdownMenuItem(value: 'option2', child: Text('Option 2')),
+            DropdownMenuItem(value: 'option3', child: Text('Option 3')),
+          ],
+          onChanged: (value) {},
+        ),
+      ],
     );
   }
 } 
