@@ -11,10 +11,7 @@ void main() {
           theme: ThemeData.light(),
           home: Scaffold(
             body: Center(
-              child: LoginProviderSelector(
-                isTestMode: true,
-                testDarkMode: false,
-              ),
+              child: LoginProviderSelector(),
             ),
           ),
         ),
@@ -34,10 +31,7 @@ void main() {
           theme: ThemeData.dark(),
           home: Scaffold(
             body: Center(
-              child: LoginProviderSelector(
-                isTestMode: true,
-                testDarkMode: true,
-              ),
+              child: LoginProviderSelector(),
             ),
           ),
         ),
@@ -60,8 +54,6 @@ void main() {
               child: LoginProviderSelector(
                 title: 'Sign In',
                 subtitle: 'Select your authentication method',
-                isTestMode: true,
-                testDarkMode: false,
               ),
             ),
           ),

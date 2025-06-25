@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dmtools_mobile/core/theme/app_colors.dart';
+import '../../theme/app_colors.dart';
 
 enum StatusDotType {
   success,
@@ -34,21 +34,22 @@ class StatusDot extends StatelessWidget {
 
   Color _getColor(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = isDark ? AppColors.dark : AppColors.light;
     switch (type) {
       case StatusDotType.success:
-        return lightSuccessColor;
+        return colors.successColor;
       case StatusDotType.warning:
-        return lightWarningColor;
+        return colors.warningColor;
       case StatusDotType.error:
-        return lightDangerColor;
+        return colors.dangerColor;
       case StatusDotType.info:
-        return lightInfoColor;
+        return colors.infoColor;
       case StatusDotType.offline:
-        return isDark ? darkTextMuted : lightTextMuted;
+        return colors.textMuted;
       case StatusDotType.processing:
-        return isDark ? darkAccentColor : lightAccentColor;
+        return colors.accentColor;
       default:
-        return lightSuccessColor;
+        return colors.successColor;
     }
   }
 } 

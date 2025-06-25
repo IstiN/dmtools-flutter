@@ -13,8 +13,6 @@ void main() {
                 provider: OAuthProvider.google,
                 text: 'Continue with Google',
                 onPressed: () {},
-                isTestMode: true,
-                testDarkMode: false,
               ),
             ),
           ),
@@ -34,8 +32,6 @@ void main() {
                 provider: OAuthProvider.microsoft,
                 text: 'Continue with Microsoft',
                 onPressed: () {},
-                isTestMode: true,
-                testDarkMode: false,
               ),
             ),
           ),
@@ -55,8 +51,6 @@ void main() {
                 provider: OAuthProvider.github,
                 text: 'Continue with GitHub',
                 onPressed: () {},
-                isTestMode: true,
-                testDarkMode: false,
               ),
             ),
           ),
@@ -64,27 +58,6 @@ void main() {
       );
 
       expect(find.text('Continue with GitHub'), findsOneWidget);
-      expect(find.byType(OAuthProviderButton), findsOneWidget);
-    });
-
-    testWidgets('Custom OAuth Button', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: OAuthProviderButton(
-                provider: OAuthProvider.custom,
-                text: 'Custom OAuth Provider',
-                onPressed: () {},
-                isTestMode: true,
-                testDarkMode: false,
-              ),
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Custom OAuth Provider'), findsOneWidget);
       expect(find.byType(OAuthProviderButton), findsOneWidget);
     });
 
@@ -98,8 +71,6 @@ void main() {
                 text: 'Continue with Google',
                 onPressed: () {},
                 isDisabled: true,
-                isTestMode: true,
-                testDarkMode: false,
               ),
             ),
           ),
@@ -120,8 +91,6 @@ void main() {
                 text: 'Continue with Google',
                 onPressed: () {},
                 isLoading: true,
-                isTestMode: true,
-                testDarkMode: false,
               ),
             ),
           ),

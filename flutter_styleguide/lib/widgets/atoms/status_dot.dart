@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_colors.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
 
 enum StatusType {
   online,
@@ -31,7 +31,7 @@ class StatusDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../core/theme/app_theme.dart';
-import '../../core/theme/app_colors.dart';
+import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
 
 enum TagChipVariant {
   primary,
@@ -31,7 +31,7 @@ class TagChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    AppColorScheme colors;
+    ThemeColorSet colors;
     
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
@@ -55,62 +55,51 @@ class TagChip extends StatelessWidget {
     
     switch (variant) {
       case TagChipVariant.primary:
-        bgColor = colors.accentColor;
-        textColor = Colors.white;
+        bgColor = isOutlined ? Colors.transparent : colors.accentColor.withOpacity(0.1);
+        textColor = colors.accentColor;
         borderColor = colors.accentColor;
         break;
       case TagChipVariant.secondary:
-        bgColor = isDarkMode ? Color(0xFF2A2A2A) : Colors.grey.shade200;
-        textColor = isDarkMode ? Colors.grey.shade300 : Colors.grey.shade700;
-        borderColor = isDarkMode ? Colors.grey.shade700 : Colors.grey.shade300;
+        bgColor = isOutlined ? Colors.transparent : colors.textMuted.withOpacity(0.1);
+        textColor = colors.textMuted;
+        borderColor = colors.textMuted;
         break;
       case TagChipVariant.success:
-        bgColor = colors.successColor;
-        textColor = Colors.white;
+        bgColor = isOutlined ? Colors.transparent : colors.successColor.withOpacity(0.1);
+        textColor = colors.successColor;
         borderColor = colors.successColor;
         break;
       case TagChipVariant.warning:
-        bgColor = colors.warningColor;
-        textColor = Colors.white;
+        bgColor = isOutlined ? Colors.transparent : colors.warningColor.withOpacity(0.1);
+        textColor = colors.warningColor;
         borderColor = colors.warningColor;
         break;
       case TagChipVariant.danger:
-        bgColor = colors.dangerColor;
-        textColor = Colors.white;
+        bgColor = isOutlined ? Colors.transparent : colors.dangerColor.withOpacity(0.1);
+        textColor = colors.dangerColor;
         borderColor = colors.dangerColor;
         break;
       case TagChipVariant.info:
-        bgColor = colors.infoColor;
-        textColor = Colors.white;
+        bgColor = isOutlined ? Colors.transparent : colors.infoColor.withOpacity(0.1);
+        textColor = colors.infoColor;
         borderColor = colors.infoColor;
         break;
     }
-    
-    // Apply outlined style if needed
-    if (isOutlined) {
-      textColor = bgColor;
-      bgColor = Colors.transparent;
-    }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor),
+        border: isOutlined ? Border.all(color: borderColor) : null,
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: textColor,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
+      child: Text(
+        label,
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }

@@ -3,11 +3,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
 import 'package:dmtools_styleguide/theme/app_colors.dart';
 import 'package:dmtools_styleguide/theme/app_theme.dart';
-import '../golden_test_helper.dart';
+import '../golden_test_helper.dart' as helper;
 
 void main() {
   setUpAll(() async {
-    await loadAppFonts();
+    await helper.loadAppFonts();
   });
 
   group('Theme Golden Tests', () {
@@ -66,7 +66,7 @@ void main() {
         'inputFocusBorder': AppColors.inputFocusBorder,
       }));
 
-      final builder = GoldenTestHelper.createDeviceBuilder(
+      final builder = helper.GoldenTestHelper.createDeviceBuilder(
         widgets: colorWidgets,
         name: 'Light Theme Colors',
         isDarkMode: false,
@@ -131,7 +131,7 @@ void main() {
         'inputFocusBorder': AppColors.inputFocusBorder,
       }));
 
-      final builder = GoldenTestHelper.createDeviceBuilder(
+      final builder = helper.GoldenTestHelper.createDeviceBuilder(
         widgets: colorWidgets,
         name: 'Dark Theme Colors',
         isDarkMode: true,
@@ -182,7 +182,7 @@ void main() {
         const SizedBox(height: 8),
       ];
 
-      final builder = GoldenTestHelper.createDeviceBuilder(
+      final builder = helper.GoldenTestHelper.createDeviceBuilder(
         widgets: typographyWidgets,
         name: 'Typography',
         isDarkMode: false,
@@ -232,7 +232,7 @@ void main() {
         const SizedBox(height: 8),
       ];
 
-      final darkBuilder = GoldenTestHelper.createDeviceBuilder(
+      final darkBuilder = helper.GoldenTestHelper.createDeviceBuilder(
         widgets: darkTypographyWidgets,
         name: 'Typography Dark',
         isDarkMode: true,
