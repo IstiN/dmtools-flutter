@@ -81,7 +81,6 @@ class AppButton extends StatelessWidget {
           textStyle: TextStyle(fontWeight: FontWeight.w500, fontSize: isSmall ? 12 : 14),
         );
       case AppButtonStyle.primary:
-      default:
         return theme.elevatedButtonTheme.style!.copyWith(
            padding: WidgetStateProperty.all(EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding))
         );
@@ -103,7 +102,6 @@ class AppButton extends StatelessWidget {
       case AppButtonStyle.link:
         return TextStyle(color: AppColors.accentColor, fontWeight: FontWeight.w500, fontSize: fontSize);
       case AppButtonStyle.primary:
-      default:
         return TextStyle(color: Colors.white, fontWeight: FontWeight.w500, fontSize: fontSize);
     }
   }

@@ -1,14 +1,11 @@
-import 'package:dmtools_styleguide/dmtools_styleguide.dart';
-import 'package:dmtools_styleguide/theme/app_dimensions.dart';
-import 'package:dmtools_styleguide/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:dmtools_styleguide/theme/app_dimensions.dart';
 import 'package:dmtools_styleguide/widgets/atoms/buttons/app_buttons.dart';
+import 'package:dmtools_styleguide/widgets/atoms/form_elements.dart';
 import 'package:dmtools_styleguide/widgets/atoms/status_dot.dart';
 import 'package:dmtools_styleguide/widgets/atoms/tag_chip.dart';
-import 'package:dmtools_styleguide/widgets/atoms/form_elements.dart';
-import 'package:dmtools_styleguide/widgets/atoms/view_all_link.dart';
 import 'package:dmtools_styleguide/widgets/atoms/texts/app_text.dart';
 import '../golden_test_helper.dart' as helper;
 

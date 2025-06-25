@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dmtools_styleguide/widgets/molecules/login_provider_selector.dart';
-import '../golden_test_helper.dart';
 
 void main() {
   group('Login Provider Selector Tests', () {

@@ -26,9 +26,6 @@ class _AtomsPageState extends State<AtomsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
-
     return ListView(
       padding: EdgeInsets.all(AppDimensions.spacingM),
       children: [
@@ -38,20 +35,20 @@ class _AtomsPageState extends State<AtomsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const PrimaryButton(text: 'Primary'),
-              SizedBox(height: AppDimensions.spacingXs),
+              const SizedBox(height: AppDimensions.spacingXs),
               const SecondaryButton(text: 'Secondary'),
-              SizedBox(height: AppDimensions.spacingXs),
+              const SizedBox(height: AppDimensions.spacingXs),
               const OutlineButton(text: 'Outline'),
-              SizedBox(height: AppDimensions.spacingXs),
+              const SizedBox(height: AppDimensions.spacingXs),
               const AppTextButton(text: 'Text'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               const BaseStyleButton(text: 'Base Button'),
-              SizedBox(height: AppDimensions.spacingXs),
+              const SizedBox(height: AppDimensions.spacingXs),
               const RunButton(
                 text: 'Run',
                 icon: Icons.play_arrow,
               ),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               Wrap(
                 spacing: AppDimensions.spacingM,
                 runSpacing: AppDimensions.spacingM,
@@ -82,32 +79,32 @@ class _AtomsPageState extends State<AtomsPage> {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Form Inputs',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 300,
                 child: FormGroup(
                   label: 'Text Label',
-                  child: const TextInput(
+                  child: TextInput(
                     placeholder: 'Enter text...',
                   ),
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
-              SizedBox(
+              const SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(
                 width: 300,
                 child: FormGroup(
                   label: 'Password Label',
-                  child: const PasswordInput(
+                  child: PasswordInput(
                     placeholder: 'Enter password...',
                   ),
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               SizedBox(
                 width: 300,
                 child: FormGroup(
@@ -128,7 +125,7 @@ class _AtomsPageState extends State<AtomsPage> {
                   ),
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Checkbox',
                 child: Column(
@@ -155,7 +152,7 @@ class _AtomsPageState extends State<AtomsPage> {
                   ],
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Radio Buttons',
                 child: Column(
@@ -187,7 +184,7 @@ class _AtomsPageState extends State<AtomsPage> {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Tags & Status',
           child: Column(
@@ -207,7 +204,7 @@ class _AtomsPageState extends State<AtomsPage> {
                   ],
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Tags',
                 child: Wrap(
@@ -230,7 +227,7 @@ class _AtomsPageState extends State<AtomsPage> {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         const ComponentDisplay(
           title: 'Links',
           child: Column(
@@ -245,7 +242,7 @@ class _AtomsPageState extends State<AtomsPage> {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         const ComponentDisplay(
           title: 'OAuth Provider Buttons',
           child: SizedBox(
@@ -257,23 +254,23 @@ class _AtomsPageState extends State<AtomsPage> {
                   provider: OAuthProvider.google,
                   text: 'Continue with Google',
                 ),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.microsoft,
                   text: 'Continue with Microsoft',
                 ),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.github,
                   text: 'Continue with Github',
                 ),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.google,
                   text: 'Loading...',
                   isLoading: true,
                 ),
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.google,
                   text: 'Disabled',
