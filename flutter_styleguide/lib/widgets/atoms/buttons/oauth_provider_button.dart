@@ -1,9 +1,9 @@
 import 'package:dmtools_styleguide/core/config/app_config.dart';
 import 'package:dmtools_styleguide/theme/app_dimensions.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart'; // Unused
 import 'package:url_launcher/url_launcher.dart';
-import '../../../theme/app_theme.dart';
+// import '../../../theme/app_theme.dart'; // Unused
 import '../../../theme/app_colors.dart';
 
 enum OAuthProvider {
