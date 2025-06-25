@@ -69,7 +69,7 @@ class PrimaryButtonState extends BaseButtonState<PrimaryButton> {
   List<BoxShadow> getHoverBoxShadows(ThemeColorSet colors, bool isDarkMode) {
     return [
       BoxShadow(
-        color: const Color(0xFF000000).withOpacity(0.15),
+        color: const Color(0xFF000000).withValues(alpha: 0.15),
         blurRadius: 12,
         offset: const Offset(0, 4),
       )

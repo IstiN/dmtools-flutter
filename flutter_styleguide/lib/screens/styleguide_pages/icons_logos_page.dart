@@ -263,7 +263,7 @@ class CustomLogoPreview extends StatelessWidget {
           style: TextStyle(
             fontFamily: 'monospace',
             fontSize: 13,
-            backgroundColor: colors.borderColor.withOpacity(0.5),
+            backgroundColor: colors.borderColor.withValues(alpha: 0.5),
             color: colors.textSecondary,
           ),
         ),

@@ -29,8 +29,8 @@ class _EmptyStateState extends State<EmptyState> {
 
     // Colors based on the web version
     final borderColor = _isHovering 
-        ? const Color(0xFF6078F0).withOpacity(0.8)
-        : (isDark ? Colors.white.withOpacity(0.2) : Colors.grey.withOpacity(0.3));
+        ? const Color(0xFF6078F0).withValues(alpha: 0.8)
+        : (isDark ? Colors.white.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.3));
     
     final iconColor = _isHovering
         ? const Color(0xFF6078F0)

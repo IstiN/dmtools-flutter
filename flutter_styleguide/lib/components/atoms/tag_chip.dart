@@ -17,8 +17,8 @@ class TagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = backgroundColor ?? AppColors.primary.withOpacity(0.1);
-    final txtColor = textColor ?? AppColors.primary;
+    final bgColor = backgroundColor ?? AppColors.accentColor.withValues(alpha: 0.1);
+    final txtColor = textColor ?? AppColors.accentColor;
     
     return Container(
       padding: EdgeInsets.symmetric(

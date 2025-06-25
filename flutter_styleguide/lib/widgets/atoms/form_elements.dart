@@ -615,24 +615,6 @@ class FormElementsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-    
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
-
     return Column(
       children: [
         // Basic text input

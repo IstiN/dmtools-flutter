@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
 import '../../widgets/styleguide/component_display.dart';
-import '../../widgets/styleguide/component_item.dart';
 import '../../widgets/molecules/agent_card.dart';
 import '../../widgets/molecules/application_item.dart';
 import '../../widgets/molecules/chat_input_group.dart';
@@ -18,7 +16,6 @@ import '../../widgets/atoms/buttons/app_buttons.dart';
 import '../../widgets/styleguide/theme_switch.dart';
 import '../../widgets/molecules/chat_message.dart';
 import '../../widgets/atoms/status_dot.dart';
-import '../../widgets/molecules/headers/headers.dart';
 
 class MoleculesPage extends StatelessWidget {
   const MoleculesPage({Key? key}) : super(key: key);
@@ -256,7 +253,7 @@ class MoleculesPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
+                  color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.green),
                 ),
@@ -272,7 +269,7 @@ class MoleculesPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.red.withOpacity(0.1),
+                  color: Colors.red.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.red),
                 ),
@@ -288,7 +285,7 @@ class MoleculesPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
+                  color: Colors.blue.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.blue),
                 ),
@@ -304,7 +301,7 @@ class MoleculesPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: Colors.orange.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(color: Colors.orange),
                 ),
