@@ -14,42 +14,42 @@ void main() {
     testGoldens('WordmarkLogo - Light Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
             children: [
               Column(
                 children: [
-                  const WordmarkLogo(
+                  WordmarkLogo(
                     size: LogoSize.small,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small'),
+                  SizedBox(height: 8),
+                  Text('Small'),
                 ],
               ),
               Column(
                 children: [
-                  const WordmarkLogo(
+                  WordmarkLogo(
                     size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium'),
+                  SizedBox(height: 8),
+                  Text('Medium'),
                 ],
               ),
               Column(
                 children: [
-                  const WordmarkLogo(
+                  WordmarkLogo(
                     size: LogoSize.large,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Large'),
+                  SizedBox(height: 8),
+                  Text('Large'),
                 ],
               ),
             ],
@@ -66,42 +66,42 @@ void main() {
     testGoldens('WordmarkLogo - Dark Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
             children: [
               Column(
                 children: [
-                  const WordmarkLogo(
+                  WordmarkLogo(
                     size: LogoSize.small,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Small', style: TextStyle(color: Colors.white)),
                 ],
               ),
               Column(
                 children: [
-                  const WordmarkLogo(
+                  WordmarkLogo(
                     size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Medium', style: TextStyle(color: Colors.white)),
                 ],
               ),
               Column(
                 children: [
-                  const WordmarkLogo(
+                  WordmarkLogo(
                     size: LogoSize.large,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Large', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Large', style: TextStyle(color: Colors.white)),
                 ],
               ),
             ],
@@ -118,42 +118,42 @@ void main() {
     testGoldens('IconLogo - Light Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
             children: [
               Column(
                 children: [
-                  const IconLogo(
+                  IconLogo(
                     size: LogoSize.small,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small'),
+                  SizedBox(height: 8),
+                  Text('Small'),
                 ],
               ),
               Column(
                 children: [
-                  const IconLogo(
+                  IconLogo(
                     size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium'),
+                  SizedBox(height: 8),
+                  Text('Medium'),
                 ],
               ),
               Column(
                 children: [
-                  const IconLogo(
+                  IconLogo(
                     size: LogoSize.large,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Large'),
+                  SizedBox(height: 8),
+                  Text('Large'),
                 ],
               ),
             ],
@@ -170,42 +170,42 @@ void main() {
     testGoldens('IconLogo - Dark Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
             children: [
               Column(
                 children: [
-                  const IconLogo(
+                  IconLogo(
                     size: LogoSize.small,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Small', style: TextStyle(color: Colors.white)),
                 ],
               ),
               Column(
                 children: [
-                  const IconLogo(
+                  IconLogo(
                     size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Medium', style: TextStyle(color: Colors.white)),
                 ],
               ),
               Column(
                 children: [
-                  const IconLogo(
+                  IconLogo(
                     size: LogoSize.large,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Large', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Large', style: TextStyle(color: Colors.white)),
                 ],
               ),
             ],
@@ -222,31 +222,31 @@ void main() {
     testGoldens('NetworkNodesLogo - Light Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
             children: [
               Column(
                 children: [
-                  const NetworkNodesLogo(
+                  NetworkNodesLogo(
                     size: LogoSize.small,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small'),
+                  SizedBox(height: 8),
+                  Text('Small'),
                 ],
               ),
               Column(
                 children: [
-                  const NetworkNodesLogo(
+                  NetworkNodesLogo(
                     size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium'),
+                  SizedBox(height: 8),
+                  Text('Medium'),
                 ],
               ),
             ],
@@ -263,31 +263,31 @@ void main() {
     testGoldens('NetworkNodesLogo - Dark Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
             children: [
               Column(
                 children: [
-                  const NetworkNodesLogo(
+                  NetworkNodesLogo(
                     size: LogoSize.small,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Small', style: TextStyle(color: Colors.white)),
                 ],
               ),
               Column(
                 children: [
-                  const NetworkNodesLogo(
+                  NetworkNodesLogo(
                     size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Medium', style: TextStyle(color: Colors.white)),
                 ],
               ),
             ],
@@ -304,7 +304,7 @@ void main() {
     testGoldens('Combined Logo - Light Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
@@ -313,7 +313,7 @@ void main() {
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       IconLogo(
                         size: LogoSize.small,
                         isTestMode: true,
@@ -327,15 +327,15 @@ void main() {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small'),
+                  SizedBox(height: 8),
+                  Text('Small'),
                 ],
               ),
               Column(
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       IconLogo(
                         size: LogoSize.medium,
                         isTestMode: true,
@@ -349,8 +349,8 @@ void main() {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium'),
+                  SizedBox(height: 8),
+                  Text('Medium'),
                 ],
               ),
             ],
@@ -367,7 +367,7 @@ void main() {
     testGoldens('Combined Logo - Dark Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
-          Wrap(
+          const Wrap(
             spacing: 20,
             runSpacing: 20,
             alignment: WrapAlignment.center,
@@ -376,7 +376,7 @@ void main() {
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       IconLogo(
                         size: LogoSize.small,
                         isTestMode: true,
@@ -390,15 +390,15 @@ void main() {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Small', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Small', style: TextStyle(color: Colors.white)),
                 ],
               ),
               Column(
                 children: [
                   Row(
                     mainAxisSize: MainAxisSize.min,
-                    children: const [
+                    children: [
                       IconLogo(
                         size: LogoSize.medium,
                         isTestMode: true,
@@ -412,8 +412,8 @@ void main() {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium', style: TextStyle(color: Colors.white)),
+                  SizedBox(height: 8),
+                  Text('Medium', style: TextStyle(color: Colors.white)),
                 ],
               ),
             ],

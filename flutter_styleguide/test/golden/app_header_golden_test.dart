@@ -20,7 +20,7 @@ void main() {
           onThemeToggle: () {},
           isTestMode: true,
           testDarkMode: false,
-          profileButton: UserProfileButton(
+          profileButton: const UserProfileButton(
             userName: 'Test User',
             loginState: LoginState.loggedIn,
             isTestMode: true,
@@ -46,7 +46,7 @@ void main() {
           onThemeToggle: () {},
           isTestMode: true,
           testDarkMode: false,
-          profileButton: UserProfileButton(
+          profileButton: const UserProfileButton(
             userName: 'Test User',
             loginState: LoginState.loggedIn,
             isTestMode: true,
@@ -70,7 +70,7 @@ void main() {
           onThemeToggle: () {},
           isTestMode: true,
           testDarkMode: false,
-          profileButton: UserProfileButton(
+          profileButton: const UserProfileButton(
             userName: 'Test User',
             loginState: LoginState.loggedIn,
             isTestMode: true,

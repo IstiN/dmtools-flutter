@@ -67,12 +67,12 @@ class WelcomePage extends StatelessWidget {
     final theme = Theme.of(context);
     
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: AppDimensions.spacingXs),
+      padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacingXs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.arrow_right, size: 20),
-          SizedBox(width: AppDimensions.spacingXs),
+          const Icon(Icons.arrow_right, size: 20),
+          const SizedBox(width: AppDimensions.spacingXs),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

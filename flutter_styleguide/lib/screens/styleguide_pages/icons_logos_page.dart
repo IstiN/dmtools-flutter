@@ -24,7 +24,7 @@ class IconsLogosPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Original Concepts',
           child: ComponentItem(
             title: 'Icon (Favicon) - Intelligent Network Fusion',
@@ -37,7 +37,7 @@ class IconsLogosPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'New AI & Themed Concepts',
           child: Column(
             children: [
@@ -49,7 +49,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-connected-dots.svg',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - JAI Circuitry Monogram',
                 child: LogoDisplay(
@@ -62,7 +62,7 @@ class IconsLogosPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Dark Theme Enhanced Variants',
           child: Column(
             children: [
@@ -74,7 +74,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-connected-dots-dark-enhanced.svg',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - JAI Circuitry Dark Enhanced',
                 child: LogoDisplay(
@@ -83,7 +83,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-jai-circuitry-dark-enhanced.svg',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - Hybrid Dark Matrix',
                 child: LogoDisplay(
@@ -92,7 +92,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-hybrid-dark-matrix.svg',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - Connected JAI Dark Fusion',
                 child: LogoDisplay(
@@ -110,7 +110,7 @@ class IconsLogosPage extends StatelessWidget {
           title: 'Merged Concept Variants',
           child: Column(
             children: [
-              ComponentItem(
+              const ComponentItem(
                 title: 'Logo - Intelligent Network Fusion (Theme Adaptive)',
                 child: LogoDisplay(
                   lightAsset: 'assets/img/dmtools-logo-intelligent-network-fusion.svg',
@@ -168,7 +168,7 @@ class IconsLogosPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Wordmark Variants (New)',
           child: Column(
             children: [
@@ -184,7 +184,7 @@ class IconsLogosPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Experimental Wordmark Concepts',
           child: Column(
             children: [
@@ -196,7 +196,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-mono-tech.svg',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Minimalist Bold Circle',
                 child: LogoDisplay(
@@ -205,7 +205,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-bold-circle.svg',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Network Nodes',
                 child: LogoDisplay(
@@ -215,7 +215,7 @@ class IconsLogosPage extends StatelessWidget {
                   maxWidth: 240,
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'JAI Emphasis',
                 child: LogoDisplay(
@@ -355,7 +355,7 @@ class LogoUsageGuide extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          MediumTitleText('📋 Logo Selection Rules:'),
+          const MediumTitleText('📋 Logo Selection Rules:'),
           const SizedBox(height: AppDimensions.spacingS),
           _buildRuleItem('🤍 White Version:', 'Use when placing logos on colored backgrounds (blue headers, dark backgrounds, colored banners)'),
           _buildRuleItem('⚫ Dark Version:', 'Use for light/white backgrounds and minimal interfaces'),
@@ -373,12 +373,12 @@ class LogoUsageGuide extends StatelessWidget {
   
   Widget _buildRuleItem(String title, String description) {
     return Padding(
-      padding: EdgeInsets.only(left: AppDimensions.spacingXs, bottom: AppDimensions.spacingXs),
+      padding: const EdgeInsets.only(left: AppDimensions.spacingXs, bottom: AppDimensions.spacingXs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           BoldText(title),
-          SizedBox(width: AppDimensions.spacingXs),
+          const SizedBox(width: AppDimensions.spacingXs),
           Expanded(child: MediumBodyText(description)),
         ],
       ),

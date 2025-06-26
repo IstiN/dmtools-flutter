@@ -182,7 +182,7 @@ class AtomsPageState extends State<AtomsPage> {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Tags & Status',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +193,7 @@ class AtomsPageState extends State<AtomsPage> {
                   spacing: AppDimensions.spacingL,
                   runSpacing: AppDimensions.spacingM,
                   crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const [
+                  children: [
                     StatusDot(status: StatusType.online, showLabel: true),
                     StatusDot(status: StatusType.offline, showLabel: true),
                     StatusDot(status: StatusType.warning, showLabel: true),
@@ -201,13 +201,13 @@ class AtomsPageState extends State<AtomsPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
+              SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Tags',
                 child: Wrap(
                   spacing: AppDimensions.spacingXs,
                   runSpacing: AppDimensions.spacingXs,
-                  children: const [
+                  children: [
                     TagChip(label: 'Default'),
                     TagChip(label: 'Primary', variant: TagChipVariant.primary),
                     TagChip(label: 'Success', variant: TagChipVariant.success),
@@ -225,11 +225,11 @@ class AtomsPageState extends State<AtomsPage> {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Links',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               ComponentItem(
                 title: 'View All Link',
                 child: ViewAllLink(
@@ -240,13 +240,13 @@ class AtomsPageState extends State<AtomsPage> {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'OAuth Provider Buttons',
           child: SizedBox(
             width: 300,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 OAuthProviderButton(
                   provider: OAuthProvider.google,
                   text: 'Continue with Google',

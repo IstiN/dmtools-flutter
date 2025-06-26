@@ -17,7 +17,7 @@ class LogosPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Column(
@@ -27,8 +27,8 @@ class LogosPage extends StatelessWidget {
                         isTestMode: true,
                         isDarkMode: false,
                       ),
-                      const SizedBox(height: 8),
-                      const Text('Small'),
+                      SizedBox(height: 8),
+                      Text('Small'),
                     ],
                   ),
                   Column(
@@ -38,8 +38,8 @@ class LogosPage extends StatelessWidget {
                         isTestMode: true,
                         isDarkMode: false,
                       ),
-                      const SizedBox(height: 8),
-                      const Text('Medium'),
+                      SizedBox(height: 8),
+                      Text('Medium'),
                     ],
                   ),
                   Column(
@@ -49,8 +49,8 @@ class LogosPage extends StatelessWidget {
                         isTestMode: true,
                         isDarkMode: false,
                       ),
-                      const SizedBox(height: 8),
-                      const Text('Large'),
+                      SizedBox(height: 8),
+                      Text('Large'),
                     ],
                   ),
                 ],
@@ -59,7 +59,7 @@ class LogosPage extends StatelessWidget {
               Container(
                 color: Colors.black,
                 padding: const EdgeInsets.all(AppDimensions.spacingL),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Column(
@@ -69,8 +69,8 @@ class LogosPage extends StatelessWidget {
                           isTestMode: true,
                           isDarkMode: true,
                         ),
-                        const SizedBox(height: 8),
-                        const Text('Small', style: TextStyle(color: Colors.white)),
+                        SizedBox(height: 8),
+                        Text('Small', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                     Column(
@@ -80,8 +80,8 @@ class LogosPage extends StatelessWidget {
                           isTestMode: true,
                           isDarkMode: true,
                         ),
-                        const SizedBox(height: 8),
-                        const Text('Medium', style: TextStyle(color: Colors.white)),
+                        SizedBox(height: 8),
+                        Text('Medium', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                     Column(
@@ -91,8 +91,8 @@ class LogosPage extends StatelessWidget {
                           isTestMode: true,
                           isDarkMode: true,
                         ),
-                        const SizedBox(height: 8),
-                        const Text('Large', style: TextStyle(color: Colors.white)),
+                        SizedBox(height: 8),
+                        Text('Large', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ],
@@ -108,7 +108,7 @@ class LogosPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Column(
@@ -120,7 +120,7 @@ class LogosPage extends StatelessWidget {
                             isTestMode: true,
                             isDarkMode: false,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           WordmarkLogo(
                             size: LogoSize.small,
                             isTestMode: true,
@@ -128,8 +128,8 @@ class LogosPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      const Text('Small'),
+                      SizedBox(height: 8),
+                      Text('Small'),
                     ],
                   ),
                   Column(
@@ -141,7 +141,7 @@ class LogosPage extends StatelessWidget {
                             isTestMode: true,
                             isDarkMode: false,
                           ),
-                          const SizedBox(width: 8),
+                          SizedBox(width: 8),
                           WordmarkLogo(
                             size: LogoSize.medium,
                             isTestMode: true,
@@ -149,14 +149,14 @@ class LogosPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      const Text('Medium'),
+                      SizedBox(height: 8),
+                      Text('Medium'),
                     ],
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Column(
+              const Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +166,7 @@ class LogosPage extends StatelessWidget {
                         isTestMode: true,
                         isDarkMode: false,
                       ),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       WordmarkLogo(
                         size: LogoSize.large,
                         isTestMode: true,
@@ -174,15 +174,15 @@ class LogosPage extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Large'),
+                  SizedBox(height: 8),
+                  Text('Large'),
                 ],
               ),
               const SizedBox(height: 40),
               Container(
                 color: Colors.black,
                 padding: const EdgeInsets.all(AppDimensions.spacingL),
-                child: Column(
+                child: const Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -196,7 +196,7 @@ class LogosPage extends StatelessWidget {
                                   isTestMode: true,
                                   isDarkMode: true,
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8),
                                 WordmarkLogo(
                                   size: LogoSize.small,
                                   isTestMode: true,
@@ -204,8 +204,8 @@ class LogosPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            const Text('Small', style: TextStyle(color: Colors.white)),
+                            SizedBox(height: 8),
+                            Text('Small', style: TextStyle(color: Colors.white)),
                           ],
                         ),
                         Column(
@@ -217,7 +217,7 @@ class LogosPage extends StatelessWidget {
                                   isTestMode: true,
                                   isDarkMode: true,
                                 ),
-                                const SizedBox(width: 8),
+                                SizedBox(width: 8),
                                 WordmarkLogo(
                                   size: LogoSize.medium,
                                   isTestMode: true,
@@ -225,13 +225,13 @@ class LogosPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 8),
-                            const Text('Medium', style: TextStyle(color: Colors.white)),
+                            SizedBox(height: 8),
+                            Text('Medium', style: TextStyle(color: Colors.white)),
                           ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     Column(
                       children: [
                         Row(
@@ -242,7 +242,7 @@ class LogosPage extends StatelessWidget {
                               isTestMode: true,
                               isDarkMode: true,
                             ),
-                            const SizedBox(width: 12),
+                            SizedBox(width: 12),
                             WordmarkLogo(
                               size: LogoSize.large,
                               isTestMode: true,
@@ -250,8 +250,8 @@ class LogosPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        const Text('Large', style: TextStyle(color: Colors.white)),
+                        SizedBox(height: 8),
+                        Text('Large', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ],
@@ -267,7 +267,7 @@ class LogosPage extends StatelessWidget {
           child: Column(
             children: [
               const SizedBox(height: 20),
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Column(
@@ -277,29 +277,29 @@ class LogosPage extends StatelessWidget {
                         isTestMode: true,
                         isDarkMode: false,
                       ),
-                      const SizedBox(height: 8),
-                      const Text('Small'),
+                      SizedBox(height: 8),
+                      Text('Small'),
                     ],
                   ),
                 ],
               ),
               const SizedBox(height: 20),
-              Column(
+              const Column(
                 children: [
                   NetworkNodesLogo(
                     size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: false,
                   ),
-                  const SizedBox(height: 8),
-                  const Text('Medium'),
+                  SizedBox(height: 8),
+                  Text('Medium'),
                 ],
               ),
               const SizedBox(height: 40),
               Container(
                 color: Colors.black,
                 padding: const EdgeInsets.all(AppDimensions.spacingL),
-                child: Column(
+                child: const Column(
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -311,13 +311,13 @@ class LogosPage extends StatelessWidget {
                               isTestMode: true,
                               isDarkMode: true,
                             ),
-                            const SizedBox(height: 8),
-                            const Text('Small', style: TextStyle(color: Colors.white)),
+                            SizedBox(height: 8),
+                            Text('Small', style: TextStyle(color: Colors.white)),
                           ],
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: 20),
                     Column(
                       children: [
                         NetworkNodesLogo(
@@ -325,8 +325,8 @@ class LogosPage extends StatelessWidget {
                           isTestMode: true,
                           isDarkMode: true,
                         ),
-                        const SizedBox(height: 8),
-                        const Text('Medium', style: TextStyle(color: Colors.white)),
+                        SizedBox(height: 8),
+                        Text('Medium', style: TextStyle(color: Colors.white)),
                       ],
                     ),
                   ],

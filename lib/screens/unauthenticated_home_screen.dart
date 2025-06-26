@@ -33,9 +33,9 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return AlertDialog(
+                    return const AlertDialog(
                       contentPadding: AppDimensions.dialogPadding,
-                      content: const LoginProviderSelector(),
+                      content: LoginProviderSelector(),
                     );
                   },
                 );
@@ -82,13 +82,13 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                     const SizedBox(height: 48),
                     
                     // Feature Cards using the styleguide component
-                    SizedBox(
+                    const SizedBox(
                       width: totalWidth,
                       child: Wrap(
                         spacing: cardSpacing,
                         runSpacing: cardSpacing,
                         alignment: WrapAlignment.center,
-                        children: const [
+                        children: [
                           FeatureCard(
                             icon: Icons.smart_toy,
                             title: 'AI-Powered Agents',

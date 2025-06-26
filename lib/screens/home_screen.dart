@@ -197,9 +197,9 @@ class HomeScreen extends StatelessWidget {
                         // Workspace and agents summary
                         if (isWideScreen)
                           // Wide layout - side by side
-                          Row(
+                          const Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               // Workspace summary
                               Expanded(
                                 flex: 2,
@@ -217,8 +217,8 @@ class HomeScreen extends StatelessWidget {
                           )
                         else
                           // Narrow layout - stacked
-                          Column(
-                            children: const [
+                          const Column(
+                            children: [
                               // Workspace summary
                               WorkspaceSummary(),
                               

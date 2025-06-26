@@ -71,14 +71,14 @@ class MoleculesPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Search Form',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('A common molecule for search functionality, combining an input field and a button.'),
-              const SizedBox(height: AppDimensions.spacingM),
-              const SearchForm(),
+              Text('A common molecule for search functionality, combining an input field and a button.'),
+              SizedBox(height: AppDimensions.spacingM),
+              SearchForm(),
             ],
           ),
         ),
@@ -122,14 +122,14 @@ class MoleculesPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Login Provider Selector',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('A component that allows users to choose from multiple authentication providers.'),
-              const SizedBox(height: AppDimensions.spacingM),
-              const LoginProviderSelector(),
+              Text('A component that allows users to choose from multiple authentication providers.'),
+              SizedBox(height: AppDimensions.spacingM),
+              LoginProviderSelector(),
             ],
           ),
         ),
@@ -164,7 +164,7 @@ class MoleculesPage extends StatelessWidget {
                       onPressed: () {},
                     ),
                   ),
-                  SizedBox(width: AppDimensions.spacingM),
+                  const SizedBox(width: AppDimensions.spacingM),
                   Expanded(
                     child: EmptyState(
                       icon: Icons.add,
@@ -179,24 +179,24 @@ class MoleculesPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        ComponentDisplay(
+        const ComponentDisplay(
           title: 'Chat Message',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Displays a single message in a chat interface, with variations for sender.'),
-              const SizedBox(height: AppDimensions.spacingM),
-              const ChatMessage(
+              Text('Displays a single message in a chat interface, with variations for sender.'),
+              SizedBox(height: AppDimensions.spacingM),
+              ChatMessage(
                 text: 'This is a message from the user.',
                 sender: MessageSender.user,
               ),
-              const SizedBox(height: AppDimensions.spacingXs),
-              const ChatMessage(
+              SizedBox(height: AppDimensions.spacingXs),
+              ChatMessage(
                 text: 'This is a message from the agent.',
                 sender: MessageSender.agent,
               ),
-              const SizedBox(height: AppDimensions.spacingXs),
-              const ChatMessage(
+              SizedBox(height: AppDimensions.spacingXs),
+              ChatMessage(
                 text: 'This is a system notification.',
                 sender: MessageSender.system,
               ),
@@ -331,7 +331,7 @@ class MoleculesPage extends StatelessWidget {
                     avatarUrl: 'https://ui-avatars.com/api/?name=John+Doe&background=667eea&color=fff&size=48',
                     onPressed: () {},
                   ),
-                  SizedBox(width: AppDimensions.spacingM),
+                  const SizedBox(width: AppDimensions.spacingM),
                   UserProfileButton(
                     userName: 'Jane Smith',
                     onPressed: () {},

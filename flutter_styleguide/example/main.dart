@@ -115,7 +115,7 @@ class ExampleHomePage extends StatelessWidget {
               description: 'Handles customer inquiries and resolves issues',
               status: StatusType.online,
               statusLabel: 'Active',
-              tags: ['Support', 'Customer Service'],
+              tags: const ['Support', 'Customer Service'],
               runCount: 42,
               lastRunTime: '2 hours ago',
               onRun: () {},

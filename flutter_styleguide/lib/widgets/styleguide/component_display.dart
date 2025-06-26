@@ -31,13 +31,13 @@ class ComponentDisplay extends StatelessWidget {
           color: colors.textColor,
         ),
         if (description != null) ...[
-          SizedBox(height: AppDimensions.spacingXs),
+          const SizedBox(height: AppDimensions.spacingXs),
           MediumBodyText(
             description!,
             color: colors.textSecondary,
           ),
         ],
-        SizedBox(height: AppDimensions.spacingM),
+        const SizedBox(height: AppDimensions.spacingM),
         child,
       ],
     );

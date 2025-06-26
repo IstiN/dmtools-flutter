@@ -8,7 +8,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.light(),
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: LoginProviderSelector(),
             ),
@@ -28,7 +28,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.dark(),
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: LoginProviderSelector(),
             ),
@@ -48,7 +48,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: ThemeData.light(),
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: LoginProviderSelector(
                 title: 'Sign In',

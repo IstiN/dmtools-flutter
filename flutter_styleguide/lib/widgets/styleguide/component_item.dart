@@ -20,10 +20,10 @@ class ComponentItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         MediumTitleText(title),
-        SizedBox(height: AppDimensions.spacingS),
+        const SizedBox(height: AppDimensions.spacingS),
         child,
         if (codeSnippet != null) ...[
-          SizedBox(height: AppDimensions.spacingS),
+          const SizedBox(height: AppDimensions.spacingS),
           CodeText(codeSnippet!),
         ],
       ],

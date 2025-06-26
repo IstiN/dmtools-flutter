@@ -41,7 +41,7 @@ class ComponentSection extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colors.bgColor,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(AppDimensions.radiusM),
                 topRight: Radius.circular(AppDimensions.radiusM),
               ),

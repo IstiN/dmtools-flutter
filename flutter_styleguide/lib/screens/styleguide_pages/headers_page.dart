@@ -28,7 +28,7 @@ class HeadersPage extends StatelessWidget {
                 onThemeToggle: () {},
                 isTestMode: true,
                 testDarkMode: false,
-                profileButton: UserProfileButton(
+                profileButton: const UserProfileButton(
                   userName: 'Test User',
                   loginState: LoginState.loggedIn,
                   isTestMode: true,
@@ -48,7 +48,7 @@ class HeadersPage extends StatelessWidget {
                   onThemeToggle: () {},
                   isTestMode: true,
                   testDarkMode: true,
-                  profileButton: UserProfileButton(
+                  profileButton: const UserProfileButton(
                     userName: 'Test User',
                     loginState: LoginState.loggedIn,
                     isTestMode: true,
@@ -77,7 +77,7 @@ class HeadersPage extends StatelessWidget {
                 onThemeToggle: () {},
                 isTestMode: true,
                 testDarkMode: false,
-                profileButton: UserProfileButton(
+                profileButton: const UserProfileButton(
                   userName: 'Test User',
                   loginState: LoginState.loggedIn,
                   isTestMode: true,
@@ -97,7 +97,7 @@ class HeadersPage extends StatelessWidget {
                   onThemeToggle: () {},
                   isTestMode: true,
                   testDarkMode: true,
-                  profileButton: UserProfileButton(
+                  profileButton: const UserProfileButton(
                     userName: 'Test User',
                     loginState: LoginState.loggedIn,
                     isTestMode: true,
@@ -124,7 +124,7 @@ class HeadersPage extends StatelessWidget {
                 onThemeToggle: () {},
                 isTestMode: true,
                 testDarkMode: false,
-                profileButton: UserProfileButton(
+                profileButton: const UserProfileButton(
                   userName: 'Test User',
                   loginState: LoginState.loggedIn,
                   isTestMode: true,
@@ -195,7 +195,7 @@ class HeadersPage extends StatelessWidget {
                 onSearch: (_) {},
                 onLogoPressed: () {},
                 onThemeToggle: () {},
-                profileButton: UserProfileButton(
+                profileButton: const UserProfileButton(
                   loginState: LoginState.loggedOut,
                   isTestMode: true,
                   testDarkMode: false,
@@ -256,7 +256,7 @@ class HeadersPage extends StatelessWidget {
               const SizedBox(height: 20),
               BaseSectionHeader(
                 title: 'Recent Agents',
-                leading: Icon(Icons.smart_toy_outlined, size: 28),
+                leading: const Icon(Icons.smart_toy_outlined, size: 28),
                 viewAllText: 'View All',
                 onViewAll: () {},
                 isTestMode: true,
@@ -265,7 +265,7 @@ class HeadersPage extends StatelessWidget {
               const SizedBox(height: 20),
               BaseSectionHeader(
                 title: 'Applications',
-                leading: Icon(Icons.apps_outlined, size: 28),
+                leading: const Icon(Icons.apps_outlined, size: 28),
                 viewAllText: 'View All',
                 onViewAll: () {},
                 isTestMode: true,

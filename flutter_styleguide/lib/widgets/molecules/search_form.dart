@@ -96,9 +96,9 @@ class _SearchFormState extends State<SearchForm> {
               hoverColor: colors.accentHover,
               child: Container(
                 width: 100,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Color(0xFF4169F9),
-                  borderRadius: const BorderRadius.only(
+                  borderRadius: BorderRadius.only(
                     topRight: Radius.circular(4),
                     bottomRight: Radius.circular(4),
                   ),
