@@ -27,7 +27,7 @@ class HomeScreen extends StatelessWidget {
                 // Logo section
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Icon(
+                  child: const Icon(
                     Icons.bubble_chart,
                     color: Colors.white,
                     size: 24,
@@ -44,7 +44,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 const SizedBox(width: 32),
                 // Current page title
-                Icon(
+                const Icon(
                   Icons.dashboard_outlined,
                   color: Colors.white,
                   size: 20,
@@ -109,12 +109,12 @@ class HomeScreen extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(32),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
-                                const Color(0xFF3F6AE0),
-                                const Color(0xFF2A4CC2),
+                                Color(0xFF3F6AE0),
+                                Color(0xFF2A4CC2),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(12),
@@ -174,15 +174,15 @@ class HomeScreen extends StatelessWidget {
                                         shape: BoxShape.circle,
                                         color: Colors.white,
                                       ),
-                                      child: Center(
+                                                                              child: Center(
                                         child: Text(
-                                          'Tools',
-                                          style: TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold,
-                                            color: const Color(0xFF2A4CC2),
+                                            'Tools',
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF2A4CC2),
+                                            ),
                                           ),
-                                        ),
                                       ),
                                     ),
                                   ],
