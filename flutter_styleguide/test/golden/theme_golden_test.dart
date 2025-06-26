@@ -258,13 +258,13 @@ Widget _buildColorGrid(Map<String, Color> colors) {
             decoration: BoxDecoration(
               color: entry.value,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.withOpacity(0.3)),
+              border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
             ),
           ),
           const SizedBox(height: 4),
           Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w500)),
           Text(
-            '#${entry.value.value.toRadixString(16).substring(2).toUpperCase()}',
+            '#${entry.value.toARGB32.toRadixString(16).substring(2).toUpperCase()}',
             style: const TextStyle(fontSize: 12),
           ),
         ],

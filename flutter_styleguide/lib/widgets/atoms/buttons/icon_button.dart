@@ -76,7 +76,7 @@ class AppIconButtonState extends State<AppIconButton> {
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     // Get dimensions from AppDimensions
-    final iconSizes = AppDimensions.buttonIconSize;
+    const iconSizes = AppDimensions.buttonIconSize;
     
     final effectiveOnPressed = widget.isDisabled || widget.isLoading ? null : widget.onPressed;
 

@@ -18,7 +18,7 @@ class IconLogo extends BaseLogo {
 
   @override
   Widget buildLogo(bool isDark) {
-    final String assetName = 'assets/img/dmtools-icon.svg';
+    const String assetName = 'assets/img/dmtools-icon.svg';
     final color = isDark ? Colors.white : Colors.black;
 
     return SvgPicture.asset(

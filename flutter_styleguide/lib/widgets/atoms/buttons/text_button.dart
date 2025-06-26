@@ -82,9 +82,9 @@ class AppTextButtonState extends State<AppTextButton> {
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     // Get dimensions from AppDimensions
-    final paddings = AppDimensions.buttonPadding;
+    const paddings = AppDimensions.buttonPadding;
     const fontSizes = AppDimensions.buttonFontSize;
-    final iconSizes = AppDimensions.buttonIconSize;
+    const iconSizes = AppDimensions.buttonIconSize;
     
     final effectiveOnPressed = widget.isDisabled || widget.isLoading ? null : widget.onPressed;
 
