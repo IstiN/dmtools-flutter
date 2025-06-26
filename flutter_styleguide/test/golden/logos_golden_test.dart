@@ -5,16 +5,12 @@ import 'package:dmtools_styleguide/widgets/atoms/logos/logos.dart';
 import '../golden_test_helper.dart';
 
 void main() {
-  setUpAll(() {
-    // Initialize golden toolkit
-    GoldenToolkit.configure(
-      GoldenToolkitConfiguration(
-        enableRealShadows: true,
-      ),
-    );
-  });
-
-  group('Logo Components Golden Tests', () {
+  GoldenToolkit.runWithConfiguration(
+    config: GoldenToolkitConfiguration(
+      enableRealShadows: true,
+    ),
+    () {
+      group('Logo Components Golden Tests', () {
     testGoldens('WordmarkLogo - Light Mode', (tester) async {
       final builder = GoldenTestHelper.createDeviceBuilder(
         widgets: [
@@ -431,4 +427,6 @@ void main() {
       await screenMatchesGolden(tester, 'combined_logo_dark');
     });
   });
+    },
+  );
 } 

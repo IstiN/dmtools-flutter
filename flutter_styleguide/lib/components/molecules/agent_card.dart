@@ -22,9 +22,9 @@ class AgentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: const BorderRadius.all(Radius.circular(8)),
-        side: const BorderSide(color: AppColors.lightBorderColor),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(8)),
+        side: BorderSide(color: AppColors.lightBorderColor),
       ),
       child: InkWell(
         onTap: onTap,

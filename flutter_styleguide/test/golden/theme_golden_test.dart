@@ -264,7 +264,7 @@ Widget _buildColorGrid(Map<String, Color> colors) {
           const SizedBox(height: 4),
           Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w500)),
           Text(
-            '#${entry.value.toARGB32.toRadixString(16).substring(2).toUpperCase()}',
+            '#${entry.value.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}',
             style: const TextStyle(fontSize: 12),
           ),
         ],

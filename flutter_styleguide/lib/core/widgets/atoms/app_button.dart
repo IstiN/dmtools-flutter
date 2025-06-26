@@ -57,7 +57,7 @@ class AppButton extends StatelessWidget {
         return theme.elevatedButtonTheme.style!.copyWith(
           backgroundColor: WidgetStateProperty.all(Colors.transparent),
           elevation: WidgetStateProperty.all(0),
-          side: WidgetStateProperty.all(BorderSide(color: AppColors.accentColor, width: 1.5)),
+          side: WidgetStateProperty.all(const BorderSide(color: AppColors.accentColor, width: 1.5)),
           overlayColor: WidgetStateProperty.all(AppColors.accentColor.withValues(alpha: 0.1)),
         );
       case AppButtonStyle.tertiary:
