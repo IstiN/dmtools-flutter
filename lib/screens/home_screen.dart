@@ -25,9 +25,9 @@ class HomeScreen extends StatelessWidget {
             child: Row(
               children: [
                 // Logo section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: const Icon(
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: Icon(
                     Icons.bubble_chart,
                     color: Colors.white,
                     size: 24,
@@ -167,14 +167,14 @@ class HomeScreen extends StatelessWidget {
                                   ),
                                   if (showCircle) ...[
                                     const SizedBox(width: 24),
-                                    Container(
+                                                                        Container(
                                       width: 120,
                                       height: 120,
                                       decoration: const BoxDecoration(
                                         shape: BoxShape.circle,
                                         color: Colors.white,
                                       ),
-                                                                              child: Center(
+                                      child: const Center(
                                         child: Text(
                                             'Tools',
                                             style: TextStyle(
@@ -199,17 +199,17 @@ class HomeScreen extends StatelessWidget {
                           // Wide layout - side by side
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                            children: const [
                               // Workspace summary
-                              const Expanded(
+                              Expanded(
                                 flex: 2,
                                 child: WorkspaceSummary(),
                               ),
                               
-                              const SizedBox(width: 24),
+                              SizedBox(width: 24),
                               
                               // Recent agents
-                              const Expanded(
+                              Expanded(
                                 flex: 3,
                                 child: RecentAgents(),
                               ),
