@@ -19,9 +19,9 @@ class AuthenticationPage extends StatelessWidget {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return AlertDialog(
-                  contentPadding: const EdgeInsets.all(AppDimensions.spacingL),
-                  content: const LoginProviderSelector(),
+                return const AlertDialog(
+                  contentPadding: EdgeInsets.all(AppDimensions.spacingL),
+                  content: LoginProviderSelector(),
                 );
               },
             );

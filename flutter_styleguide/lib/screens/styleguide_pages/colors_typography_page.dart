@@ -223,7 +223,7 @@ class ColorsTypographyPage extends StatelessWidget {
                             const LargeBodyText('This is a hyperlink, typically using '),
                             LargeBodyText('var(--accent-color)', 
                               color: colors.accentColor,
-                              style: TextStyle(decoration: TextDecoration.underline),
+                              style: const TextStyle(decoration: TextDecoration.underline),
                             ),
                             const LargeBodyText('.'),
                           ],

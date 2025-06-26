@@ -147,7 +147,8 @@ class ExampleHomePage extends StatelessWidget {
                   ),
                 ],
                 onSendMessage: (message) {
-                  print('Message sent: $message');
+                  // In production, this would be handled by a proper messaging system
+                  // print('Message sent: $message');
                 },
                 title: 'Support Chat',
               ),

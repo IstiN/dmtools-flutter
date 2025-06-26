@@ -189,11 +189,11 @@ class AtomsPageState extends State<AtomsPage> {
             children: [
               ComponentItem(
                 title: 'Status Dots',
-                child: const Wrap(
+                child: Wrap(
                   spacing: AppDimensions.spacingL,
                   runSpacing: AppDimensions.spacingM,
                   crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
+                  children: const [
                     StatusDot(status: StatusType.online, showLabel: true),
                     StatusDot(status: StatusType.offline, showLabel: true),
                     StatusDot(status: StatusType.warning, showLabel: true),
@@ -204,10 +204,10 @@ class AtomsPageState extends State<AtomsPage> {
               const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Tags',
-                child: const Wrap(
+                child: Wrap(
                   spacing: AppDimensions.spacingXs,
                   runSpacing: AppDimensions.spacingXs,
-                  children: [
+                  children: const [
                     TagChip(label: 'Default'),
                     TagChip(label: 'Primary', variant: TagChipVariant.primary),
                     TagChip(label: 'Success', variant: TagChipVariant.success),
@@ -225,11 +225,11 @@ class AtomsPageState extends State<AtomsPage> {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        const ComponentDisplay(
+        ComponentDisplay(
           title: 'Links',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: const [
               ComponentItem(
                 title: 'View All Link',
                 child: ViewAllLink(
@@ -240,34 +240,34 @@ class AtomsPageState extends State<AtomsPage> {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        const ComponentDisplay(
+        ComponentDisplay(
           title: 'OAuth Provider Buttons',
           child: SizedBox(
             width: 300,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              children: const [
                 OAuthProviderButton(
                   provider: OAuthProvider.google,
                   text: 'Continue with Google',
                 ),
-                const SizedBox(height: AppDimensions.spacingM),
+                SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.microsoft,
                   text: 'Continue with Microsoft',
                 ),
-                const SizedBox(height: AppDimensions.spacingM),
+                SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.github,
                   text: 'Continue with Github',
                 ),
-                const SizedBox(height: AppDimensions.spacingM),
+                SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.google,
                   text: 'Loading...',
                   isLoading: true,
                 ),
-                const SizedBox(height: AppDimensions.spacingM),
+                SizedBox(height: AppDimensions.spacingM),
                 OAuthProviderButton(
                   provider: OAuthProvider.google,
                   text: 'Disabled',
