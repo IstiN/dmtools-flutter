@@ -76,9 +76,20 @@ class AppTextButtonState extends State<AppTextButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = widget.isTestMode
-        ? widget.testDarkMode
-        : Provider.of<ThemeProvider>(context).isDarkMode;
+    bool isDarkMode;
+    
+    if (widget.isTestMode) {
+      isDarkMode = widget.testDarkMode;
+    } else {
+      try {
+        // Try to get the theme provider from context
+        isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
+      } catch (e) {
+        // Fallback to light theme if provider is not available
+        isDarkMode = false;
+      }
+    }
+    
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     // Get dimensions from AppDimensions
