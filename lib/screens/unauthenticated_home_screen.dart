@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'package:dmtools_styleguide/widgets/molecules/user_profile_button.dart';
-import 'package:dmtools_styleguide/widgets/molecules/cards/feature_card.dart';
-import 'package:dmtools_styleguide/widgets/molecules/login_provider_selector.dart';
 
 class UnauthenticatedHomeScreen extends StatelessWidget {
   const UnauthenticatedHomeScreen({Key? key}) : super(key: key);
@@ -17,7 +15,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
     // Calculate the total width of the three cards with spacing
     const cardWidth = 300.0;
     const cardSpacing = 24.0;
-    final totalWidth = (cardWidth * 3) + (cardSpacing * 2);
+    const totalWidth = (cardWidth * 3) + (cardSpacing * 2);
     
     return Scaffold(
       backgroundColor: colors.bgColor,
@@ -35,9 +33,9 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return const AlertDialog(
+                    return AlertDialog(
                       contentPadding: AppDimensions.dialogPadding,
-                      content: LoginProviderSelector(),
+                      content: const LoginProviderSelector(),
                     );
                   },
                 );
@@ -90,7 +88,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                         spacing: cardSpacing,
                         runSpacing: cardSpacing,
                         alignment: WrapAlignment.center,
-                        children: [
+                        children: const [
                           FeatureCard(
                             icon: Icons.smart_toy,
                             title: 'AI-Powered Agents',
