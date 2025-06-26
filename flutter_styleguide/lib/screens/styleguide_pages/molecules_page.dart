@@ -25,7 +25,7 @@ class MoleculesPage extends StatelessWidget {
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         ComponentDisplay(
           title: 'Theme Switch',
@@ -33,7 +33,7 @@ class MoleculesPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('The theme switch component allows users to toggle between light and dark modes.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               ThemeSwitch(
                 isDarkMode: themeProvider.isDarkMode,
                 onToggle: () {
@@ -43,14 +43,14 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Card',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Cards are used to group related information. The base style provides background, border, shadow, and rounded corners.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               SizedBox(
                 width: 300,
                 child: CustomCard(
@@ -60,7 +60,7 @@ class MoleculesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text('Card Title', style: Theme.of(context).textTheme.titleLarge),
-                        SizedBox(height: AppDimensions.spacingXs),
+                        const SizedBox(height: AppDimensions.spacingXs),
                         Text('This is some content within a basic card.', style: Theme.of(context).textTheme.bodyMedium),
                       ],
                     ),
@@ -70,26 +70,26 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Search Form',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('A common molecule for search functionality, combining an input field and a button.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               const SearchForm(),
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Section Header',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('A common pattern for section headers with a title and a "view all" link.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               Text(
                 'Section Title',
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -97,14 +97,14 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Agent Card',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Cards specifically designed for displaying agent information with status, description, and actions.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               SizedBox(
                 width: 400,
                 child: AgentCard(
@@ -121,38 +121,38 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Login Provider Selector',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('A component that allows users to choose from multiple authentication providers.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               const LoginProviderSelector(),
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Application Item',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('List items specifically designed for displaying application information with metadata.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               ApplicationItem(onOpen: () {}),
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Empty State',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('A pattern for displaying empty states or call-to-action areas when no content is available.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -178,24 +178,24 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Chat Message',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Displays a single message in a chat interface, with variations for sender.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               const ChatMessage(
                 text: 'This is a message from the user.',
                 sender: MessageSender.user,
               ),
-              SizedBox(height: AppDimensions.spacingXs),
+              const SizedBox(height: AppDimensions.spacingXs),
               const ChatMessage(
                 text: 'This is a message from the agent.',
                 sender: MessageSender.agent,
               ),
-              SizedBox(height: AppDimensions.spacingXs),
+              const SizedBox(height: AppDimensions.spacingXs),
               const ChatMessage(
                 text: 'This is a system notification.',
                 sender: MessageSender.system,
@@ -203,14 +203,14 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Chat Input Group',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('A group containing a textarea for message input and action buttons like send or attach.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               ChatInputGroup(
                 controller: TextEditingController(),
                 onSend: () {},
@@ -219,14 +219,14 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Action Button Group',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('A simple horizontal group of action buttons, typically used for form submissions or main actions in a section.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               ActionButtonGroup(
                 buttons: [
                   SecondaryButton(
@@ -242,14 +242,14 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Notification Message',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Floating messages to provide feedback to the user (success, error, info, warning).'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
@@ -316,14 +316,14 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingXl),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'User Profile Button',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Displays user information with avatar, name, and optional dropdown indicator.'),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               Row(
                 children: [
                   UserProfileButton(

@@ -9,7 +9,7 @@ class LogosPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         ComponentDisplay(
           title: 'Wordmark Logo',
@@ -58,7 +58,7 @@ class LogosPage extends StatelessWidget {
               const SizedBox(height: 40),
               Container(
                 color: Colors.black,
-                padding: EdgeInsets.all(AppDimensions.spacingL),
+                padding: const EdgeInsets.all(AppDimensions.spacingL),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -101,7 +101,7 @@ class LogosPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'Combined Logo',
           description: 'Icon and wordmark combined for full branding',
@@ -181,7 +181,7 @@ class LogosPage extends StatelessWidget {
               const SizedBox(height: 40),
               Container(
                 color: Colors.black,
-                padding: EdgeInsets.all(AppDimensions.spacingL),
+                padding: const EdgeInsets.all(AppDimensions.spacingL),
                 child: Column(
                   children: [
                     Row(
@@ -260,7 +260,7 @@ class LogosPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'Network Nodes Logo',
           description: 'The main logo with network nodes visualization',
@@ -298,7 +298,7 @@ class LogosPage extends StatelessWidget {
               const SizedBox(height: 40),
               Container(
                 color: Colors.black,
-                padding: EdgeInsets.all(AppDimensions.spacingL),
+                padding: const EdgeInsets.all(AppDimensions.spacingL),
                 child: Column(
                   children: [
                     Row(

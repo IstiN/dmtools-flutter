@@ -207,7 +207,7 @@ class HeadersPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'Section Header',
           description: 'Header for content sections with optional view all button',
@@ -233,7 +233,7 @@ class HeadersPage extends StatelessWidget {
               const SizedBox(height: 20),
               Container(
                 color: Colors.grey[850],
-                padding: EdgeInsets.all(AppDimensions.spacingM),
+                padding: const EdgeInsets.all(AppDimensions.spacingM),
                 child: BaseSectionHeader(
                   title: 'Recent Agents',
                   subtitle: '12 agents updated in the last 24 hours',
@@ -247,7 +247,7 @@ class HeadersPage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'Section Header - With Icon',
           description: 'Section header with leading icon',

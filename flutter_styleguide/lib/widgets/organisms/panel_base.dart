@@ -96,10 +96,10 @@ class PanelBase extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: headerBgColor,
                   borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(AppDimensions.radiusM),
-                    topRight: Radius.circular(AppDimensions.radiusM),
-                    bottomLeft: isCollapsed ? Radius.circular(AppDimensions.radiusM) : Radius.zero,
-                    bottomRight: isCollapsed ? Radius.circular(AppDimensions.radiusM) : Radius.zero,
+                    topLeft: const Radius.circular(AppDimensions.radiusM),
+                    topRight: const Radius.circular(AppDimensions.radiusM),
+                    bottomLeft: isCollapsed ? const Radius.circular(AppDimensions.radiusM) : Radius.zero,
+                    bottomRight: isCollapsed ? const Radius.circular(AppDimensions.radiusM) : Radius.zero,
                   ),
                 ),
                 child: Row(

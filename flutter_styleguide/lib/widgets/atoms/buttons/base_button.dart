@@ -88,9 +88,9 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     // Get dimensions from AppDimensions
-    final paddings = AppDimensions.buttonPadding;
-    final fontSizes = AppDimensions.buttonFontSize;
-    final iconSizes = AppDimensions.buttonIconSize;
+    const paddings = AppDimensions.buttonPadding;
+    const fontSizes = AppDimensions.buttonFontSize;
+    const iconSizes = AppDimensions.buttonIconSize;
     
     final effectiveOnPressed = widget.isDisabled || widget.isLoading ? null : widget.onPressed;
 

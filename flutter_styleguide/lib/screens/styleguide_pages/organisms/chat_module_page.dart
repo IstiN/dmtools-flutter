@@ -42,7 +42,7 @@ class ChatModulePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: AppDimensions.spacingM),
+                  const SizedBox(height: AppDimensions.spacingM),
                   ChatModule(
                     messages: [
                       ChatMessage(

@@ -40,10 +40,10 @@ class ChatModule extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChatModuleState createState() => _ChatModuleState();
+  ChatModuleState createState() => ChatModuleState();
 }
 
-class _ChatModuleState extends State<ChatModule> {
+class ChatModuleState extends State<ChatModule> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;

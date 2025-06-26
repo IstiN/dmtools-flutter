@@ -59,7 +59,7 @@ class ColorSwatchItem extends StatelessWidget {
                   color: contrastColor,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: AppDimensions.spacingXxs),
+                const SizedBox(height: AppDimensions.spacingXxs),
                 Text(
                   'RGB(${(color.r * 255.0).round()}, ${(color.g * 255.0).round()}, ${(color.b * 255.0).round()})',
                   style: TextStyle(

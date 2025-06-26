@@ -7,16 +7,15 @@ import '../../widgets/atoms/form_elements.dart';
 import '../../widgets/atoms/status_dot.dart';
 import '../../widgets/atoms/tag_chip.dart';
 import '../../widgets/atoms/texts/app_text.dart';
-import '../../widgets/atoms/buttons/oauth_provider_button.dart';
 
 class AtomsPage extends StatefulWidget {
   const AtomsPage({Key? key}) : super(key: key);
 
   @override
-  _AtomsPageState createState() => _AtomsPageState();
+  AtomsPageState createState() => AtomsPageState();
 }
 
-class _AtomsPageState extends State<AtomsPage> {
+class AtomsPageState extends State<AtomsPage> {
   String _dropdownValue = 'Option 1';
   bool _checkbox1Value = false;
   bool _checkbox2Value = true;
@@ -56,7 +55,7 @@ class _AtomsPageState extends State<AtomsPage> {
                     text: 'Settings',
                     icon: Icons.settings,
                   ),
-                  MediumBodyText('Dark Theme:'),
+                  const MediumBodyText('Dark Theme:'),
                   Theme(
                     data: ThemeData.dark(),
                     child: const AppIconButton(
@@ -190,11 +189,11 @@ class _AtomsPageState extends State<AtomsPage> {
             children: [
               ComponentItem(
                 title: 'Status Dots',
-                child: Wrap(
+                child: const Wrap(
                   spacing: AppDimensions.spacingL,
                   runSpacing: AppDimensions.spacingM,
                   crossAxisAlignment: WrapCrossAlignment.center,
-                  children: const [
+                  children: [
                     StatusDot(status: StatusType.online, showLabel: true),
                     StatusDot(status: StatusType.offline, showLabel: true),
                     StatusDot(status: StatusType.warning, showLabel: true),
@@ -205,10 +204,10 @@ class _AtomsPageState extends State<AtomsPage> {
               const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Tags',
-                child: Wrap(
+                child: const Wrap(
                   spacing: AppDimensions.spacingXs,
                   runSpacing: AppDimensions.spacingXs,
-                  children: const [
+                  children: [
                     TagChip(label: 'Default'),
                     TagChip(label: 'Primary', variant: TagChipVariant.primary),
                     TagChip(label: 'Success', variant: TagChipVariant.success),

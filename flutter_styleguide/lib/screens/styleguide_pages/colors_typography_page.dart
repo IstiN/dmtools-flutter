@@ -24,11 +24,11 @@ class ColorsTypographyPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MediumHeadlineText('Color Palette (from CSS Variables)'),
+                const MediumHeadlineText('Color Palette (from CSS Variables)'),
                 const SizedBox(height: AppDimensions.spacingL),
                 
                 // Base Colors
-                LargeTitleText('Base Colors'),
+                const LargeTitleText('Base Colors'),
                 const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
@@ -70,7 +70,7 @@ class ColorsTypographyPage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Accent Colors
-                LargeTitleText('Accent Colors'),
+                const LargeTitleText('Accent Colors'),
                 const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
@@ -97,7 +97,7 @@ class ColorsTypographyPage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Button & Interaction Colors
-                LargeTitleText('Button & Interaction Colors'),
+                const LargeTitleText('Button & Interaction Colors'),
                 const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
@@ -124,7 +124,7 @@ class ColorsTypographyPage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Feedback Colors
-                LargeTitleText('Feedback Colors'),
+                const LargeTitleText('Feedback Colors'),
                 const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
@@ -156,7 +156,7 @@ class ColorsTypographyPage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Input Colors
-                LargeTitleText('Input Colors'),
+                const LargeTitleText('Input Colors'),
                 const SizedBox(height: AppDimensions.spacingM),
                 Wrap(
                   spacing: AppDimensions.spacingM,
@@ -178,9 +178,9 @@ class ColorsTypographyPage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingXxl),
                 
                 // Typography Section
-                MediumHeadlineText('Typography'),
+                const MediumHeadlineText('Typography'),
                 const SizedBox(height: AppDimensions.spacingM),
-                MediumBodyText('Base font family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'),
+                const MediumBodyText('Base font family: "Inter", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'),
                 const SizedBox(height: AppDimensions.spacingXl),
                 
                 // Heading Examples
@@ -196,55 +196,55 @@ class ColorsTypographyPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        LargeDisplayText('Heading 1'),
-                        SizedBox(height: AppDimensions.spacingM),
-                        MediumDisplayText('Heading 2'),
-                        SizedBox(height: AppDimensions.spacingM),
+                        const LargeDisplayText('Heading 1'),
+                        const SizedBox(height: AppDimensions.spacingM),
+                        const MediumDisplayText('Heading 2'),
+                        const SizedBox(height: AppDimensions.spacingM),
                         Divider(color: colors.borderColor),
-                        SizedBox(height: AppDimensions.spacingM),
-                        SmallDisplayText('Heading 3'),
-                        SizedBox(height: AppDimensions.spacingXs),
-                        LargeHeadlineText('Heading 4'),
-                        SizedBox(height: AppDimensions.spacingXs),
-                        MediumHeadlineText('Heading 5'),
-                        SizedBox(height: AppDimensions.spacingXs),
-                        SmallHeadlineText('Heading 6'),
-                        SizedBox(height: AppDimensions.spacingM),
+                        const SizedBox(height: AppDimensions.spacingM),
+                        const SmallDisplayText('Heading 3'),
+                        const SizedBox(height: AppDimensions.spacingXs),
+                        const LargeHeadlineText('Heading 4'),
+                        const SizedBox(height: AppDimensions.spacingXs),
+                        const MediumHeadlineText('Heading 5'),
+                        const SizedBox(height: AppDimensions.spacingXs),
+                        const SmallHeadlineText('Heading 6'),
+                        const SizedBox(height: AppDimensions.spacingM),
                         Divider(color: colors.borderColor),
-                        SizedBox(height: AppDimensions.spacingM),
-                        LargeBodyText('This is a standard paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. It uses '),
+                        const SizedBox(height: AppDimensions.spacingM),
+                        const LargeBodyText('This is a standard paragraph. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. It uses '),
                         ItalicText('var(--text-color)', baseStyle: Theme.of(context).textTheme.bodyLarge),
-                        SizedBox(height: AppDimensions.spacingXs),
-                        MediumBodyText('This is small text, often used for less important details or '),
-                        MediumBodyText('var(--text-muted)', color: colors.textMuted, style: const TextStyle(fontStyle: FontStyle.italic)),
-                        SizedBox(height: AppDimensions.spacingXs),
+                        const SizedBox(height: AppDimensions.spacingXs),
+                        const MediumBodyText('This is small text, often used for less important details or '),
+                        MediumBodyText('var(--text-muted)', color: colors.textMuted, style: TextStyle(fontStyle: FontStyle.italic)),
+                        const SizedBox(height: AppDimensions.spacingXs),
                         Wrap(
                           children: [
-                            LargeBodyText('This is a hyperlink, typically using '),
+                            const LargeBodyText('This is a hyperlink, typically using '),
                             LargeBodyText('var(--accent-color)', 
                               color: colors.accentColor,
-                              style: const TextStyle(decoration: TextDecoration.underline),
+                              style: TextStyle(decoration: TextDecoration.underline),
                             ),
-                            LargeBodyText('.'),
+                            const LargeBodyText('.'),
                           ],
                         ),
-                        SizedBox(height: AppDimensions.spacingXs),
+                        const SizedBox(height: AppDimensions.spacingXs),
                         Wrap(
                           children: [
-                            BoldText('This is bold text. '),
-                            ItalicText('This is italic text.'),
+                            const BoldText('This is bold text. '),
+                            const ItalicText('This is italic text.'),
                           ],
                         ),
-                        SizedBox(height: AppDimensions.spacingXs),
+                        const SizedBox(height: AppDimensions.spacingXs),
                         Container(
                           padding: AppDimensions.cardPaddingS,
                           decoration: BoxDecoration(
                             color: isDarkMode ? const Color(0xFF343A40) : const Color(0xFFF8F9FA),
                             borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
                           ),
-                          child: CodeText('This is inline code.'),
+                          child: const CodeText('This is inline code.'),
                         ),
-                        SizedBox(height: AppDimensions.spacingXs),
+                        const SizedBox(height: AppDimensions.spacingXs),
                         Container(
                           width: double.infinity,
                           padding: AppDimensions.cardPaddingM,

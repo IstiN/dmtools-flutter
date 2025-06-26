@@ -19,7 +19,7 @@ class WelcomeBannerPage extends StatelessWidget {
         title: const Text('Welcome Banner'),
       ),
       body: ListView(
-        padding: EdgeInsets.all(AppDimensions.spacingM),
+        padding: const EdgeInsets.all(AppDimensions.spacingM),
         children: [
           Text(
             'Welcome Banner',
@@ -30,7 +30,7 @@ class WelcomeBannerPage extends StatelessWidget {
             'Prominent banner component for main page headers with logo, text, and call-to-action buttons.',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          SizedBox(height: AppDimensions.spacingL),
+          const SizedBox(height: AppDimensions.spacingL),
           
           // Standard Welcome Banner
           ComponentDisplay(
@@ -39,7 +39,7 @@ class WelcomeBannerPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 WelcomeBanner(
                   title: 'Welcome to DMTools',
                   subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
@@ -54,7 +54,7 @@ class WelcomeBannerPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Welcome Banner with Logo
           ComponentDisplay(
@@ -63,7 +63,7 @@ class WelcomeBannerPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 WelcomeBanner(
                   title: 'Welcome to DMTools',
                   subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
@@ -79,7 +79,7 @@ class WelcomeBannerPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Welcome Banner with Wordmark Logo
           ComponentDisplay(
@@ -88,7 +88,7 @@ class WelcomeBannerPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 WelcomeBanner(
                   title: 'Welcome to DMTools',
                   subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
@@ -104,7 +104,7 @@ class WelcomeBannerPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Welcome Banner with Combined Logo
           ComponentDisplay(
@@ -113,7 +113,7 @@ class WelcomeBannerPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 WelcomeBanner(
                   title: 'Welcome to DMTools',
                   subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
@@ -129,7 +129,7 @@ class WelcomeBannerPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Custom Welcome Banner
           ComponentDisplay(
@@ -138,7 +138,7 @@ class WelcomeBannerPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 WelcomeBanner(
                   title: 'Introducing DMTools Pro',
                   subtitle: 'Upgrade to our premium plan for advanced features, priority support, and unlimited access to all tools.',
@@ -153,7 +153,7 @@ class WelcomeBannerPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Implementation Details
           Text(
