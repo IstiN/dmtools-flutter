@@ -11,7 +11,7 @@ void main() {
           theme: ThemeData.light().copyWith(
             primaryColor: AppColors.light.accentColor,
           ),
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: FeatureCard(
                 icon: Icons.smart_toy,
@@ -37,7 +37,7 @@ void main() {
           theme: ThemeData.dark().copyWith(
             primaryColor: AppColors.dark.accentColor,
           ),
-          home: Scaffold(
+          home: const Scaffold(
             body: Center(
               child: FeatureCard(
                 icon: Icons.smart_toy,

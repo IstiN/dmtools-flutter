@@ -122,7 +122,7 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
                 children: [
                   const SizedBox(height: AppDimensions.spacingM),
                   WorkspaceManagement(
-                    workspaces: [],
+                    workspaces: const [],
                     onCreateWorkspace: () {},
                     isTestMode: true,
                     testDarkMode: isDarkMode,
@@ -298,7 +298,7 @@ WorkspaceManagement(
         testDarkMode: isDarkMode,
         actions: [
           IconButton(
-            icon: Icon(Icons.delete_outline, color: Colors.white),
+            icon: const Icon(Icons.delete_outline, color: Colors.white),
             onPressed: () {
               // Delete workspace logic would go here
               setState(() {

@@ -216,7 +216,7 @@ class ColorsTypographyPage extends StatelessWidget {
                         ItalicText('var(--text-color)', baseStyle: Theme.of(context).textTheme.bodyLarge),
                         const SizedBox(height: AppDimensions.spacingXs),
                         const MediumBodyText('This is small text, often used for less important details or '),
-                        MediumBodyText('var(--text-muted)', color: colors.textMuted, style: TextStyle(fontStyle: FontStyle.italic)),
+                        MediumBodyText('var(--text-muted)', color: colors.textMuted, style: const TextStyle(fontStyle: FontStyle.italic)),
                         const SizedBox(height: AppDimensions.spacingXs),
                         Wrap(
                           children: [
@@ -229,10 +229,10 @@ class ColorsTypographyPage extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: AppDimensions.spacingXs),
-                        Wrap(
+                        const Wrap(
                           children: [
-                            const BoldText('This is bold text. '),
-                            const ItalicText('This is italic text.'),
+                            BoldText('This is bold text. '),
+                            ItalicText('This is italic text.'),
                           ],
                         ),
                         const SizedBox(height: AppDimensions.spacingXs),

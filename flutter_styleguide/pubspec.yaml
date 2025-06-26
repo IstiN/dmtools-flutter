@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   provider: ^6.0.0
   flutter_svg: ^2.0.7
   google_fonts: ^4.0.0
@@ -29,7 +31,6 @@ dev_dependencies:
 #     image_path: "assets/img/dmtools-icon.svg"
 #     background_color: "#FFFFFF"
 #     theme_color: "#FFFFFF"
-
 flutter:
   uses-material-design: true
   assets:

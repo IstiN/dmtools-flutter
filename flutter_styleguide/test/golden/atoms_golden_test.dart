@@ -255,23 +255,23 @@ Widget _buildAllFormElements() {
 }
 
 Widget _buildAllTextElements() {
-  return Scaffold(
+  return const Scaffold(
     body: SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           LargeDisplayText('Display Text'),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           LargeHeadlineText('Headline Text'),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           LargeTitleText('Title Text'),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           LargeBodyText('Body Text'),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           LargeLabelText('Label Text'),
-          const SizedBox(height: 8),
-          const CodeText('Special Text'),
+          SizedBox(height: 8),
+          CodeText('Special Text'),
         ],
       ),
     ),
