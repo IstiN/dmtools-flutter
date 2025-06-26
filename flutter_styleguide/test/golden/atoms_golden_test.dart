@@ -17,13 +17,10 @@ void main() {
   group('Atoms Golden Tests', () {
     testGoldens('All Buttons - Light Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.light(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllButtons(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: false),
         surfaceSize: const Size(400, 600),
       );
 
@@ -36,13 +33,10 @@ void main() {
 
     testGoldens('All Buttons - Dark Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.dark(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllButtons(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: true),
         surfaceSize: const Size(400, 600),
       );
 
@@ -55,13 +49,10 @@ void main() {
 
     testGoldens('All Form Elements - Light Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.light(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllFormElements(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: false),
         surfaceSize: const Size(400, 600),
       );
 
@@ -74,13 +65,10 @@ void main() {
 
     testGoldens('All Form Elements - Dark Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.dark(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllFormElements(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: true),
         surfaceSize: const Size(400, 600),
       );
 
@@ -93,13 +81,10 @@ void main() {
 
     testGoldens('All Text Elements - Light Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.light(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllTextElements(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: false),
         surfaceSize: const Size(400, 600),
       );
 
@@ -112,13 +97,10 @@ void main() {
 
     testGoldens('All Text Elements - Dark Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.dark(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllTextElements(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: true),
         surfaceSize: const Size(400, 600),
       );
 
@@ -131,13 +113,10 @@ void main() {
 
     testGoldens('All Tags & Status - Light Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.light(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllTagsAndStatus(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: false),
         surfaceSize: const Size(400, 600),
       );
 
@@ -150,13 +129,10 @@ void main() {
 
     testGoldens('All Tags & Status - Dark Mode', (tester) async {
       const devices = [Device.phone];
-      final wrapper = materialAppWrapper(
-        theme: ThemeData.dark(),
-      );
 
       await tester.pumpWidgetBuilder(
         _buildAllTagsAndStatus(),
-        wrapper: wrapper,
+        wrapper: (child) => helper.createTestApp(child, darkMode: true),
         surfaceSize: const Size(400, 600),
       );
 
@@ -231,7 +207,7 @@ Widget _buildAllButtons() {
           // Other button types
           const OutlineButton(text: 'Outline'),
           const SizedBox(height: 8),
-          const AppTextButton(text: 'Text Button'),
+          const AppTextButton(text: 'Text Button', isTestMode: true),
           const SizedBox(height: 8),
           const RunButton(text: 'Run', icon: Icons.play_arrow),
         ],
