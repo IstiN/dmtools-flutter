@@ -127,7 +127,7 @@ class IconsLogosPage extends StatelessWidget {
                   previews: [
                     Container(
                       color: const Color(0xFF466AF1),
-                      padding: EdgeInsets.all(AppDimensions.spacingL),
+                      padding: const EdgeInsets.all(AppDimensions.spacingL),
                       child: SvgPicture.asset(
                         'assets/img/dmtools-logo-intelligent-network-fusion-white.svg',
                         width: 320,
@@ -135,7 +135,7 @@ class IconsLogosPage extends StatelessWidget {
                     ),
                     Container(
                       color: const Color(0xFF2C3E50),
-                      padding: EdgeInsets.all(AppDimensions.spacingL),
+                      padding: const EdgeInsets.all(AppDimensions.spacingL),
                       child: SvgPicture.asset(
                         'assets/img/dmtools-logo-intelligent-network-fusion-white.svg',
                         width: 320,
@@ -151,7 +151,7 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-intelligent-network-fusion-dark.svg',
                   previews: [
                     Container(
-                      padding: EdgeInsets.all(AppDimensions.spacingL),
+                      padding: const EdgeInsets.all(AppDimensions.spacingL),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         border: Border.all(color: Colors.grey.shade300)
@@ -215,7 +215,7 @@ class IconsLogosPage extends StatelessWidget {
                   maxWidth: 240,
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'JAI Emphasis',
                 child: LogoDisplay(
@@ -257,7 +257,7 @@ class CustomLogoPreview extends StatelessWidget {
           crossAxisAlignment: WrapCrossAlignment.center,
           children: previews,
         ),
-        SizedBox(height: AppDimensions.spacingM),
+        const SizedBox(height: AppDimensions.spacingM),
         SelectableText(
           assetName,
           style: TextStyle(
@@ -330,7 +330,7 @@ class LogoDisplay extends StatelessWidget {
             ),
           ],
         ),
-        SizedBox(height: AppDimensions.spacingM),
+        const SizedBox(height: AppDimensions.spacingM),
         CodeText(assetName, color: colors.textSecondary),
       ],
     );
@@ -356,11 +356,11 @@ class LogoUsageGuide extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           MediumTitleText('📋 Logo Selection Rules:'),
-          SizedBox(height: AppDimensions.spacingS),
+          const SizedBox(height: AppDimensions.spacingS),
           _buildRuleItem('🤍 White Version:', 'Use when placing logos on colored backgrounds (blue headers, dark backgrounds, colored banners)'),
           _buildRuleItem('⚫ Dark Version:', 'Use for light/white backgrounds and minimal interfaces'),
           _buildRuleItem('🔄 Theme Adaptive:', 'Use for dynamic interfaces that support theme switching'),
-          SizedBox(height: AppDimensions.spacingS),
+          const SizedBox(height: AppDimensions.spacingS),
           MediumBodyText(
             'Always ensure sufficient contrast between logo and background for accessibility.',
             style: const TextStyle(fontStyle: FontStyle.italic),

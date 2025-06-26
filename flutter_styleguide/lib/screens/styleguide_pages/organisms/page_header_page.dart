@@ -19,7 +19,7 @@ class PageHeaderPage extends StatelessWidget {
         title: const Text('Page Header'),
       ),
       body: ListView(
-        padding: EdgeInsets.all(AppDimensions.spacingM),
+        padding: const EdgeInsets.all(AppDimensions.spacingM),
         children: [
           Text(
             'Page Header',
@@ -30,7 +30,7 @@ class PageHeaderPage extends StatelessWidget {
             'Main navigation header with logo, theme toggle, and action buttons.',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          SizedBox(height: AppDimensions.spacingL),
+          const SizedBox(height: AppDimensions.spacingL),
           
           // Basic Page Header
           ComponentDisplay(
@@ -39,7 +39,7 @@ class PageHeaderPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 PageHeader(
                   title: 'DMTools',
                   onThemeToggle: () {
@@ -52,7 +52,7 @@ class PageHeaderPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Page Header with Actions
           ComponentDisplay(
@@ -61,7 +61,7 @@ class PageHeaderPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 PageHeader(
                   title: 'DMTools',
                   onThemeToggle: () {
@@ -84,7 +84,7 @@ class PageHeaderPage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Implementation Details
           Text(

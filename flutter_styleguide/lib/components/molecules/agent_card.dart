@@ -24,7 +24,7 @@ class AgentCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(
         borderRadius: const BorderRadius.all(Radius.circular(8)),
-        side: BorderSide(color: AppColors.lightBorderColor),
+        side: const BorderSide(color: AppColors.lightBorderColor),
       ),
       child: InkWell(
         onTap: onTap,

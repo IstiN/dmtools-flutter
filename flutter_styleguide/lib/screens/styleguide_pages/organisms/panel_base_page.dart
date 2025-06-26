@@ -19,7 +19,7 @@ class PanelBasePage extends StatelessWidget {
         title: const Text('Panel Base'),
       ),
       body: ListView(
-        padding: EdgeInsets.all(AppDimensions.spacingM),
+        padding: const EdgeInsets.all(AppDimensions.spacingM),
         children: [
           Text(
             'Panel Base',
@@ -30,7 +30,7 @@ class PanelBasePage extends StatelessWidget {
             'Foundational panel structure with header and content area. Base for other modules.',
             style: Theme.of(context).textTheme.bodyLarge,
           ),
-          SizedBox(height: AppDimensions.spacingL),
+          const SizedBox(height: AppDimensions.spacingL),
           
           // Primary Style Panel
           ComponentDisplay(
@@ -39,7 +39,7 @@ class PanelBasePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 PanelBase(
                   title: 'Panel Title',
                   headerStyle: PanelHeaderStyle.primary,
@@ -52,7 +52,7 @@ class PanelBasePage extends StatelessWidget {
                     ),
                   ],
                   content: Padding(
-                    padding: EdgeInsets.all(AppDimensions.spacingM),
+                    padding: const EdgeInsets.all(AppDimensions.spacingM),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -64,7 +64,7 @@ class PanelBasePage extends StatelessWidget {
                             color: isDarkMode ? AppColors.dark.textColor : AppColors.light.textColor,
                           ),
                         ),
-                        SizedBox(height: AppDimensions.spacingS),
+                        const SizedBox(height: AppDimensions.spacingS),
                         Text(
                           'This is the content area of the panel. It can contain any widgets or components.',
                           style: TextStyle(
@@ -80,7 +80,7 @@ class PanelBasePage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Secondary Style Panel
           ComponentDisplay(
@@ -89,14 +89,14 @@ class PanelBasePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 PanelBase(
                   title: 'Secondary Panel',
                   headerStyle: PanelHeaderStyle.secondary,
                   isTestMode: true,
                   testDarkMode: isDarkMode,
                   content: Padding(
-                    padding: EdgeInsets.all(AppDimensions.spacingM),
+                    padding: const EdgeInsets.all(AppDimensions.spacingM),
                     child: Text(
                       'This panel uses a secondary header style.',
                       style: TextStyle(
@@ -109,7 +109,7 @@ class PanelBasePage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Neutral Style Panel
           ComponentDisplay(
@@ -118,14 +118,14 @@ class PanelBasePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 PanelBase(
                   title: 'Neutral Panel',
                   headerStyle: PanelHeaderStyle.neutral,
                   isTestMode: true,
                   testDarkMode: isDarkMode,
                   content: Padding(
-                    padding: EdgeInsets.all(AppDimensions.spacingM),
+                    padding: const EdgeInsets.all(AppDimensions.spacingM),
                     child: Text(
                       'This panel uses a neutral header style.',
                       style: TextStyle(
@@ -138,7 +138,7 @@ class PanelBasePage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Collapsible Panel
           ComponentDisplay(
@@ -147,7 +147,7 @@ class PanelBasePage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: AppDimensions.spacingM),
+                const SizedBox(height: AppDimensions.spacingM),
                 PanelBase(
                   title: 'Collapsible Panel',
                   headerStyle: PanelHeaderStyle.primary,
@@ -155,7 +155,7 @@ class PanelBasePage extends StatelessWidget {
                   isTestMode: true,
                   testDarkMode: isDarkMode,
                   content: Padding(
-                    padding: EdgeInsets.all(AppDimensions.spacingM),
+                    padding: const EdgeInsets.all(AppDimensions.spacingM),
                     child: Text(
                       'This panel can be collapsed by clicking the expand/collapse icon in the header.',
                       style: TextStyle(
@@ -168,7 +168,7 @@ class PanelBasePage extends StatelessWidget {
             ),
           ),
           
-          SizedBox(height: AppDimensions.spacingXl),
+          const SizedBox(height: AppDimensions.spacingXl),
           
           // Implementation Details
           Text(
@@ -224,7 +224,7 @@ PanelBase(
     ),
   ],
   content: Padding(
-    padding: EdgeInsets.all(16),
+    padding: const EdgeInsets.all(16),
     child: Text('Panel content goes here'),
   ),
 )''',

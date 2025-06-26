@@ -219,8 +219,8 @@ class _StyleguideHomeState extends State<StyleguideHome> {
     final isSelected = _selectedIndex == index;
     
     final Color textColor = isDarkMode ? Colors.white70 : const Color(0xFF495057);
-    final Color selectedTextColor = Colors.white;
-    final Color selectedBgColor = const Color(0xFF6078F0);
+    const Color selectedTextColor = Colors.white;
+    const Color selectedBgColor = Color(0xFF6078F0);
     final Color hoverBgColor = isDarkMode 
         ? const Color(0xFF5B7BF0).withValues(alpha: 0.15)
         : const Color(0xFF466AF1).withValues(alpha: 0.08);

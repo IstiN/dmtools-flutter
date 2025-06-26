@@ -9,7 +9,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         ComponentDisplay(
           title: 'User Profile Button - Logged In',
@@ -44,7 +44,7 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'User Profile Button with Dropdown',
           description: 'User profile button with dropdown menu',
@@ -82,7 +82,7 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'User Profile Button - Logged Out',
           description: 'User profile button in logged out state',
@@ -102,7 +102,7 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'User Profile Button - Loading',
           description: 'User profile button in loading state',
@@ -122,12 +122,12 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         ComponentDisplay(
           title: 'User Profile Button - Dark Mode',
           description: 'User profile button in dark mode',
           child: Container(
-            padding: EdgeInsets.all(AppDimensions.spacingM),
+            padding: const EdgeInsets.all(AppDimensions.spacingM),
             color: Colors.grey[850],
             child: Column(
               children: [

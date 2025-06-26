@@ -83,7 +83,7 @@ class AppTextButtonState extends State<AppTextButton> {
 
     // Get dimensions from AppDimensions
     final paddings = AppDimensions.buttonPadding;
-    final fontSizes = AppDimensions.buttonFontSize;
+    const fontSizes = AppDimensions.buttonFontSize;
     final iconSizes = AppDimensions.buttonIconSize;
     
     final effectiveOnPressed = widget.isDisabled || widget.isLoading ? null : widget.onPressed;

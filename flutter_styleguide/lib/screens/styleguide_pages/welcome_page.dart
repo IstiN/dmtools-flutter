@@ -9,10 +9,10 @@ class WelcomePage extends StatelessWidget {
     final theme = Theme.of(context);
     
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         Padding(
-          padding: EdgeInsets.all(AppDimensions.spacingL),
+          padding: const EdgeInsets.all(AppDimensions.spacingL),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -20,22 +20,22 @@ class WelcomePage extends StatelessWidget {
                 'DMTools Style Guide',
                 style: theme.textTheme.headlineLarge,
               ),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               Text(
                 'Welcome to the DMTools Style Guide. This is a comprehensive collection of UI components and design patterns used across the DMTools application.',
                 style: theme.textTheme.bodyLarge,
               ),
-              SizedBox(height: AppDimensions.spacingL),
+              const SizedBox(height: AppDimensions.spacingL),
               Text(
                 'Getting Started',
                 style: theme.textTheme.headlineSmall,
               ),
-              SizedBox(height: AppDimensions.spacingS),
+              const SizedBox(height: AppDimensions.spacingS),
               Text(
                 'Use the navigation menu to explore different categories of components:',
                 style: theme.textTheme.bodyMedium,
               ),
-              SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(height: AppDimensions.spacingM),
               _buildNavigationItem(
                 context, 
                 'Colors & Typography', 

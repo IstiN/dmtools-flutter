@@ -64,7 +64,7 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: AppDimensions.spacingM),
+                  const SizedBox(height: AppDimensions.spacingM),
                   WorkspaceManagement(
                     workspaces: [
                       WorkspaceCard(
@@ -120,7 +120,7 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: AppDimensions.spacingM),
+                  const SizedBox(height: AppDimensions.spacingM),
                   WorkspaceManagement(
                     workspaces: [],
                     onCreateWorkspace: () {},

@@ -97,7 +97,7 @@ class _SearchFormState extends State<SearchForm> {
               child: Container(
                 width: 100,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4169F9),
+                  color: Color(0xFF4169F9),
                   borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(4),
                     bottomRight: Radius.circular(4),

@@ -73,7 +73,7 @@ class OrganismsPage extends StatelessWidget {
     ];
 
     return ListView(
-      padding: EdgeInsets.all(AppDimensions.spacingM),
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
         Text(
           'Organisms',
@@ -84,7 +84,7 @@ class OrganismsPage extends StatelessWidget {
           'More complex UI components composed of groups of molecules and/or atoms.',
           style: Theme.of(context).textTheme.bodyLarge,
         ),
-        SizedBox(height: AppDimensions.spacingL),
+        const SizedBox(height: AppDimensions.spacingL),
         
         // Organism cards grid
         GridView.builder(
@@ -125,7 +125,7 @@ class OrganismsPage extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(AppDimensions.radiusS),
         child: Padding(
-          padding: EdgeInsets.all(AppDimensions.spacingM),
+          padding: const EdgeInsets.all(AppDimensions.spacingM),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
