@@ -23,6 +23,48 @@ Use README.MD to understand process of development in flutter styleguide.
 - You must not hardcode colors, you must use colors from styleguide lib.
 - You must not develop UI elements in main app - instead you must develop UI elements in styleguide, write tests, and then use the elements in main app.
 
+** WIDGET COMPOSITION RULES **
+CRITICAL: Use private widgets instead of methods for UI components.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ Widget _buildSomething(BuildContext context, Type params) { return Container(...); }
+❌ Widget _buildItem(context, data, colors) - passing theme colors as parameters
+❌ Methods that return widgets - Flutter recreates them on every build
+❌ Positional parameters in widget constructors
+
+REQUIRED PATTERNS:
+✅ class _PrivateWidget extends StatelessWidget with named parameters
+✅ Use context.colors within the widget instead of passing colors as parameters
+✅ Named parameters: required this.title, required this.onPressed
+✅ Private widgets allow Flutter to optimize rebuilds and improve performance
+
+Examples:
+✅ class _AgentItem extends StatelessWidget { final String title; const _AgentItem({required this.title}); }
+✅ Using widget: _AgentItem(title: agent.title)
+❌ Widget _buildAgentItem(BuildContext context, String title, ThemeColorSet colors)
+❌ Using method: _buildAgentItem(context, agent.title, colors)
+
+** LIST AND SCROLL OPTIMIZATION RULES **
+CRITICAL: Proper ListView usage and performance optimization.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ shrinkWrap: true - breaks virtualization and degrades performance
+❌ physics: const NeverScrollableScrollPhysics() - makes ListView non-scrollable
+❌ final list = [...] - mutable lists recreated on every build
+❌ ListView inside Column without Expanded wrapper
+
+REQUIRED PATTERNS:
+✅ const List<Type> staticData = [...] - immutable const lists
+✅ Expanded(child: ListView.builder()) - proper scrollable lists with virtualization
+✅ ListView.builder for dynamic content without shrinkWrap
+✅ Separate const data from widget logic
+
+Examples:
+✅ const List<Map<String, dynamic>> _sampleData = [...];
+✅ Expanded(child: ListView.builder(itemCount: _sampleData.length))
+❌ final data = [...]; ListView.builder(shrinkWrap: true, physics: NeverScrollableScrollPhysics())
+❌ Column(children: [ListView.builder(...)]) without Expanded
+
 ** THEME MANAGEMENT RULES **
 CRITICAL: Use centralized theme management through ThemeContext extension.
 
@@ -31,12 +73,14 @@ FORBIDDEN ANTI-PATTERNS:
 ❌ final themeProvider = Provider.of<ThemeProvider>(context); final colors = themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
 ❌ Manual theme selection with Provider.of<ThemeProvider>
 ❌ Direct AppColors.dark/AppColors.light access in widgets
+❌ Passing ThemeColorSet colors as widget parameters
 
 REQUIRED PATTERNS:
 ✅ final colors = context.colors;
 ✅ final colors = context.colorsListening; // for reactive updates
 ✅ final isDarkMode = context.isDarkMode;
 ✅ Use ThemeContext extension for all theme access
+✅ Access theme within widgets, don't pass as parameters
 
 IMPORT: import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
@@ -46,6 +90,7 @@ Examples:
 ✅ if (context.isDarkMode) { /* dark mode logic */ }
 ❌ Container(color: isDarkMode ? AppColors.dark.cardBg : AppColors.light.cardBg)
 ❌ Text('Hello', style: TextStyle(color: themeProvider.isDarkMode ? AppColors.dark.textColor : AppColors.light.textColor))
+❌ Widget _buildItem(context, data, colors) - don't pass colors as parameter
 
 ARCHITECTURE RULES:
 - ThemeContext extension provides automatic fallback to Theme.of(context)
