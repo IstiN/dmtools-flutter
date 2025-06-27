@@ -86,12 +86,35 @@ class MyApp extends StatelessWidget {
 
 ## Running the Demo App
 
-The styleguide includes a demo app that showcases all components. To run it:
+The styleguide includes a demo app that showcases all components. You can run it on multiple platforms:
 
+### Web (Chrome)
 ```bash
 cd flutter_styleguide
 flutter run -d chrome --web-experimental-hot-reload
 ```
+
+### Android Emulators
+```bash
+# Using the convenience script (auto-launch emulator)
+../scripts/run-android.sh --app styleguide --device Pixel_9_Pro --launch
+
+# Or manually launch emulator first
+flutter emulators --launch Pixel_9_Pro
+flutter run -d Pixel_9_Pro
+
+# Available emulator options:
+# - Pixel_9_Pro (Phone)
+# - Pixel_Tablet (Tablet)
+# - android (auto-select any Android device)
+```
+
+### VS Code Launch Configurations
+The project includes VS Code launch configurations for easy debugging:
+- **Flutter Styleguide (Web)**: Run on Chrome with hot reload
+- **Flutter Styleguide (Android - Pixel 9 Pro)**: Run on Pixel 9 Pro emulator
+- **Flutter Styleguide (Android - Pixel Tablet)**: Run on Pixel Tablet emulator  
+- **Flutter Styleguide (Android - Auto Select)**: Run on any available Android device
 
 ## Architecture & Component Structure
 
@@ -182,8 +205,19 @@ flutter test test/golden/
 # Build for production
 flutter build web
 
+# Build for Android
+flutter build apk
+flutter build appbundle
+
 # Analyze code
 flutter analyze
+
+# Check available devices and emulators
+flutter devices
+flutter emulators
+
+# Launch specific emulator
+flutter emulators --launch Pixel_9_Pro
 ```
 
 ## Project Structure

@@ -1,0 +1,180 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Flutter: Clean",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["clean"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Pub Get",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["pub", "get"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Test",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["test"],
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Analyze",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["analyze"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Build Web",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["build", "web"],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Styleguide: Clean",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["clean"],
+      "options": {
+        "cwd": "${workspaceFolder}/flutter_styleguide"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Styleguide: Pub Get",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["pub", "get"],
+      "options": {
+        "cwd": "${workspaceFolder}/flutter_styleguide"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Styleguide: Test",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["test"],
+      "options": {
+        "cwd": "${workspaceFolder}/flutter_styleguide"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Styleguide: Test (Update Goldens)",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["test", "--update-goldens"],
+      "options": {
+        "cwd": "${workspaceFolder}/flutter_styleguide"
+      },
+      "group": "test",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Styleguide: Build Web",
+      "type": "shell",
+      "command": "flutter",
+      "args": ["build", "web"],
+      "options": {
+        "cwd": "${workspaceFolder}/flutter_styleguide"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    }
+  ]
+} 

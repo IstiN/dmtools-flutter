@@ -22,4 +22,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false
 }
 
+// Set unique root project name for styleguide
+rootProject.name = "dmtools_styleguide_android"
+
 include(":app")

@@ -1,0 +1,32 @@
+{
+  "flutter.flutterPath": null,
+  "dart.debugExternalPackageLibraries": false,
+  "dart.debugSdkLibraries": false,
+  "files.associations": {
+    "*.dart": "dart"
+  },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "dart.lineLength": 120,
+  "dart.previewFlutterUiGuides": true,
+  "dart.previewFlutterUiGuidesCustomTracking": true,
+  "flutter.experiments": {
+    "androidEmbedding": true
+  },
+
+  "files.exclude": {
+    "**/build/": true,
+    "**/.dart_tool/": true,
+    "**/.packages": true,
+    "**/.pub/": true
+  },
+  "search.exclude": {
+    "**/build/": true,
+    "**/.dart_tool/": true,
+    "**/.packages": true,
+    "**/.pub/": true,
+    "**/coverage/": true
+  }
+} 
