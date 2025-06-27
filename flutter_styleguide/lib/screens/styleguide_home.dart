@@ -35,6 +35,7 @@ class _NavigationItem {
 
 class _StyleguideHomeState extends State<StyleguideHome> {
   int _selectedIndex = 0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final List<Widget> _pages = [
     const WelcomePage(),
@@ -121,11 +122,14 @@ class _StyleguideHomeState extends State<StyleguideHome> {
     final isDarkMode = themeProvider.isDarkMode;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: AppHeader(
           showSearch: false,
           showTitle: false,
+          showHamburgerMenu: true,
+          onHamburgerPressed: () => _scaffoldKey.currentState?.openDrawer(),
           onThemeToggle: () => themeProvider.toggleTheme(),
           isTestMode: true,
           testDarkMode: isDarkMode,

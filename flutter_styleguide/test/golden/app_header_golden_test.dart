@@ -81,5 +81,29 @@ void main() {
         height: 80,
       );
     });
+
+    testGoldens('AppHeader with hamburger menu', (WidgetTester tester) async {
+      await GoldenTestHelper.testWidgetInBothThemes(
+        tester: tester,
+        name: 'app_header_hamburger_menu',
+        widget: AppHeader(
+          showSearch: false,
+          showTitle: false,
+          showHamburgerMenu: true,
+          onHamburgerPressed: () {},
+          onThemeToggle: () {},
+          isTestMode: true,
+          testDarkMode: false,
+          profileButton: const UserProfileButton(
+            userName: 'Test User',
+            loginState: LoginState.loggedIn,
+            isTestMode: true,
+            testDarkMode: false,
+          ),
+        ),
+        width: 400,
+        height: 80,
+      );
+    });
   });
-} 
+}
