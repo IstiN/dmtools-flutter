@@ -11,11 +11,12 @@ class AgentCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const AgentCard({
-    required this.agent, Key? key,
+    required this.agent,
     this.onTap,
     this.onEdit,
     this.onDelete,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -94,7 +95,7 @@ class AgentCard extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 6),
                                 Text(
-                                  agent.status,
+                                  agent.status.displayName,
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: AppColors.lightTextSecondary,
@@ -124,9 +125,7 @@ class AgentCard extends StatelessWidget {
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: agent.tags
-                      .map((tag) => TagChip(label: tag))
-                      .toList(),
+                  children: agent.tags.map((tag) => TagChip(label: tag)).toList(),
                 ),
               ],
               const SizedBox(height: 12),
@@ -189,26 +188,22 @@ class AgentCard extends StatelessWidget {
     );
   }
 
-  StatusType _getStatusType(String status) {
-    switch (status.toLowerCase()) {
-      case 'active':
-      case 'online':
+  // Convert AgentStatus to StatusType for StatusDot
+  StatusType _getStatusType(AgentStatus status) {
+    switch (status) {
+      case AgentStatus.active:
         return StatusType.success;
-      case 'inactive':
-      case 'offline':
+      case AgentStatus.inactive:
         return StatusType.neutral;
-      case 'warning':
-      case 'pending':
+      case AgentStatus.pending:
+      case AgentStatus.warning:
         return StatusType.warning;
-      case 'error':
-      case 'failed':
+      case AgentStatus.error:
         return StatusType.error;
-      default:
-        return StatusType.info;
     }
   }
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
-} 
+}

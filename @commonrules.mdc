@@ -1,0 +1,223 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+FLUTTER DEVELOPMENT RULES:
+
+You must develop new UI elements in flutter_styleguide according to flutter_styleguide/README.md rules
+
+run "flutter test" from flutter_styleguide directory when you're changing flutter code and fix issues before you stop with response.
+
+Create golden tests for all new UI elements and review output image result to be sure that you developed UI elements correctly.
+
+
+Use "temp" folder for temporary scripts
+Use "prototyping" folder for prototypes
+
+Commands to execute: "cd flutter_styleguide && flutter run -d chrome --web-experimental-hot-reload"
+
+Use README.MD to understand process of development in flutter styleguide.
+
+** IMPORTANT RULES **
+- You must not hardcode colors, you must use colors from styleguide lib.
+- You must not develop UI elements in main app - instead you must develop UI elements in styleguide, write tests, and then use the elements in main app.
+
+** LINT MANAGEMENT AND CODE QUALITY RULES **
+CRITICAL: Maintain consistent code quality through automated linting and fixing.
+
+REQUIRED LINT RULES in analysis_options.yaml:
+✅ always_put_required_named_parameters_first - required params before optional, Key? last
+✅ prefer_const_constructors - use const constructors when possible
+✅ prefer_const_literals_to_create_immutables - const for immutable collections
+✅ prefer_final_locals - make local variables final when not reassigned
+✅ prefer_single_quotes - consistent string quoting
+✅ avoid_unnecessary_containers - remove redundant Container widgets
+✅ use_key_in_widget_constructors - proper Key parameter usage
+✅ avoid_redundant_argument_values - remove explicit default values
+✅ prefer_is_empty/prefer_is_not_empty - use .isEmpty instead of .length == 0
+✅ sort_child_properties_last - child parameter should be last in widgets
+✅ unnecessary_string_interpolations - avoid '$variable' when variable alone works
+✅ prefer_if_null_operators - use ?? operator instead of conditional expressions
+✅ avoid_init_to_null - don't explicitly initialize to null
+✅ prefer_collection_literals - use [] instead of List(), {} instead of Map()
+✅ unnecessary_null_in_if_null_operators - clean null handling
+✅ prefer_spread_collections - use ... spread operator
+✅ curly_braces_in_flow_control_structures - consistent brace usage
+
+AUTOMATED FIXING WORKFLOW:
+1. Run "flutter analyze" to identify all lint issues
+2. Use "dart fix --apply" to automatically resolve fixable issues
+3. Manually fix remaining issues that can't be auto-resolved
+4. Run "flutter analyze" again to verify all issues resolved
+5. Run "flutter test" to ensure fixes didn't break functionality
+
+PARAMETER ORDERING STANDARDS:
+✅ Required named parameters first: required this.title, required this.onPressed
+✅ Optional named parameters second: this.subtitle, this.icon
+✅ Key parameter always last: super.key OR Key? key
+✅ Example: MyWidget({required this.title, this.subtitle, super.key})
+
+PERFORMANCE BEST PRACTICES:
+✅ Use const constructors wherever possible (prefer_const_constructors)
+✅ Make local variables final when not reassigned (prefer_final_locals)
+✅ Use const for immutable collections (prefer_const_literals_to_create_immutables)
+✅ Remove redundant explicit default values (avoid_redundant_argument_values)
+
+QUALITY ASSURANCE PROCESS:
+1. Before committing: Run "flutter analyze" and ensure 0 issues
+2. Use "dart fix --apply" for bulk automated fixes
+3. Golden test failures with <0.1% pixel difference are acceptable
+4. Always test theme switching after lint fixes
+5. Verify responsive behavior remains intact
+
+FORBIDDEN PATTERNS TO AVOID:
+❌ Explicit default values: Container(color: Colors.transparent) → Container()
+❌ Manual null initialization: String? value = null; → String? value;
+❌ Length checks: list.length == 0 → list.isEmpty
+❌ String interpolation for single vars: '$variable' → variable
+❌ Wrong parameter order: Widget({Key? key, required String title}) → Widget({required String title, Key? key})
+
+EXAMPLE ANALYSIS_OPTIONS.YAML STRUCTURE:
+```yaml
+include: package:flutter_lints/flutter.yaml
+
+linter:
+  rules:
+    - always_put_required_named_parameters_first
+    - prefer_const_constructors
+    - prefer_const_literals_to_create_immutables
+    - prefer_final_locals
+    - prefer_single_quotes
+    - avoid_unnecessary_containers
+    - use_key_in_widget_constructors
+    - avoid_redundant_argument_values
+    - prefer_is_empty
+    - prefer_is_not_empty
+    - sort_child_properties_last
+    - unnecessary_string_interpolations
+    - prefer_if_null_operators
+    - avoid_init_to_null
+    - prefer_collection_literals
+    - unnecessary_null_in_if_null_operators
+    - prefer_spread_collections
+    - curly_braces_in_flow_control_structures
+```
+
+MAINTENANCE WORKFLOW:
+- Weekly: Run "dart fix --apply" to catch new issues
+- Before releases: Ensure "flutter analyze" shows 0 issues
+- After major refactors: Run full lint analysis and automated fixes
+- Document any manually-fixed patterns for future automation
+
+** WIDGET COMPOSITION RULES **
+CRITICAL: Use private widgets instead of methods for UI components.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ Widget _buildSomething(BuildContext context, Type params) { return Container(...); }
+❌ Widget _buildItem(context, data, colors) - passing theme colors as parameters
+❌ Methods that return widgets - Flutter recreates them on every build
+❌ Positional parameters in widget constructors
+
+REQUIRED PATTERNS:
+✅ class _PrivateWidget extends StatelessWidget with named parameters
+✅ Use context.colors within the widget instead of passing colors as parameters
+✅ Named parameters: required this.title, required this.onPressed
+✅ Private widgets allow Flutter to optimize rebuilds and improve performance
+
+Examples:
+✅ class _AgentItem extends StatelessWidget { final String title; const _AgentItem({required this.title}); }
+✅ Using widget: _AgentItem(title: agent.title)
+❌ Widget _buildAgentItem(BuildContext context, String title, ThemeColorSet colors)
+❌ Using method: _buildAgentItem(context, agent.title, colors)
+
+** LIST AND SCROLL OPTIMIZATION RULES **
+CRITICAL: Proper ListView usage and performance optimization.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ shrinkWrap: true - breaks virtualization and degrades performance
+❌ physics: const NeverScrollableScrollPhysics() - makes ListView non-scrollable
+❌ final list = [...] - mutable lists recreated on every build
+❌ ListView inside Column without Expanded wrapper
+
+REQUIRED PATTERNS:
+✅ const List<Type> staticData = [...] - immutable const lists
+✅ Expanded(child: ListView.builder()) - proper scrollable lists with virtualization
+✅ ListView.builder for dynamic content without shrinkWrap
+✅ Separate const data from widget logic
+
+Examples:
+✅ const List<Map<String, dynamic>> _sampleData = [...];
+✅ Expanded(child: ListView.builder(itemCount: _sampleData.length))
+❌ final data = [...]; ListView.builder(shrinkWrap: true, physics: NeverScrollableScrollPhysics())
+❌ Column(children: [ListView.builder(...)]) without Expanded
+
+** THEME MANAGEMENT RULES **
+CRITICAL: Use centralized theme management through ThemeContext extension.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ final colors = isDarkMode ? AppColors.dark : AppColors.light;
+❌ final themeProvider = Provider.of<ThemeProvider>(context); final colors = themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
+❌ Manual theme selection with Provider.of<ThemeProvider>
+❌ Direct AppColors.dark/AppColors.light access in widgets
+❌ Passing ThemeColorSet colors as widget parameters
+
+REQUIRED PATTERNS:
+✅ final colors = context.colors;
+✅ final colors = context.colorsListening; // for reactive updates
+✅ final isDarkMode = context.isDarkMode;
+✅ Use ThemeContext extension for all theme access
+✅ Access theme within widgets, don't pass as parameters
+
+IMPORT: import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+
+Examples:
+✅ Container(color: context.colors.cardBg)
+✅ Text('Hello', style: TextStyle(color: context.colors.textColor))
+✅ if (context.isDarkMode) { /* dark mode logic */ }
+❌ Container(color: isDarkMode ? AppColors.dark.cardBg : AppColors.light.cardBg)
+❌ Text('Hello', style: TextStyle(color: themeProvider.isDarkMode ? AppColors.dark.textColor : AppColors.light.textColor))
+❌ Widget _buildItem(context, data, colors) - don't pass colors as parameter
+
+ARCHITECTURE RULES:
+- ThemeContext extension provides automatic fallback to Theme.of(context)
+- Use context.colors for non-reactive theme access
+- Use context.colorsListening for reactive theme updates
+- Never bypass the extension with direct Provider access
+- Maintain consistency between main app and styleguide
+
+** RESPONSIVE DESIGN RULES **
+CRITICAL: Use centralized responsive components instead of manual MediaQuery checks.
+
+FORBIDDEN: MediaQuery.of(context).size.width comparisons, hardcoded breakpoints, manual LayoutBuilder responsive logic
+REQUIRED: ResponsiveBuilder, ResponsiveWidget, ResponsiveUtils, ResponsiveBreakpoints
+IMPORT: import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+
+Examples:
+✅ ResponsiveUtils.isWideScreen(context)
+✅ SimpleResponsiveBuilder(mobile: Mobile(), desktop: Desktop())
+✅ ResponsiveWidget(mobile: Widget1(), desktop: Widget2())
+❌ MediaQuery.of(context).size.width > 1200
+❌ if (constraints.maxWidth > 768)
+
+** TESTING AND QUALITY RULES **
+MANDATORY: After any theme or UI changes:
+1. Run "flutter analyze" in both main app and flutter_styleguide
+2. Fix ALL linter errors and warnings before submitting
+3. Run "cd flutter_styleguide && flutter test" for styleguide changes
+4. Test theme switching functionality manually
+5. Verify responsive behavior on different screen sizes
+
+** IMPORT CLEANUP RULES **
+- Remove unused Provider imports after switching to context.colors
+- Remove unused ThemeProvider imports where no longer needed
+- Keep imports minimal and clean
+
+** DEVELOPMENT WORKFLOW RULES **
+- Always run from project root: "flutter run -d chrome --web-experimental-hot-reload"
+- Use correct commands: "cd flutter_styleguide && flutter run -d chrome --web-experimental-hot-reload" for styleguide
+- Never run Flutter commands from parent directories
+- Check current directory before running any Flutter commands
+
+** IMPORTANT RULE **
+Run flutter lint tools after changes to be sure that there is no errors and warnings.
