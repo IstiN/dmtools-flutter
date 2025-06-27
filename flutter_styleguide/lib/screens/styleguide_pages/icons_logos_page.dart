@@ -152,10 +152,7 @@ class IconsLogosPage extends StatelessWidget {
                   previews: [
                     Container(
                       padding: const EdgeInsets.all(AppDimensions.spacingL),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(color: Colors.grey.shade300)
-                      ),
+                      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300)),
                       child: SvgPicture.asset(
                         'assets/img/dmtools-logo-intelligent-network-fusion-dark.svg',
                         width: 320,
@@ -238,9 +235,9 @@ class CustomLogoPreview extends StatelessWidget {
   final List<Widget> previews;
 
   const CustomLogoPreview({
-    Key? key,
     required this.assetName,
     required this.previews,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -280,10 +277,10 @@ class LogoDisplay extends StatelessWidget {
   final double maxWidth;
 
   const LogoDisplay({
-    Key? key,
     required this.lightAsset,
     required this.darkAsset,
     required this.assetName,
+    Key? key,
     this.fixedHeight,
     this.maxWidth = 220,
   }) : super(key: key);
@@ -311,7 +308,6 @@ class LogoDisplay extends StatelessWidget {
                 lightAsset,
                 height: fixedHeight,
                 width: fixedHeight,
-                fit: BoxFit.contain,
               ),
             ),
             Container(
@@ -325,7 +321,6 @@ class LogoDisplay extends StatelessWidget {
                 darkAsset,
                 height: fixedHeight,
                 width: fixedHeight,
-                fit: BoxFit.contain,
               ),
             ),
           ],
@@ -344,7 +339,7 @@ class LogoUsageGuide extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Provider.of<ThemeProvider>(context);
     final colors = theme.isDarkMode ? AppColors.dark : AppColors.light;
-    
+
     return Container(
       padding: AppDimensions.cardPaddingM,
       decoration: BoxDecoration(
@@ -357,7 +352,8 @@ class LogoUsageGuide extends StatelessWidget {
         children: [
           const MediumTitleText('📋 Logo Selection Rules:'),
           const SizedBox(height: AppDimensions.spacingS),
-          _buildRuleItem('🤍 White Version:', 'Use when placing logos on colored backgrounds (blue headers, dark backgrounds, colored banners)'),
+          _buildRuleItem('🤍 White Version:',
+              'Use when placing logos on colored backgrounds (blue headers, dark backgrounds, colored banners)'),
           _buildRuleItem('⚫ Dark Version:', 'Use for light/white backgrounds and minimal interfaces'),
           _buildRuleItem('🔄 Theme Adaptive:', 'Use for dynamic interfaces that support theme switching'),
           const SizedBox(height: AppDimensions.spacingS),
@@ -370,7 +366,7 @@ class LogoUsageGuide extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildRuleItem(String title, String description) {
     return Padding(
       padding: const EdgeInsets.only(left: AppDimensions.spacingXs, bottom: AppDimensions.spacingXs),
@@ -384,4 +380,4 @@ class LogoUsageGuide extends StatelessWidget {
       ),
     );
   }
-} 
+}

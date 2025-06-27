@@ -35,7 +35,6 @@ void main() {
         tester: tester,
         name: 'search_form',
         widget: SearchForm(
-          hintText: 'Search...',
           onSearch: (_) {},
           isTestMode: true,
           testDarkMode: false,
@@ -72,7 +71,6 @@ void main() {
         name: 'section_header',
         widget: SectionHeader(
           title: 'Section Title',
-          viewAllText: 'View All',
           onViewAll: () {},
         ),
         width: 400,
@@ -111,7 +109,6 @@ void main() {
           const Text('Search Form', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           SearchForm(
-            hintText: 'Search...',
             onSearch: (_) {},
             isTestMode: true,
             testDarkMode: false,
@@ -122,7 +119,6 @@ void main() {
           const SizedBox(height: 16),
           SectionHeader(
             title: 'Recent Agents',
-            viewAllText: 'View All',
             onViewAll: () {},
           ),
           const SizedBox(height: 32),
@@ -173,7 +169,6 @@ void main() {
           const Text('Search Form', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           SearchForm(
-            hintText: 'Search...',
             onSearch: (_) {},
             isTestMode: true,
             testDarkMode: true,
@@ -184,7 +179,6 @@ void main() {
           const SizedBox(height: 16),
           SectionHeader(
             title: 'Recent Agents',
-            viewAllText: 'View All',
             onViewAll: () {},
           ),
           const SizedBox(height: 32),

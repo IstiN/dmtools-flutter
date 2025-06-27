@@ -7,7 +7,6 @@ import 'base_button.dart';
 /// Used for tertiary actions or in places where visual weight should be reduced
 class OutlineButton extends BaseButton {
   const OutlineButton({
-    Key? key,
     required String text,
     VoidCallback? onPressed,
     ButtonSize size = ButtonSize.medium,
@@ -17,6 +16,7 @@ class OutlineButton extends BaseButton {
     bool isDisabled = false,
     bool isTestMode = false,
     bool testDarkMode = false,
+    Key? key,
   }) : super(
           key: key,
           text: text,
@@ -58,9 +58,8 @@ class OutlineButtonState extends BaseButtonState<OutlineButton> {
   @override
   BorderSide getBorderSide(ThemeColorSet colors, bool isDarkMode) {
     return BorderSide(
-      color: isDarkMode ? Colors.white.withValues(alpha: 0.8) : colors.accentColor, 
-      width: AppDimensions.borderWidthRegular
-    );
+        color: isDarkMode ? Colors.white.withValues(alpha: 0.8) : colors.accentColor,
+        width: AppDimensions.borderWidthRegular);
   }
 
   @override
@@ -75,4 +74,4 @@ class OutlineButtonState extends BaseButtonState<OutlineButton> {
   Color _getHoverColor(bool isDarkMode, ThemeColorSet colors) {
     return isDarkMode ? Colors.white.withValues(alpha: 0.15) : colors.hoverBg;
   }
-} 
+}

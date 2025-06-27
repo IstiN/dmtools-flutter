@@ -7,7 +7,6 @@ import 'base_button.dart';
 /// Used specifically for run/execute actions
 class RunButton extends BaseButton {
   const RunButton({
-    Key? key,
     required String text,
     VoidCallback? onPressed,
     ButtonSize size = ButtonSize.medium,
@@ -17,6 +16,7 @@ class RunButton extends BaseButton {
     bool isDisabled = false,
     bool isTestMode = false,
     bool testDarkMode = false,
+    Key? key,
   }) : super(
           key: key,
           text: text,
@@ -49,11 +49,9 @@ class RunButtonState extends BaseButtonState<RunButton> {
   Color getHoverBackgroundColor(ThemeColorSet colors, bool isDarkMode) {
     // Use a slightly darker shade of the success color for hover
     final successColor = colors.successColor;
-    return isDarkMode 
-        ? HSLColor.fromColor(successColor).withLightness(
-            HSLColor.fromColor(successColor).lightness * 0.85).toColor()
-        : HSLColor.fromColor(successColor).withLightness(
-            HSLColor.fromColor(successColor).lightness * 0.8).toColor();
+    return isDarkMode
+        ? HSLColor.fromColor(successColor).withLightness(HSLColor.fromColor(successColor).lightness * 0.85).toColor()
+        : HSLColor.fromColor(successColor).withLightness(HSLColor.fromColor(successColor).lightness * 0.8).toColor();
   }
 
   @override
@@ -86,4 +84,4 @@ class RunButtonState extends BaseButtonState<RunButton> {
   BorderRadius getBorderRadius() {
     return BorderRadius.circular(AppDimensions.radiusS);
   }
-} 
+}

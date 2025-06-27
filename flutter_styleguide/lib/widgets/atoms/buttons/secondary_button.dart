@@ -7,7 +7,6 @@ import 'base_button.dart';
 /// Used for secondary actions alongside primary buttons
 class SecondaryButton extends BaseButton {
   const SecondaryButton({
-    Key? key,
     required String text,
     VoidCallback? onPressed,
     ButtonSize size = ButtonSize.medium,
@@ -17,6 +16,7 @@ class SecondaryButton extends BaseButton {
     bool isDisabled = false,
     bool isTestMode = false,
     bool testDarkMode = false,
+    Key? key,
   }) : super(
           key: key,
           text: text,
@@ -64,4 +64,4 @@ class SecondaryButtonState extends BaseButtonState<SecondaryButton> {
   BorderSide getHoverBorderSide(ThemeColorSet colors, bool isDarkMode) {
     return BorderSide(color: colors.accentColor, width: AppDimensions.borderWidthRegular);
   }
-} 
+}

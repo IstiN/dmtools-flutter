@@ -8,8 +8,7 @@ class TagChip extends StatelessWidget {
   final VoidCallback? onRemove;
 
   const TagChip({
-    Key? key,
-    required this.label,
+    required this.label, Key? key,
     this.backgroundColor,
     this.textColor,
     this.onRemove,

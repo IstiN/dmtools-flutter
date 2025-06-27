@@ -10,8 +10,7 @@ class CodeSnippet extends StatelessWidget {
   final bool showCopyButton;
 
   const CodeSnippet({
-    Key? key,
-    required this.code,
+    required this.code, Key? key,
     this.language = 'dart',
     this.showCopyButton = true,
   }) : super(key: key);
@@ -27,7 +26,6 @@ class CodeSnippet extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: colors.borderColor,
-          width: 1,
         ),
       ),
       child: Column(

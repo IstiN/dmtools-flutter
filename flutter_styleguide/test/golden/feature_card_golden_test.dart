@@ -18,7 +18,6 @@ void main() {
                 title: 'AI-Powered Agents',
                 description: 'Automate repetitive tasks with intelligent agents that learn from your workflow',
                 isTestMode: true,
-                testDarkMode: false,
               ),
             ),
           ),

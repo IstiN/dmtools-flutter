@@ -15,8 +15,7 @@ class BaseSectionHeader extends StatelessWidget {
   final bool testDarkMode;
 
   const BaseSectionHeader({
-    Key? key,
-    required this.title,
+    required this.title, Key? key,
     this.subtitle,
     this.viewAllText,
     this.onViewAll,
@@ -45,7 +44,6 @@ class BaseSectionHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppDimensions.spacingM),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           // Leading widget (if provided)
           if (leading != null) ...[

@@ -4,11 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
 
-enum PanelHeaderStyle {
-  primary,
-  secondary,
-  neutral
-}
+enum PanelHeaderStyle { primary, secondary, neutral }
 
 class PanelBase extends StatelessWidget {
   final String title;
@@ -21,7 +17,6 @@ class PanelBase extends StatelessWidget {
   final bool? testDarkMode;
 
   const PanelBase({
-    Key? key,
     required this.title,
     required this.content,
     this.actions = const [],
@@ -30,13 +25,14 @@ class PanelBase extends StatelessWidget {
     this.initiallyCollapsed = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     dynamic colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -54,7 +50,7 @@ class PanelBase extends StatelessWidget {
 
     Color headerBgColor;
     Color headerTextColor;
-    
+
     switch (headerStyle) {
       case PanelHeaderStyle.primary:
         headerBgColor = colors.accentColor;
@@ -73,7 +69,7 @@ class PanelBase extends StatelessWidget {
     return StatefulBuilder(
       builder: (context, setState) {
         bool isCollapsed = initiallyCollapsed;
-        
+
         return Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -130,7 +126,7 @@ class PanelBase extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // Panel Content
               if (!isCollapsed)
                 Container(
@@ -143,4 +139,4 @@ class PanelBase extends StatelessWidget {
       },
     );
   }
-} 
+}

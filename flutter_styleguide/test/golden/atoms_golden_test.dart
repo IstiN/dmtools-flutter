@@ -20,7 +20,7 @@ void main() {
 
       await tester.pumpWidgetBuilder(
         _buildAllButtons(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: false),
+        wrapper: (child) => helper.createTestApp(child),
         surfaceSize: const Size(400, 600),
       );
 
@@ -52,7 +52,7 @@ void main() {
 
       await tester.pumpWidgetBuilder(
         _buildAllFormElements(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: false),
+        wrapper: (child) => helper.createTestApp(child),
         surfaceSize: const Size(400, 600),
       );
 
@@ -84,7 +84,7 @@ void main() {
 
       await tester.pumpWidgetBuilder(
         _buildAllTextElements(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: false),
+        wrapper: (child) => helper.createTestApp(child),
         surfaceSize: const Size(400, 600),
       );
 
@@ -116,7 +116,7 @@ void main() {
 
       await tester.pumpWidgetBuilder(
         _buildAllTagsAndStatus(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: false),
+        wrapper: (child) => helper.createTestApp(child),
         surfaceSize: const Size(400, 600),
       );
 
@@ -162,7 +162,6 @@ Widget _buildAllButtons() {
           const SizedBox(height: 8),
           const PrimaryButton(
             text: 'Primary Medium',
-            size: ButtonSize.medium,
           ),
           const SizedBox(height: 8),
           const PrimaryButton(
@@ -172,7 +171,6 @@ Widget _buildAllButtons() {
           const SizedBox(height: 8),
           PrimaryButton(
             text: 'Primary with Icon',
-            size: ButtonSize.medium,
             icon: Icons.star,
             onPressed: () {},
           ),
@@ -188,7 +186,6 @@ Widget _buildAllButtons() {
           const SizedBox(height: 8),
           const SecondaryButton(
             text: 'Secondary Medium',
-            size: ButtonSize.medium,
           ),
           const SizedBox(height: 8),
           const SecondaryButton(
@@ -198,7 +195,6 @@ Widget _buildAllButtons() {
           const SizedBox(height: 8),
           SecondaryButton(
             text: 'Secondary with Icon',
-            size: ButtonSize.medium,
             icon: Icons.info,
             onPressed: () {},
           ),
@@ -271,7 +267,7 @@ Widget _buildAllTagsAndStatus() {
           SizedBox(height: 16),
           TagChip(label: 'Default'),
           SizedBox(height: 8),
-          TagChip(label: 'Primary', variant: TagChipVariant.primary),
+          TagChip(label: 'Primary'),
           SizedBox(height: 8),
           TagChip(label: 'Success', variant: TagChipVariant.success),
           SizedBox(height: 8),

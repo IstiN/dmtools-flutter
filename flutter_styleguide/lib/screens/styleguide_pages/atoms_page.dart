@@ -209,13 +209,12 @@ class AtomsPageState extends State<AtomsPage> {
                   runSpacing: AppDimensions.spacingXs,
                   children: [
                     TagChip(label: 'Default'),
-                    TagChip(label: 'Primary', variant: TagChipVariant.primary),
+                    TagChip(label: 'Primary'),
                     TagChip(label: 'Success', variant: TagChipVariant.success),
                     TagChip(label: 'Warning', variant: TagChipVariant.warning),
                     TagChip(label: 'Danger', variant: TagChipVariant.danger),
                     TagChip(
                       label: 'Removable',
-                      variant: TagChipVariant.primary,
                       // onDeleted: () {}, // Temporarily removed
                     ),
                   ],

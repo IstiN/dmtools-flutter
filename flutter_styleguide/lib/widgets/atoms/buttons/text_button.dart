@@ -18,7 +18,6 @@ class AppTextButton extends StatefulWidget {
   final bool testDarkMode;
 
   const AppTextButton({
-    Key? key,
     required this.text,
     this.onPressed,
     this.size = ButtonSize.medium,
@@ -28,6 +27,7 @@ class AppTextButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -77,7 +77,7 @@ class AppTextButtonState extends State<AppTextButton> {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    
+
     if (widget.isTestMode) {
       isDarkMode = widget.testDarkMode;
     } else {
@@ -89,14 +89,14 @@ class AppTextButtonState extends State<AppTextButton> {
         isDarkMode = false;
       }
     }
-    
+
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     // Get dimensions from AppDimensions
     const paddings = AppDimensions.buttonPadding;
     const fontSizes = AppDimensions.buttonFontSize;
     const iconSizes = AppDimensions.buttonIconSize;
-    
+
     final effectiveOnPressed = widget.isDisabled || widget.isLoading ? null : widget.onPressed;
 
     // Get style properties
@@ -133,7 +133,7 @@ class AppTextButtonState extends State<AppTextButton> {
 
     final isHovering = _isHovering && !widget.isDisabled;
     final isCurrentlyPressed = _isPressed && !widget.isDisabled;
-    
+
     // Build button content
     Widget content;
     if (widget.isLoading) {
@@ -157,10 +157,10 @@ class AppTextButtonState extends State<AppTextButton> {
           Text(
             widget.text,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontSize: fontSizes[widget.size],
-              fontWeight: FontWeight.w500,
-              color: isHovering ? hoverTextColor : textColor,
-            ),
+                  fontSize: fontSizes[widget.size],
+                  fontWeight: FontWeight.w500,
+                  color: isHovering ? hoverTextColor : textColor,
+                ),
           ),
         ],
       );
@@ -204,4 +204,4 @@ class AppTextButtonState extends State<AppTextButton> {
       ),
     );
   }
-} 
+}

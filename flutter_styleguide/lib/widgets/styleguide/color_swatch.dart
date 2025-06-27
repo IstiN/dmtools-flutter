@@ -10,17 +10,17 @@ class ColorSwatchItem extends StatelessWidget {
   final Color? textColor;
 
   const ColorSwatchItem({
-    Key? key,
     required this.color,
     required this.name,
     required this.hexCode,
     this.textColor,
+    Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final contrastColor = textColor ?? _getContrastColor(color);
-    
+
     return Container(
       width: 180,
       height: 120,
@@ -74,14 +74,14 @@ class ColorSwatchItem extends StatelessWidget {
       ),
     );
   }
-  
+
   Color _getContrastColor(Color backgroundColor) {
     // Calculate relative luminance
-    double luminance = 0.299 * (backgroundColor.r * 255.0).round() + 
-                       0.587 * (backgroundColor.g * 255.0).round() + 
-                       0.114 * (backgroundColor.b * 255.0).round();
-    
+    final double luminance = 0.299 * (backgroundColor.r * 255.0).round() +
+        0.587 * (backgroundColor.g * 255.0).round() +
+        0.114 * (backgroundColor.b * 255.0).round();
+
     // Use white text on dark backgrounds and black text on light backgrounds
     return luminance > 128 ? Colors.black : Colors.white;
   }
-} 
+}

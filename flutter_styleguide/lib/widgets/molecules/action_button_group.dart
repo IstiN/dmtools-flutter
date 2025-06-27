@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class ActionButtonGroup extends StatelessWidget {
   final List<Widget> buttons;
 
-  const ActionButtonGroup({Key? key, required this.buttons}) : super(key: key);
+  const ActionButtonGroup({required this.buttons, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

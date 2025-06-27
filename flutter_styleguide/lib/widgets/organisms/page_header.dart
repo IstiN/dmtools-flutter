@@ -12,19 +12,19 @@ class PageHeader extends StatelessWidget {
   final bool? testDarkMode;
 
   const PageHeader({
-    super.key,
     required this.title,
     required this.onThemeToggle,
     this.actions = const [],
     this.isTestMode = false,
     this.testDarkMode = false,
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -39,7 +39,7 @@ class PageHeader extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return Container(
       height: 80,
       decoration: BoxDecoration(
@@ -79,4 +79,4 @@ class PageHeader extends StatelessWidget {
       ),
     );
   }
-} 
+}

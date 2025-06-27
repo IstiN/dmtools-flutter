@@ -22,13 +22,13 @@ class OAuthProviderButton extends StatefulWidget {
   final bool isDisabled;
 
   const OAuthProviderButton({
-    super.key,
     required this.provider,
     required this.text,
     this.onPressed,
     this.isFullWidth = true,
     this.isLoading = false,
     this.isDisabled = false,
+    super.key,
   });
 
   @override
@@ -130,27 +130,22 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
     final baseBackgroundColor = getBaseBackgroundColor();
     final hoverColor = isDark ? colors.hoverBgDark : colors.hoverBgLight;
 
-    final materialColor = _isHovering && !widget.isDisabled
-        ? Color.alphaBlend(hoverColor, baseBackgroundColor)
-        : baseBackgroundColor;
+    final materialColor =
+        _isHovering && !widget.isDisabled ? Color.alphaBlend(hoverColor, baseBackgroundColor) : baseBackgroundColor;
 
     final effectiveTextColor =
         widget.isDisabled ? (isDark ? colors.disabledDarkText : colors.disabledLightText) : getTextColor();
-    
+
     final bool showLoading = widget.isLoading || _isLoading;
 
     return SizedBox(
       width: widget.isFullWidth ? double.infinity : null,
       height: AppDimensions.oauthButtonHeight,
       child: Material(
-        color: widget.isDisabled
-            ? (isDark ? colors.disabledDarkBg : colors.disabledLightBg)
-            : materialColor,
+        color: widget.isDisabled ? (isDark ? colors.disabledDarkBg : colors.disabledLightBg) : materialColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-          side: BorderSide(
-              color: widget.isDisabled ? Colors.transparent : getBorderColor(),
-              width: 1.0),
+          side: BorderSide(color: widget.isDisabled ? Colors.transparent : getBorderColor()),
         ),
         child: InkWell(
           onTap: widget.isDisabled || showLoading ? null : _handleOnPressed,
@@ -164,7 +159,6 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
             padding: AppDimensions.oauthButtonPadding,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if (showLoading)
                   SizedBox(
@@ -180,7 +174,6 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
                     width: AppDimensions.iconSizeL,
                     height: AppDimensions.iconSizeL,
                     child: Align(
-                      alignment: Alignment.center,
                       child: getIcon(),
                     ),
                   ),
@@ -200,4 +193,4 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
       ),
     );
   }
-} 
+}

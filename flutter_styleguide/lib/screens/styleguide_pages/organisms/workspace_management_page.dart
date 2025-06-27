@@ -140,7 +140,6 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: colors.borderColor,
-                  width: 1,
                 ),
               ),
               child: Column(
@@ -210,7 +209,6 @@ WorkspaceManagement(
       padding: const EdgeInsets.only(top: 24.0),
       child: PanelBase(
         title: 'Create Workspace',
-        headerStyle: PanelHeaderStyle.primary,
         isTestMode: true,
         testDarkMode: isDarkMode,
         content: Padding(
@@ -293,7 +291,6 @@ WorkspaceManagement(
       padding: const EdgeInsets.only(top: 24.0),
       child: PanelBase(
         title: 'Edit Workspace',
-        headerStyle: PanelHeaderStyle.primary,
         isTestMode: true,
         testDarkMode: isDarkMode,
         actions: [

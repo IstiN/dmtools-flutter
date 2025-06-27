@@ -10,21 +10,21 @@ class FormGroup extends StatelessWidget {
   final String? helperText;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const FormGroup({
-    Key? key,
     required this.child,
     required this.label,
     this.helperText,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -39,7 +39,7 @@ class FormGroup extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -76,22 +76,22 @@ class TextInput extends StatelessWidget {
   final bool isDisabled;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const TextInput({
-    Key? key,
     this.placeholder,
     this.controller,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -106,7 +106,7 @@ class TextInput extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return TextField(
       controller: controller,
       onChanged: onChanged,
@@ -142,15 +142,15 @@ class PasswordInput extends StatefulWidget {
   final bool isDisabled;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const PasswordInput({
-    Key? key,
     this.placeholder,
     this.controller,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -159,12 +159,12 @@ class PasswordInput extends StatefulWidget {
 
 class _PasswordInputState extends State<PasswordInput> {
   bool _obscureText = true;
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (widget.isTestMode == true) {
       isDarkMode = widget.testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -179,7 +179,7 @@ class _PasswordInputState extends State<PasswordInput> {
         colors = AppColors.light;
       }
     }
-    
+
     return TextField(
       controller: widget.controller,
       onChanged: widget.onChanged,
@@ -227,22 +227,22 @@ class NumberInput extends StatelessWidget {
   final bool isDisabled;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const NumberInput({
-    Key? key,
     this.placeholder,
     this.controller,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -257,7 +257,7 @@ class NumberInput extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return TextField(
       controller: controller,
       onChanged: onChanged,
@@ -296,9 +296,8 @@ class TextArea extends StatelessWidget {
   final int maxLines;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const TextArea({
-    Key? key,
     this.placeholder,
     this.controller,
     this.onChanged,
@@ -307,13 +306,14 @@ class TextArea extends StatelessWidget {
     this.maxLines = 5,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -328,7 +328,7 @@ class TextArea extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return TextField(
       controller: controller,
       onChanged: onChanged,
@@ -366,22 +366,22 @@ class SelectDropdown<T> extends StatelessWidget {
   final bool isDisabled;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const SelectDropdown({
-    Key? key,
     required this.items,
+    Key? key,
     this.value,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -396,7 +396,7 @@ class SelectDropdown<T> extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
@@ -430,22 +430,22 @@ class CheckboxInput extends StatelessWidget {
   final bool isDisabled;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const CheckboxInput({
-    Key? key,
     required this.value,
     required this.label,
+    Key? key,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -460,7 +460,7 @@ class CheckboxInput extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return Row(
       children: [
         Checkbox(
@@ -489,23 +489,23 @@ class RadioInput<T> extends StatelessWidget {
   final bool isDisabled;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const RadioInput({
-    Key? key,
     required this.value,
     required this.groupValue,
     required this.label,
+    Key? key,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -520,7 +520,7 @@ class RadioInput<T> extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return Row(
       children: [
         Radio<T>(
@@ -547,20 +547,20 @@ class ViewAllLink extends StatelessWidget {
   final VoidCallback? onTap;
   final bool? isTestMode;
   final bool? testDarkMode;
-  
+
   const ViewAllLink({
-    Key? key,
     required this.text,
+    Key? key,
     this.onTap,
     this.isTestMode = false,
     this.testDarkMode = false,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -575,7 +575,7 @@ class ViewAllLink extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     return InkWell(
       onTap: onTap,
       child: Row(
@@ -628,7 +628,7 @@ class FormElementsWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Password input
         TextFormField(
           obscureText: true,
@@ -642,7 +642,7 @@ class FormElementsWidget extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // Dropdown
         DropdownButtonFormField<String>(
           decoration: InputDecoration(
@@ -661,4 +661,4 @@ class FormElementsWidget extends StatelessWidget {
       ],
     );
   }
-} 
+}

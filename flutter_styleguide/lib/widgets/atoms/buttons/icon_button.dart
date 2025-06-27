@@ -17,7 +17,6 @@ class AppIconButton extends StatefulWidget {
   final bool testDarkMode;
 
   const AppIconButton({
-    Key? key,
     required this.text,
     required this.icon,
     this.onPressed,
@@ -26,6 +25,7 @@ class AppIconButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -53,7 +53,7 @@ class AppIconButtonState extends State<AppIconButton> {
   }
 
   BorderSide getBorderSide(ThemeColorSet colors, bool isDarkMode) {
-    return BorderSide(color: colors.borderColor, width: AppDimensions.borderWidthThin);
+    return BorderSide(color: colors.borderColor);
   }
 
   BorderSide getHoverBorderSide(ThemeColorSet colors, bool isDarkMode) {
@@ -70,14 +70,12 @@ class AppIconButtonState extends State<AppIconButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = widget.isTestMode
-        ? widget.testDarkMode
-        : Provider.of<ThemeProvider>(context).isDarkMode;
+    final isDarkMode = widget.isTestMode ? widget.testDarkMode : Provider.of<ThemeProvider>(context).isDarkMode;
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     // Get dimensions from AppDimensions
     const iconSizes = AppDimensions.buttonIconSize;
-    
+
     final effectiveOnPressed = widget.isDisabled || widget.isLoading ? null : widget.onPressed;
 
     // Get style properties
@@ -114,7 +112,7 @@ class AppIconButtonState extends State<AppIconButton> {
 
     final isHovering = _isHovering && !widget.isDisabled;
     final isCurrentlyPressed = _isPressed && !widget.isDisabled;
-    
+
     // Build button content
     Widget content;
     if (widget.isLoading) {
@@ -127,11 +125,7 @@ class AppIconButtonState extends State<AppIconButton> {
         ),
       );
     } else {
-      content = Icon(
-        widget.icon, 
-        size: iconSizes[widget.size], 
-        color: isHovering ? hoverTextColor : textColor
-      );
+      content = Icon(widget.icon, size: iconSizes[widget.size], color: isHovering ? hoverTextColor : textColor);
     }
 
     return MouseRegion(
@@ -172,4 +166,4 @@ class AppIconButtonState extends State<AppIconButton> {
       ),
     );
   }
-} 
+}

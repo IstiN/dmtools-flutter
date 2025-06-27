@@ -194,7 +194,7 @@ class _SearchBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: colors.borderColor),
             ),
-            contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
             filled: true,
             fillColor: colors.inputBg,
           ),

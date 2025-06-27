@@ -14,8 +14,7 @@ class Agent {
     required this.description,
     required this.status,
     required this.tags,
-    this.avatarUrl,
-    required this.createdAt,
+    required this.createdAt, this.avatarUrl,
     this.lastActive,
   });
 

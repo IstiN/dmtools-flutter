@@ -11,8 +11,7 @@ class AgentCard extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const AgentCard({
-    Key? key,
-    required this.agent,
+    required this.agent, Key? key,
     this.onTap,
     this.onEdit,
     this.onDelete,

@@ -17,7 +17,6 @@ class AgentCard extends StatelessWidget {
   final bool? testDarkMode;
 
   const AgentCard({
-    super.key,
     required this.title,
     required this.description,
     required this.status,
@@ -28,6 +27,7 @@ class AgentCard extends StatelessWidget {
     required this.onRun,
     this.isTestMode,
     this.testDarkMode,
+    super.key,
   });
 
   @override

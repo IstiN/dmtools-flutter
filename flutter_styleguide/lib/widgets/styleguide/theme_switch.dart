@@ -5,9 +5,9 @@ class ThemeSwitch extends StatelessWidget {
   final VoidCallback onToggle;
 
   const ThemeSwitch({
-    Key? key,
     required this.isDarkMode,
     required this.onToggle,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -15,7 +15,7 @@ class ThemeSwitch extends StatelessWidget {
     return IconButton(
       icon: Stack(
         alignment: Alignment.center,
-          children: [
+        children: [
           // Sun icon
           AnimatedOpacity(
             opacity: isDarkMode ? 0.0 : 1.0,
@@ -23,8 +23,8 @@ class ThemeSwitch extends StatelessWidget {
             child: const Icon(
               Icons.light_mode,
               size: 20,
-              ),
             ),
+          ),
           // Moon icon
           AnimatedOpacity(
             opacity: isDarkMode ? 1.0 : 0.0,
@@ -32,13 +32,13 @@ class ThemeSwitch extends StatelessWidget {
             child: const Icon(
               Icons.dark_mode,
               size: 20,
-                ),
-              ),
-          ],
-        ),
+            ),
+          ),
+        ],
+      ),
       onPressed: onToggle,
       tooltip: isDarkMode ? 'Switch to light mode' : 'Switch to dark mode',
       padding: const EdgeInsets.all(8),
     );
   }
-} 
+}

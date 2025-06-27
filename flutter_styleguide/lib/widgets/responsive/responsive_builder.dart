@@ -81,10 +81,10 @@ class SimpleResponsiveBuilder extends StatelessWidget {
   final double? breakpoint;
 
   const SimpleResponsiveBuilder({
-    Key? key,
     required this.mobile,
     required this.desktop,
     this.breakpoint,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -121,12 +121,12 @@ class ResponsiveWidget extends StatelessWidget {
   final Widget? defaultWidget;
 
   const ResponsiveWidget({
-    Key? key,
     this.mobile,
     this.tablet,
     this.desktop,
     this.wideDesktop,
     this.defaultWidget,
+    Key? key,
   }) : super(key: key);
 
   @override

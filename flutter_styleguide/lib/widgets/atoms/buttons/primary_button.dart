@@ -7,7 +7,6 @@ import 'base_button.dart';
 /// Used for main call-to-action buttons
 class PrimaryButton extends BaseButton {
   const PrimaryButton({
-    Key? key,
     required String text,
     VoidCallback? onPressed,
     ButtonSize size = ButtonSize.medium,
@@ -17,6 +16,7 @@ class PrimaryButton extends BaseButton {
     bool isDisabled = false,
     bool isTestMode = false,
     bool testDarkMode = false,
+    Key? key,
   }) : super(
           key: key,
           text: text,

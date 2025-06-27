@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/widgets/atoms/buttons/app_buttons.dart';
-import 'package:dmtools_styleguide/theme/app_dimensions.dart';
 
 class ChatInputGroup extends StatelessWidget {
   final TextEditingController controller;
@@ -9,11 +8,11 @@ class ChatInputGroup extends StatelessWidget {
   final bool isLoading;
 
   const ChatInputGroup({
-    Key? key,
     required this.controller,
     required this.onSend,
     required this.onClear,
     this.isLoading = false,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -43,17 +42,15 @@ class ChatInputGroup extends StatelessWidget {
             onPressed: onSend,
             icon: Icons.send,
             isLoading: isLoading,
-            size: ButtonSize.medium,
           ),
           const SizedBox(width: 8),
           OutlineButton(
             text: 'Clear',
             onPressed: onClear,
             icon: Icons.clear,
-            size: ButtonSize.medium,
           ),
         ],
       ),
     );
   }
-} 
+}

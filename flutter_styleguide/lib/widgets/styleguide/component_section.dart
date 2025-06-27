@@ -10,10 +10,10 @@ class ComponentSection extends StatelessWidget {
   final Widget child;
 
   const ComponentSection({
-    Key? key,
     required this.title,
     required this.description,
     required this.child,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -75,4 +75,4 @@ class ComponentSection extends StatelessWidget {
       ),
     );
   }
-} 
+}

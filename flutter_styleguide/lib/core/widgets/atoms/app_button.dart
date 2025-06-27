@@ -17,9 +17,7 @@ class AppButton extends StatelessWidget {
   final bool isSmall;
 
   const AppButton({
-    super.key,
-    required this.onPressed,
-    required this.text,
+    required this.onPressed, required this.text, super.key,
     this.icon,
     this.style = AppButtonStyle.primary,
     this.isSmall = false,

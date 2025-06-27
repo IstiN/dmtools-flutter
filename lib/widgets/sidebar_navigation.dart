@@ -16,8 +16,7 @@ class SidebarNavigation extends StatelessWidget {
   final int selectedIndex;
 
   const SidebarNavigation({
-    Key? key,
-    required this.selectedIndex,
+    required this.selectedIndex, Key? key,
   }) : super(key: key);
 
   // Const navigation items with proper typing

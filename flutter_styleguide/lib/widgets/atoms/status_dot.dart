@@ -19,13 +19,13 @@ class StatusDot extends StatelessWidget {
   final bool? testDarkMode;
 
   const StatusDot({
-    Key? key,
     required this.status,
     this.size = 10,
     this.label,
     this.showLabel = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 
   @override

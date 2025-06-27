@@ -11,10 +11,8 @@ class ComponentDisplay extends StatelessWidget {
   final Widget child;
 
   const ComponentDisplay({
-    Key? key,
-    required this.title,
+    required this.title, required this.child, Key? key,
     this.description,
-    required this.child,
   }) : super(key: key);
 
   @override
