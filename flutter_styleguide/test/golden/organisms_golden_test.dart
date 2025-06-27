@@ -109,7 +109,7 @@ void main() {
         createTestApp(
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ChatModule(
+            child: ChatInterface(
               messages: [
                 ChatMessage(
                   message: 'Hello! How can I help you today?',
@@ -132,7 +132,7 @@ void main() {
         ),
       );
       await expectLater(
-        find.byType(ChatModule),
+        find.byType(ChatInterface),
         matchesGoldenFile('goldens/chat_module_light.png'),
       );
     });
@@ -143,7 +143,7 @@ void main() {
         createTestApp(
           Padding(
             padding: const EdgeInsets.all(16.0),
-            child: ChatModule(
+            child: ChatInterface(
               messages: [
                 ChatMessage(
                   message: 'Hello! How can I help you today?',
@@ -167,7 +167,7 @@ void main() {
         ),
       );
       await expectLater(
-        find.byType(ChatModule),
+        find.byType(ChatInterface),
         matchesGoldenFile('goldens/chat_module_dark.png'),
       );
     });
@@ -335,7 +335,7 @@ void main() {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ChatModule(
+                  ChatInterface(
                     messages: [
                       ChatMessage(
                         message: 'Hello! How can I help you today?',
@@ -410,7 +410,7 @@ void main() {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  ChatModule(
+                  ChatInterface(
                     messages: [
                       ChatMessage(
                         message: 'Hello! How can I help you today?',
@@ -437,4 +437,4 @@ void main() {
       );
     });
   });
-} 
+}

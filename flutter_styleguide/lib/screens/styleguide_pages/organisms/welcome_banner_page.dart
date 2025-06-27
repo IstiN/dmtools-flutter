@@ -6,8 +6,9 @@ import '../../../theme/app_dimensions.dart';
 import '../../../widgets/organisms/welcome_banner.dart';
 import '../../../widgets/styleguide/component_display.dart';
 
-class WelcomeBannerPage extends StatelessWidget {
-  const WelcomeBannerPage({Key? key}) : super(key: key);
+/// Styleguide showcase page displaying various WelcomeBanner component configurations
+class WelcomeBannerShowcasePage extends StatelessWidget {
+  const WelcomeBannerShowcasePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class WelcomeBannerPage extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: AppDimensions.spacingL),
-          
+
           // Standard Welcome Banner
           ComponentDisplay(
             title: 'Standard Welcome Banner',
@@ -51,9 +52,9 @@ class WelcomeBannerPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacingXl),
-          
+
           // Welcome Banner with Logo
           ComponentDisplay(
             title: 'Welcome Banner with Connected Logo',
@@ -74,9 +75,9 @@ class WelcomeBannerPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacingXl),
-          
+
           // Welcome Banner with Wordmark Logo
           ComponentDisplay(
             title: 'Welcome Banner with Wordmark Logo',
@@ -97,9 +98,9 @@ class WelcomeBannerPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacingXl),
-          
+
           // Welcome Banner with Combined Logo
           ComponentDisplay(
             title: 'Welcome Banner with Combined Logo',
@@ -120,9 +121,9 @@ class WelcomeBannerPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacingXl),
-          
+
           // Custom Welcome Banner
           ComponentDisplay(
             title: 'Custom Welcome Banner',
@@ -133,7 +134,8 @@ class WelcomeBannerPage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingM),
                 WelcomeBanner(
                   title: 'Introducing DMTools Pro',
-                  subtitle: 'Upgrade to our premium plan for advanced features, priority support, and unlimited access to all tools.',
+                  subtitle:
+                      'Upgrade to our premium plan for advanced features, priority support, and unlimited access to all tools.',
                   onPrimaryAction: () {},
                   onSecondaryAction: () {},
                   primaryActionText: 'Upgrade Now',
@@ -144,9 +146,9 @@ class WelcomeBannerPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacingXl),
-          
+
           // Implementation Details
           Text(
             'Implementation Details',
@@ -167,7 +169,8 @@ class WelcomeBannerPage extends StatelessWidget {
                 Text('• Gradient background with accent color', style: Theme.of(context).textTheme.bodyMedium),
                 Text('• Large title and descriptive subtitle', style: Theme.of(context).textTheme.bodyMedium),
                 Text('• Primary and secondary action buttons', style: Theme.of(context).textTheme.bodyMedium),
-                Text('• Responsive layout that adapts to different screen sizes', style: Theme.of(context).textTheme.bodyMedium),
+                Text('• Responsive layout that adapts to different screen sizes',
+                    style: Theme.of(context).textTheme.bodyMedium),
               ],
             ),
           ),
@@ -216,4 +219,4 @@ WelcomeBanner(
       ),
     );
   }
-} 
+}
