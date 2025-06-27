@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 // import 'package:google_fonts/google_fonts.dart'; // Unused
-// import 'package:provider/provider.dart'; // Unused
 import 'app_colors.dart';
 
 class ThemeProvider with ChangeNotifier {
@@ -196,4 +196,40 @@ class AppTheme {
       ),
     );
   }
-} 
+}
+
+/// Extension to provide easy access to theme colors from any BuildContext
+extension ThemeContext on BuildContext {
+  /// Get theme colors without listening to changes (for non-reactive usage)
+  ThemeColorSet get colors {
+    try {
+      final themeProvider = Provider.of<ThemeProvider>(this, listen: false);
+      return themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
+    } catch (e) {
+      // Fallback to theme-based colors if Provider is not available
+      final brightness = Theme.of(this).brightness;
+      return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+    }
+  }
+
+  /// Get theme colors with listening to changes (for reactive usage)
+  ThemeColorSet get colorsListening {
+    try {
+      final themeProvider = Provider.of<ThemeProvider>(this);
+      return themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
+    } catch (e) {
+      // Fallback to theme-based colors if Provider is not available
+      final brightness = Theme.of(this).brightness;
+      return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+    }
+  }
+
+  /// Check if current theme is dark mode
+  bool get isDarkMode {
+    try {
+      return Provider.of<ThemeProvider>(this, listen: false).isDarkMode;
+    } catch (e) {
+      return Theme.of(this).brightness == Brightness.dark;
+    }
+  }
+}

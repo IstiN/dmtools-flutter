@@ -3,7 +3,7 @@ library dmtools_styleguide;
 // Core exports
 export 'theme/app_colors.dart';
 export 'theme/app_dimensions.dart';
-export 'theme/app_theme.dart';
+export 'theme/app_theme.dart'; // Includes ThemeContext extension
 export 'core/services/auth_service.dart';
 
 // Responsive

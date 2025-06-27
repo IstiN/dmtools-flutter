@@ -2,6 +2,7 @@
   "flutter.flutterPath": null,
   "dart.debugExternalPackageLibraries": false,
   "dart.debugSdkLibraries": false,
+  "cSpell.enabled": false,
   "files.associations": {
     "*.dart": "dart"
   },

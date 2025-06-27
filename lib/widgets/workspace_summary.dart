@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 class WorkspaceCard {
@@ -23,9 +22,7 @@ class WorkspaceSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
-    final colors = isDarkMode ? AppColors.dark : AppColors.light;
+    final colors = context.colors;
 
     // Sample workspace data
     final workspaces = [
@@ -97,7 +94,7 @@ class WorkspaceSummary extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Content
           Padding(
             padding: const EdgeInsets.all(20),
@@ -132,14 +129,14 @@ class WorkspaceSummary extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // Workspace list
                 ...workspaces.map((workspace) => _buildWorkspaceItem(context, workspace, colors)).toList(),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // View all button
                 SizedBox(
                   width: double.infinity,
@@ -273,4 +270,4 @@ class WorkspaceSummary extends StatelessWidget {
       ),
     );
   }
-} 
+}

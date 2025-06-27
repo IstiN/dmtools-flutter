@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 class RecentAgents extends StatelessWidget {
@@ -7,9 +6,7 @@ class RecentAgents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
-    final colors = isDarkMode ? AppColors.dark : AppColors.light;
+    final colors = context.colors;
 
     // Sample agent data
     final agents = [

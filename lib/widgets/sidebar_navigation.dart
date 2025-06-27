@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 class SidebarNavigation extends StatelessWidget {
@@ -12,9 +11,8 @@ class SidebarNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
-    final colors = isDarkMode ? AppColors.dark : AppColors.light;
+    final colors = context.colors;
+    final isDarkMode = context.isDarkMode;
 
     // Navigation items
     final List<Map<String, dynamic>> navItems = [
@@ -38,7 +36,7 @@ class SidebarNavigation extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
               itemBuilder: (context, index) {
                 final bool isSelected = index == selectedIndex;
-                
+
                 return Container(
                   margin: const EdgeInsets.only(bottom: 8),
                   decoration: BoxDecoration(
@@ -70,7 +68,7 @@ class SidebarNavigation extends StatelessWidget {
               },
             ),
           ),
-          
+
           // User profile button
           Container(
             margin: const EdgeInsets.all(16),
@@ -130,4 +128,4 @@ class SidebarNavigation extends StatelessWidget {
       ),
     );
   }
-} 
+}

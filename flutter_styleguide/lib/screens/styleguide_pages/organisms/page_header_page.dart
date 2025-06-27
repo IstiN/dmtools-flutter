@@ -31,7 +31,7 @@ class PageHeaderPage extends StatelessWidget {
             style: Theme.of(context).textTheme.bodyLarge,
           ),
           const SizedBox(height: AppDimensions.spacingL),
-          
+
           // Basic Page Header
           ComponentDisplay(
             title: 'Basic Page Header',
@@ -51,9 +51,9 @@ class PageHeaderPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacingXl),
-          
+
           // Page Header with Actions
           ComponentDisplay(
             title: 'Page Header with Actions',
@@ -83,9 +83,9 @@ class PageHeaderPage extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: AppDimensions.spacingXl),
-          
+
           // Implementation Details
           Text(
             'Implementation Details',
@@ -152,4 +152,4 @@ PageHeader(
       ),
     );
   }
-} 
+}
