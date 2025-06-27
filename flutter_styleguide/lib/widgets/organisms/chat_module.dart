@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
+import '../responsive/responsive_breakpoints.dart';
 import '../atoms/buttons/app_buttons.dart';
 
 class ChatMessage {
@@ -97,7 +98,7 @@ class ChatModuleState extends State<ChatModule> {
   Widget build(BuildContext context) {
     bool isDarkMode;
     dynamic colors;
-    
+
     if (widget.isTestMode == true) {
       isDarkMode = widget.testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -158,7 +159,7 @@ class ChatModuleState extends State<ChatModule> {
                 ],
               ),
             ),
-          
+
           // Messages area
           Expanded(
             child: ListView.builder(
@@ -171,7 +172,7 @@ class ChatModuleState extends State<ChatModule> {
               },
             ),
           ),
-          
+
           // Input area
           Container(
             padding: const EdgeInsets.all(16),
@@ -241,7 +242,7 @@ class ChatModuleState extends State<ChatModule> {
           ],
         ),
         constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.7,
+          maxWidth: MediaQuery.of(context).size.width * ResponsiveBreakpoints.chatMaxWidthBreakpoint,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,4 +270,4 @@ class ChatModuleState extends State<ChatModule> {
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
-} 
+}

@@ -22,3 +22,16 @@ Use README.MD to understand process of development in flutter styleguide.
 ** IMPORTANT RULES **
 - You must not hardcode colors, yoy must use colors from styleguid lib.
 - You must not develop UI elements in main app - instead you must develop UI elements in styleguide, write tests, and then use the elements in main app.
+** RESPONSIVE DESIGN RULES **
+CRITICAL: Use centralized responsive components instead of manual MediaQuery checks.
+
+FORBIDDEN: MediaQuery.of(context).size.width comparisons, hardcoded breakpoints, manual LayoutBuilder responsive logic
+REQUIRED: ResponsiveBuilder, ResponsiveWidget, ResponsiveUtils, ResponsiveBreakpoints
+IMPORT: import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+
+Examples:
+✅ ResponsiveUtils.isWideScreen(context)
+✅ SimpleResponsiveBuilder(mobile: Mobile(), desktop: Desktop())
+✅ ResponsiveWidget(mobile: Widget1(), desktop: Widget2())
+❌ MediaQuery.of(context).size.width > 1200
+❌ if (constraints.maxWidth > 768)

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
+import '../../widgets/responsive/responsive_builder.dart';
 import 'organisms/page_header_page.dart';
 import 'organisms/welcome_banner_page.dart';
 import 'organisms/panel_base_page.dart';
@@ -85,13 +86,13 @@ class OrganismsPage extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         const SizedBox(height: AppDimensions.spacingL),
-        
+
         // Organism cards grid
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _calculateCrossAxisCount(context),
+            crossAxisCount: ResponsiveUtils.getGridColumnCount(context),
             crossAxisSpacing: AppDimensions.spacingM,
             mainAxisSpacing: AppDimensions.spacingM,
             childAspectRatio: 1.2,
@@ -104,13 +105,6 @@ class OrganismsPage extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  int _calculateCrossAxisCount(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    if (width > 1200) return 3;
-    if (width > 800) return 2;
-    return 1;
   }
 
   Widget _buildOrganismCard(BuildContext context, OrganismCard organism, dynamic colors) {
@@ -205,4 +199,4 @@ class OrganismsPage extends StatelessWidget {
       ),
     );
   }
-} 
+}

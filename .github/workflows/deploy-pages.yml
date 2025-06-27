@@ -65,12 +65,12 @@ jobs:
 
       - name: Build Main App for Web
         run: |
-          flutter build web --release --csp --source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/
+          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/
 
       - name: Build Styleguide for Web
         run: |
           cd flutter_styleguide
-          flutter build web --release --csp --source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/styleguide/
+          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/styleguide/
           cd ..
 
       - name: Create deployment structure
