@@ -18,7 +18,7 @@ class ExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    
+
     return MaterialApp(
       title: 'DMTools Styleguide Example',
       theme: ThemeData.light().copyWith(
@@ -44,7 +44,7 @@ class ExampleHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('DMTools Styleguide Example'),
@@ -70,9 +70,9 @@ class ExampleHomePage extends StatelessWidget {
               onSecondaryAction: () {},
               logoAssetPath: 'assets/img/dmtools-logo-combined.svg',
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Button Examples
             Text(
               'Buttons',
@@ -101,9 +101,9 @@ class ExampleHomePage extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Agent Card Example
             Text(
               'Agent Card',
@@ -120,9 +120,9 @@ class ExampleHomePage extends StatelessWidget {
               lastRunTime: '2 hours ago',
               onRun: () {},
             ),
-            
+
             const SizedBox(height: 32),
-            
+
             // Chat Module Example
             Text(
               'Chat Module',
@@ -131,7 +131,7 @@ class ExampleHomePage extends StatelessWidget {
             const SizedBox(height: 16),
             SizedBox(
               height: 400,
-              child: ChatModule(
+              child: ChatInterface(
                 messages: [
                   ChatMessage(
                     message: 'Hello! How can I help you today?',
@@ -158,4 +158,4 @@ class ExampleHomePage extends StatelessWidget {
       ),
     );
   }
-} 
+}

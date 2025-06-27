@@ -17,31 +17,39 @@ class ChatMessage {
   }) : timestamp = timestamp ?? DateTime.now();
 }
 
-class ChatModule extends StatefulWidget {
+/// Interactive chat interface widget with message display and input functionality.
+/// Provides a complete chat experience with message bubbles, input field, and optional header.
+class ChatInterface extends StatefulWidget {
   final List<ChatMessage> messages;
   final Function(String) onSendMessage;
   final VoidCallback? onAttachmentPressed;
   final bool showHeader;
   final String title;
   final bool isLoading;
+
+  /// Used in tests to override theme detection for predictable rendering
   final bool? isTestMode;
+
+  /// Theme to use when isTestMode is true
   final bool? testDarkMode;
 
-  const ChatModule({
-    required this.messages, required this.onSendMessage, Key? key,
+  const ChatInterface({
+    required this.messages,
+    required this.onSendMessage,
+    super.key,
     this.onAttachmentPressed,
     this.showHeader = true,
     this.title = 'Chat',
     this.isLoading = false,
     this.isTestMode,
     this.testDarkMode,
-  }) : super(key: key);
+  });
 
   @override
-  ChatModuleState createState() => ChatModuleState();
+  ChatInterfaceState createState() => ChatInterfaceState();
 }
 
-class ChatModuleState extends State<ChatModule> {
+class ChatInterfaceState extends State<ChatInterface> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
@@ -55,7 +63,7 @@ class ChatModuleState extends State<ChatModule> {
   }
 
   @override
-  void didUpdateWidget(ChatModule oldWidget) {
+  void didUpdateWidget(ChatInterface oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.messages.length > oldWidget.messages.length) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

@@ -7,6 +7,19 @@ import '../../../widgets/organisms/chat_module.dart';
 import '../../../widgets/styleguide/component_display.dart';
 
 class ChatModulePage extends StatelessWidget {
+  // Properties data structure for cleaner table generation
+  static const List<Map<String, String>> _propertyData = [
+    {'property': 'messages', 'type': 'List<ChatMessage>', 'description': 'List of chat messages to display'},
+    {'property': 'onSendMessage', 'type': 'Function(String)', 'description': 'Callback when a message is sent'},
+    {
+      'property': 'onAttachmentPressed',
+      'type': 'VoidCallback?',
+      'description': 'Callback when attachment button is pressed'
+    },
+    {'property': 'showHeader', 'type': 'bool', 'description': 'Whether to show the chat header'},
+    {'property': 'title', 'type': 'String', 'description': 'Title shown in the header'},
+    {'property': 'isLoading', 'type': 'bool', 'description': 'Whether to show loading indicator'},
+  ];
   const ChatModulePage({Key? key}) : super(key: key);
 
   @override
@@ -35,7 +48,6 @@ class ChatModulePage extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 32),
-            
             ComponentDisplay(
               title: 'Default Chat Module',
               description: 'Standard chat module with header and message input.',
@@ -43,7 +55,7 @@ class ChatModulePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: AppDimensions.spacingM),
-                  ChatModule(
+                  ChatInterface(
                     messages: [
                       ChatMessage(
                         message: 'Hello! How can I help you today?',
@@ -54,7 +66,8 @@ class ChatModulePage extends StatelessWidget {
                         isUser: true,
                       ),
                       ChatMessage(
-                        message: 'Sure, I can guide you through the process. What type of agent would you like to create?',
+                        message:
+                            'Sure, I can guide you through the process. What type of agent would you like to create?',
                         isUser: false,
                       ),
                     ],
@@ -70,9 +83,7 @@ class ChatModulePage extends StatelessWidget {
                 ],
               ),
             ),
-            
             const SizedBox(height: 48),
-            
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -103,7 +114,7 @@ class ChatModulePage extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     child: SelectableText(
                       '''
-ChatModule(
+ChatInterface(
   messages: [
     ChatMessage(
       message: 'Hello! How can I help you today?',
@@ -136,12 +147,10 @@ ChatModule(
                 ],
               ),
             ),
-            
             const SizedBox(height: 48),
-            
             ComponentDisplay(
               title: 'Properties',
-              description: 'The ChatModule widget accepts the following properties:',
+              description: 'The ChatInterface widget accepts the following properties:',
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Table(
@@ -191,12 +200,13 @@ ChatModule(
                         ),
                       ],
                     ),
-                    _buildTableRow('messages', 'List<ChatMessage>', 'List of chat messages to display', colors),
-                    _buildTableRow('onSendMessage', 'Function(String)', 'Callback when a message is sent', colors),
-                    _buildTableRow('onAttachmentPressed', 'VoidCallback?', 'Callback when attachment button is pressed', colors),
-                    _buildTableRow('showHeader', 'bool', 'Whether to show the chat header', colors),
-                    _buildTableRow('title', 'String', 'Title shown in the header', colors),
-                    _buildTableRow('isLoading', 'bool', 'Whether to show loading indicator', colors),
+                    // Generate table rows from data structure
+                    ..._propertyData.map((property) => _buildTableRow(
+                          property['property']!,
+                          property['type']!,
+                          property['description']!,
+                          colors,
+                        )),
                   ],
                 ),
               ),
@@ -242,4 +252,4 @@ ChatModule(
       ],
     );
   }
-} 
+}

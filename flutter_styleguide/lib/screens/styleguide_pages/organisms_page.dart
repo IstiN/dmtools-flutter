@@ -47,7 +47,7 @@ class OrganismsPage extends StatelessWidget {
         title: 'Welcome Banner',
         code: '.welcome-banner',
         description: 'Prominent banner component for main page headers with logo, text, and call-to-action buttons.',
-        pageBuilder: (context) => const WelcomeBannerPage(),
+        pageBuilder: (context) => const WelcomeBannerShowcasePage(),
         icon: Icons.campaign,
       ),
       OrganismCard(
