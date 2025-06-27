@@ -28,6 +28,20 @@
         "--web-experimental-hot-reload"
       ],
       "console": "terminal"
+    },
+    {
+      "name": "Build Styleguide Web Production SPA",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "flutter build web --release --csp --source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first",
+      "cwd": "${workspaceFolder}/flutter_styleguide"
+    },
+    {
+      "name": "Build Main App Web Production SPA",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "flutter build web --release --csp --source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first",
+      "cwd": "${workspaceFolder}"
     }
   ]
 } 
