@@ -15,13 +15,45 @@ Create golden tests for all new UI elements and review output image result to be
 Use "temp" folder for temporary scripts
 Use "prototyping" folder for prototypes
 
-Commands to execute: "cd flutter_styleguide && flutter run -d chrome --web-experimental-hot-reloadter run -d chrome --web-experimental-hot-reload"
+Commands to execute: "cd flutter_styleguide && flutter run -d chrome --web-experimental-hot-reload"
 
 Use README.MD to understand process of development in flutter styleguide.
 
 ** IMPORTANT RULES **
-- You must not hardcode colors, yoy must use colors from styleguid lib.
+- You must not hardcode colors, you must use colors from styleguide lib.
 - You must not develop UI elements in main app - instead you must develop UI elements in styleguide, write tests, and then use the elements in main app.
+
+** THEME MANAGEMENT RULES **
+CRITICAL: Use centralized theme management through ThemeContext extension.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ final colors = isDarkMode ? AppColors.dark : AppColors.light;
+❌ final themeProvider = Provider.of<ThemeProvider>(context); final colors = themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
+❌ Manual theme selection with Provider.of<ThemeProvider>
+❌ Direct AppColors.dark/AppColors.light access in widgets
+
+REQUIRED PATTERNS:
+✅ final colors = context.colors;
+✅ final colors = context.colorsListening; // for reactive updates
+✅ final isDarkMode = context.isDarkMode;
+✅ Use ThemeContext extension for all theme access
+
+IMPORT: import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+
+Examples:
+✅ Container(color: context.colors.cardBg)
+✅ Text('Hello', style: TextStyle(color: context.colors.textColor))
+✅ if (context.isDarkMode) { /* dark mode logic */ }
+❌ Container(color: isDarkMode ? AppColors.dark.cardBg : AppColors.light.cardBg)
+❌ Text('Hello', style: TextStyle(color: themeProvider.isDarkMode ? AppColors.dark.textColor : AppColors.light.textColor))
+
+ARCHITECTURE RULES:
+- ThemeContext extension provides automatic fallback to Theme.of(context)
+- Use context.colors for non-reactive theme access
+- Use context.colorsListening for reactive theme updates
+- Never bypass the extension with direct Provider access
+- Maintain consistency between main app and styleguide
+
 ** RESPONSIVE DESIGN RULES **
 CRITICAL: Use centralized responsive components instead of manual MediaQuery checks.
 
@@ -35,3 +67,25 @@ Examples:
 ✅ ResponsiveWidget(mobile: Widget1(), desktop: Widget2())
 ❌ MediaQuery.of(context).size.width > 1200
 ❌ if (constraints.maxWidth > 768)
+
+** TESTING AND QUALITY RULES **
+MANDATORY: After any theme or UI changes:
+1. Run "flutter analyze" in both main app and flutter_styleguide
+2. Fix ALL linter errors and warnings before submitting
+3. Run "cd flutter_styleguide && flutter test" for styleguide changes
+4. Test theme switching functionality manually
+5. Verify responsive behavior on different screen sizes
+
+** IMPORT CLEANUP RULES **
+- Remove unused Provider imports after switching to context.colors
+- Remove unused ThemeProvider imports where no longer needed
+- Keep imports minimal and clean
+
+** DEVELOPMENT WORKFLOW RULES **
+- Always run from project root: "flutter run -d chrome --web-experimental-hot-reload"
+- Use correct commands: "cd flutter_styleguide && flutter run -d chrome --web-experimental-hot-reload" for styleguide
+- Never run Flutter commands from parent directories
+- Check current directory before running any Flutter commands
+
+** IMPORTANT RULE **
+Run flutter lint tools after changes to be sure that there is no errors and warnings.

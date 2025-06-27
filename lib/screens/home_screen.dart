@@ -11,7 +11,6 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final bool isWideScreen = ResponsiveUtils.isWideScreen(context);
 
     return Scaffold(
       body: Column(

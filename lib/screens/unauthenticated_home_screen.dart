@@ -8,15 +8,13 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
-    final colors = isDarkMode ? AppColors.dark : AppColors.light;
-    
+    final colors = context.colors;
+
     // Calculate the total width of the three cards with spacing
     const cardWidth = 300.0;
     const cardSpacing = 24.0;
     const totalWidth = (cardWidth * 3) + (cardSpacing * 2);
-    
+
     return Scaffold(
       backgroundColor: colors.bgColor,
       body: Column(
@@ -25,7 +23,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
           AppHeader(
             showTitle: false, // Hide header text
             showSearch: false, // Hide search as requested
-            onThemeToggle: () => themeProvider.toggleTheme(),
+            onThemeToggle: () => Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
             actions: const [], // Remove actions as we'll use profileButton
             profileButton: UserProfileButton(
               loginState: LoginState.loggedOut,
@@ -42,7 +40,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
               },
             ),
           ),
-          
+
           // Main Content
           Expanded(
             child: SingleChildScrollView(
@@ -52,7 +50,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 32),
-                    
+
                     // Welcome Banner with width matching the three cards
                     SizedBox(
                       width: totalWidth,
@@ -66,9 +64,9 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                         logoAssetPath: 'assets/img/dmtools-icon.svg',
                       ),
                     ),
-                    
+
                     const SizedBox(height: 64),
-                    
+
                     // Features Section
                     SizedBox(
                       width: totalWidth,
@@ -78,9 +76,9 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    
+
                     const SizedBox(height: 48),
-                    
+
                     // Feature Cards using the styleguide component
                     const SizedBox(
                       width: totalWidth,
@@ -92,22 +90,25 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                           FeatureCard(
                             icon: Icons.smart_toy,
                             title: 'AI-Powered Agents',
-                            description: 'Automate repetitive tasks with intelligent agents that learn from your workflow and adapt to your needs',
+                            description:
+                                'Automate repetitive tasks with intelligent agents that learn from your workflow and adapt to your needs',
                           ),
                           FeatureCard(
                             icon: Icons.workspaces,
                             title: 'Workspace Management',
-                            description: 'Organize your projects and teams in dedicated workspaces with customizable permissions and tools',
+                            description:
+                                'Organize your projects and teams in dedicated workspaces with customizable permissions and tools',
                           ),
                           FeatureCard(
                             icon: Icons.apps,
                             title: 'Integrated Applications',
-                            description: 'Access a suite of tools designed for delivery managers to streamline your workflow and boost productivity',
+                            description:
+                                'Access a suite of tools designed for delivery managers to streamline your workflow and boost productivity',
                           ),
                         ],
                       ),
                     ),
-                    
+
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -118,4 +119,4 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}
