@@ -10,9 +10,11 @@ class AppHeader extends StatelessWidget {
   final String title;
   final bool showSearch;
   final bool showTitle;
+  final bool showHamburgerMenu;
   final Function(String)? onSearch;
   final VoidCallback? onProfilePressed;
   final VoidCallback? onLogoPressed;
+  final VoidCallback? onHamburgerPressed;
   final VoidCallback? onThemeToggle;
   final List<Widget>? actions;
   final UserProfileButton? profileButton;
@@ -26,9 +28,11 @@ class AppHeader extends StatelessWidget {
     this.title = 'DMTools',
     this.showSearch = true,
     this.showTitle = true,
+    this.showHamburgerMenu = false,
     this.onSearch,
     this.onProfilePressed,
     this.onLogoPressed,
+    this.onHamburgerPressed,
     this.onThemeToggle,
     this.actions,
     this.profileButton,
@@ -50,7 +54,7 @@ class AppHeader extends StatelessWidget {
         isDarkMode = Theme.of(context).brightness == Brightness.dark;
       }
     }
-    
+
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
     final theme = Theme.of(context);
 
@@ -69,48 +73,60 @@ class AppHeader extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Logo section
-          InkWell(
-            onTap: onLogoPressed,
-            child: Row(
-              children: [
-                NetworkNodesLogo(
-                  size: LogoSize.small,
-                  isDarkMode: isDarkMode,
-                  isTestMode: true,
-                ),
-                if (showTitle) ...[
-                  const SizedBox(width: 8),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: 'DM',
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        TextSpan(
-                          text: ' Tools',
-                          style: TextStyle(
-                            color: isDarkMode ? Colors.white : Colors.black,
-                            fontWeight: FontWeight.normal,
-                            fontSize: 18,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
+          // Logo or Hamburger section
+          if (showHamburgerMenu) ...[
+            IconButton(
+              icon: Icon(
+                Icons.menu,
+                color: colors.textColor,
+                size: 24,
+              ),
+              onPressed: onHamburgerPressed,
+              tooltip: 'Open navigation menu',
             ),
-          ),
-          
+          ] else ...[
+            InkWell(
+              onTap: onLogoPressed,
+              child: Row(
+                children: [
+                  NetworkNodesLogo(
+                    size: LogoSize.small,
+                    isDarkMode: isDarkMode,
+                    isTestMode: true,
+                  ),
+                  if (showTitle) ...[
+                    const SizedBox(width: 8),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'DM',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                          TextSpan(
+                            text: ' Tools',
+                            style: TextStyle(
+                              color: isDarkMode ? Colors.white : Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+
           // Spacer
           const Spacer(),
-          
+
           // Search (if enabled)
           if (showSearch) ...[
             Flexible(
@@ -126,10 +142,10 @@ class AppHeader extends StatelessWidget {
             ),
             const SizedBox(width: 16),
           ],
-          
+
           // Actions (if provided)
           if (actions != null) ...actions!,
-          
+
           // Theme toggle
           if (onThemeToggle != null) ...[
             IconButton(
@@ -141,9 +157,9 @@ class AppHeader extends StatelessWidget {
               tooltip: isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
             ),
           ],
-          
+
           const SizedBox(width: 8),
-          
+
           // Profile button
           profileButton ??
               CircleAvatar(
@@ -158,4 +174,4 @@ class AppHeader extends StatelessWidget {
       ),
     );
   }
-} 
+}
