@@ -1,4 +1,6 @@
-class Agent {
+/// Core Agent model for simplified agent representation
+/// Used in widgets that need basic agent information
+class CoreAgent {
   final String title;
   final bool isActive;
   final String description;
@@ -7,7 +9,7 @@ class Agent {
   final String lastRun;
   final String icon;
 
-  const Agent({
+  const CoreAgent({
     required this.title,
     required this.isActive,
     required this.description,
@@ -16,4 +18,4 @@ class Agent {
     required this.lastRun,
     required this.icon,
   });
-} 
+}

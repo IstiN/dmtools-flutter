@@ -2,30 +2,15 @@ import 'package:flutter/material.dart';
 import '../atoms/app_button.dart';
 import '../atoms/status_dot.dart';
 import '../atoms/tag_chip.dart';
-
-// Simple Agent model for this widget
-class Agent {
-  final String title;
-  final String description;
-  final bool isActive;
-  final List<String> tags;
-  final int runCount;
-  final String lastRun;
-
-  const Agent({
-    required this.title,
-    required this.description,
-    required this.isActive,
-    required this.tags,
-    required this.runCount,
-    required this.lastRun,
-  });
-}
+import '../../models/agent.dart';
 
 class AgentCard extends StatelessWidget {
-  final Agent agent;
+  final CoreAgent agent;
 
-  const AgentCard({required this.agent, super.key});
+  const AgentCard({
+    required this.agent,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -116,4 +101,4 @@ class AgentCard extends StatelessWidget {
       ),
     );
   }
-} 
+}
