@@ -47,7 +47,6 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 32),
 
@@ -59,7 +58,6 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                         subtitle: 'Your all-in-one solution for delivery management and automation',
                         onPrimaryAction: () {},
                         onSecondaryAction: () {},
-                        primaryActionText: 'Get Started',
                         secondaryActionText: 'Get Help',
                         logoAssetPath: 'assets/img/dmtools-icon.svg',
                       ),

@@ -40,7 +40,6 @@ class NetworkNodesLogo extends BaseLogo {
       assetName,
       width: width,
       height: height,
-      fit: BoxFit.contain,
       colorFilter: isDark ? 
         const ColorFilter.mode(Colors.white, BlendMode.srcIn) : 
         null,

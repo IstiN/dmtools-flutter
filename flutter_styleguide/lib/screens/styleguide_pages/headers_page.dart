@@ -21,18 +21,14 @@ class HeadersPage extends StatelessWidget {
               AppHeader(
                 searchHintText: 'Search agents and apps...',
                 searchWidth: 400,
-                showTitle: true,
                 onSearch: (_) {},
                 onProfilePressed: () {},
                 onLogoPressed: () {},
                 onThemeToggle: () {},
                 isTestMode: true,
-                testDarkMode: false,
                 profileButton: const UserProfileButton(
                   userName: 'Test User',
-                  loginState: LoginState.loggedIn,
                   isTestMode: true,
-                  testDarkMode: false,
                 ),
               ),
               const SizedBox(height: 40),
@@ -41,7 +37,6 @@ class HeadersPage extends StatelessWidget {
                 child: AppHeader(
                   searchHintText: 'Search agents and apps...',
                   searchWidth: 400,
-                  showTitle: true,
                   onSearch: (_) {},
                   onProfilePressed: () {},
                   onLogoPressed: () {},
@@ -50,7 +45,6 @@ class HeadersPage extends StatelessWidget {
                   testDarkMode: true,
                   profileButton: const UserProfileButton(
                     userName: 'Test User',
-                    loginState: LoginState.loggedIn,
                     isTestMode: true,
                     testDarkMode: true,
                   ),
@@ -76,12 +70,9 @@ class HeadersPage extends StatelessWidget {
                 onLogoPressed: () {},
                 onThemeToggle: () {},
                 isTestMode: true,
-                testDarkMode: false,
                 profileButton: const UserProfileButton(
                   userName: 'Test User',
-                  loginState: LoginState.loggedIn,
                   isTestMode: true,
-                  testDarkMode: false,
                 ),
               ),
               const SizedBox(height: 40),
@@ -99,7 +90,6 @@ class HeadersPage extends StatelessWidget {
                   testDarkMode: true,
                   profileButton: const UserProfileButton(
                     userName: 'Test User',
-                    loginState: LoginState.loggedIn,
                     isTestMode: true,
                     testDarkMode: true,
                   ),
@@ -118,17 +108,13 @@ class HeadersPage extends StatelessWidget {
               const SizedBox(height: 20),
               AppHeader(
                 showSearch: false,
-                showTitle: true,
                 onProfilePressed: () {},
                 onLogoPressed: () {},
                 onThemeToggle: () {},
                 isTestMode: true,
-                testDarkMode: false,
                 profileButton: const UserProfileButton(
                   userName: 'Test User',
-                  loginState: LoginState.loggedIn,
                   isTestMode: true,
-                  testDarkMode: false,
                 ),
               ),
               const SizedBox(height: 20),
@@ -145,7 +131,6 @@ class HeadersPage extends StatelessWidget {
               AppHeader(
                 searchHintText: 'Search agents and apps...',
                 searchWidth: 400,
-                showTitle: true,
                 onSearch: (_) {},
                 onLogoPressed: () {},
                 onThemeToggle: () {},
@@ -153,9 +138,7 @@ class HeadersPage extends StatelessWidget {
                   userName: 'John Doe',
                   email: 'john.doe@example.com',
                   avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
-                  loginState: LoginState.loggedIn,
                   isTestMode: true,
-                  testDarkMode: false,
                   dropdownItems: [
                     UserProfileDropdownItem(
                       icon: Icons.settings,
@@ -175,7 +158,6 @@ class HeadersPage extends StatelessWidget {
                   ],
                 ),
                 isTestMode: true,
-                testDarkMode: false,
               ),
               const SizedBox(height: 20),
             ],
@@ -191,17 +173,14 @@ class HeadersPage extends StatelessWidget {
               AppHeader(
                 searchHintText: 'Search agents and apps...',
                 searchWidth: 400,
-                showTitle: true,
                 onSearch: (_) {},
                 onLogoPressed: () {},
                 onThemeToggle: () {},
                 profileButton: const UserProfileButton(
                   loginState: LoginState.loggedOut,
                   isTestMode: true,
-                  testDarkMode: false,
                 ),
                 isTestMode: true,
-                testDarkMode: false,
               ),
               const SizedBox(height: 20),
             ],
@@ -220,7 +199,6 @@ class HeadersPage extends StatelessWidget {
                 viewAllText: 'View All',
                 onViewAll: () {},
                 isTestMode: true,
-                testDarkMode: false,
               ),
               const SizedBox(height: 20),
               BaseSectionHeader(
@@ -228,7 +206,6 @@ class HeadersPage extends StatelessWidget {
                 viewAllText: 'View All',
                 onViewAll: () {},
                 isTestMode: true,
-                testDarkMode: false,
               ),
               const SizedBox(height: 20),
               Container(
@@ -260,7 +237,6 @@ class HeadersPage extends StatelessWidget {
                 viewAllText: 'View All',
                 onViewAll: () {},
                 isTestMode: true,
-                testDarkMode: false,
               ),
               const SizedBox(height: 20),
               BaseSectionHeader(
@@ -269,7 +245,6 @@ class HeadersPage extends StatelessWidget {
                 viewAllText: 'View All',
                 onViewAll: () {},
                 isTestMode: true,
-                testDarkMode: false,
               ),
               const SizedBox(height: 20),
             ],

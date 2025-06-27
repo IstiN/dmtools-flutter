@@ -23,7 +23,6 @@ void main() {
               ),
             ],
             isTestMode: true,
-            testDarkMode: false,
           ),
         ),
       );
@@ -69,10 +68,7 @@ void main() {
               subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
               onPrimaryAction: () {},
               onSecondaryAction: () {},
-              primaryActionText: 'Get Started',
-              secondaryActionText: 'Learn More',
               isTestMode: true,
-              testDarkMode: false,
             ),
           ),
         ),
@@ -94,8 +90,6 @@ void main() {
               subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
               onPrimaryAction: () {},
               onSecondaryAction: () {},
-              primaryActionText: 'Get Started',
-              secondaryActionText: 'Learn More',
               isTestMode: true,
               testDarkMode: true,
             ),
@@ -186,9 +180,7 @@ void main() {
             padding: const EdgeInsets.all(16.0),
             child: PanelBase(
               title: 'Panel Title',
-              headerStyle: PanelHeaderStyle.primary,
               isTestMode: true,
-              testDarkMode: false,
               actions: [
                 IconButton(
                   icon: const Icon(Icons.more_vert, color: Colors.white),
@@ -217,7 +209,6 @@ void main() {
             padding: const EdgeInsets.all(16.0),
             child: PanelBase(
               title: 'Panel Title',
-              headerStyle: PanelHeaderStyle.primary,
               isTestMode: true,
               testDarkMode: true,
               actions: [
@@ -259,7 +250,6 @@ void main() {
               onWorkspaceSelected: (_) {},
               onCreateWorkspace: () {},
               isTestMode: true,
-              testDarkMode: false,
             ),
           ),
         ),
@@ -320,7 +310,6 @@ void main() {
                       ),
                     ],
                     isTestMode: true,
-                    testDarkMode: false,
                   ),
                   const SizedBox(height: 16),
                   WelcomeBanner(
@@ -328,17 +317,12 @@ void main() {
                     subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
                     onPrimaryAction: () {},
                     onSecondaryAction: () {},
-                    primaryActionText: 'Get Started',
-                    secondaryActionText: 'Learn More',
                     isTestMode: true,
-                    testDarkMode: false,
                   ),
                   const SizedBox(height: 16),
                   PanelBase(
                     title: 'Panel Title',
-                    headerStyle: PanelHeaderStyle.primary,
                     isTestMode: true,
-                    testDarkMode: false,
                     actions: [
                       IconButton(
                         icon: const Icon(Icons.more_vert, color: Colors.white),
@@ -406,15 +390,12 @@ void main() {
                     subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
                     onPrimaryAction: () {},
                     onSecondaryAction: () {},
-                    primaryActionText: 'Get Started',
-                    secondaryActionText: 'Learn More',
                     isTestMode: true,
                     testDarkMode: true,
                   ),
                   const SizedBox(height: 16),
                   PanelBase(
                     title: 'Panel Title',
-                    headerStyle: PanelHeaderStyle.primary,
                     isTestMode: true,
                     testDarkMode: true,
                     actions: [

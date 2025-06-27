@@ -6,8 +6,7 @@ class SectionHeader extends StatelessWidget {
   final String? viewAllText;
 
   const SectionHeader({
-    super.key,
-    required this.title,
+    required this.title, super.key,
     this.onViewAll,
     this.viewAllText = 'View All',
   });

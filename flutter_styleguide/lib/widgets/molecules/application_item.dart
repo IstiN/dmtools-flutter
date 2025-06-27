@@ -13,14 +13,13 @@ class ApplicationItem extends StatelessWidget {
   final IconData icon;
 
   const ApplicationItem({
-    Key? key,
+    required this.onOpen, Key? key,
     this.title = 'Sample Application',
     this.version = 'v1.0.0',
     this.description = 'Sample application description that explains the functionality and purpose.',
     this.category = 'Productivity',
     this.rating = 4.8,
     this.downloadCount = 1200,
-    required this.onOpen,
     this.icon = Icons.apps,
   }) : super(key: key);
 

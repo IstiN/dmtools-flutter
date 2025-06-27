@@ -42,7 +42,6 @@ class PanelBasePage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingM),
                 PanelBase(
                   title: 'Panel Title',
-                  headerStyle: PanelHeaderStyle.primary,
                   isTestMode: true,
                   testDarkMode: isDarkMode,
                   actions: [
@@ -150,7 +149,6 @@ class PanelBasePage extends StatelessWidget {
                 const SizedBox(height: AppDimensions.spacingM),
                 PanelBase(
                   title: 'Collapsible Panel',
-                  headerStyle: PanelHeaderStyle.primary,
                   isCollapsible: true,
                   isTestMode: true,
                   testDarkMode: isDarkMode,

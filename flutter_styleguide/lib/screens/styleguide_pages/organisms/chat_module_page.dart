@@ -80,7 +80,6 @@ class ChatModulePage extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
                   color: colors.borderColor,
-                  width: 1,
                 ),
               ),
               child: Column(
@@ -147,13 +146,12 @@ ChatModule(
                 padding: const EdgeInsets.all(16),
                 child: Table(
                   columnWidths: const {
-                    0: FlexColumnWidth(1),
-                    1: FlexColumnWidth(1),
+                    0: FlexColumnWidth(),
+                    1: FlexColumnWidth(),
                     2: FlexColumnWidth(2),
                   },
                   border: TableBorder.all(
                     color: colors.borderColor,
-                    width: 1,
                   ),
                   children: [
                     TableRow(

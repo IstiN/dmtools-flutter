@@ -24,7 +24,6 @@ class ProfilePage extends StatelessWidget {
                     userName: 'John Doe',
                     email: 'john.doe@example.com',
                     onPressed: () {},
-                    loginState: LoginState.loggedIn,
                   ),
                 ],
               ),
@@ -36,7 +35,6 @@ class ProfilePage extends StatelessWidget {
                     userName: 'Jane Smith',
                     avatarUrl: 'https://randomuser.me/api/portraits/women/44.jpg',
                     onPressed: () {},
-                    loginState: LoginState.loggedIn,
                   ),
                 ],
               ),
@@ -57,7 +55,6 @@ class ProfilePage extends StatelessWidget {
                   UserProfileButton(
                     userName: 'Vladimir Klyshevich',
                     avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
-                    loginState: LoginState.loggedIn,
                     dropdownItems: [
                       UserProfileDropdownItem(
                         icon: Icons.settings,
@@ -139,7 +136,6 @@ class ProfilePage extends StatelessWidget {
                       userName: 'John Doe',
                       email: 'john.doe@example.com',
                       onPressed: () {},
-                      loginState: LoginState.loggedIn,
                       isTestMode: true,
                       testDarkMode: true,
                     ),
@@ -152,7 +148,6 @@ class ProfilePage extends StatelessWidget {
                     UserProfileButton(
                       userName: 'Vladimir Klyshevich',
                       avatarUrl: 'https://randomuser.me/api/portraits/men/32.jpg',
-                      loginState: LoginState.loggedIn,
                       isTestMode: true,
                       testDarkMode: true,
                       dropdownItems: [

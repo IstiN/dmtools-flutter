@@ -80,7 +80,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(56),
         child: AppHeader(
-          showSearch: true,
           showTitle: false,
           searchHintText: 'Search agents and apps...',
           searchWidth: 400,
@@ -93,7 +92,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
           testDarkMode: isDarkMode,
           profileButton: UserProfileButton(
             userName: 'Vladimir Klyshevich',
-            loginState: LoginState.loggedIn,
             isTestMode: true,
             testDarkMode: isDarkMode,
           ),
@@ -135,7 +133,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
           testDarkMode: isDarkMode,
           profileButton: UserProfileButton(
             userName: 'VK',
-            loginState: LoginState.loggedIn,
             isTestMode: true,
             testDarkMode: isDarkMode,
           ),
@@ -171,7 +168,6 @@ class _StyleguideHomeState extends State<StyleguideHome> {
             Container(
               padding: const EdgeInsets.all(12),
               child: NetworkNodesLogo(
-                size: LogoSize.medium,
                 isDarkMode: isDarkMode,
                 isTestMode: true,
               ),

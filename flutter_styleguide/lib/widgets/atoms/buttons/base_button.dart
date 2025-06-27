@@ -18,7 +18,6 @@ abstract class BaseButton extends StatefulWidget {
   final bool testDarkMode;
 
   const BaseButton({
-    Key? key,
     required this.text,
     this.onPressed,
     this.size = ButtonSize.medium,
@@ -28,6 +27,7 @@ abstract class BaseButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 }
 
@@ -72,7 +72,7 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
   @override
   Widget build(BuildContext context) {
     bool isDarkMode;
-    
+
     if (widget.isTestMode) {
       isDarkMode = widget.testDarkMode;
     } else {
@@ -84,14 +84,14 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
         isDarkMode = false;
       }
     }
-    
+
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     // Get dimensions from AppDimensions
     const paddings = AppDimensions.buttonPadding;
     const fontSizes = AppDimensions.buttonFontSize;
     const iconSizes = AppDimensions.buttonIconSize;
-    
+
     final effectiveOnPressed = widget.isDisabled || widget.isLoading ? null : widget.onPressed;
 
     // Get style properties
@@ -128,7 +128,7 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
 
     final isHovering = _isHovering && !widget.isDisabled;
     final isCurrentlyPressed = _isPressed && !widget.isDisabled;
-    
+
     // Build button content
     Widget content;
     if (widget.isLoading) {
@@ -152,10 +152,10 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
           Text(
             widget.text,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              fontSize: fontSizes[widget.size],
-              fontWeight: FontWeight.w500,
-              color: isHovering ? hoverTextColor : textColor,
-            ),
+                  fontSize: fontSizes[widget.size],
+                  fontWeight: FontWeight.w500,
+                  color: isHovering ? hoverTextColor : textColor,
+                ),
           ),
         ],
       );
@@ -199,4 +199,4 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
       ),
     );
   }
-} 
+}

@@ -25,7 +25,7 @@ class Agent {
 class AgentCard extends StatelessWidget {
   final Agent agent;
 
-  const AgentCard({super.key, required this.agent});
+  const AgentCard({required this.agent, super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -4,8 +4,7 @@ class TagChip extends StatelessWidget {
   final String label;
 
   const TagChip({
-    super.key,
-    required this.label,
+    required this.label, super.key,
   });
 
   @override

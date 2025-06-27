@@ -25,7 +25,6 @@ class LogosPage extends StatelessWidget {
                       WordmarkLogo(
                         size: LogoSize.small,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                       SizedBox(height: 8),
                       Text('Small'),
@@ -34,9 +33,7 @@ class LogosPage extends StatelessWidget {
                   Column(
                     children: [
                       WordmarkLogo(
-                        size: LogoSize.medium,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                       SizedBox(height: 8),
                       Text('Medium'),
@@ -47,7 +44,6 @@ class LogosPage extends StatelessWidget {
                       WordmarkLogo(
                         size: LogoSize.large,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                       SizedBox(height: 8),
                       Text('Large'),
@@ -76,7 +72,6 @@ class LogosPage extends StatelessWidget {
                     Column(
                       children: [
                         WordmarkLogo(
-                          size: LogoSize.medium,
                           isTestMode: true,
                           isDarkMode: true,
                         ),
@@ -118,13 +113,11 @@ class LogosPage extends StatelessWidget {
                           IconLogo(
                             size: LogoSize.small,
                             isTestMode: true,
-                            isDarkMode: false,
                           ),
                           SizedBox(width: 8),
                           WordmarkLogo(
                             size: LogoSize.small,
                             isTestMode: true,
-                            isDarkMode: false,
                           ),
                         ],
                       ),
@@ -137,15 +130,11 @@ class LogosPage extends StatelessWidget {
                       Row(
                         children: [
                           IconLogo(
-                            size: LogoSize.medium,
                             isTestMode: true,
-                            isDarkMode: false,
                           ),
                           SizedBox(width: 8),
                           WordmarkLogo(
-                            size: LogoSize.medium,
                             isTestMode: true,
-                            isDarkMode: false,
                           ),
                         ],
                       ),
@@ -164,13 +153,11 @@ class LogosPage extends StatelessWidget {
                       IconLogo(
                         size: LogoSize.large,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                       SizedBox(width: 12),
                       WordmarkLogo(
                         size: LogoSize.large,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                     ],
                   ),
@@ -213,13 +200,11 @@ class LogosPage extends StatelessWidget {
                             Row(
                               children: [
                                 IconLogo(
-                                  size: LogoSize.medium,
                                   isTestMode: true,
                                   isDarkMode: true,
                                 ),
                                 SizedBox(width: 8),
                                 WordmarkLogo(
-                                  size: LogoSize.medium,
                                   isTestMode: true,
                                   isDarkMode: true,
                                 ),
@@ -275,7 +260,6 @@ class LogosPage extends StatelessWidget {
                       NetworkNodesLogo(
                         size: LogoSize.small,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                       SizedBox(height: 8),
                       Text('Small'),
@@ -287,9 +271,7 @@ class LogosPage extends StatelessWidget {
               const Column(
                 children: [
                   NetworkNodesLogo(
-                    size: LogoSize.medium,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Medium'),
@@ -321,7 +303,6 @@ class LogosPage extends StatelessWidget {
                     Column(
                       children: [
                         NetworkNodesLogo(
-                          size: LogoSize.medium,
                           isTestMode: true,
                           isDarkMode: true,
                         ),

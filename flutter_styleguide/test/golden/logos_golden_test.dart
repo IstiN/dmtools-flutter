@@ -24,7 +24,6 @@ void main() {
                   WordmarkLogo(
                     size: LogoSize.small,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Small'),
@@ -33,9 +32,7 @@ void main() {
               Column(
                 children: [
                   WordmarkLogo(
-                    size: LogoSize.medium,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Medium'),
@@ -46,7 +43,6 @@ void main() {
                   WordmarkLogo(
                     size: LogoSize.large,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Large'),
@@ -85,7 +81,6 @@ void main() {
               Column(
                 children: [
                   WordmarkLogo(
-                    size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
@@ -128,7 +123,6 @@ void main() {
                   IconLogo(
                     size: LogoSize.small,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Small'),
@@ -137,9 +131,7 @@ void main() {
               Column(
                 children: [
                   IconLogo(
-                    size: LogoSize.medium,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Medium'),
@@ -150,7 +142,6 @@ void main() {
                   IconLogo(
                     size: LogoSize.large,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Large'),
@@ -189,7 +180,6 @@ void main() {
               Column(
                 children: [
                   IconLogo(
-                    size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
@@ -232,7 +222,6 @@ void main() {
                   NetworkNodesLogo(
                     size: LogoSize.small,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Small'),
@@ -241,9 +230,7 @@ void main() {
               Column(
                 children: [
                   NetworkNodesLogo(
-                    size: LogoSize.medium,
                     isTestMode: true,
-                    isDarkMode: false,
                   ),
                   SizedBox(height: 8),
                   Text('Medium'),
@@ -282,7 +269,6 @@ void main() {
               Column(
                 children: [
                   NetworkNodesLogo(
-                    size: LogoSize.medium,
                     isTestMode: true,
                     isDarkMode: true,
                   ),
@@ -317,13 +303,11 @@ void main() {
                       IconLogo(
                         size: LogoSize.small,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                       SizedBox(width: 8),
                       WordmarkLogo(
                         size: LogoSize.small,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                     ],
                   ),
@@ -337,15 +321,11 @@ void main() {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconLogo(
-                        size: LogoSize.medium,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                       SizedBox(width: 8),
                       WordmarkLogo(
-                        size: LogoSize.medium,
                         isTestMode: true,
-                        isDarkMode: false,
                       ),
                     ],
                   ),
@@ -400,13 +380,11 @@ void main() {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconLogo(
-                        size: LogoSize.medium,
                         isTestMode: true,
                         isDarkMode: true,
                       ),
                       SizedBox(width: 8),
                       WordmarkLogo(
-                        size: LogoSize.medium,
                         isTestMode: true,
                         isDarkMode: true,
                       ),

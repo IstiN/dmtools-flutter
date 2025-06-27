@@ -11,8 +11,7 @@ abstract class BaseText extends StatelessWidget {
   final TextStyle? style;
 
   const BaseText({
-    Key? key,
-    required this.text,
+    required this.text, Key? key,
     this.textAlign,
     this.overflow,
     this.maxLines,

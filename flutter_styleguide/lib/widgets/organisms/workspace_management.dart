@@ -30,8 +30,7 @@ class WorkspaceManagement extends StatelessWidget {
   final bool? testDarkMode;
 
   const WorkspaceManagement({
-    Key? key,
-    required this.workspaces,
+    required this.workspaces, Key? key,
     this.onWorkspaceSelected,
     this.onCreateWorkspace,
     this.isTestMode = false,
@@ -90,7 +89,6 @@ class WorkspaceManagement extends StatelessWidget {
         else
           PanelBase(
             title: 'Your Workspaces',
-            headerStyle: PanelHeaderStyle.primary,
             isTestMode: isTestMode,
             testDarkMode: isDarkMode,
             content: Column(
@@ -113,7 +111,6 @@ class WorkspaceManagement extends StatelessWidget {
         border: Border.all(
           color: colors.borderColor,
           width: 2,
-          style: BorderStyle.solid,
         ),
       ),
       child: Column(

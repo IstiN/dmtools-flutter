@@ -7,11 +7,11 @@ class ColorSwatchWidget extends StatelessWidget {
   final Color textColor;
 
   const ColorSwatchWidget({
-    super.key,
     required this.color,
     required this.name,
     required this.hexCode,
     this.textColor = Colors.black,
+    super.key,
   });
 
   @override
@@ -71,4 +71,4 @@ class ColorSwatchWidget extends StatelessWidget {
       ),
     );
   }
-} 
+}

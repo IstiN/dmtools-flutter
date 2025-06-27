@@ -71,7 +71,6 @@ class AuthPageState extends State<AuthPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
                       'Interactive Demo',

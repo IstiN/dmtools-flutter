@@ -238,7 +238,6 @@ class _UserProfileButtonState extends State<UserProfileButton> {
       decoration: BoxDecoration(
         border: Border.all(
           color: _isDropdownOpen ? colors.accentColor : Colors.transparent,
-          width: 1,
         ),
         borderRadius: BorderRadius.circular(AppDimensions.radiusM),
       ),

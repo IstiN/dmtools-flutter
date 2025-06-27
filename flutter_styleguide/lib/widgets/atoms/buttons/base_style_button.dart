@@ -7,7 +7,6 @@ import 'base_button.dart';
 /// Used for basic actions or as a foundation for custom buttons
 class BaseStyleButton extends BaseButton {
   const BaseStyleButton({
-    Key? key,
     required String text,
     VoidCallback? onPressed,
     ButtonSize size = ButtonSize.medium,
@@ -17,6 +16,7 @@ class BaseStyleButton extends BaseButton {
     bool isDisabled = false,
     bool isTestMode = false,
     bool testDarkMode = false,
+    Key? key,
   }) : super(
           key: key,
           text: text,
@@ -57,11 +57,11 @@ class BaseStyleButtonState extends BaseButtonState<BaseStyleButton> {
 
   @override
   BorderSide getBorderSide(ThemeColorSet colors, bool isDarkMode) {
-    return BorderSide(color: colors.borderColor, width: AppDimensions.borderWidthThin);
+    return BorderSide(color: colors.borderColor);
   }
 
   @override
   BorderSide getHoverBorderSide(ThemeColorSet colors, bool isDarkMode) {
-    return BorderSide(color: colors.accentColor, width: AppDimensions.borderWidthThin);
+    return BorderSide(color: colors.accentColor);
   }
 }

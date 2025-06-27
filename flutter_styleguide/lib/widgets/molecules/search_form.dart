@@ -73,15 +73,15 @@ class _SearchFormState extends State<SearchForm> {
           contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
-            borderSide: BorderSide(color: colors.borderColor, width: 1),
+            borderSide: BorderSide(color: colors.borderColor),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
-            borderSide: BorderSide(color: colors.borderColor, width: 1),
+            borderSide: BorderSide(color: colors.borderColor),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(4),
-            borderSide: BorderSide(color: colors.accentColor, width: 1),
+            borderSide: BorderSide(color: colors.accentColor),
           ),
           filled: true,
           fillColor: colors.inputBg,

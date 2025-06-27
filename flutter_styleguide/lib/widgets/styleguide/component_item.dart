@@ -8,10 +8,10 @@ class ComponentItem extends StatelessWidget {
   final String? codeSnippet;
 
   const ComponentItem({
-    Key? key,
     required this.title,
     required this.child,
     this.codeSnippet,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -29,4 +29,4 @@ class ComponentItem extends StatelessWidget {
       ],
     );
   }
-} 
+}

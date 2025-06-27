@@ -20,12 +20,12 @@ class TagChip extends StatelessWidget {
   final bool? testDarkMode;
 
   const TagChip({
-    Key? key,
     required this.label,
     this.variant = TagChipVariant.primary,
     this.isOutlined = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 
   @override

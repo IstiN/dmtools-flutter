@@ -18,9 +18,7 @@ class WelcomeBanner extends StatelessWidget {
   final String? logoAssetPath;
 
   const WelcomeBanner({
-    Key? key,
-    required this.title,
-    required this.subtitle,
+    required this.title, required this.subtitle, Key? key,
     this.onPrimaryAction,
     this.onSecondaryAction,
     this.primaryActionText = 'Get Started',
@@ -65,7 +63,6 @@ class WelcomeBanner extends StatelessWidget {
                 ? SvgPicture.asset(
                     logoAssetPath!,
                     height: 80,
-                    fit: BoxFit.contain,
                     colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
                   )
                 : Image.asset(
@@ -99,7 +96,6 @@ class WelcomeBanner extends StatelessWidget {
               PrimaryButton(
                 text: primaryActionText,
                 onPressed: onPrimaryAction,
-                size: ButtonSize.medium,
                 isTestMode: isTestMode,
                 testDarkMode: testDarkMode,
               ),
@@ -107,7 +103,6 @@ class WelcomeBanner extends StatelessWidget {
               WhiteOutlineButton(
                 text: secondaryActionText,
                 onPressed: onSecondaryAction,
-                size: ButtonSize.medium,
                 isTestMode: isTestMode,
                 testDarkMode: testDarkMode,
               ),

@@ -14,8 +14,7 @@ class StatusDot extends StatelessWidget {
   final double size;
 
   const StatusDot({
-    Key? key,
-    required this.status,
+    required this.status, Key? key,
     this.size = 10.0,
   }) : super(key: key);
 

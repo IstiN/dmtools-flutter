@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
-import '../../theme/app_dimensions.dart';
 import '../responsive/responsive_breakpoints.dart';
 import '../atoms/buttons/app_buttons.dart';
 
@@ -29,9 +28,7 @@ class ChatModule extends StatefulWidget {
   final bool? testDarkMode;
 
   const ChatModule({
-    Key? key,
-    required this.messages,
-    required this.onSendMessage,
+    required this.messages, required this.onSendMessage, Key? key,
     this.onAttachmentPressed,
     this.showHeader = true,
     this.title = 'Chat',
@@ -212,7 +209,6 @@ class ChatModuleState extends State<ChatModule> {
                   onPressed: _sendMessage,
                   icon: Icons.send,
                   isLoading: _isLoading,
-                  size: ButtonSize.medium,
                   isTestMode: widget.isTestMode ?? false,
                   testDarkMode: isDarkMode,
                 ),

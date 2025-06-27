@@ -18,7 +18,6 @@ class AppButton extends StatelessWidget {
   final bool isDisabled;
 
   const AppButton({
-    Key? key,
     required this.text,
     required this.onPressed,
     this.style = ButtonStyle.primary,
@@ -26,13 +25,14 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.isDisabled = false,
+    Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final isIconButton = icon != null;
-    
-    Widget buttonContent = Row(
+
+    final buttonContent = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (isLoading)
@@ -62,7 +62,7 @@ class AppButton extends StatelessWidget {
     );
 
     Widget button;
-    
+
     switch (style) {
       case ButtonStyle.primary:
         button = ElevatedButton(
@@ -121,13 +121,6 @@ class AppButton extends StatelessWidget {
         break;
     }
 
-    if (isFullWidth) {
-      return SizedBox(
-        width: double.infinity,
-        child: button,
-      );
-    }
-
     return button;
   }
 
@@ -145,4 +138,4 @@ class AppButton extends StatelessWidget {
         return AppColors.accentColor;
     }
   }
-} 
+}

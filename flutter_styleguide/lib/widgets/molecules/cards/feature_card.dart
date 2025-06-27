@@ -5,35 +5,34 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_dimensions.dart';
 
 /// A feature card component used to showcase features with an icon, title, and description
-/// 
+///
 /// This component is typically used on landing pages to highlight product features
 class FeatureCard extends StatelessWidget {
   /// The icon to display at the top of the card
   final IconData icon;
-  
+
   /// The title of the feature
   final String title;
-  
+
   /// The description of the feature
   final String description;
-  
+
   /// Optional width of the card
   final double? width;
-  
+
   /// Optional height of the card
   final double? height;
-  
+
   /// Optional padding inside the card
   final EdgeInsetsGeometry padding;
-  
+
   /// For testing purposes
   final bool isTestMode;
-  
+
   /// For testing purposes
   final bool testDarkMode;
 
   const FeatureCard({
-    Key? key,
     required this.icon,
     required this.title,
     required this.description,
@@ -42,6 +41,7 @@ class FeatureCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(24),
     this.isTestMode = false,
     this.testDarkMode = false,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -56,7 +56,7 @@ class FeatureCard extends StatelessWidget {
         isDarkMode = Theme.of(context).brightness == Brightness.dark;
       }
     }
-    
+
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     return Container(
@@ -101,4 +101,4 @@ class FeatureCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

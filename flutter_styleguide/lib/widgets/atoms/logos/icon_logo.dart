@@ -25,7 +25,6 @@ class IconLogo extends BaseLogo {
       assetName,
       width: width,
       height: height,
-      fit: BoxFit.contain,
       colorFilter: ColorFilter.mode(
         color,
         BlendMode.srcIn,

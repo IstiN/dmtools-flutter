@@ -7,7 +7,6 @@ import 'base_button.dart';
 /// Used for secondary actions on colored backgrounds like banners
 class WhiteOutlineButton extends BaseButton {
   const WhiteOutlineButton({
-    Key? key,
     required String text,
     VoidCallback? onPressed,
     ButtonSize size = ButtonSize.medium,
@@ -17,6 +16,7 @@ class WhiteOutlineButton extends BaseButton {
     bool isDisabled = false,
     bool isTestMode = false,
     bool testDarkMode = false,
+    Key? key,
   }) : super(
           key: key,
           text: text,
@@ -64,4 +64,4 @@ class WhiteOutlineButtonState extends BaseButtonState<WhiteOutlineButton> {
   BorderSide getHoverBorderSide(ThemeColorSet colors, bool isDarkMode) {
     return const BorderSide(color: Colors.white, width: AppDimensions.borderWidthRegular);
   }
-} 
+}

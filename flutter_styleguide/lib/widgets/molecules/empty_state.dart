@@ -11,11 +11,11 @@ class EmptyState extends StatefulWidget {
   final VoidCallback? onPressed;
 
   const EmptyState({
-    Key? key,
     required this.icon,
     required this.title,
     required this.message,
     this.onPressed,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -68,7 +68,6 @@ class _EmptyStateState extends State<EmptyState> {
               padding: const EdgeInsets.symmetric(vertical: 48.0, horizontal: 24.0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   AnimatedContainer(
                     duration: const Duration(milliseconds: 200),

@@ -146,12 +146,10 @@ class HomeScreen extends StatelessWidget {
                                         PrimaryButton(
                                           text: 'Get Started',
                                           onPressed: () {},
-                                          size: ButtonSize.medium,
                                         ),
                                         WhiteOutlineButton(
                                           text: 'Learn More',
                                           onPressed: () {},
-                                          size: ButtonSize.medium,
                                         ),
                                       ],
                                     ),
