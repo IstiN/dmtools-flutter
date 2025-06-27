@@ -42,7 +42,7 @@ class PrimaryButtonState extends BaseButtonState<PrimaryButton> {
 
   @override
   Color getTextColor(ThemeColorSet colors, bool isDarkMode) {
-    return Colors.white;
+    return colors.primaryTextOnAccent;
   }
 
   @override
@@ -52,7 +52,7 @@ class PrimaryButtonState extends BaseButtonState<PrimaryButton> {
 
   @override
   Color getHoverTextColor(ThemeColorSet colors, bool isDarkMode) {
-    return Colors.white;
+    return colors.primaryTextOnAccent;
   }
 
   @override
@@ -69,10 +69,10 @@ class PrimaryButtonState extends BaseButtonState<PrimaryButton> {
   List<BoxShadow> getHoverBoxShadows(ThemeColorSet colors, bool isDarkMode) {
     return [
       BoxShadow(
-        color: const Color(0xFF000000).withValues(alpha: 0.15),
+        color: colors.shadowColor,
         blurRadius: 12,
         offset: const Offset(0, 4),
       )
     ];
   }
-} 
+}

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../theme/app_colors.dart';
+import '../../theme/app_theme.dart';
 import 'dart:ui';
 
 class EmptyState extends StatefulWidget {
@@ -24,23 +27,28 @@ class _EmptyStateState extends State<EmptyState> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    // Try to get theme from provider, fallback to Theme.of(context) for tests
+    bool isDark = false;
+    try {
+      final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
+      isDark = themeProvider.isDarkMode;
+    } catch (e) {
+      // Fallback for tests where Provider might not be available
+      isDark = Theme.of(context).brightness == Brightness.dark;
+    }
+
+    final colors = isDark ? AppColors.dark : AppColors.light;
 
     // Colors based on the web version
-    final borderColor = _isHovering 
-        ? const Color(0xFF6078F0).withValues(alpha: 0.8)
-        : (isDark ? Colors.white.withValues(alpha: 0.2) : Colors.grey.withValues(alpha: 0.3));
-    
-    final iconColor = _isHovering
-        ? const Color(0xFF6078F0)
-        : const Color(0xFF6C757D);
-    
-    final titleColor = _isHovering
-        ? const Color(0xFF6078F0)
-        : (isDark ? Colors.white : const Color(0xFF212529));
-    
-    final messageColor = isDark ? Colors.white70 : const Color(0xFF6C757D);
+    final borderColor = _isHovering
+        ? colors.accentColor.withValues(alpha: 0.8)
+        : (isDark ? colors.whiteColor.withValues(alpha: 0.2) : colors.textMuted.withValues(alpha: 0.3));
+
+    final iconColor = _isHovering ? colors.accentColor : colors.textMuted;
+
+    final titleColor = _isHovering ? colors.accentColor : colors.textColor;
+
+    final messageColor = isDark ? colors.textSecondary : colors.textMuted;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovering = true),
@@ -104,31 +112,31 @@ class _EmptyStateState extends State<EmptyState> {
 
 class DashedBorderPainter extends CustomPainter {
   final Color borderColor;
-  
+
   DashedBorderPainter({
     required this.borderColor,
   });
-  
+
   @override
   void paint(Canvas canvas, Size size) {
     final Paint paint = Paint()
       ..color = borderColor
       ..strokeWidth = 2
       ..style = PaintingStyle.stroke;
-    
+
     final Path path = Path()
       ..addRRect(RRect.fromRectAndRadius(
         Rect.fromLTWH(0, 0, size.width, size.height),
         const Radius.circular(12),
       ));
-    
+
     final Path dashPath = Path();
-    
+
     const double dashWidth = 6.0;
     const double dashSpace = 4.0;
-    
+
     double distance = 0.0;
-    
+
     for (PathMetric pathMetric in path.computeMetrics()) {
       while (distance < pathMetric.length) {
         dashPath.addPath(
@@ -139,12 +147,12 @@ class DashedBorderPainter extends CustomPainter {
         distance += dashSpace;
       }
     }
-    
+
     canvas.drawPath(dashPath, paint);
   }
-  
+
   @override
   bool shouldRepaint(covariant DashedBorderPainter oldDelegate) {
     return oldDelegate.borderColor != borderColor;
   }
-} 
+}

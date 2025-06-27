@@ -18,3 +18,7 @@ Use "prototyping" folder for prototypes
 Commands to execute: "cd flutter_styleguide && flutter run -d chrome --web-experimental-hot-reloadter run -d chrome --web-experimental-hot-reload"
 
 Use README.MD to understand process of development in flutter styleguide.
+
+** IMPORTANT RULES **
+- You must not hardcode colors, yoy must use colors from styleguid lib.
+- You must not develop UI elements in main app - instead you must develop UI elements in styleguide, write tests, and then use the elements in main app.

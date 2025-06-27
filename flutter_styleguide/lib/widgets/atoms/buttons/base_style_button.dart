@@ -37,7 +37,7 @@ class BaseStyleButton extends BaseButton {
 class BaseStyleButtonState extends BaseButtonState<BaseStyleButton> {
   @override
   Color getBackgroundColor(ThemeColorSet colors, bool isDarkMode) {
-    return isDarkMode ? const Color(0xFF3A3A3A) : const Color(0xFFF1F5F9);
+    return colors.baseButtonBg;
   }
 
   @override
@@ -64,4 +64,4 @@ class BaseStyleButtonState extends BaseButtonState<BaseStyleButton> {
   BorderSide getHoverBorderSide(ThemeColorSet colors, bool isDarkMode) {
     return BorderSide(color: colors.accentColor, width: AppDimensions.borderWidthThin);
   }
-} 
+}

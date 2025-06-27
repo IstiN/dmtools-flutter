@@ -20,10 +20,10 @@ class CodeSnippet extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     final colors = isDarkMode ? AppColors.dark : AppColors.light;
-    
+
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? const Color(0xFF1E1E1E) : const Color(0xFFF5F5F5),
+        color: colors.codeBgColor,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: colors.borderColor,
@@ -37,7 +37,7 @@ class CodeSnippet extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: isDarkMode ? const Color(0xFF252526) : const Color(0xFFEAEAEA),
+              color: colors.codeHeaderBgColor,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(7),
                 topRight: Radius.circular(7),
@@ -76,7 +76,7 @@ class CodeSnippet extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Code content
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -88,7 +88,7 @@ class CodeSnippet extends StatelessWidget {
                   fontFamily: 'monospace',
                   fontSize: 14,
                   height: 1.5,
-                  color: isDarkMode ? Colors.white : Colors.black87,
+                  color: colors.textColor,
                 ),
               ),
             ),
@@ -97,4 +97,4 @@ class CodeSnippet extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -202,4 +202,4 @@ class AgentCard extends StatelessWidget {
       ),
     );
   }
-} 
+}

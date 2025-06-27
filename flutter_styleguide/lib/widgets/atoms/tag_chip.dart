@@ -32,7 +32,7 @@ class TagChip extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -47,12 +47,12 @@ class TagChip extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     // Define colors based on variant
     Color bgColor;
     Color textColor;
     Color borderColor;
-    
+
     switch (variant) {
       case TagChipVariant.primary:
         textColor = colors.accentColor;
@@ -103,4 +103,4 @@ class TagChip extends StatelessWidget {
       ),
     );
   }
-} 
+}
