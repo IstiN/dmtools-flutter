@@ -49,7 +49,7 @@ class _SearchFormState extends State<SearchForm> {
       isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
     }
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
-    
+
     return Container(
       height: 40,
       decoration: BoxDecoration(
@@ -96,18 +96,18 @@ class _SearchFormState extends State<SearchForm> {
               hoverColor: colors.accentHover,
               child: Container(
                 width: 100,
-                decoration: const BoxDecoration(
-                  color: Color(0xFF4169F9),
-                  borderRadius: BorderRadius.only(
+                decoration: BoxDecoration(
+                  color: colors.accentColor,
+                  borderRadius: const BorderRadius.only(
                     topRight: Radius.circular(4),
                     bottomRight: Radius.circular(4),
                   ),
                 ),
-                child: const Center(
+                child: Center(
                   child: Text(
                     'Search',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: colors.primaryTextOnAccent,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
                     ),
@@ -124,4 +124,4 @@ class _SearchFormState extends State<SearchForm> {
       ),
     );
   }
-} 
+}

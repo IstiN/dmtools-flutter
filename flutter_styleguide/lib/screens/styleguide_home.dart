@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../theme/app_theme.dart';
+import '../theme/app_colors.dart';
 import '../widgets/molecules/user_profile_button.dart';
 import '../widgets/atoms/logos/logos.dart';
 import '../widgets/molecules/headers/app_header.dart';
@@ -14,7 +15,6 @@ import 'styleguide_pages/headers_page.dart';
 import 'styleguide_pages/profile_page.dart';
 import 'styleguide_pages/auth_page.dart';
 
-
 class StyleguideHome extends StatefulWidget {
   const StyleguideHome({super.key});
 
@@ -27,14 +27,14 @@ class _NavigationItem {
   final String label;
 
   const _NavigationItem({
-    required this.icon, 
+    required this.icon,
     required this.label,
   });
 }
 
 class _StyleguideHomeState extends State<StyleguideHome> {
   int _selectedIndex = 0;
-  
+
   final List<Widget> _pages = [
     const WelcomePage(),
     const ColorsTypographyPage(),
@@ -79,6 +79,7 @@ class _StyleguideHomeState extends State<StyleguideHome> {
   Widget _buildDesktopLayout() {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
+    final colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     return Scaffold(
       appBar: PreferredSize(
@@ -108,7 +109,7 @@ class _StyleguideHomeState extends State<StyleguideHome> {
           _buildSidebar(context, isMobile: false),
           Container(
             width: 1,
-            color: isDarkMode ? const Color(0xFF2A2A2A) : const Color(0xFFEAEDF1),
+            color: colors.dividerColor,
           ),
           Expanded(
             child: Padding(
@@ -151,23 +152,17 @@ class _StyleguideHomeState extends State<StyleguideHome> {
       ),
     );
   }
-  
+
   Widget _buildSidebar(BuildContext context, {required bool isMobile}) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    
-    final Color bgColor = isDarkMode 
-        ? const Color(0xFF202124)
-        : Colors.white;
-    
-    final Color textColor = isDarkMode 
-        ? Colors.white70
-        : const Color(0xFF495057);
-    
-    final Color dividerColor = isDarkMode
-        ? const Color(0xFF2A2A2A) 
-        : const Color(0xFFEAEDF1);
-    
+    final colors = isDarkMode ? AppColors.dark : AppColors.light;
+
+    final Color bgColor = isDarkMode ? AppColors.darkSidebarBg : AppColors.lightSidebarBg;
+
+    final Color textColor = colors.textSecondary;
+    final Color dividerColor = colors.dividerColor;
+
     return Container(
       width: 240,
       color: bgColor,
@@ -190,8 +185,7 @@ class _StyleguideHomeState extends State<StyleguideHome> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                for (int i = 0; i < _navItems.length; i++)
-                  _buildNavItem(i, context, isMobile: isMobile),
+                for (int i = 0; i < _navItems.length; i++) _buildNavItem(i, context, isMobile: isMobile),
               ],
             ),
           ),
@@ -212,18 +206,17 @@ class _StyleguideHomeState extends State<StyleguideHome> {
       ),
     );
   }
-  
+
   Widget _buildNavItem(int index, BuildContext context, {required bool isMobile}) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
+    final colors = isDarkMode ? AppColors.dark : AppColors.light;
     final isSelected = _selectedIndex == index;
-    
-    final Color textColor = isDarkMode ? Colors.white70 : const Color(0xFF495057);
-    const Color selectedTextColor = Colors.white;
-    const Color selectedBgColor = Color(0xFF6078F0);
-    final Color hoverBgColor = isDarkMode 
-        ? const Color(0xFF5B7BF0).withValues(alpha: 0.15)
-        : const Color(0xFF466AF1).withValues(alpha: 0.08);
+
+    final Color textColor = colors.textSecondary;
+    const Color selectedTextColor = AppColors.primaryTextOnAccent;
+    const Color selectedBgColor = AppColors.selectedBgColor;
+    final Color hoverBgColor = isDarkMode ? AppColors.darkHoverBgColor : AppColors.lightHoverBgColor;
 
     return Container(
       margin: EdgeInsets.zero,
@@ -281,7 +274,7 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -305,7 +298,6 @@ class WelcomePage extends StatelessWidget {
           _buildBulletPoint('Reuse components to ensure consistency.', theme),
           _buildBulletPoint('Test components in isolation.', theme),
           _buildBulletPoint('Quickly reference design specifications.', theme),
-          
           const SizedBox(height: 24),
           Text(
             'Dependencies',
@@ -320,7 +312,6 @@ class WelcomePage extends StatelessWidget {
           _buildBulletPoint('Google Fonts - Used for typography throughout the application.', theme),
           _buildBulletPoint('Flutter SVG - Used for rendering SVG icons.', theme),
           _buildBulletPoint('Provider - Used for state management and theming.', theme),
-          
           const SizedBox(height: 24),
           Text(
             'Default view is Colors & Typography.',
@@ -330,7 +321,7 @@ class WelcomePage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildBulletPoint(String text, ThemeData theme) {
     return Padding(
       padding: const EdgeInsets.only(left: 16, bottom: 8),
@@ -345,4 +336,4 @@ class WelcomePage extends StatelessWidget {
       ),
     );
   }
-} 
+}

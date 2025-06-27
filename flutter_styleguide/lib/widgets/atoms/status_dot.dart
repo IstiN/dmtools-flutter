@@ -32,7 +32,7 @@ class StatusDot extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDarkMode;
     ThemeColorSet colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -47,10 +47,10 @@ class StatusDot extends StatelessWidget {
         colors = AppColors.light;
       }
     }
-    
+
     Color statusColor;
     String statusText = label ?? '';
-    
+
     switch (status) {
       case StatusType.online:
         statusColor = colors.successColor;
@@ -102,4 +102,4 @@ class StatusDot extends StatelessWidget {
       ],
     );
   }
-} 
+}
