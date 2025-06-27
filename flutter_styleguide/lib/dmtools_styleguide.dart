@@ -6,6 +6,10 @@ export 'theme/app_dimensions.dart';
 export 'theme/app_theme.dart';
 export 'core/services/auth_service.dart';
 
+// Responsive
+export 'widgets/responsive/responsive_breakpoints.dart';
+export 'widgets/responsive/responsive_builder.dart';
+
 // Atoms
 export 'widgets/atoms/buttons/app_buttons.dart';
 export 'widgets/atoms/status_dot.dart';
@@ -29,4 +33,4 @@ export 'widgets/organisms/chat_module.dart';
 export 'widgets/organisms/page_header.dart';
 export 'widgets/organisms/panel_base.dart';
 export 'widgets/organisms/welcome_banner.dart';
-export 'widgets/organisms/workspace_management.dart'; 
+export 'widgets/organisms/workspace_management.dart';

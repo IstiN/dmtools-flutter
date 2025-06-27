@@ -87,7 +87,7 @@ class RecentAgents extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Content
           Padding(
             padding: const EdgeInsets.all(20),
@@ -120,7 +120,7 @@ class RecentAgents extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Agent cards
                 ListView.builder(
                   shrinkWrap: true,
@@ -131,9 +131,9 @@ class RecentAgents extends StatelessWidget {
                     return _buildAgentItem(context, agent, colors);
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // View all button
                 SizedBox(
                   width: double.infinity,
@@ -150,10 +150,10 @@ class RecentAgents extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildAgentItem(BuildContext context, Map<String, dynamic> agent, ThemeColorSet colors) {
     final bool isActive = (agent['status'] as StatusType) == StatusType.online;
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -228,87 +228,83 @@ class RecentAgents extends StatelessWidget {
             children: (agent['tags'] as List<String>).map((tag) => _buildTag(tag)).toList(),
           ),
           const SizedBox(height: 16),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final bool isNarrow = constraints.maxWidth < 400;
-              
-              return isNarrow
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          children: [
-                            _buildStat(
-                              Icons.replay_circle_filled_outlined,
-                              'Runs',
-                              (agent['runCount'] as int).toString(),
-                              colors,
-                            ),
-                            const SizedBox(width: 24),
-                            _buildStat(
-                              Icons.access_time_outlined,
-                              'Last Run',
-                              agent['lastRunTime'] as String,
-                              colors,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.play_arrow, size: 16),
-                          label: const Text('Run'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: colors.accentColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            textStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Row(
-                      children: [
-                        _buildStat(
-                          Icons.replay_circle_filled_outlined,
-                          'Runs',
-                          (agent['runCount'] as int).toString(),
-                          colors,
-                        ),
-                        const SizedBox(width: 24),
-                        _buildStat(
-                          Icons.access_time_outlined,
-                          'Last Run',
-                          agent['lastRunTime'] as String,
-                          colors,
-                        ),
-                        const Spacer(),
-                        ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: const Icon(Icons.play_arrow, size: 16),
-                          label: const Text('Run'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: colors.accentColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            textStyle: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-            },
+          SimpleResponsiveBuilder(
+            breakpoint: ResponsiveBreakpoints.agentCardNarrowThreshold,
+            mobile: (context, constraints) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    _buildStat(
+                      Icons.replay_circle_filled_outlined,
+                      'Runs',
+                      (agent['runCount'] as int).toString(),
+                      colors,
+                    ),
+                    const SizedBox(width: 24),
+                    _buildStat(
+                      Icons.access_time_outlined,
+                      'Last Run',
+                      agent['lastRunTime'] as String,
+                      colors,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.play_arrow, size: 16),
+                  label: const Text('Run'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.accentColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            desktop: (context, constraints) => Row(
+              children: [
+                _buildStat(
+                  Icons.replay_circle_filled_outlined,
+                  'Runs',
+                  (agent['runCount'] as int).toString(),
+                  colors,
+                ),
+                const SizedBox(width: 24),
+                _buildStat(
+                  Icons.access_time_outlined,
+                  'Last Run',
+                  agent['lastRunTime'] as String,
+                  colors,
+                ),
+                const Spacer(),
+                ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.play_arrow, size: 16),
+                  label: const Text('Run'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: colors.accentColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    textStyle: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
-  
+
   Widget _buildTag(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -325,7 +321,7 @@ class RecentAgents extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildStat(IconData icon, String label, String value, ThemeColorSet colors) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -355,4 +351,4 @@ class RecentAgents extends StatelessWidget {
       ],
     );
   }
-} 
+}

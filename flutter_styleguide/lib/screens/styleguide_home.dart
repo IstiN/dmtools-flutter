@@ -5,6 +5,7 @@ import '../theme/app_colors.dart';
 import '../widgets/molecules/user_profile_button.dart';
 import '../widgets/atoms/logos/logos.dart';
 import '../widgets/molecules/headers/app_header.dart';
+import '../widgets/responsive/responsive_builder.dart';
 import 'styleguide_pages/colors_typography_page.dart';
 import 'styleguide_pages/atoms_page.dart';
 import 'styleguide_pages/molecules_page.dart';
@@ -63,16 +64,9 @@ class _StyleguideHomeState extends State<StyleguideHome> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth > 768) {
-          // Desktop layout
-          return _buildDesktopLayout();
-        } else {
-          // Mobile layout
-          return _buildMobileLayout();
-        }
-      },
+    return SimpleResponsiveBuilder(
+      mobile: (context, constraints) => _buildMobileLayout(),
+      desktop: (context, constraints) => _buildDesktopLayout(),
     );
   }
 

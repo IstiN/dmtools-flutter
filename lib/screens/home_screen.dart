@@ -11,9 +11,8 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final bool isWideScreen = screenWidth > 1200;
-    
+    final bool isWideScreen = ResponsiveUtils.isWideScreen(context);
+
     return Scaffold(
       body: Column(
         children: [
@@ -62,9 +61,7 @@ class HomeScreen extends StatelessWidget {
                 // Right side actions
                 IconButton(
                   icon: Icon(
-                    themeProvider.isDarkMode
-                        ? Icons.light_mode_outlined
-                        : Icons.dark_mode_outlined,
+                    themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
                     color: Colors.white,
                   ),
                   onPressed: () => themeProvider.toggleTheme(),
@@ -88,7 +85,7 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Content area with sidebar and main content
           Expanded(
             child: Row(
@@ -96,7 +93,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 // Sidebar navigation
                 const SidebarNavigation(selectedIndex: 0),
-                
+
                 // Main content
                 Expanded(
                   child: SingleChildScrollView(
@@ -108,8 +105,8 @@ class HomeScreen extends StatelessWidget {
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(32),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                               colors: [
@@ -117,87 +114,109 @@ class HomeScreen extends StatelessWidget {
                                 Color(0xFF2A4CC2),
                               ],
                             ),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                           ),
-                          child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              final bool showCircle = constraints.maxWidth > 600;
-                              return Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      'Welcome to DMTools',
+                                      style: TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    const Text(
+                                      'Build, deploy, and manage AI agents with our powerful platform.',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white,
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    Wrap(
+                                      spacing: 16,
+                                      runSpacing: 16,
                                       children: [
-                                        const Text(
-                                          'Welcome to DMTools',
-                                          style: TextStyle(
-                                            fontSize: 28,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
+                                        PrimaryButton(
+                                          text: 'Get Started',
+                                          onPressed: () {},
+                                          size: ButtonSize.medium,
                                         ),
-                                        const SizedBox(height: 12),
-                                        const Text(
-                                          'Build, deploy, and manage AI agents with our powerful platform.',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            color: Colors.white,
-                                            height: 1.5,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 24),
-                                        Wrap(
-                                          spacing: 16,
-                                          runSpacing: 16,
-                                          children: [
-                                            PrimaryButton(
-                                              text: 'Get Started',
-                                              onPressed: () {},
-                                              size: ButtonSize.medium,
-                                            ),
-                                            WhiteOutlineButton(
-                                              text: 'Learn More',
-                                              onPressed: () {},
-                                              size: ButtonSize.medium,
-                                            ),
-                                          ],
+                                        WhiteOutlineButton(
+                                          text: 'Learn More',
+                                          onPressed: () {},
+                                          size: ButtonSize.medium,
                                         ),
                                       ],
                                     ),
+                                  ],
+                                ),
+                              ),
+                              const ResponsiveWidget(
+                                tablet: SizedBox(width: 24),
+                                desktop: SizedBox(width: 24),
+                              ),
+                              ResponsiveWidget(
+                                tablet: Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
                                   ),
-                                  if (showCircle) ...[
-                                    const SizedBox(width: 24),
-                                                                        Container(
-                                      width: 120,
-                                      height: 120,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white,
-                                      ),
-                                      child: const Center(
-                                        child: Text(
-                                            'Tools',
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFF2A4CC2),
-                                            ),
-                                          ),
+                                  child: const Center(
+                                    child: Text(
+                                      'Tools',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2A4CC2),
                                       ),
                                     ),
-                                  ],
-                                ],
-                              );
-                            },
+                                  ),
+                                ),
+                                desktop: Container(
+                                  width: 120,
+                                  height: 120,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  child: const Center(
+                                    child: Text(
+                                      'Tools',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF2A4CC2),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 32),
-                        
+
                         // Workspace and agents summary
-                        if (isWideScreen)
-                          // Wide layout - side by side
-                          const Row(
+                        const ResponsiveWidget(
+                          mobile: Column(
+                            children: [
+                              WorkspaceSummary(),
+                              SizedBox(height: 24),
+                              RecentAgents(),
+                            ],
+                          ),
+                          desktop: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Workspace summary
@@ -205,29 +224,17 @@ class HomeScreen extends StatelessWidget {
                                 flex: 2,
                                 child: WorkspaceSummary(),
                               ),
-                              
+
                               SizedBox(width: 24),
-                              
+
                               // Recent agents
                               Expanded(
                                 flex: 3,
                                 child: RecentAgents(),
                               ),
                             ],
-                          )
-                        else
-                          // Narrow layout - stacked
-                          const Column(
-                            children: [
-                              // Workspace summary
-                              WorkspaceSummary(),
-                              
-                              SizedBox(height: 24),
-                              
-                              // Recent agents
-                              RecentAgents(),
-                            ],
                           ),
+                        ),
                       ],
                     ),
                   ),
@@ -239,4 +246,4 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}
