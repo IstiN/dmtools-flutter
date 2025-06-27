@@ -22,4 +22,7 @@ plugins {
     id("org.jetbrains.kotlin.android") version "2.1.0" apply false
 }
 
+// Set unique root project name for main app
+rootProject.name = "dmtools_android"
+
 include(":app")

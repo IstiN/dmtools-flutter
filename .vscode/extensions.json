@@ -1,0 +1,17 @@
+{
+  "recommendations": [
+    "dart-code.dart-code",
+    "dart-code.flutter",
+    "ms-vscode.vscode-json",
+    "bradlc.vscode-tailwindcss",
+    "usernamehw.errorlens",
+    "gruntfuggly.todo-tree",
+    "streetsidesoftware.code-spell-checker",
+    "ms-vscode.vscode-typescript-next",
+    "formulahendry.auto-rename-tag",
+    "ms-vscode.vscode-yaml"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript"
+  ]
+} 
