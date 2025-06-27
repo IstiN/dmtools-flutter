@@ -1,0 +1,177 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.x"
+          channel: "stable"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Install dependencies - Main App
+        run: flutter pub get
+
+      - name: Install dependencies - Styleguide
+        run: |
+          cd flutter_styleguide
+          flutter pub get
+          cd ..
+
+      - name: Run tests - Main App
+        run: flutter test
+
+      - name: Run tests - Styleguide
+        run: |
+          cd flutter_styleguide
+          flutter test
+          cd ..
+
+      - name: Build Main App for Web
+        run: |
+          flutter build web --release --csp --source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/
+
+      - name: Build Styleguide for Web
+        run: |
+          cd flutter_styleguide
+          flutter build web --release --csp --source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/styleguide/
+          cd ..
+
+      - name: Create deployment structure
+        run: |
+          # Create the deployment directory
+          mkdir -p _site
+
+          # Copy main app to root
+          cp -r build/web/* _site/
+
+          # Create styleguide subdirectory and copy styleguide build
+          mkdir -p _site/styleguide
+          cp -r flutter_styleguide/build/web/* _site/styleguide/
+
+          # Create a simple navigation index that links to both apps
+          cat > _site/navigation.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>DMTools Flutter - Navigation</title>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <style>
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                      max-width: 800px;
+                      margin: 50px auto;
+                      padding: 20px;
+                      background: #f8f9fa;
+                  }
+                  .container {
+                      background: white;
+                      padding: 40px;
+                      border-radius: 12px;
+                      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                  }
+                  h1 { color: #2c3e50; margin-bottom: 30px; }
+                  .app-links {
+                      display: grid;
+                      gap: 20px;
+                      margin-top: 30px;
+                  }
+                  .app-link {
+                      display: block;
+                      padding: 20px;
+                      background: #007bff;
+                      color: white;
+                      text-decoration: none;
+                      border-radius: 8px;
+                      transition: background 0.2s;
+                      text-align: center;
+                  }
+                  .app-link:hover {
+                      background: #0056b3;
+                  }
+                  .app-link.styleguide {
+                      background: #28a745;
+                  }
+                  .app-link.styleguide:hover {
+                      background: #1e7e34;
+                  }
+                  .description {
+                      color: #6c757d;
+                      margin-top: 10px;
+                      font-size: 14px;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <h1>🚀 DMTools Flutter</h1>
+                  <p>Welcome to the DMTools AI Agent Management Platform built with Flutter.</p>
+                  
+                  <div class="app-links">
+                      <a href="/" class="app-link">
+                          <div><strong>📱 Main Application</strong></div>
+                          <div class="description">The core DMTools AI Agent Management Platform</div>
+                      </a>
+                      
+                      <a href="/styleguide/" class="app-link styleguide">
+                          <div><strong>🎨 Design System & Styleguide</strong></div>
+                          <div class="description">Interactive component library and design system documentation</div>
+                      </a>
+                  </div>
+                  
+                  <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6;">
+                      <p style="color: #6c757d; font-size: 14px; text-align: center;">
+                          Built with Flutter • 
+                          <a href="https://github.com/IstiN/dmtools-flutter" style="color: #007bff;">View on GitHub</a>
+                      </p>
+                  </div>
+              </div>
+          </body>
+          </html>
+          EOF
+
+          # List the deployment structure for debugging
+          echo "Deployment structure:"
+          find _site -type f -name "*.html" | head -10
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "_site"
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

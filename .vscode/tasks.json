@@ -175,6 +175,59 @@
         "clear": false
       },
       "problemMatcher": []
+    },
+    {
+      "label": "Flutter: Build Web Production SPA",
+      "type": "shell",
+      "command": "flutter",
+      "args": [
+        "build",
+        "web",
+        "--release",
+        "--csp",
+        "--source-maps",
+        "--tree-shake-icons",
+        "--optimization-level=4",
+        "--pwa-strategy=offline-first"
+      ],
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Styleguide: Build Web Production SPA",
+      "type": "shell",
+      "command": "flutter",
+      "args": [
+        "build",
+        "web",
+        "--release",
+        "--csp",
+        "--source-maps",
+        "--tree-shake-icons",
+        "--optimization-level=4",
+        "--pwa-strategy=offline-first"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/flutter_styleguide"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
     }
   ]
 } 
