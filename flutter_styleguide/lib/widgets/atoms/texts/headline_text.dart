@@ -7,20 +7,14 @@ import 'base_text.dart';
 class LargeHeadlineText extends BaseText {
   const LargeHeadlineText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -30,20 +24,14 @@ class LargeHeadlineText extends BaseText {
 class MediumHeadlineText extends BaseText {
   const MediumHeadlineText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -53,20 +41,14 @@ class MediumHeadlineText extends BaseText {
 class SmallHeadlineText extends BaseText {
   const SmallHeadlineText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override

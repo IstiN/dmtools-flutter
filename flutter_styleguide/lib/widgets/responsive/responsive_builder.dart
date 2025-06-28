@@ -20,13 +20,13 @@ class ResponsiveBuilder extends StatelessWidget {
   final Widget Function(BuildContext context, BoxConstraints constraints)? defaultBuilder;
 
   const ResponsiveBuilder({
-    Key? key,
+    super.key,
     this.mobile,
     this.tablet,
     this.desktop,
     this.wideDesktop,
     this.defaultBuilder,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +84,8 @@ class SimpleResponsiveBuilder extends StatelessWidget {
     required this.mobile,
     required this.desktop,
     this.breakpoint,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +126,8 @@ class ResponsiveWidget extends StatelessWidget {
     this.desktop,
     this.wideDesktop,
     this.defaultWidget,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

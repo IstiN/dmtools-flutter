@@ -14,9 +14,9 @@ class StatusDot extends StatelessWidget {
   final double size;
 
   const StatusDot({
-    required this.status, Key? key,
+    required this.status, super.key,
     this.size = 10.0,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

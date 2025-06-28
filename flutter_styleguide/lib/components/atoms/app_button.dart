@@ -25,8 +25,8 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.isDisabled = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

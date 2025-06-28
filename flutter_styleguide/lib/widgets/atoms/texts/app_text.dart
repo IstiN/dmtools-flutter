@@ -11,6 +11,7 @@
 ///
 /// NOTE: The old single-file implementation at 'widgets/atoms/app_text.dart' has been deprecated
 /// and removed in favor of this more organized approach with separate files for each text type.
+library;
 
 export 'base_text.dart';
 export 'display_text.dart';

@@ -4,17 +4,12 @@ import 'base_logo.dart';
 
 class IconLogo extends BaseLogo {
   const IconLogo({
-    Key? key,
-    LogoSize size = LogoSize.medium,
-    bool isDarkMode = false,
-    bool isTestMode = false,
+    super.key,
+    super.size,
+    super.isDarkMode,
+    super.isTestMode,
     bool testDarkMode = false,
-  }) : super(
-          key: key,
-          size: size,
-          isDarkMode: isDarkMode,
-          isTestMode: isTestMode,
-        );
+  });
 
   @override
   Widget buildLogo(bool isDark) {

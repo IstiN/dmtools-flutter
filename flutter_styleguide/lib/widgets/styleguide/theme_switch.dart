@@ -7,8 +7,8 @@ class ThemeSwitch extends StatelessWidget {
   const ThemeSwitch({
     required this.isDarkMode,
     required this.onToggle,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

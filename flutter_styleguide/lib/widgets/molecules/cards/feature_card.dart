@@ -41,8 +41,8 @@ class FeatureCard extends StatelessWidget {
     this.padding = const EdgeInsets.all(24),
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

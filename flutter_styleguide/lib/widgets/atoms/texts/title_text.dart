@@ -7,20 +7,14 @@ import 'base_text.dart';
 class LargeTitleText extends BaseText {
   const LargeTitleText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -30,20 +24,14 @@ class LargeTitleText extends BaseText {
 class MediumTitleText extends BaseText {
   const MediumTitleText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -53,20 +41,14 @@ class MediumTitleText extends BaseText {
 class SmallTitleText extends BaseText {
   const SmallTitleText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override

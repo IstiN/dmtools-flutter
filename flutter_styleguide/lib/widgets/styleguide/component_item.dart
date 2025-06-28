@@ -11,8 +11,8 @@ class ComponentItem extends StatelessWidget {
     required this.title,
     required this.child,
     this.codeSnippet,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

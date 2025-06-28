@@ -18,7 +18,7 @@ class WelcomeBanner extends StatelessWidget {
   final String? logoAssetPath;
 
   const WelcomeBanner({
-    required this.title, required this.subtitle, Key? key,
+    required this.title, required this.subtitle, super.key,
     this.onPrimaryAction,
     this.onSecondaryAction,
     this.primaryActionText = 'Get Started',
@@ -26,7 +26,7 @@ class WelcomeBanner extends StatelessWidget {
     this.isTestMode = false,
     this.testDarkMode = false,
     this.logoAssetPath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

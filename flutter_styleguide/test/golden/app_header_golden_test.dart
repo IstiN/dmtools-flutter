@@ -1,95 +1,164 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:alchemist/alchemist.dart';
 import 'package:dmtools_styleguide/widgets/molecules/headers/app_header.dart';
 import 'package:dmtools_styleguide/widgets/molecules/user_profile_button.dart';
-import '../golden_test_helper.dart';
+import '../golden_test_helper.dart' as helper;
 
 void main() {
-  group('AppHeader Golden Tests', () {
-    testGoldens('AppHeader with search and title', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'app_header_with_title',
-        widget: AppHeader(
-          searchHintText: 'Search agents and apps...',
-          searchWidth: 400,
-          onSearch: (_) {},
-          onProfilePressed: () {},
-          onLogoPressed: () {},
-          onThemeToggle: () {},
-          isTestMode: true,
-          profileButton: const UserProfileButton(
-            userName: 'Test User',
-            isTestMode: true,
+  group('App Header Golden Tests', () {
+    goldenTest(
+      'App Header - Light Mode',
+      fileName: 'app_header_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'app_header_light',
+            child: SizedBox(
+              width: 1000,
+              height: 150,
+              child: helper.createTestApp(_buildAppHeader()),
+            ),
           ),
-        ),
-        width: 800,
-        height: 80,
-      );
-    });
+        ],
+      ),
+    );
 
-    testGoldens('AppHeader with search without title', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'app_header_without_title',
-        widget: AppHeader(
-          searchHintText: 'Search agents and apps...',
-          searchWidth: 400,
-          showTitle: false,
-          onSearch: (_) {},
-          onProfilePressed: () {},
-          onLogoPressed: () {},
-          onThemeToggle: () {},
-          isTestMode: true,
-          profileButton: const UserProfileButton(
-            userName: 'Test User',
-            isTestMode: true,
+    goldenTest(
+      'App Header - Dark Mode',
+      fileName: 'app_header_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'app_header_dark',
+            child: SizedBox(
+              width: 1000,
+              height: 150,
+              child: helper.createTestApp(_buildAppHeader(), darkMode: true),
+            ),
           ),
-        ),
-        width: 800,
-        height: 80,
-      );
-    });
+        ],
+      ),
+    );
 
-    testGoldens('AppHeader without search', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'app_header_no_search',
-        widget: AppHeader(
-          showSearch: false,
-          onProfilePressed: () {},
-          onLogoPressed: () {},
-          onThemeToggle: () {},
-          isTestMode: true,
-          profileButton: const UserProfileButton(
-            userName: 'Test User',
-            isTestMode: true,
+    goldenTest(
+      'App Header with Title - Light Mode',
+      fileName: 'app_header_with_title_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'app_header_with_title_light',
+            child: SizedBox(
+              width: 1000,
+              height: 150,
+              child: helper.createTestApp(_buildAppHeaderWithTitle()),
+            ),
           ),
-        ),
-        width: 800,
-        height: 80,
-      );
-    });
+        ],
+      ),
+    );
 
-    testGoldens('AppHeader with hamburger menu', (WidgetTester tester) async {
-      await GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'app_header_hamburger_menu',
-        widget: AppHeader(
-          showSearch: false,
-          showTitle: false,
-          showHamburgerMenu: true,
-          onHamburgerPressed: () {},
-          onThemeToggle: () {},
-          isTestMode: true,
-          profileButton: const UserProfileButton(
-            userName: 'Test User',
-            isTestMode: true,
+    goldenTest(
+      'App Header with Title - Dark Mode',
+      fileName: 'app_header_with_title_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'app_header_with_title_dark',
+            child: SizedBox(
+              width: 1000,
+              height: 150,
+              child: helper.createTestApp(_buildAppHeaderWithTitle(), darkMode: true),
+            ),
           ),
-        ),
-        width: 400,
-        height: 80,
-      );
-    });
+        ],
+      ),
+    );
+
+    goldenTest(
+      'App Header without Search - Light Mode',
+      fileName: 'app_header_no_search_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'app_header_no_search_light',
+            child: SizedBox(
+              width: 1000,
+              height: 150,
+              child: helper.createTestApp(_buildAppHeaderNoSearch()),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'App Header without Search - Dark Mode',
+      fileName: 'app_header_no_search_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'app_header_no_search_dark',
+            child: SizedBox(
+              width: 1000,
+              height: 150,
+              child: helper.createTestApp(_buildAppHeaderNoSearch(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
   });
+}
+
+Widget _buildAppHeader() {
+  return Scaffold(
+    body: AppHeader(
+      searchHintText: 'Search agents and apps...',
+      searchWidth: 400,
+      onSearch: (_) {},
+      onProfilePressed: () {},
+      onLogoPressed: () {},
+      onThemeToggle: () {},
+      isTestMode: true,
+      profileButton: const UserProfileButton(
+        userName: 'Test User',
+        isTestMode: true,
+      ),
+    ),
+  );
+}
+
+Widget _buildAppHeaderWithTitle() {
+  return Scaffold(
+    body: AppHeader(
+      searchHintText: 'Search agents and apps...',
+      searchWidth: 400,
+      onSearch: (_) {},
+      onProfilePressed: () {},
+      onLogoPressed: () {},
+      onThemeToggle: () {},
+      isTestMode: true,
+      profileButton: const UserProfileButton(
+        userName: 'Test User',
+        isTestMode: true,
+      ),
+    ),
+  );
+}
+
+Widget _buildAppHeaderNoSearch() {
+  return Scaffold(
+    body: AppHeader(
+      showSearch: false,
+      onProfilePressed: () {},
+      onLogoPressed: () {},
+      onThemeToggle: () {},
+      isTestMode: true,
+      profileButton: const UserProfileButton(
+        userName: 'Test User',
+        isTestMode: true,
+      ),
+    ),
+  );
 }

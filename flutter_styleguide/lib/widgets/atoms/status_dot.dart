@@ -25,8 +25,8 @@ class StatusDot extends StatelessWidget {
     this.showLabel = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

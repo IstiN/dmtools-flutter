@@ -1,34 +1,22 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
-import '../../../theme/app_dimensions.dart';
 import 'base_button.dart';
 
 /// Base style button component with light background and border
 /// Used for basic actions or as a foundation for custom buttons
 class BaseStyleButton extends BaseButton {
   const BaseStyleButton({
-    required String text,
-    VoidCallback? onPressed,
-    ButtonSize size = ButtonSize.medium,
-    IconData? icon,
-    bool isFullWidth = false,
-    bool isLoading = false,
-    bool isDisabled = false,
-    bool isTestMode = false,
-    bool testDarkMode = false,
-    Key? key,
-  }) : super(
-          key: key,
-          text: text,
-          onPressed: onPressed,
-          size: size,
-          icon: icon,
-          isFullWidth: isFullWidth,
-          isLoading: isLoading,
-          isDisabled: isDisabled,
-          isTestMode: isTestMode,
-          testDarkMode: testDarkMode,
-        );
+    required super.text,
+    super.onPressed,
+    super.size,
+    super.icon,
+    super.isFullWidth,
+    super.isLoading,
+    super.isDisabled,
+    super.isTestMode,
+    super.testDarkMode,
+    super.key,
+  });
 
   @override
   BaseStyleButtonState createState() => BaseStyleButtonState();

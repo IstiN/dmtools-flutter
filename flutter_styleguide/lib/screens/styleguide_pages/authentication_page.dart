@@ -4,7 +4,7 @@ import '../../widgets/molecules/login_provider_selector.dart';
 import '../../theme/app_dimensions.dart';
 
 class AuthenticationPage extends StatelessWidget {
-  const AuthenticationPage({Key? key}) : super(key: key);
+  const AuthenticationPage({super.key});
 
   @override
   Widget build(BuildContext context) {

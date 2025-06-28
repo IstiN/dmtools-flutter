@@ -11,6 +11,7 @@
 ///
 /// NOTE: The old single-file implementation at 'widgets/atoms/app_button.dart' has been deprecated
 /// and removed in favor of this more organized approach with separate files for each button type.
+library;
 
 export 'base_button.dart';
 export 'primary_button.dart';

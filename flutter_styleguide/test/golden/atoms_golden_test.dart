@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:golden_toolkit/golden_toolkit.dart';
+import 'package:alchemist/alchemist.dart';
 import 'package:dmtools_styleguide/theme/app_dimensions.dart';
 import 'package:dmtools_styleguide/widgets/atoms/buttons/app_buttons.dart';
 import 'package:dmtools_styleguide/widgets/atoms/form_elements.dart';
@@ -11,137 +11,145 @@ import '../golden_test_helper.dart' as helper;
 
 void main() {
   setUpAll(() async {
-    await helper.loadAppFonts();
+    await helper.GoldenTestHelper.loadAppFonts();
   });
 
   group('Atoms Golden Tests', () {
-    testGoldens('All Buttons - Light Mode', (tester) async {
-      const devices = [Device.phone];
+    goldenTest(
+      'All Buttons - Light Mode',
+      fileName: 'all_buttons_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_buttons_light',
+            child: SizedBox(
+              width: 600,
+              height: 500,
+              child: helper.createTestApp(_buildAllButtons()),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      await tester.pumpWidgetBuilder(
-        _buildAllButtons(),
-        wrapper: (child) => helper.createTestApp(child),
-        surfaceSize: const Size(400, 600),
-      );
+    goldenTest(
+      'All Buttons - Dark Mode',
+      fileName: 'all_buttons_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_buttons_dark',
+            child: SizedBox(
+              width: 600,
+              height: 500,
+              child: helper.createTestApp(_buildAllButtons(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      await multiScreenGolden(
-        tester,
-        'all_buttons_light',
-        devices: devices,
-      );
-    });
+    goldenTest(
+      'All Form Elements - Light Mode',
+      fileName: 'all_form_elements_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_form_elements_light',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildAllFormElements()),
+            ),
+          ),
+        ],
+      ),
+    );
 
-    testGoldens('All Buttons - Dark Mode', (tester) async {
-      const devices = [Device.phone];
+    goldenTest(
+      'All Form Elements - Dark Mode',
+      fileName: 'all_form_elements_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_form_elements_dark',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildAllFormElements(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      await tester.pumpWidgetBuilder(
-        _buildAllButtons(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: true),
-        surfaceSize: const Size(400, 600),
-      );
+    goldenTest(
+      'All Text Elements - Light Mode',
+      fileName: 'all_text_elements_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_text_elements_light',
+            child: SizedBox(
+              width: 500,
+              height: 600,
+              child: helper.createTestApp(_buildAllTextElements()),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      await multiScreenGolden(
-        tester,
-        'all_buttons_dark',
-        devices: devices,
-      );
-    });
+    goldenTest(
+      'All Text Elements - Dark Mode',
+      fileName: 'all_text_elements_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_text_elements_dark',
+            child: SizedBox(
+              width: 500,
+              height: 600,
+              child: helper.createTestApp(_buildAllTextElements(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
 
-    testGoldens('All Form Elements - Light Mode', (tester) async {
-      const devices = [Device.phone];
+    goldenTest(
+      'All Tags & Status - Light Mode',
+      fileName: 'all_tags_status_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_tags_status_light',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildAllTagsAndStatus()),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      await tester.pumpWidgetBuilder(
-        _buildAllFormElements(),
-        wrapper: (child) => helper.createTestApp(child),
-        surfaceSize: const Size(400, 600),
-      );
-
-      await multiScreenGolden(
-        tester,
-        'all_form_elements_light',
-        devices: devices,
-      );
-    });
-
-    testGoldens('All Form Elements - Dark Mode', (tester) async {
-      const devices = [Device.phone];
-
-      await tester.pumpWidgetBuilder(
-        _buildAllFormElements(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: true),
-        surfaceSize: const Size(400, 600),
-      );
-
-      await multiScreenGolden(
-        tester,
-        'all_form_elements_dark',
-        devices: devices,
-      );
-    });
-
-    testGoldens('All Text Elements - Light Mode', (tester) async {
-      const devices = [Device.phone];
-
-      await tester.pumpWidgetBuilder(
-        _buildAllTextElements(),
-        wrapper: (child) => helper.createTestApp(child),
-        surfaceSize: const Size(400, 600),
-      );
-
-      await multiScreenGolden(
-        tester,
-        'all_text_elements_light',
-        devices: devices,
-      );
-    });
-
-    testGoldens('All Text Elements - Dark Mode', (tester) async {
-      const devices = [Device.phone];
-
-      await tester.pumpWidgetBuilder(
-        _buildAllTextElements(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: true),
-        surfaceSize: const Size(400, 600),
-      );
-
-      await multiScreenGolden(
-        tester,
-        'all_text_elements_dark',
-        devices: devices,
-      );
-    });
-
-    testGoldens('All Tags & Status - Light Mode', (tester) async {
-      const devices = [Device.phone];
-
-      await tester.pumpWidgetBuilder(
-        _buildAllTagsAndStatus(),
-        wrapper: (child) => helper.createTestApp(child),
-        surfaceSize: const Size(400, 600),
-      );
-
-      await multiScreenGolden(
-        tester,
-        'all_tags_status_light',
-        devices: devices,
-      );
-    });
-
-    testGoldens('All Tags & Status - Dark Mode', (tester) async {
-      const devices = [Device.phone];
-
-      await tester.pumpWidgetBuilder(
-        _buildAllTagsAndStatus(),
-        wrapper: (child) => helper.createTestApp(child, darkMode: true),
-        surfaceSize: const Size(400, 600),
-      );
-
-      await multiScreenGolden(
-        tester,
-        'all_tags_status_dark',
-        devices: devices,
-      );
-    });
+    goldenTest(
+      'All Tags & Status - Dark Mode',
+      fileName: 'all_tags_status_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'all_tags_status_dark',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildAllTagsAndStatus(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
   });
 }
 
@@ -175,8 +183,8 @@ Widget _buildAllButtons() {
             onPressed: () {},
           ),
           const SizedBox(height: 16),
-          
-          // Secondary Buttons  
+
+          // Secondary Buttons
           const SecondaryButton(text: 'Secondary'),
           const SizedBox(height: 8),
           const SecondaryButton(
@@ -199,7 +207,7 @@ Widget _buildAllButtons() {
             onPressed: () {},
           ),
           const SizedBox(height: 16),
-          
+
           // Other button types
           const OutlineButton(text: 'Outline'),
           const SizedBox(height: 8),
@@ -278,4 +286,4 @@ Widget _buildAllTagsAndStatus() {
       ),
     ),
   );
-} 
+}

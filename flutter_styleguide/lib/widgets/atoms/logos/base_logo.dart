@@ -12,11 +12,11 @@ abstract class BaseLogo extends StatelessWidget {
   final bool isTestMode;
 
   const BaseLogo({
-    Key? key,
+    super.key,
     this.size = LogoSize.medium,
     this.isDarkMode = false,
     this.isTestMode = false,
-  }) : super(key: key);
+  });
 
   double get height {
     switch (size) {

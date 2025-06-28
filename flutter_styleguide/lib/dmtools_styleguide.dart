@@ -1,4 +1,4 @@
-library dmtools_styleguide;
+library;
 
 // Models
 export 'models/agent.dart';

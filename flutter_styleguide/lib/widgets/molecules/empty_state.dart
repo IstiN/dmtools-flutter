@@ -15,8 +15,8 @@ class EmptyState extends StatefulWidget {
     required this.title,
     required this.message,
     this.onPressed,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<EmptyState> createState() => _EmptyStateState();

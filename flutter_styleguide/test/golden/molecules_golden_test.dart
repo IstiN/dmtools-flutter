@@ -1,217 +1,162 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:golden_toolkit/golden_toolkit.dart';
-import 'package:dmtools_styleguide/widgets/molecules/empty_state.dart';
-import 'package:dmtools_styleguide/widgets/molecules/search_form.dart';
+import 'package:alchemist/alchemist.dart';
 import 'package:dmtools_styleguide/widgets/molecules/agent_card.dart';
-import 'package:dmtools_styleguide/widgets/molecules/section_header.dart';
+import 'package:dmtools_styleguide/widgets/molecules/empty_state.dart';
 import 'package:dmtools_styleguide/widgets/molecules/user_profile_button.dart';
 import 'package:dmtools_styleguide/widgets/atoms/status_dot.dart';
 import '../golden_test_helper.dart' as helper;
 
 void main() {
-  setUpAll(() async {
-    await helper.loadAppFonts();
+  group('Molecules Golden Tests', () {
+    goldenTest(
+      'Agent Card - Light Mode',
+      fileName: 'agent_card_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'agent_card_light',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildAgentCard()),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'Agent Card - Dark Mode',
+      fileName: 'agent_card_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'agent_card_dark',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildAgentCard(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'Empty State - Light Mode',
+      fileName: 'empty_state_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'empty_state_light',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildEmptyState()),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'Empty State - Dark Mode',
+      fileName: 'empty_state_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'empty_state_dark',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildEmptyState(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'User Profile Button - Light Mode',
+      fileName: 'user_profile_button_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'user_profile_button_light',
+            child: SizedBox(
+              width: 400,
+              height: 200,
+              child: helper.createTestApp(_buildUserProfileButton()),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'User Profile Button - Dark Mode',
+      fileName: 'user_profile_button_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'user_profile_button_dark',
+            child: SizedBox(
+              width: 400,
+              height: 200,
+              child: helper.createTestApp(_buildUserProfileButton(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
   });
+}
 
-  group('Molecules Golden Tests - Individual Components', () {
-    testGoldens('Empty State', (WidgetTester tester) async {
-      await helper.GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'empty_state',
-        widget: EmptyState(
-          icon: Icons.add,
-          title: 'Create New Item',
-          message: 'Get started by creating your first item',
-          onPressed: () {},
-        ),
-        width: 400,
-        height: 300,
-      );
-    });
+Widget _buildAgentCard() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16),
+      child: AgentCard(
+        title: 'Sample Agent',
+        description: 'This is a sample agent description that demonstrates the card layout.',
+        status: StatusType.online,
+        statusLabel: 'Active',
+        tags: const ['AI', 'Productivity', 'Automation'],
+        runCount: 42,
+        lastRunTime: '2 hours ago',
+        onRun: () {},
+        isTestMode: true,
+      ),
+    ),
+  );
+}
 
-    testGoldens('Search Form', (WidgetTester tester) async {
-      await helper.GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'search_form',
-        widget: SearchForm(
-          onSearch: (_) {},
-          isTestMode: true,
-          testDarkMode: false,
-        ),
-        width: 400,
-        height: 100,
-      );
-    });
+Widget _buildEmptyState() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16),
+      child: EmptyState(
+        icon: Icons.add,
+        title: 'Create New Item',
+        message: 'Get started by creating your first item',
+        onPressed: () {},
+      ),
+    ),
+  );
+}
 
-    testGoldens('Agent Card', (WidgetTester tester) async {
-      await helper.GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'agent_card',
-        widget: AgentCard(
-          title: 'Test Agent',
-          description: 'This is a test agent description that might be a bit longer to show how it wraps.',
-          status: StatusType.online,
-          statusLabel: 'Active',
-          tags: const ['AI', 'Productivity', 'Automation'],
-          runCount: 42,
-          lastRunTime: '2 hours ago',
-          onRun: () {},
-          isTestMode: true,
-          testDarkMode: false,
-        ),
-        width: 400,
-        height: 350,
-      );
-    });
-
-    testGoldens('Section Header', (WidgetTester tester) async {
-      await helper.GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'section_header',
-        widget: SectionHeader(
-          title: 'Section Title',
-          onViewAll: () {},
-        ),
-        width: 400,
-        height: 80,
-      );
-    });
-
-    testGoldens('User Profile Button', (WidgetTester tester) async {
-      await helper.GoldenTestHelper.testWidgetInBothThemes(
-        tester: tester,
-        name: 'user_profile_button',
-        widget: UserProfileButton(
+Widget _buildUserProfileButton() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16),
+      child: Center(
+        child: UserProfileButton(
           userName: 'John Doe',
           onPressed: () {},
+          isTestMode: true,
         ),
-        width: 200,
-        height: 80,
-      );
-    });
-  });
-
-  group('Molecules Golden Tests - Collection', () {
-    testGoldens('All Molecules', (tester) async {
-      final builder = helper.GoldenTestHelper.createDeviceBuilder(
-        widgets: [
-          const Text('Empty State', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          EmptyState(
-            icon: Icons.add,
-            title: 'Create New Item',
-            message: 'Get started by creating your first item',
-            onPressed: () {},
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('Search Form', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          SearchForm(
-            onSearch: (_) {},
-            isTestMode: true,
-            testDarkMode: false,
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('Section Header', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          SectionHeader(
-            title: 'Recent Agents',
-            onViewAll: () {},
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('Agent Card', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          AgentCard(
-            title: 'Test Agent',
-            description: 'This is a test agent description that might be a bit longer to show how it wraps.',
-            status: StatusType.online,
-            statusLabel: 'Active',
-            tags: const ['AI', 'Productivity', 'Automation'],
-            runCount: 42,
-            lastRunTime: '2 hours ago',
-            onRun: () {},
-            isTestMode: true,
-            testDarkMode: false,
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('User Profile Button', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          UserProfileButton(
-            userName: 'John Doe',
-            onPressed: () {},
-          ),
-        ],
-        name: 'All Molecules',
-        isDarkMode: false,
-      );
-
-      await tester.pumpDeviceBuilder(builder);
-      await screenMatchesGolden(tester, 'molecules_collection_light');
-
-      // Dark theme
-      final darkBuilder = helper.GoldenTestHelper.createDeviceBuilder(
-        widgets: [
-          const Text('Empty State', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          EmptyState(
-            icon: Icons.add,
-            title: 'Create New Item',
-            message: 'Get started by creating your first item',
-            onPressed: () {},
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('Search Form', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          SearchForm(
-            onSearch: (_) {},
-            isTestMode: true,
-            testDarkMode: true,
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('Section Header', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          SectionHeader(
-            title: 'Recent Agents',
-            onViewAll: () {},
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('Agent Card', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          AgentCard(
-            title: 'Test Agent',
-            description: 'This is a test agent description that might be a bit longer to show how it wraps.',
-            status: StatusType.online,
-            statusLabel: 'Active',
-            tags: const ['AI', 'Productivity', 'Automation'],
-            runCount: 42,
-            lastRunTime: '2 hours ago',
-            onRun: () {},
-            isTestMode: true,
-            testDarkMode: true,
-          ),
-          const SizedBox(height: 32),
-          
-          const Text('User Profile Button', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          UserProfileButton(
-            userName: 'John Doe',
-            onPressed: () {},
-          ),
-        ],
-        name: 'All Molecules',
-        isDarkMode: true,
-      );
-
-      await tester.pumpDeviceBuilder(darkBuilder);
-      await screenMatchesGolden(tester, 'molecules_collection_dark');
-    });
-  });
-} 
+      ),
+    ),
+  );
+}

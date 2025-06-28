@@ -7,28 +7,17 @@ import 'base_button.dart';
 /// Used for tertiary actions or in places where visual weight should be reduced
 class OutlineButton extends BaseButton {
   const OutlineButton({
-    required String text,
-    VoidCallback? onPressed,
-    ButtonSize size = ButtonSize.medium,
-    IconData? icon,
-    bool isFullWidth = false,
-    bool isLoading = false,
-    bool isDisabled = false,
-    bool isTestMode = false,
-    bool testDarkMode = false,
-    Key? key,
-  }) : super(
-          key: key,
-          text: text,
-          onPressed: onPressed,
-          size: size,
-          icon: icon,
-          isFullWidth: isFullWidth,
-          isLoading: isLoading,
-          isDisabled: isDisabled,
-          isTestMode: isTestMode,
-          testDarkMode: testDarkMode,
-        );
+    required super.text,
+    super.onPressed,
+    super.size,
+    super.icon,
+    super.isFullWidth,
+    super.isLoading,
+    super.isDisabled,
+    super.isTestMode,
+    super.testDarkMode,
+    super.key,
+  });
 
   @override
   OutlineButtonState createState() => OutlineButtonState();

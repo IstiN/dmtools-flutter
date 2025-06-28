@@ -14,8 +14,8 @@ class ColorSwatchItem extends StatelessWidget {
     required this.name,
     required this.hexCode,
     this.textColor,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

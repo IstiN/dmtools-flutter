@@ -11,13 +11,13 @@ abstract class BaseText extends StatelessWidget {
   final TextStyle? style;
 
   const BaseText({
-    required this.text, Key? key,
+    required this.text, super.key,
     this.textAlign,
     this.overflow,
     this.maxLines,
     this.color,
     this.style,
-  }) : super(key: key);
+  });
 
   /// Get the base text style from the theme
   /// Subclasses must implement this to provide their specific text style

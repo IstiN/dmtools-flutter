@@ -7,7 +7,7 @@ import '../../widgets/styleguide/color_swatch.dart';
 import '../../widgets/atoms/texts/app_text.dart';
 
 class ColorsTypographyPage extends StatelessWidget {
-  const ColorsTypographyPage({Key? key}) : super(key: key);
+  const ColorsTypographyPage({super.key});
 
   @override
   Widget build(BuildContext context) {

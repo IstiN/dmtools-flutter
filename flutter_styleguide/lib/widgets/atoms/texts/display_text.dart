@@ -7,20 +7,14 @@ import 'base_text.dart';
 class LargeDisplayText extends BaseText {
   const LargeDisplayText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -30,20 +24,14 @@ class LargeDisplayText extends BaseText {
 class MediumDisplayText extends BaseText {
   const MediumDisplayText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -53,20 +41,14 @@ class MediumDisplayText extends BaseText {
 class SmallDisplayText extends BaseText {
   const SmallDisplayText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override

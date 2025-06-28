@@ -10,10 +10,10 @@ class CodeSnippet extends StatelessWidget {
   final bool showCopyButton;
 
   const CodeSnippet({
-    required this.code, Key? key,
+    required this.code, super.key,
     this.language = 'dart',
     this.showCopyButton = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

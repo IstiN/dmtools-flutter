@@ -30,12 +30,12 @@ class WorkspaceManagement extends StatelessWidget {
   final bool? testDarkMode;
 
   const WorkspaceManagement({
-    required this.workspaces, Key? key,
+    required this.workspaces, super.key,
     this.onWorkspaceSelected,
     this.onCreateWorkspace,
     this.isTestMode = false,
     this.testDarkMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

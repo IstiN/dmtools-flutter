@@ -9,7 +9,7 @@ import '../../../widgets/atoms/buttons/app_buttons.dart';
 import '../../../widgets/styleguide/component_display.dart';
 
 class WorkspaceManagementPage extends StatefulWidget {
-  const WorkspaceManagementPage({Key? key}) : super(key: key);
+  const WorkspaceManagementPage({super.key});
 
   @override
   State<WorkspaceManagementPage> createState() => _WorkspaceManagementPageState();

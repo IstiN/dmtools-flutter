@@ -13,7 +13,7 @@ class ApplicationItem extends StatelessWidget {
   final IconData icon;
 
   const ApplicationItem({
-    required this.onOpen, Key? key,
+    required this.onOpen, super.key,
     this.title = 'Sample Application',
     this.version = 'v1.0.0',
     this.description = 'Sample application description that explains the functionality and purpose.',
@@ -21,7 +21,7 @@ class ApplicationItem extends StatelessWidget {
     this.rating = 4.8,
     this.downloadCount = 1200,
     this.icon = Icons.apps,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

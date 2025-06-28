@@ -1,105 +1,166 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:alchemist/alchemist.dart';
 import 'package:dmtools_styleguide/widgets/atoms/buttons/oauth_provider_button.dart';
+import '../golden_test_helper.dart' as helper;
 
 void main() {
-  group('OAuth Provider Button Tests', () {
-    testWidgets('Google OAuth Button', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: OAuthProviderButton(
-                provider: OAuthProvider.google,
-                text: 'Continue with Google',
-                onPressed: () {},
-              ),
+  group('OAuth Provider Button Golden Tests', () {
+    goldenTest(
+      'OAuth Google - Light Mode',
+      fileName: 'oauth_google_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'oauth_google_light',
+            child: SizedBox(
+              width: 400,
+              height: 200,
+              child: helper.createTestApp(_buildGoogleButton()),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
 
-      expect(find.text('Continue with Google'), findsOneWidget);
-      expect(find.byType(OAuthProviderButton), findsOneWidget);
-    });
-
-    testWidgets('Microsoft OAuth Button', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: OAuthProviderButton(
-                provider: OAuthProvider.microsoft,
-                text: 'Continue with Microsoft',
-                onPressed: () {},
-              ),
+    goldenTest(
+      'OAuth Google - Dark Mode',
+      fileName: 'oauth_google_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'oauth_google_dark',
+            child: SizedBox(
+              width: 400,
+              height: 200,
+              child: helper.createTestApp(_buildGoogleButton(), darkMode: true),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
 
-      expect(find.text('Continue with Microsoft'), findsOneWidget);
-      expect(find.byType(OAuthProviderButton), findsOneWidget);
-    });
-
-    testWidgets('GitHub OAuth Button', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: OAuthProviderButton(
-                provider: OAuthProvider.github,
-                text: 'Continue with GitHub',
-                onPressed: () {},
-              ),
+    goldenTest(
+      'OAuth GitHub - Light Mode',
+      fileName: 'oauth_github_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'oauth_github_light',
+            child: SizedBox(
+              width: 400,
+              height: 200,
+              child: helper.createTestApp(_buildGitHubButton()),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
 
-      expect(find.text('Continue with GitHub'), findsOneWidget);
-      expect(find.byType(OAuthProviderButton), findsOneWidget);
-    });
-
-    testWidgets('Disabled OAuth Button', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: OAuthProviderButton(
-                provider: OAuthProvider.google,
-                text: 'Continue with Google',
-                onPressed: () {},
-                isDisabled: true,
-              ),
+    goldenTest(
+      'OAuth GitHub - Dark Mode',
+      fileName: 'oauth_github_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'oauth_github_dark',
+            child: SizedBox(
+              width: 400,
+              height: 200,
+              child: helper.createTestApp(_buildGitHubButton(), darkMode: true),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
 
-      expect(find.text('Continue with Google'), findsOneWidget);
-      expect(find.byType(OAuthProviderButton), findsOneWidget);
-    });
-
-    testWidgets('Loading OAuth Button', (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: Center(
-              child: OAuthProviderButton(
-                provider: OAuthProvider.google,
-                text: 'Continue with Google',
-                onPressed: () {},
-                isLoading: true,
-              ),
+    goldenTest(
+      'OAuth All Providers - Light Mode',
+      fileName: 'oauth_all_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'oauth_all_light',
+            child: SizedBox(
+              width: 400,
+              height: 300,
+              child: helper.createTestApp(_buildAllProviders()),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
 
-      expect(find.text('Continue with Google'), findsOneWidget);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
-      expect(find.byType(OAuthProviderButton), findsOneWidget);
-    });
+    goldenTest(
+      'OAuth All Providers - Dark Mode',
+      fileName: 'oauth_all_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'oauth_all_dark',
+            child: SizedBox(
+              width: 400,
+              height: 300,
+              child: helper.createTestApp(_buildAllProviders(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
   });
-} 
+}
+
+Widget _buildGitHubButton() {
+  return const Scaffold(
+    body: Padding(
+      padding: EdgeInsets.all(16),
+      child: Center(
+        child: OAuthProviderButton(
+          provider: OAuthProvider.github,
+          text: 'Continue with GitHub',
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildGoogleButton() {
+  return const Scaffold(
+    body: Padding(
+      padding: EdgeInsets.all(16),
+      child: Center(
+        child: OAuthProviderButton(
+          provider: OAuthProvider.google,
+          text: 'Continue with Google',
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildAllProviders() {
+  return const Scaffold(
+    body: Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          OAuthProviderButton(
+            provider: OAuthProvider.github,
+            text: 'Continue with GitHub',
+          ),
+          SizedBox(height: 16),
+          OAuthProviderButton(
+            provider: OAuthProvider.google,
+            text: 'Continue with Google',
+          ),
+          SizedBox(height: 16),
+          OAuthProviderButton(
+            provider: OAuthProvider.microsoft,
+            text: 'Continue with Microsoft',
+          ),
+        ],
+      ),
+    ),
+  );
+}

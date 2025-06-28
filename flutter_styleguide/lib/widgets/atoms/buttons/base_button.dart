@@ -27,8 +27,8 @@ abstract class BaseButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 }
 
 /// Base state class for all button components

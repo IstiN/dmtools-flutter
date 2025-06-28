@@ -25,8 +25,8 @@ class PanelBase extends StatelessWidget {
     this.initiallyCollapsed = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

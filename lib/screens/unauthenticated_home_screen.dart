@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 class UnauthenticatedHomeScreen extends StatelessWidget {
-  const UnauthenticatedHomeScreen({Key? key}) : super(key: key);
+  const UnauthenticatedHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

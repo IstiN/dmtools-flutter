@@ -18,7 +18,7 @@ class WorkspaceCard {
 }
 
 class WorkspaceSummary extends StatelessWidget {
-  const WorkspaceSummary({Key? key}) : super(key: key);
+  const WorkspaceSummary({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +133,7 @@ class WorkspaceSummary extends StatelessWidget {
                 const SizedBox(height: 24),
 
                 // Workspace list
-                ...workspaces.map((workspace) => _buildWorkspaceItem(context, workspace, colors)).toList(),
+                ...workspaces.map((workspace) => _buildWorkspaceItem(context, workspace, colors)),
 
                 const SizedBox(height: 16),
 
