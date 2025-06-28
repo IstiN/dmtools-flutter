@@ -7,20 +7,14 @@ import 'base_text.dart';
 class LargeBodyText extends BaseText {
   const LargeBodyText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -30,20 +24,14 @@ class LargeBodyText extends BaseText {
 class MediumBodyText extends BaseText {
   const MediumBodyText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -53,20 +41,14 @@ class MediumBodyText extends BaseText {
 class SmallBodyText extends BaseText {
   const SmallBodyText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override

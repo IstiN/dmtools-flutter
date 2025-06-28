@@ -5,7 +5,7 @@ import '../../widgets/molecules/headers/headers.dart';
 import '../../widgets/molecules/user_profile_button.dart';
 
 class HeadersPage extends StatelessWidget {
-  const HeadersPage({Key? key}) : super(key: key);
+  const HeadersPage({super.key});
 
   @override
   Widget build(BuildContext context) {

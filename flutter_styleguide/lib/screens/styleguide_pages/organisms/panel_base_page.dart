@@ -7,7 +7,7 @@ import '../../../widgets/styleguide/component_display.dart';
 import '../../../widgets/organisms/panel_base.dart';
 
 class PanelBasePage extends StatelessWidget {
-  const PanelBasePage({Key? key}) : super(key: key);
+  const PanelBasePage({super.key});
 
   @override
   Widget build(BuildContext context) {

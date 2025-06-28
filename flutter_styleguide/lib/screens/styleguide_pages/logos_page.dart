@@ -4,7 +4,7 @@ import '../../widgets/styleguide/component_display.dart';
 import '../../widgets/atoms/logos/logos.dart';
 
 class LogosPage extends StatelessWidget {
-  const LogosPage({Key? key}) : super(key: key);
+  const LogosPage({super.key});
 
   @override
   Widget build(BuildContext context) {

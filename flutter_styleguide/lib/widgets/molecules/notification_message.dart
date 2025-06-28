@@ -10,8 +10,8 @@ class NotificationMessage extends StatelessWidget {
   final NotificationType type;
 
   const NotificationMessage({
-    required this.message, required this.type, Key? key,
-  }) : super(key: key);
+    required this.message, required this.type, super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

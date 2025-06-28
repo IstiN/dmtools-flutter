@@ -1,440 +1,291 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:alchemist/alchemist.dart';
 import 'package:dmtools_styleguide/widgets/organisms/chat_module.dart';
 import 'package:dmtools_styleguide/widgets/organisms/page_header.dart';
 import 'package:dmtools_styleguide/widgets/organisms/welcome_banner.dart';
 import 'package:dmtools_styleguide/widgets/organisms/panel_base.dart';
 import 'package:dmtools_styleguide/widgets/organisms/workspace_management.dart';
-import '../golden_test_helper.dart';
+import '../golden_test_helper.dart' as helper;
 
 void main() {
   group('Organisms Golden Tests', () {
-    testWidgets('Page Header - Light Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          PageHeader(
-            title: 'DMTools',
-            onThemeToggle: () {},
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                onPressed: () {},
-              ),
-            ],
-            isTestMode: true,
-          ),
-        ),
-      );
-      await expectLater(
-        find.byType(PageHeader),
-        matchesGoldenFile('goldens/page_header_light.png'),
-      );
-    });
-
-    testWidgets('Page Header - Dark Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          PageHeader(
-            title: 'DMTools',
-            onThemeToggle: () {},
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                onPressed: () {},
-              ),
-            ],
-            isTestMode: true,
-            testDarkMode: true,
-          ),
-          darkMode: true,
-        ),
-      );
-      await expectLater(
-        find.byType(PageHeader),
-        matchesGoldenFile('goldens/page_header_dark.png'),
-      );
-    });
-
-    testWidgets('Welcome Banner - Light Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: WelcomeBanner(
-              title: 'Welcome to DMTools',
-              subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
-              onPrimaryAction: () {},
-              onSecondaryAction: () {},
-              isTestMode: true,
+    goldenTest(
+      'Page Header - Light Mode',
+      fileName: 'page_header_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'page_header_light',
+            child: SizedBox(
+              width: 1200,
+              height: 200,
+              child: helper.createTestApp(_buildPageHeader()),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(WelcomeBanner),
-        matchesGoldenFile('goldens/welcome_banner_light.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('Welcome Banner - Dark Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: WelcomeBanner(
-              title: 'Welcome to DMTools',
-              subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
-              onPrimaryAction: () {},
-              onSecondaryAction: () {},
-              isTestMode: true,
-              testDarkMode: true,
+    goldenTest(
+      'Page Header - Dark Mode',
+      fileName: 'page_header_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'page_header_dark',
+            child: SizedBox(
+              width: 1200,
+              height: 200,
+              child: helper.createTestApp(_buildPageHeader(), darkMode: true),
             ),
           ),
-          darkMode: true,
-        ),
-      );
-      await expectLater(
-        find.byType(WelcomeBanner),
-        matchesGoldenFile('goldens/welcome_banner_dark.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('Chat Module - Light Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ChatInterface(
-              messages: [
-                ChatMessage(
-                  message: 'Hello! How can I help you today?',
-                  isUser: false,
-                ),
-                ChatMessage(
-                  message: 'I need help with setting up a new agent.',
-                  isUser: true,
-                ),
-                ChatMessage(
-                  message: 'Sure, I can guide you through the process. What type of agent would you like to create?',
-                  isUser: false,
-                ),
-              ],
-              onSendMessage: (message) {},
-              isTestMode: true,
-              testDarkMode: false,
+    goldenTest(
+      'Welcome Banner - Light Mode',
+      fileName: 'welcome_banner_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'welcome_banner_light',
+            child: SizedBox(
+              width: 1000,
+              height: 600,
+              child: helper.createTestApp(_buildWelcomeBanner()),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(ChatInterface),
-        matchesGoldenFile('goldens/chat_module_light.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('Chat Module - Dark Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ChatInterface(
-              messages: [
-                ChatMessage(
-                  message: 'Hello! How can I help you today?',
-                  isUser: false,
-                ),
-                ChatMessage(
-                  message: 'I need help with setting up a new agent.',
-                  isUser: true,
-                ),
-                ChatMessage(
-                  message: 'Sure, I can guide you through the process. What type of agent would you like to create?',
-                  isUser: false,
-                ),
-              ],
-              onSendMessage: (message) {},
-              isTestMode: true,
-              testDarkMode: true,
+    goldenTest(
+      'Welcome Banner - Dark Mode',
+      fileName: 'welcome_banner_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'welcome_banner_dark',
+            child: SizedBox(
+              width: 1000,
+              height: 600,
+              child: helper.createTestApp(_buildWelcomeBanner(), darkMode: true),
             ),
           ),
-          darkMode: true,
-        ),
-      );
-      await expectLater(
-        find.byType(ChatInterface),
-        matchesGoldenFile('goldens/chat_module_dark.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('Panel Base - Light Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: PanelBase(
-              title: 'Panel Title',
-              isTestMode: true,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.more_vert, color: Colors.white),
-                  onPressed: () {},
-                ),
-              ],
-              content: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text('This is the content area of the panel.'),
-              ),
+    goldenTest(
+      'Chat Module - Light Mode',
+      fileName: 'chat_module_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'chat_module_light',
+            child: SizedBox(
+              width: 800,
+              height: 600,
+              child: helper.createTestApp(_buildChatModule()),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(PanelBase),
-        matchesGoldenFile('goldens/panel_base_light.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('Panel Base - Dark Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: PanelBase(
-              title: 'Panel Title',
-              isTestMode: true,
-              testDarkMode: true,
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.more_vert, color: Colors.white),
-                  onPressed: () {},
-                ),
-              ],
-              content: const Padding(
-                padding: EdgeInsets.all(16.0),
-                child: Text('This is the content area of the panel.'),
-              ),
+    goldenTest(
+      'Chat Module - Dark Mode',
+      fileName: 'chat_module_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'chat_module_dark',
+            child: SizedBox(
+              width: 800,
+              height: 600,
+              child: helper.createTestApp(_buildChatModule(), darkMode: true),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(PanelBase),
-        matchesGoldenFile('goldens/panel_base_dark.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('Workspace Management - Light Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: WorkspaceManagement(
-              workspaces: [
-                WorkspaceCard(
-                  name: 'Marketing Team',
-                  description: 'Workspace for marketing team projects and campaigns',
-                  memberCount: 8,
-                  agentCount: 3,
-                  lastActive: DateTime.now().subtract(const Duration(hours: 2)),
-                ),
-              ],
-              onWorkspaceSelected: (_) {},
-              onCreateWorkspace: () {},
-              isTestMode: true,
+    goldenTest(
+      'Panel Base - Light Mode',
+      fileName: 'panel_base_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'panel_base_light',
+            child: SizedBox(
+              width: 800,
+              height: 400,
+              child: helper.createTestApp(_buildPanelBase()),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(WorkspaceManagement),
-        matchesGoldenFile('goldens/workspace_management_light.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('Workspace Management - Dark Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: WorkspaceManagement(
-              workspaces: [
-                WorkspaceCard(
-                  name: 'Marketing Team',
-                  description: 'Workspace for marketing team projects and campaigns',
-                  memberCount: 8,
-                  agentCount: 3,
-                  lastActive: DateTime.now().subtract(const Duration(hours: 2)),
-                ),
-              ],
-              onWorkspaceSelected: (_) {},
-              onCreateWorkspace: () {},
-              isTestMode: true,
-              testDarkMode: true,
+    goldenTest(
+      'Panel Base - Dark Mode',
+      fileName: 'panel_base_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'panel_base_dark',
+            child: SizedBox(
+              width: 800,
+              height: 400,
+              child: helper.createTestApp(_buildPanelBase(), darkMode: true),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(WorkspaceManagement),
-        matchesGoldenFile('goldens/workspace_management_dark.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('All Organisms - Light Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PageHeader(
-                    title: 'DMTools',
-                    onThemeToggle: () {},
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ],
-                    isTestMode: true,
-                  ),
-                  const SizedBox(height: 16),
-                  WelcomeBanner(
-                    title: 'Welcome to DMTools',
-                    subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
-                    onPrimaryAction: () {},
-                    onSecondaryAction: () {},
-                    isTestMode: true,
-                  ),
-                  const SizedBox(height: 16),
-                  PanelBase(
-                    title: 'Panel Title',
-                    isTestMode: true,
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.more_vert, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ],
-                    content: const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text('This is the content area of the panel.'),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ChatInterface(
-                    messages: [
-                      ChatMessage(
-                        message: 'Hello! How can I help you today?',
-                        isUser: false,
-                      ),
-                      ChatMessage(
-                        message: 'I need help with setting up a new agent.',
-                        isUser: true,
-                      ),
-                    ],
-                    onSendMessage: (message) {},
-                    isTestMode: true,
-                    testDarkMode: false,
-                  ),
-                ],
-              ),
+    goldenTest(
+      'Workspace Management - Light Mode',
+      fileName: 'workspace_management_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'workspace_management_light',
+            child: SizedBox(
+              width: 1000,
+              height: 600,
+              child: helper.createTestApp(_buildWorkspaceManagement()),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(SingleChildScrollView),
-        matchesGoldenFile('goldens/all_organisms_light.png'),
-      );
-    });
+        ],
+      ),
+    );
 
-    testWidgets('All Organisms - Dark Mode', (WidgetTester tester) async {
-      await loadAppFonts();
-      await tester.pumpWidget(
-        createTestApp(
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  PageHeader(
-                    title: 'DMTools',
-                    onThemeToggle: () {},
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ],
-                    isTestMode: true,
-                    testDarkMode: true,
-                  ),
-                  const SizedBox(height: 16),
-                  WelcomeBanner(
-                    title: 'Welcome to DMTools',
-                    subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
-                    onPrimaryAction: () {},
-                    onSecondaryAction: () {},
-                    isTestMode: true,
-                    testDarkMode: true,
-                  ),
-                  const SizedBox(height: 16),
-                  PanelBase(
-                    title: 'Panel Title',
-                    isTestMode: true,
-                    testDarkMode: true,
-                    actions: [
-                      IconButton(
-                        icon: const Icon(Icons.more_vert, color: Colors.white),
-                        onPressed: () {},
-                      ),
-                    ],
-                    content: const Padding(
-                      padding: EdgeInsets.all(16.0),
-                      child: Text('This is the content area of the panel.'),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ChatInterface(
-                    messages: [
-                      ChatMessage(
-                        message: 'Hello! How can I help you today?',
-                        isUser: false,
-                      ),
-                      ChatMessage(
-                        message: 'I need help with setting up a new agent.',
-                        isUser: true,
-                      ),
-                    ],
-                    onSendMessage: (message) {},
-                    isTestMode: true,
-                    testDarkMode: true,
-                  ),
-                ],
-              ),
+    goldenTest(
+      'Workspace Management - Dark Mode',
+      fileName: 'workspace_management_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'workspace_management_dark',
+            child: SizedBox(
+              width: 1000,
+              height: 600,
+              child: helper.createTestApp(_buildWorkspaceManagement(), darkMode: true),
             ),
           ),
-        ),
-      );
-      await expectLater(
-        find.byType(SingleChildScrollView),
-        matchesGoldenFile('goldens/all_organisms_dark.png'),
-      );
-    });
+        ],
+      ),
+    );
   });
+}
+
+Widget _buildPageHeader() {
+  return Scaffold(
+    body: PageHeader(
+      title: 'DMTools',
+      onThemeToggle: () {},
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+          onPressed: () {},
+        ),
+      ],
+      isTestMode: true,
+    ),
+  );
+}
+
+Widget _buildWelcomeBanner() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: WelcomeBanner(
+        title: 'Welcome to DMTools',
+        subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
+        onPrimaryAction: () {},
+        onSecondaryAction: () {},
+        isTestMode: true,
+      ),
+    ),
+  );
+}
+
+Widget _buildChatModule() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ChatInterface(
+        messages: [
+          ChatMessage(
+            message: 'Hello! How can I help you today?',
+            isUser: false,
+          ),
+          ChatMessage(
+            message: 'I need help with setting up a new agent.',
+            isUser: true,
+          ),
+          ChatMessage(
+            message: 'Sure, I can guide you through the process. What type of agent would you like to create?',
+            isUser: false,
+          ),
+        ],
+        onSendMessage: (message) {},
+        isTestMode: true,
+      ),
+    ),
+  );
+}
+
+Widget _buildPanelBase() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: PanelBase(
+        title: 'Panel Title',
+        isTestMode: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.more_vert, color: Colors.white),
+            onPressed: () {},
+          ),
+        ],
+        content: const Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('This is the content area of the panel.'),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _buildWorkspaceManagement() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: WorkspaceManagement(
+        workspaces: [
+          WorkspaceCard(
+            name: 'Marketing Team',
+            description: 'Workspace for marketing team projects and campaigns',
+            memberCount: 8,
+            agentCount: 3,
+            lastActive: DateTime.now().subtract(const Duration(hours: 2)),
+          ),
+          WorkspaceCard(
+            name: 'Development Team',
+            description: 'Software development and engineering workspace',
+            memberCount: 12,
+            agentCount: 5,
+            lastActive: DateTime.now().subtract(const Duration(minutes: 30)),
+          ),
+        ],
+        onWorkspaceSelected: (_) {},
+        onCreateWorkspace: () {},
+        isTestMode: true,
+      ),
+    ),
+  );
 }

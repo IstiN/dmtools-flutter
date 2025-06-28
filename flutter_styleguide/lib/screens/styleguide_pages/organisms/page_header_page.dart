@@ -7,7 +7,7 @@ import '../../../widgets/organisms/page_header.dart';
 import '../../../widgets/styleguide/component_display.dart';
 
 class PageHeaderPage extends StatelessWidget {
-  const PageHeaderPage({Key? key}) : super(key: key);
+  const PageHeaderPage({super.key});
 
   @override
   Widget build(BuildContext context) {

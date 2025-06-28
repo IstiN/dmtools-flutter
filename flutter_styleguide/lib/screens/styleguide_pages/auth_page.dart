@@ -6,7 +6,7 @@ import '../../widgets/molecules/login_provider_selector.dart';
 import '../../widgets/atoms/buttons/app_buttons.dart';
 
 class AuthPage extends StatefulWidget {
-  const AuthPage({Key? key}) : super(key: key);
+  const AuthPage({super.key});
 
   @override
   AuthPageState createState() => AuthPageState();

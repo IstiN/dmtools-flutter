@@ -9,7 +9,7 @@ import '../../widgets/atoms/tag_chip.dart';
 import '../../widgets/atoms/texts/app_text.dart';
 
 class AtomsPage extends StatefulWidget {
-  const AtomsPage({Key? key}) : super(key: key);
+  const AtomsPage({super.key});
 
   @override
   AtomsPageState createState() => AtomsPageState();

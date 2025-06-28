@@ -1,12 +1,23 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:golden_toolkit/golden_toolkit.dart' hide loadAppFonts;
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/theme/app_theme.dart';
 
 /// Helper class for golden tests
 class GoldenTestHelper {
+  /// Setup fonts for testing
+  static Future<void> loadAppFonts() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+
+    // Disable runtime font fetching for tests
+    GoogleFonts.config.allowRuntimeFetching = false;
+
+    // Use system fonts for testing - no need to load assets
+    // This ensures consistent rendering across test environments
+  }
+
   /// Test a widget in both light and dark themes
   static Future<void> testWidgetInBothThemes({
     required WidgetTester tester,
@@ -20,7 +31,7 @@ class GoldenTestHelper {
     if (!directory.existsSync()) {
       directory.createSync(recursive: true);
     }
-    
+
     // Test in light theme
     await _testWidgetInTheme(
       tester: tester,
@@ -41,8 +52,7 @@ class GoldenTestHelper {
       height: height,
     );
   }
-  
-  /// Test a widget in a specific theme
+
   static Future<void> _testWidgetInTheme({
     required WidgetTester tester,
     required String name,
@@ -51,125 +61,55 @@ class GoldenTestHelper {
     double? width,
     double? height,
   }) async {
-    await tester.pumpWidget(
-      _wrapWithTheme(
-        Center(
-          child: SizedBox(
-            width: width,
-            height: height,
-            child: widget,
-          ),
-        ),
-        isDarkMode: isDarkMode,
-      ),
-    );
-
-    await screenMatchesGolden(tester, 'goldens/$name');
-  }
-  
-  /// Create a device builder for testing multiple widgets at once
-  static DeviceBuilder createDeviceBuilder({
-    required List<Widget> widgets,
-    required String name,
-    required bool isDarkMode,
-  }) {
-    final deviceBuilder = DeviceBuilder()
-      ..overrideDevicesForAllScenarios(devices: [
-        Device.phone,
-      ])
-      ..addScenario(
-        widget: _wrapWithTheme(
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(
-                    name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: widgets,
-                  ),
-                ),
-              ],
+    final app = ChangeNotifierProvider(
+      create: (_) => ThemeProvider()..setTestMode(true, darkMode: isDarkMode),
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, _) => MaterialApp(
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          debugShowCheckedModeBanner: false,
+          home: Scaffold(
+            backgroundColor: themeProvider.isDarkMode
+                ? AppTheme.darkTheme.scaffoldBackgroundColor
+                : AppTheme.lightTheme.scaffoldBackgroundColor,
+            body: SizedBox(
+              width: width ?? 800,
+              height: height ?? 600,
+              child: widget,
             ),
           ),
-          isDarkMode: isDarkMode,
-        ),
-        name: name,
-      );
-
-    return deviceBuilder;
-  }
-
-  static Widget _wrapWithTheme(Widget child, {required bool isDarkMode}) {
-    final themeProvider = ThemeProvider();
-    themeProvider.setTestMode(true, darkMode: isDarkMode);
-    
-    return MaterialApp(
-      theme: isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme,
-      debugShowCheckedModeBanner: false,
-      home: ChangeNotifierProvider<ThemeProvider>.value(
-        value: themeProvider,
-        child: Material(
-          color: isDarkMode ? AppTheme.darkTheme.scaffoldBackgroundColor : AppTheme.lightTheme.scaffoldBackgroundColor,
-          child: child,
         ),
       ),
+    );
+
+    await tester.pumpWidget(app);
+    await tester.pumpAndSettle(const Duration(seconds: 2));
+
+    await expectLater(
+      find.byType(MaterialApp),
+      matchesGoldenFile('goldens/$name.png'),
     );
   }
 }
 
-/// Load app fonts for golden tests
-Future<void> loadAppFonts() async {
-  // This is a no-op for now, but you can implement font loading logic here if needed
-  // The golden_toolkit's loadAppFonts() is not available in this version
-}
-
-/// Create a test app with the given child widget
+/// Create a test app with proper theme setup
 Widget createTestApp(Widget child, {bool darkMode = false}) {
-  final themeProvider = ThemeProvider();
-  themeProvider.setTestMode(true, darkMode: darkMode);
-  
-  return MaterialApp(
-    theme: darkMode 
-        ? AppTheme.darkTheme
-        : AppTheme.lightTheme,
-    debugShowCheckedModeBanner: false,
-    home: ChangeNotifierProvider<ThemeProvider>.value(
-      value: themeProvider,
-      child: Material(
-        color: darkMode 
-            ? AppTheme.darkTheme.scaffoldBackgroundColor 
-            : AppTheme.lightTheme.scaffoldBackgroundColor,
-        child: child,
+  return ChangeNotifierProvider(
+    create: (_) => ThemeProvider()..setTestMode(true, darkMode: darkMode),
+    child: Consumer<ThemeProvider>(
+      builder: (context, themeProvider, _) => MaterialApp(
+        theme: AppTheme.lightTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+        debugShowCheckedModeBanner: false,
+        home: Material(
+          color: themeProvider.isDarkMode
+              ? AppTheme.darkTheme.scaffoldBackgroundColor
+              : AppTheme.lightTheme.scaffoldBackgroundColor,
+          child: child,
+        ),
       ),
     ),
   );
 }
-
-class ThemeProvider extends ChangeNotifier {
-  bool _isDarkMode = false;
-
-  bool get isDarkMode => _isDarkMode;
-
-  void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
-    notifyListeners();
-  }
-
-  void setTestMode(bool testMode, {required bool darkMode}) {
-    _isDarkMode = darkMode;
-    notifyListeners();
-  }
-} 

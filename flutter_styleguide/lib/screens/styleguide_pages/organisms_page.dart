@@ -27,7 +27,7 @@ class OrganismCard {
 }
 
 class OrganismsPage extends StatelessWidget {
-  const OrganismsPage({Key? key}) : super(key: key);
+  const OrganismsPage({super.key});
 
   @override
   Widget build(BuildContext context) {

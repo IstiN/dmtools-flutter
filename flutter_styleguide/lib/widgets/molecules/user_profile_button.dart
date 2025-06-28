@@ -33,7 +33,7 @@ class UserProfileButton extends StatefulWidget {
   final List<UserProfileDropdownItem>? dropdownItems;
 
   const UserProfileButton({
-    Key? key,
+    super.key,
     this.userName,
     this.email,
     this.avatarUrl,
@@ -42,7 +42,7 @@ class UserProfileButton extends StatefulWidget {
     this.isTestMode = false,
     this.testDarkMode = false,
     this.dropdownItems,
-  }) : super(key: key);
+  });
 
   @override
   State<UserProfileButton> createState() => _UserProfileButtonState();

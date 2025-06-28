@@ -24,7 +24,7 @@ class AppHeader extends StatelessWidget {
   final double searchWidth;
 
   const AppHeader({
-    Key? key,
+    super.key,
     this.title = 'DMTools',
     this.showSearch = true,
     this.showTitle = true,
@@ -40,7 +40,7 @@ class AppHeader extends StatelessWidget {
     this.testDarkMode = false,
     this.searchHintText = 'Search...',
     this.searchWidth = 300,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

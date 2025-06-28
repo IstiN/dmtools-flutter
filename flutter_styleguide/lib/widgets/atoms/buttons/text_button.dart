@@ -27,8 +27,8 @@ class AppTextButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   AppTextButtonState createState() => AppTextButtonState();

@@ -9,7 +9,7 @@ import 'package:dmtools_styleguide/theme/app_theme.dart';
 import 'package:dmtools_styleguide/widgets/atoms/texts/app_text.dart';
 
 class IconsLogosPage extends StatelessWidget {
-  const IconsLogosPage({Key? key}) : super(key: key);
+  const IconsLogosPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -237,8 +237,8 @@ class CustomLogoPreview extends StatelessWidget {
   const CustomLogoPreview({
     required this.assetName,
     required this.previews,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -280,10 +280,10 @@ class LogoDisplay extends StatelessWidget {
     required this.lightAsset,
     required this.darkAsset,
     required this.assetName,
-    Key? key,
+    super.key,
     this.fixedHeight,
     this.maxWidth = 220,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -333,7 +333,7 @@ class LogoDisplay extends StatelessWidget {
 }
 
 class LogoUsageGuide extends StatelessWidget {
-  const LogoUsageGuide({Key? key}) : super(key: key);
+  const LogoUsageGuide({super.key});
 
   @override
   Widget build(BuildContext context) {

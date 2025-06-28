@@ -4,7 +4,7 @@ import 'package:dmtools_styleguide/theme/app_theme.dart';
 import 'package:dmtools_styleguide/screens/styleguide_home.dart';
 
 class StyleguideApp extends StatelessWidget {
-  const StyleguideApp({Key? key}) : super(key: key);
+  const StyleguideApp({super.key});
 
   @override
   Widget build(BuildContext context) {

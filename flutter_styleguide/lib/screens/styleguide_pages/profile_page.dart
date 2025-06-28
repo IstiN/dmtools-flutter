@@ -4,7 +4,7 @@ import '../../widgets/styleguide/component_display.dart';
 import '../../widgets/molecules/user_profile_button.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {

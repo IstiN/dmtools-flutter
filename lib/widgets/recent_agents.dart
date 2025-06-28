@@ -23,7 +23,7 @@ class _AgentData {
 }
 
 class RecentAgents extends StatelessWidget {
-  const RecentAgents({Key? key}) : super(key: key);
+  const RecentAgents({super.key});
 
   // Sample agent data with proper typing
   static const List<_AgentData> _sampleAgents = [

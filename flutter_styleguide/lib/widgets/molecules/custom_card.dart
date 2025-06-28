@@ -5,9 +5,9 @@ class CustomCard extends StatelessWidget {
   final EdgeInsetsGeometry? padding;
 
   const CustomCard({
-    required this.child, Key? key,
+    required this.child, super.key,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

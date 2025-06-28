@@ -6,7 +6,7 @@ import '../widgets/workspace_summary.dart';
 import '../widgets/recent_agents.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

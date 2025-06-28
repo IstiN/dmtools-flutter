@@ -1,67 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:alchemist/alchemist.dart';
 import 'package:dmtools_styleguide/widgets/molecules/login_provider_selector.dart';
+import '../golden_test_helper.dart' as helper;
 
 void main() {
-  group('Login Provider Selector Tests', () {
-    testWidgets('Login Provider Selector - Light Mode', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.light(),
-          home: const Scaffold(
-            body: Center(
-              child: LoginProviderSelector(),
+  group('Login Provider Selector Golden Tests', () {
+    goldenTest(
+      'Login Provider Selector - Light Mode',
+      fileName: 'login_provider_selector_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'login_provider_selector_light',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildLoginProviderSelector()),
             ),
           ),
-        ),
-      );
+        ],
+      ),
+    );
 
-      expect(find.text('Sign in to DMTools'), findsOneWidget);
-      expect(find.text('Choose a provider to continue'), findsOneWidget);
-      expect(find.text('Continue with Google'), findsOneWidget);
-      expect(find.text('Continue with Microsoft'), findsOneWidget);
-      expect(find.text('Continue with GitHub'), findsOneWidget);
-    });
-
-    testWidgets('Login Provider Selector - Dark Mode', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.dark(),
-          home: const Scaffold(
-            body: Center(
-              child: LoginProviderSelector(),
+    goldenTest(
+      'Login Provider Selector - Dark Mode',
+      fileName: 'login_provider_selector_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'login_provider_selector_dark',
+            child: SizedBox(
+              width: 500,
+              height: 400,
+              child: helper.createTestApp(_buildLoginProviderSelector(), darkMode: true),
             ),
           ),
-        ),
-      );
-
-      expect(find.text('Sign in to DMTools'), findsOneWidget);
-      expect(find.text('Choose a provider to continue'), findsOneWidget);
-      expect(find.text('Continue with Google'), findsOneWidget);
-      expect(find.text('Continue with Microsoft'), findsOneWidget);
-      expect(find.text('Continue with GitHub'), findsOneWidget);
-    });
-
-    testWidgets('Login Provider Selector - Custom Title', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData.light(),
-          home: const Scaffold(
-            body: Center(
-              child: LoginProviderSelector(
-                title: 'Sign In',
-                subtitle: 'Select your authentication method',
-              ),
-            ),
-          ),
-        ),
-      );
-
-      expect(find.text('Sign In'), findsOneWidget);
-      expect(find.text('Select your authentication method'), findsOneWidget);
-      expect(find.text('Continue with Google'), findsOneWidget);
-      expect(find.text('Continue with Microsoft'), findsOneWidget);
-      expect(find.text('Continue with GitHub'), findsOneWidget);
-    });
+        ],
+      ),
+    );
   });
-} 
+}
+
+Widget _buildLoginProviderSelector() {
+  return const Scaffold(
+    body: Padding(
+      padding: EdgeInsets.all(16),
+      child: Center(
+        child: LoginProviderSelector(),
+      ),
+    ),
+  );
+}

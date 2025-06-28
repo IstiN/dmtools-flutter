@@ -3,16 +3,11 @@ import 'base_logo.dart';
 
 class WordmarkLogo extends BaseLogo {
   const WordmarkLogo({
-    Key? key,
-    LogoSize size = LogoSize.medium,
-    bool isDarkMode = false,
-    bool isTestMode = false,
-  }) : super(
-          key: key,
-          size: size,
-          isDarkMode: isDarkMode,
-          isTestMode: isTestMode,
-        );
+    super.key,
+    super.size,
+    super.isDarkMode,
+    super.isTestMode,
+  });
 
   @override
   double get width {

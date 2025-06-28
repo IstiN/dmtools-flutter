@@ -13,7 +13,7 @@ void main() {
 }
 
 class DMToolsApp extends StatelessWidget {
-  const DMToolsApp({Key? key}) : super(key: key);
+  const DMToolsApp({super.key});
 
   @override
   Widget build(BuildContext context) {

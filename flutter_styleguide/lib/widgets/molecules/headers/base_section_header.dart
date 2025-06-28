@@ -15,7 +15,7 @@ class BaseSectionHeader extends StatelessWidget {
   final bool testDarkMode;
 
   const BaseSectionHeader({
-    required this.title, Key? key,
+    required this.title, super.key,
     this.subtitle,
     this.viewAllText,
     this.onViewAll,
@@ -23,7 +23,7 @@ class BaseSectionHeader extends StatelessWidget {
     this.actions,
     this.isTestMode = false,
     this.testDarkMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

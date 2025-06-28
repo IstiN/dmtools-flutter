@@ -7,20 +7,14 @@ import 'base_text.dart';
 class CodeText extends BaseText {
   const CodeText(
     String text, {
-    Key? key,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.key,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -38,21 +32,15 @@ class BoldText extends BaseText {
 
   const BoldText(
     String text, {
-    Key? key,
+    super.key,
     this.baseStyle,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override
@@ -69,21 +57,15 @@ class ItalicText extends BaseText {
 
   const ItalicText(
     String text, {
-    Key? key,
+    super.key,
     this.baseStyle,
-    TextAlign? textAlign,
-    TextOverflow? overflow,
-    int? maxLines,
-    Color? color,
-    TextStyle? style,
+    super.textAlign,
+    super.overflow,
+    super.maxLines,
+    super.color,
+    super.style,
   }) : super(
-          key: key,
           text: text,
-          textAlign: textAlign,
-          overflow: overflow,
-          maxLines: maxLines,
-          color: color,
-          style: style,
         );
 
   @override

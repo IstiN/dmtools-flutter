@@ -20,7 +20,7 @@ class ChatModulePage extends StatelessWidget {
     {'property': 'title', 'type': 'String', 'description': 'Title shown in the header'},
     {'property': 'isLoading', 'type': 'bool', 'description': 'Whether to show loading indicator'},
   ];
-  const ChatModulePage({Key? key}) : super(key: key);
+  const ChatModulePage({super.key});
 
   @override
   Widget build(BuildContext context) {

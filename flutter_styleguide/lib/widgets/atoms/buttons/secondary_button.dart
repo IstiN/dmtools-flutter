@@ -7,28 +7,17 @@ import 'base_button.dart';
 /// Used for secondary actions alongside primary buttons
 class SecondaryButton extends BaseButton {
   const SecondaryButton({
-    required String text,
-    VoidCallback? onPressed,
-    ButtonSize size = ButtonSize.medium,
-    IconData? icon,
-    bool isFullWidth = false,
-    bool isLoading = false,
-    bool isDisabled = false,
-    bool isTestMode = false,
-    bool testDarkMode = false,
-    Key? key,
-  }) : super(
-          key: key,
-          text: text,
-          onPressed: onPressed,
-          size: size,
-          icon: icon,
-          isFullWidth: isFullWidth,
-          isLoading: isLoading,
-          isDisabled: isDisabled,
-          isTestMode: isTestMode,
-          testDarkMode: testDarkMode,
-        );
+    required super.text,
+    super.onPressed,
+    super.size,
+    super.icon,
+    super.isFullWidth,
+    super.isLoading,
+    super.isDisabled,
+    super.isTestMode,
+    super.testDarkMode,
+    super.key,
+  });
 
   @override
   SecondaryButtonState createState() => SecondaryButtonState();

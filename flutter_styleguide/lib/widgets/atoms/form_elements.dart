@@ -17,8 +17,8 @@ class FormGroup extends StatelessWidget {
     this.helperText,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -84,8 +84,8 @@ class TextInput extends StatelessWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -150,8 +150,8 @@ class PasswordInput extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<PasswordInput> createState() => _PasswordInputState();
@@ -235,8 +235,8 @@ class NumberInput extends StatelessWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -306,8 +306,8 @@ class TextArea extends StatelessWidget {
     this.maxLines = 5,
     this.isTestMode = false,
     this.testDarkMode = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -369,13 +369,13 @@ class SelectDropdown<T> extends StatelessWidget {
 
   const SelectDropdown({
     required this.items,
-    Key? key,
+    super.key,
     this.value,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -434,12 +434,12 @@ class CheckboxInput extends StatelessWidget {
   const CheckboxInput({
     required this.value,
     required this.label,
-    Key? key,
+    super.key,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -494,12 +494,12 @@ class RadioInput<T> extends StatelessWidget {
     required this.value,
     required this.groupValue,
     required this.label,
-    Key? key,
+    super.key,
     this.onChanged,
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -550,11 +550,11 @@ class ViewAllLink extends StatelessWidget {
 
   const ViewAllLink({
     required this.text,
-    Key? key,
+    super.key,
     this.onTap,
     this.isTestMode = false,
     this.testDarkMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -608,10 +608,10 @@ class FormElementsWidget extends StatelessWidget {
   final bool? testDarkMode;
 
   const FormElementsWidget({
-    Key? key,
+    super.key,
     this.isTestMode = false,
     this.testDarkMode = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

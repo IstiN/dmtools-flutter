@@ -1,274 +1,282 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:golden_toolkit/golden_toolkit.dart';
-import 'package:dmtools_styleguide/theme/app_colors.dart';
-import 'package:dmtools_styleguide/theme/app_theme.dart';
+import 'package:alchemist/alchemist.dart';
+import 'package:dmtools_styleguide/widgets/atoms/buttons/app_buttons.dart';
+import 'package:dmtools_styleguide/widgets/atoms/form_elements.dart';
+import 'package:dmtools_styleguide/widgets/atoms/texts/app_text.dart';
+import 'package:dmtools_styleguide/widgets/molecules/cards/feature_card.dart';
+import 'package:dmtools_styleguide/theme/app_dimensions.dart';
 import '../golden_test_helper.dart' as helper;
 
 void main() {
-  setUpAll(() async {
-    await helper.loadAppFonts();
-  });
+  group('Theme Components Golden Tests', () {
+    goldenTest(
+      'Theme Showcase - Light Mode',
+      fileName: 'theme_showcase_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'theme_showcase_light',
+            child: SizedBox(
+              width: 500,
+              height: 800,
+              child: helper.createTestApp(_buildThemeShowcase()),
+            ),
+          ),
+        ],
+      ),
+    );
 
-  group('Theme Golden Tests', () {
-    testGoldens('Light Theme Colors', (WidgetTester tester) async {
-      final colorWidgets = <Widget>[];
+    goldenTest(
+      'Theme Showcase - Dark Mode',
+      fileName: 'theme_showcase_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'theme_showcase_dark',
+            child: SizedBox(
+              width: 500,
+              height: 800,
+              child: helper.createTestApp(_buildThemeShowcase(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      // Base colors
-      colorWidgets.add(const Text('Base Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'bgColor': AppColors.lightBgColor,
-        'cardBg': AppColors.lightCardBg,
-        'textColor': AppColors.lightTextColor,
-        'textSecondary': AppColors.lightTextSecondary,
-        'textMuted': AppColors.lightTextMuted,
-        'borderColor': AppColors.lightBorderColor,
-      }));
+    goldenTest(
+      'Button Variations - Light Mode',
+      fileName: 'button_variations_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'button_variations_light',
+            child: SizedBox(
+              width: 600,
+              height: 400,
+              child: helper.createTestApp(_buildButtonVariations()),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      // Accent colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Accent Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'accentColor': AppColors.accentColor,
-        'accentLight': AppColors.accentLight,
-        'accentHover': AppColors.accentHover,
-      }));
+    goldenTest(
+      'Button Variations - Dark Mode',
+      fileName: 'button_variations_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'button_variations_dark',
+            child: SizedBox(
+              width: 600,
+              height: 400,
+              child: helper.createTestApp(_buildButtonVariations(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      // Button colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Button Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'buttonBg': AppColors.buttonBg,
-        'buttonHover': AppColors.buttonHover,
-        'hoverBg': AppColors.hoverBg,
-      }));
+    goldenTest(
+      'Typography Showcase - Light Mode',
+      fileName: 'typography_showcase_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'typography_showcase_light',
+            child: SizedBox(
+              width: 500,
+              height: 600,
+              child: helper.createTestApp(_buildTypographyShowcase()),
+            ),
+          ),
+        ],
+      ),
+    );
 
-      // Feedback colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Feedback Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'successColor': AppColors.successColor,
-        'warningColor': AppColors.warningColor,
-        'dangerColor': AppColors.dangerColor,
-        'infoColor': AppColors.infoColor,
-      }));
-
-      // Input colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Input Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'inputBg': AppColors.inputBg,
-        'inputFocusBorder': AppColors.inputFocusBorder,
-      }));
-
-      final builder = helper.GoldenTestHelper.createDeviceBuilder(
-        widgets: colorWidgets,
-        name: 'Light Theme Colors',
-        isDarkMode: false,
-      );
-
-      await tester.pumpDeviceBuilder(builder);
-      await screenMatchesGolden(tester, 'light_theme_colors');
-    });
-
-    testGoldens('Dark Theme Colors', (WidgetTester tester) async {
-      final colorWidgets = <Widget>[];
-
-      // Base colors
-      colorWidgets.add(const Text('Base Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'bgColor': AppColors.darkBgColor,
-        'cardBg': AppColors.darkCardBg,
-        'textColor': AppColors.darkTextColor,
-        'textSecondary': AppColors.darkTextSecondary,
-        'textMuted': AppColors.darkTextMuted,
-        'borderColor': AppColors.darkBorderColor,
-      }));
-
-      // Accent colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Accent Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'accentColor': AppColors.accentColor,
-        'accentLight': AppColors.accentLight,
-        'accentHover': AppColors.accentHover,
-      }));
-
-      // Button colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Button Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'buttonBg': AppColors.buttonBg,
-        'buttonHover': AppColors.buttonHover,
-        'hoverBg': AppColors.hoverBg,
-      }));
-
-      // Feedback colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Feedback Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'successColor': AppColors.successColor,
-        'warningColor': AppColors.warningColor,
-        'dangerColor': AppColors.dangerColor,
-        'infoColor': AppColors.infoColor,
-      }));
-
-      // Input colors
-      colorWidgets.add(const SizedBox(height: 24));
-      colorWidgets.add(const Text('Input Colors', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)));
-      colorWidgets.add(const SizedBox(height: 16));
-      colorWidgets.add(_buildColorGrid({
-        'inputBg': AppColors.darkCardBg,  // Dark theme uses card background for inputs
-        'inputFocusBorder': AppColors.inputFocusBorder,
-      }));
-
-      final builder = helper.GoldenTestHelper.createDeviceBuilder(
-        widgets: colorWidgets,
-        name: 'Dark Theme Colors',
-        isDarkMode: true,
-      );
-
-      await tester.pumpDeviceBuilder(builder);
-      await screenMatchesGolden(tester, 'dark_theme_colors');
-    });
-
-    testGoldens('Typography', (WidgetTester tester) async {
-      final theme = AppTheme.lightTheme;
-      
-      final typographyWidgets = <Widget>[
-        const Text('Typography', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 24),
-        
-        Text('Headline 1', style: theme.textTheme.displayLarge),
-        const SizedBox(height: 8),
-        
-        Text('Headline 2', style: theme.textTheme.displayMedium),
-        const SizedBox(height: 8),
-        
-        Text('Headline 3', style: theme.textTheme.displaySmall),
-        const SizedBox(height: 8),
-        
-        Text('Headline 4', style: theme.textTheme.headlineMedium),
-        const SizedBox(height: 8),
-        
-        Text('Headline 5', style: theme.textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        
-        Text('Headline 6', style: theme.textTheme.titleLarge),
-        const SizedBox(height: 8),
-        
-        Text('Subtitle 1', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        
-        Text('Subtitle 2', style: theme.textTheme.titleSmall),
-        const SizedBox(height: 8),
-        
-        Text('Body 1', style: theme.textTheme.bodyLarge),
-        const SizedBox(height: 8),
-        
-        Text('Body 2', style: theme.textTheme.bodyMedium),
-        const SizedBox(height: 8),
-        
-        Text('Caption', style: theme.textTheme.bodySmall),
-        const SizedBox(height: 8),
-      ];
-
-      final builder = helper.GoldenTestHelper.createDeviceBuilder(
-        widgets: typographyWidgets,
-        name: 'Typography',
-        isDarkMode: false,
-      );
-
-      await tester.pumpDeviceBuilder(builder);
-      await screenMatchesGolden(tester, 'typography_light');
-      
-      // Dark theme typography
-      final darkTheme = AppTheme.darkTheme;
-      
-      final darkTypographyWidgets = <Widget>[
-        const Text('Typography (Dark)', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 24),
-        
-        Text('Headline 1', style: darkTheme.textTheme.displayLarge),
-        const SizedBox(height: 8),
-        
-        Text('Headline 2', style: darkTheme.textTheme.displayMedium),
-        const SizedBox(height: 8),
-        
-        Text('Headline 3', style: darkTheme.textTheme.displaySmall),
-        const SizedBox(height: 8),
-        
-        Text('Headline 4', style: darkTheme.textTheme.headlineMedium),
-        const SizedBox(height: 8),
-        
-        Text('Headline 5', style: darkTheme.textTheme.headlineSmall),
-        const SizedBox(height: 8),
-        
-        Text('Headline 6', style: darkTheme.textTheme.titleLarge),
-        const SizedBox(height: 8),
-        
-        Text('Subtitle 1', style: darkTheme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        
-        Text('Subtitle 2', style: darkTheme.textTheme.titleSmall),
-        const SizedBox(height: 8),
-        
-        Text('Body 1', style: darkTheme.textTheme.bodyLarge),
-        const SizedBox(height: 8),
-        
-        Text('Body 2', style: darkTheme.textTheme.bodyMedium),
-        const SizedBox(height: 8),
-        
-        Text('Caption', style: darkTheme.textTheme.bodySmall),
-        const SizedBox(height: 8),
-      ];
-
-      final darkBuilder = helper.GoldenTestHelper.createDeviceBuilder(
-        widgets: darkTypographyWidgets,
-        name: 'Typography Dark',
-        isDarkMode: true,
-      );
-
-      await tester.pumpDeviceBuilder(darkBuilder);
-      await screenMatchesGolden(tester, 'typography_dark');
-    });
+    goldenTest(
+      'Typography Showcase - Dark Mode',
+      fileName: 'typography_showcase_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'typography_showcase_dark',
+            child: SizedBox(
+              width: 500,
+              height: 600,
+              child: helper.createTestApp(_buildTypographyShowcase(), darkMode: true),
+            ),
+          ),
+        ],
+      ),
+    );
   });
 }
 
-Widget _buildColorGrid(Map<String, Color> colors) {
-  return Wrap(
-    spacing: 16,
-    runSpacing: 16,
-    children: colors.entries.map((entry) {
-      return Column(
+Widget _buildThemeShowcase() {
+  return const Scaffold(
+    body: SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 120,
-            height: 80,
-            decoration: BoxDecoration(
-              color: entry.value,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
-            ),
+          // Buttons section
+          Row(
+            children: [
+              PrimaryButton(text: 'Primary'),
+              SizedBox(width: 8),
+              SecondaryButton(text: 'Secondary'),
+              SizedBox(width: 8),
+              OutlineButton(text: 'Outline'),
+            ],
           ),
-          const SizedBox(height: 4),
-          Text(entry.key, style: const TextStyle(fontWeight: FontWeight.w500)),
-          Text(
-            '#${entry.value.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}',
-            style: const TextStyle(fontSize: 12),
+          SizedBox(height: 16),
+
+          // Text elements
+          LargeDisplayText('Display Text Large'),
+          SizedBox(height: 8),
+          LargeHeadlineText('Headline Text Large'),
+          SizedBox(height: 8),
+          LargeTitleText('Title Text Large'),
+          SizedBox(height: 8),
+          LargeBodyText('Body Text Large'),
+          SizedBox(height: 8),
+          LargeLabelText('Label Text Large'),
+          SizedBox(height: 16),
+
+          // Form elements
+          TextInput(
+            placeholder: 'Enter text here',
+          ),
+          SizedBox(height: 16),
+
+          // Cards
+          FeatureCard(
+            title: 'Feature Card',
+            description: 'This is a sample feature card demonstrating the theme.',
+            icon: Icons.star,
           ),
         ],
-      );
-    }).toList(),
+      ),
+    ),
   );
-} 
+}
+
+Widget _buildButtonVariations() {
+  return const Scaffold(
+    body: Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Primary buttons in different sizes
+          Text('Primary Buttons'),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              PrimaryButton(text: 'Small', size: ButtonSize.small),
+              SizedBox(width: 8),
+              PrimaryButton(text: 'Medium'),
+              SizedBox(width: 8),
+              PrimaryButton(text: 'Large', size: ButtonSize.large),
+            ],
+          ),
+          SizedBox(height: 16),
+
+          // Secondary buttons
+          Text('Secondary Buttons'),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              SecondaryButton(text: 'Small', size: ButtonSize.small),
+              SizedBox(width: 8),
+              SecondaryButton(text: 'Medium'),
+              SizedBox(width: 8),
+              SecondaryButton(text: 'Large', size: ButtonSize.large),
+            ],
+          ),
+          SizedBox(height: 16),
+
+          // Outline buttons
+          Text('Outline Buttons'),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              OutlineButton(text: 'Small', size: ButtonSize.small),
+              SizedBox(width: 8),
+              OutlineButton(text: 'Medium'),
+              SizedBox(width: 8),
+              OutlineButton(text: 'Large', size: ButtonSize.large),
+            ],
+          ),
+          SizedBox(height: 16),
+
+          // Text buttons
+          Text('Text Buttons'),
+          SizedBox(height: 8),
+          Row(
+            children: [
+              AppTextButton(text: 'Small', size: ButtonSize.small, isTestMode: true),
+              SizedBox(width: 8),
+              AppTextButton(text: 'Medium', isTestMode: true),
+              SizedBox(width: 8),
+              AppTextButton(text: 'Large', size: ButtonSize.large, isTestMode: true),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildTypographyShowcase() {
+  return const Scaffold(
+    body: Padding(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Display texts
+          LargeDisplayText('Display Large'),
+          SizedBox(height: 4),
+          MediumDisplayText('Display Medium'),
+          SizedBox(height: 4),
+          SmallDisplayText('Display Small'),
+          SizedBox(height: 16),
+
+          // Headline texts
+          LargeHeadlineText('Headline Large'),
+          SizedBox(height: 4),
+          MediumHeadlineText('Headline Medium'),
+          SizedBox(height: 4),
+          SmallHeadlineText('Headline Small'),
+          SizedBox(height: 16),
+
+          // Title texts
+          LargeTitleText('Title Large'),
+          SizedBox(height: 4),
+          MediumTitleText('Title Medium'),
+          SizedBox(height: 4),
+          SmallTitleText('Title Small'),
+          SizedBox(height: 16),
+
+          // Body texts
+          LargeBodyText('Body Large'),
+          SizedBox(height: 4),
+          MediumBodyText('Body Medium'),
+          SizedBox(height: 4),
+          SmallBodyText('Body Small'),
+          SizedBox(height: 16),
+
+          // Label texts
+          LargeLabelText('Label Large'),
+          SizedBox(height: 4),
+          MediumLabelText('Label Medium'),
+          SizedBox(height: 4),
+          SmallLabelText('Label Small'),
+        ],
+      ),
+    ),
+  );
+}

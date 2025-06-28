@@ -18,7 +18,7 @@ import '../../widgets/molecules/chat_message.dart';
 import '../../widgets/atoms/status_dot.dart';
 
 class MoleculesPage extends StatelessWidget {
-  const MoleculesPage({Key? key}) : super(key: key);
+  const MoleculesPage({super.key});
 
   @override
   Widget build(BuildContext context) {

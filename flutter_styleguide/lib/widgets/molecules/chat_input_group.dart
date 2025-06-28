@@ -12,8 +12,8 @@ class ChatInputGroup extends StatelessWidget {
     required this.onSend,
     required this.onClear,
     this.isLoading = false,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
