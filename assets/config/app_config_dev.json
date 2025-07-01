@@ -1,0 +1,9 @@
+{
+  "environment": "development",
+  "baseUrl": "http://localhost:8080",
+  "appName": "DMTools",
+  "appVersion": "1.0.0",
+  "enableLogging": true,
+  "enableMockData": true,
+  "timeoutDuration": 30
+} 

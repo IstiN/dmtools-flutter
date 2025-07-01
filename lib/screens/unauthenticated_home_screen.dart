@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+import '../widgets/auth_login_widget.dart';
+import '../providers/auth_provider.dart' as app_auth;
 
 class UnauthenticatedHomeScreen extends StatelessWidget {
   const UnauthenticatedHomeScreen({super.key});
@@ -30,9 +32,11 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return const AlertDialog(
-                      contentPadding: AppDimensions.dialogPadding,
-                      content: LoginProviderSelector(),
+                    return const Dialog(
+                      backgroundColor: Colors.transparent,
+                      insetPadding: EdgeInsets.all(16),
+                      elevation: 0,
+                      child: AuthLoginWidget(),
                     );
                   },
                 );
@@ -55,9 +59,29 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                       child: WelcomeBanner(
                         title: 'Welcome to DMTools',
                         subtitle: 'Your all-in-one solution for delivery management and automation',
-                        onPrimaryAction: () {},
-                        onSecondaryAction: () {},
-                        secondaryActionText: 'Get Help',
+                        onPrimaryAction: () {
+                          // Show login dialog
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const Dialog(
+                                backgroundColor: Colors.transparent,
+                                insetPadding: EdgeInsets.all(16),
+                                elevation: 0,
+                                child: AuthLoginWidget(
+                                  title: 'Get Started with DMTools',
+                                  subtitle: 'Sign in to access your workspace and start managing your projects',
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        secondaryActionText: 'Demo',
+                        onSecondaryAction: () async {
+                          // Enable demo mode
+                          final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+                          await authProvider.enableDemoMode();
+                        },
                         logoAssetPath: 'assets/img/dmtools-icon.svg',
                       ),
                     ),

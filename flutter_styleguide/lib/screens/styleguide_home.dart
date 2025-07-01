@@ -1,67 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import '../core/routing/styleguide_router.dart';
 import '../theme/app_theme.dart';
 import '../theme/app_colors.dart';
 import '../widgets/molecules/user_profile_button.dart';
 import '../widgets/atoms/logos/logos.dart';
 import '../widgets/molecules/headers/app_header.dart';
 import '../widgets/responsive/responsive_builder.dart';
-import 'styleguide_pages/colors_typography_page.dart';
-import 'styleguide_pages/atoms_page.dart';
-import 'styleguide_pages/molecules_page.dart';
-import 'styleguide_pages/organisms_page.dart';
-import 'styleguide_pages/icons_logos_page.dart';
-import 'styleguide_pages/logos_page.dart';
-import 'styleguide_pages/headers_page.dart';
-import 'styleguide_pages/profile_page.dart';
-import 'styleguide_pages/auth_page.dart';
 
 class StyleguideHome extends StatefulWidget {
-  const StyleguideHome({super.key});
+  final Widget? child;
+
+  const StyleguideHome({this.child, super.key});
 
   @override
   State<StyleguideHome> createState() => _StyleguideHomeState();
 }
 
-class _NavigationItem {
-  final IconData icon;
-  final String label;
-
-  const _NavigationItem({
-    required this.icon,
-    required this.label,
-  });
-}
-
 class _StyleguideHomeState extends State<StyleguideHome> {
-  int _selectedIndex = 0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-  final List<Widget> _pages = [
-    const WelcomePage(),
-    const ColorsTypographyPage(),
-    const AtomsPage(),
-    const MoleculesPage(),
-    const OrganismsPage(),
-    const IconsLogosPage(),
-    const LogosPage(),
-    const HeadersPage(),
-    const ProfilePage(),
-    const AuthPage(),
-  ];
-
-  final List<_NavigationItem> _navItems = [
-    const _NavigationItem(icon: Icons.home_outlined, label: 'Welcome'),
-    const _NavigationItem(icon: Icons.palette_outlined, label: 'Colors & Typography'),
-    const _NavigationItem(icon: Icons.grain_outlined, label: 'Atoms'),
-    const _NavigationItem(icon: Icons.view_module_outlined, label: 'Molecules'),
-    const _NavigationItem(icon: Icons.view_quilt_outlined, label: 'Organisms'),
-    const _NavigationItem(icon: Icons.image_outlined, label: 'Icons & Logos'),
-    const _NavigationItem(icon: Icons.branding_watermark_outlined, label: 'Logos Components'),
-    const _NavigationItem(icon: Icons.view_headline_outlined, label: 'Headers'),
-    const _NavigationItem(icon: Icons.person_outlined, label: 'User Profile'),
-    const _NavigationItem(icon: Icons.login_outlined, label: 'Authentication'),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +65,7 @@ class _StyleguideHomeState extends State<StyleguideHome> {
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(24.0),
-              child: _pages[_selectedIndex],
+              child: widget.child ?? const WelcomePage(),
             ),
           ),
         ],
@@ -143,7 +101,7 @@ class _StyleguideHomeState extends State<StyleguideHome> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: _pages[_selectedIndex],
+        child: widget.child ?? const WelcomePage(),
       ),
     );
   }
@@ -179,7 +137,8 @@ class _StyleguideHomeState extends State<StyleguideHome> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                for (int i = 0; i < _navItems.length; i++) _buildNavItem(i, context, isMobile: isMobile),
+                for (int i = 0; i < styleguideNavigationItems.length; i++)
+                  _buildNavItem(i, context, isMobile: isMobile),
               ],
             ),
           ),
@@ -205,7 +164,9 @@ class _StyleguideHomeState extends State<StyleguideHome> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
     final colors = isDarkMode ? AppColors.dark : AppColors.light;
-    final isSelected = _selectedIndex == index;
+    final item = styleguideNavigationItems[index];
+    final currentLocation = GoRouterState.of(context).uri.toString();
+    final isSelected = currentLocation == item.route;
 
     final Color textColor = colors.textSecondary;
     const Color selectedTextColor = AppColors.primaryTextOnAccent;
@@ -224,9 +185,7 @@ class _StyleguideHomeState extends State<StyleguideHome> {
           borderRadius: BorderRadius.zero,
           hoverColor: isSelected ? Colors.transparent : hoverBgColor,
           onTap: () {
-            setState(() {
-              _selectedIndex = index;
-            });
+            context.go(item.route);
             if (isMobile) {
               Navigator.pop(context);
             }
@@ -237,14 +196,14 @@ class _StyleguideHomeState extends State<StyleguideHome> {
             child: Row(
               children: [
                 Icon(
-                  _navItems[index].icon,
+                  item.icon,
                   color: isSelected ? selectedTextColor : textColor,
                   size: 20,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    _navItems[index].label,
+                    item.label,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: isSelected ? selectedTextColor : textColor,

@@ -1,243 +1,293 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:dmtools_styleguide/dmtools_styleguide.dart';
-import '../widgets/sidebar_navigation.dart';
-import '../widgets/workspace_summary.dart';
-import '../widgets/recent_agents.dart';
+import 'package:go_router/go_router.dart';
+import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
+import '../core/routing/app_router.dart';
+import '../providers/auth_provider.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  final Widget? child;
+
+  const HomeScreen({this.child, super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
+    return SimpleResponsiveBuilder(
+      mobile: (context, constraints) => _buildMobileLayout(),
+      desktop: (context, constraints) => _buildDesktopLayout(),
+    );
+  }
+
+  Widget _buildDesktopLayout() {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+    final colors = context.colorsListening;
 
     return Scaffold(
       body: Column(
         children: [
-          // Full-width header
-          Container(
-            color: const Color(0xFF4776F6),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            height: 60,
+          // App Header
+          AppHeader(
+            showTitle: false,
+            searchHintText: 'Search agents, workspaces, and apps...',
+            searchWidth: 400,
+            onSearch: (query) {
+              debugPrint('Searching for: $query');
+            },
+            onThemeToggle: () => themeProvider.toggleTheme(),
+            onLogoPressed: () {
+              context.go('/dashboard');
+            },
+            profileButton: UserProfileButton(
+              userName: authProvider.currentUser?.name ?? 'User',
+              email: authProvider.currentUser?.email,
+              avatarUrl: authProvider.currentUser?.picture,
+              loginState: authProvider.isAuthenticated ? LoginState.loggedIn : LoginState.loggedOut,
+              dropdownItems: authProvider.isAuthenticated
+                  ? [
+                      UserProfileDropdownItem(
+                        icon: Icons.account_circle,
+                        label: 'Profile',
+                        onTap: () {
+                          debugPrint('Profile clicked');
+                        },
+                      ),
+                      UserProfileDropdownItem(
+                        icon: Icons.settings,
+                        label: 'Settings',
+                        onTap: () {
+                          context.go('/settings');
+                        },
+                      ),
+                      UserProfileDropdownItem(
+                        icon: Icons.exit_to_app,
+                        label: 'Logout',
+                        onTap: () async {
+                          await authProvider.logout();
+                        },
+                      ),
+                    ]
+                  : [],
+              onPressed: !authProvider.isAuthenticated
+                  ? () {
+                      // This shouldn't happen as unauthenticated users should be on a different screen
+                      context.go('/unauthenticated');
+                    }
+                  : null,
+            ),
+          ),
+
+          // Main Content
+          Expanded(
             child: Row(
               children: [
-                // Logo section
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Icon(
-                    Icons.bubble_chart,
-                    color: Colors.white,
-                    size: 24,
-                  ),
+                _buildSidebar(context, isMobile: false),
+                Container(
+                  width: 1,
+                  color: colors.borderColor,
                 ),
-                const SizedBox(width: 8),
-                const Text(
-                  'DMTools',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(width: 32),
-                // Current page title
-                const Icon(
-                  Icons.dashboard_outlined,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  'Dashboard',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const Spacer(),
-                // Right side actions
-                IconButton(
-                  icon: Icon(
-                    themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-                    color: Colors.white,
-                  ),
-                  onPressed: () => themeProvider.toggleTheme(),
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-                const SizedBox(width: 16),
-                IconButton(
-                  icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-                  onPressed: () {},
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
-                const SizedBox(width: 16),
-                IconButton(
-                  icon: const Icon(Icons.settings_outlined, color: Colors.white),
-                  onPressed: () {},
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
+                Expanded(
+                  child: _buildPageContent(),
                 ),
               ],
             ),
           ),
+        ],
+      ),
+    );
+  }
 
-          // Content area with sidebar and main content
+  Widget _buildMobileLayout() {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    return Scaffold(
+      key: _scaffoldKey,
+      body: Column(
+        children: [
+          // App Header
+          AppHeader(
+            showSearch: false,
+            showTitle: false,
+            showHamburgerMenu: true,
+            onHamburgerPressed: () => _scaffoldKey.currentState?.openDrawer(),
+            onThemeToggle: () => themeProvider.toggleTheme(),
+            onLogoPressed: () {
+              context.go('/dashboard');
+            },
+            profileButton: UserProfileButton(
+              userName: authProvider.currentUser?.name ?? 'User',
+              email: authProvider.currentUser?.email,
+              avatarUrl: authProvider.currentUser?.picture,
+              loginState: authProvider.isAuthenticated ? LoginState.loggedIn : LoginState.loggedOut,
+              dropdownItems: authProvider.isAuthenticated
+                  ? [
+                      UserProfileDropdownItem(
+                        icon: Icons.account_circle,
+                        label: 'Profile',
+                        onTap: () {
+                          debugPrint('Profile clicked');
+                        },
+                      ),
+                      UserProfileDropdownItem(
+                        icon: Icons.settings,
+                        label: 'Settings',
+                        onTap: () {
+                          context.go('/settings');
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      UserProfileDropdownItem(
+                        icon: Icons.exit_to_app,
+                        label: 'Logout',
+                        onTap: () async {
+                          await authProvider.logout();
+                        },
+                      ),
+                    ]
+                  : [],
+              onPressed: !authProvider.isAuthenticated
+                  ? () {
+                      // This shouldn't happen as unauthenticated users should be on a different screen
+                      context.go('/unauthenticated');
+                    }
+                  : null,
+            ),
+          ),
+
+          // Main Content
           Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: _buildPageContent(),
+          ),
+        ],
+      ),
+      drawer: Drawer(
+        child: _buildSidebar(context, isMobile: true),
+      ),
+    );
+  }
+
+  Widget _buildSidebar(BuildContext context, {required bool isMobile}) {
+    final colors = context.colorsListening;
+
+    return Container(
+      width: 240,
+      color: colors.cardBg,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (isMobile) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: NetworkNodesLogo(
+                size: LogoSize.small,
+                isDarkMode: context.isDarkMode,
+              ),
+            ),
+            Divider(color: colors.borderColor, height: 1),
+          ],
+          const SizedBox(height: 24),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                // Sidebar navigation
-                const SidebarNavigation(selectedIndex: 0),
-
-                // Main content
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Welcome banner
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(32),
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                Color(0xFF3F6AE0),
-                                Color(0xFF2A4CC2),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(12)),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text(
-                                      'Welcome to DMTools',
-                                      style: TextStyle(
-                                        fontSize: 28,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 12),
-                                    const Text(
-                                      'Build, deploy, and manage AI agents with our powerful platform.',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        height: 1.5,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Wrap(
-                                      spacing: 16,
-                                      runSpacing: 16,
-                                      children: [
-                                        PrimaryButton(
-                                          text: 'Get Started',
-                                          onPressed: () {},
-                                        ),
-                                        WhiteOutlineButton(
-                                          text: 'Learn More',
-                                          onPressed: () {},
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const ResponsiveWidget(
-                                tablet: SizedBox(width: 24),
-                                desktop: SizedBox(width: 24),
-                              ),
-                              ResponsiveWidget(
-                                tablet: Container(
-                                  width: 120,
-                                  height: 120,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'Tools',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF2A4CC2),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                desktop: Container(
-                                  width: 120,
-                                  height: 120,
-                                  decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white,
-                                  ),
-                                  child: const Center(
-                                    child: Text(
-                                      'Tools',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF2A4CC2),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        const SizedBox(height: 32),
-
-                        // Workspace and agents summary
-                        const ResponsiveWidget(
-                          mobile: Column(
-                            children: [
-                              WorkspaceSummary(),
-                              SizedBox(height: 24),
-                              RecentAgents(),
-                            ],
-                          ),
-                          desktop: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Workspace summary
-                              Expanded(
-                                flex: 2,
-                                child: WorkspaceSummary(),
-                              ),
-
-                              SizedBox(width: 24),
-
-                              // Recent agents
-                              Expanded(
-                                flex: 3,
-                                child: RecentAgents(),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                for (int i = 0; i < navigationItems.length; i++) _buildNavItem(i, context, isMobile: isMobile),
               ],
             ),
+          ),
+          if (!isMobile) ...[
+            Divider(color: colors.borderColor, height: 1),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                '© 2025 DMTools. All rights reserved.',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: colors.textSecondary,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, BuildContext context, {required bool isMobile}) {
+    final item = navigationItems[index];
+    final colors = context.colorsListening;
+    final currentLocation = GoRouterState.of(context).uri.toString();
+    final isSelected = currentLocation == item.route;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: isSelected ? colors.accentColor.withValues(alpha: 0.1) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListTile(
+        leading: Icon(
+          item.icon,
+          color: isSelected ? colors.accentColor : colors.textSecondary,
+          size: 20,
+        ),
+        title: Text(
+          item.label,
+          style: TextStyle(
+            color: isSelected ? colors.accentColor : colors.textSecondary,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 14,
+          ),
+        ),
+        onTap: () {
+          context.go(item.route);
+          if (isMobile) {
+            Navigator.of(context).pop();
+          }
+        },
+        dense: true,
+        visualDensity: VisualDensity.compact,
+      ),
+    );
+  }
+
+  Widget _buildPageContent() {
+    final colors = context.colorsListening;
+    final currentLocation = GoRouterState.of(context).uri.toString();
+    final currentRoute = navigationItems.firstWhere(
+      (item) => item.route == currentLocation,
+      orElse: () => navigationItems.first,
+    );
+
+    return Container(
+      color: colors.bgColor,
+      width: double.infinity,
+      height: double.infinity,
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Page Title
+          Text(
+            currentRoute.label,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: colors.textColor,
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // Page Content from router - constrained to available height
+          Expanded(
+            child: widget.child ?? const SizedBox.shrink(),
           ),
         ],
       ),

@@ -58,14 +58,18 @@ class RecentAgents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    final colors = context.colorsListening;
+
+    return Container(
+      height: 500, // Fixed height to prevent unbounded constraints
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.cardBg,
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colors.borderColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
+            blurRadius: 4,
             offset: const Offset(0, 2),
           ),
         ],
@@ -84,7 +88,7 @@ class RecentAgents extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Search bar
-                  const _SearchBar(),
+                  _SearchBar(colors: colors),
 
                   // Agent cards
                   Expanded(
@@ -100,6 +104,7 @@ class RecentAgents extends StatelessWidget {
                           tags: agent.tags,
                           runCount: agent.runCount,
                           lastRunTime: agent.lastRunTime,
+                          colors: colors,
                         );
                       },
                     ),
@@ -108,13 +113,10 @@ class RecentAgents extends StatelessWidget {
                   const SizedBox(height: 16),
 
                   // View all button
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlineButton(
-                      text: 'View All Agents',
-                      onPressed: () {},
-                      isFullWidth: true,
-                    ),
+                  OutlineButton(
+                    text: 'View All Agents',
+                    onPressed: () {},
+                    isFullWidth: true,
                   ),
                 ],
               ),
@@ -168,12 +170,12 @@ class _RecentAgentsHeader extends StatelessWidget {
 
 // Private widget for search bar
 class _SearchBar extends StatelessWidget {
-  const _SearchBar();
+  final dynamic colors;
+
+  const _SearchBar({required this.colors});
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: SizedBox(
@@ -213,6 +215,7 @@ class _AgentItem extends StatelessWidget {
   final List<String> tags;
   final int runCount;
   final String lastRunTime;
+  final dynamic colors;
 
   const _AgentItem({
     required this.title,
@@ -222,18 +225,18 @@ class _AgentItem extends StatelessWidget {
     required this.tags,
     required this.runCount,
     required this.lastRunTime,
+    required this.colors,
   });
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
     final bool isActive = status == StatusType.online;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colors.bgColor,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(color: colors.borderColor),
         ),
@@ -263,6 +266,7 @@ class _AgentItem extends StatelessWidget {
                   _StatusBadge(
                     isActive: isActive,
                     statusLabel: statusLabel,
+                    colors: colors,
                   ),
                 ],
               ),
@@ -272,56 +276,70 @@ class _AgentItem extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 14,
                   color: colors.textSecondary,
+                  height: 1.4,
                 ),
               ),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
-                runSpacing: 8,
-                children: tags.map((tag) => _TagChip(label: tag)).toList(),
+                runSpacing: 4,
+                children: tags
+                    .map(
+                      (tag) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: colors.accentColor.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          tag,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colors.accentColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
-              const SizedBox(height: 16),
-              SimpleResponsiveBuilder(
-                breakpoint: ResponsiveBreakpoints.agentCardNarrowThreshold,
-                mobile: (context, constraints) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        _StatWidget(
-                          icon: Icons.replay_circle_filled_outlined,
-                          label: 'Runs',
-                          value: runCount.toString(),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.play_circle_outline, size: 16, color: colors.textSecondary),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Runs: $runCount',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.textSecondary,
                         ),
-                        const SizedBox(width: 24),
-                        _StatWidget(
-                          icon: Icons.access_time_outlined,
-                          label: 'Last Run',
-                          value: lastRunTime,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                  Row(
+                    children: [
+                      Icon(Icons.access_time, size: 16, color: colors.textSecondary),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Last run: $lastRunTime',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.textSecondary,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    const _RunButton(),
-                  ],
-                ),
-                desktop: (context, constraints) => Row(
-                  children: [
-                    _StatWidget(
-                      icon: Icons.replay_circle_filled_outlined,
-                      label: 'Runs',
-                      value: runCount.toString(),
-                    ),
-                    const SizedBox(width: 24),
-                    _StatWidget(
-                      icon: Icons.access_time_outlined,
-                      label: 'Last Run',
-                      value: lastRunTime,
-                    ),
-                    const Spacer(),
-                    const _RunButton(),
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  const Spacer(),
+                  PrimaryButton(
+                    text: 'Run',
+                    onPressed: () {},
+                    size: ButtonSize.small,
+                  ),
+                ],
               ),
             ],
           ),
@@ -335,137 +353,43 @@ class _AgentItem extends StatelessWidget {
 class _StatusBadge extends StatelessWidget {
   final bool isActive;
   final String statusLabel;
+  final dynamic colors;
 
   const _StatusBadge({
     required this.isActive,
     required this.statusLabel,
+    required this.colors,
   });
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isActive ? const Color(0xFFE6F7ED) : const Color(0xFFF1F1F1),
-        borderRadius: BorderRadius.circular(12),
+        color: isActive ? colors.successColor.withValues(alpha: 0.1) : colors.textSecondary.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isActive ? const Color(0xFF34C759) : const Color(0xFF8E8E93),
-              ),
-              child: const SizedBox(width: 6, height: 6),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(
+              color: isActive ? colors.successColor : colors.textSecondary,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(width: 4),
-            Text(
-              statusLabel,
-              style: TextStyle(
-                fontSize: 12,
-                color: isActive ? const Color(0xFF34C759) : const Color(0xFF8E8E93),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Private widget for tag chip
-class _TagChip extends StatelessWidget {
-  final String label;
-
-  const _TagChip({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F1F1),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: Color(0xFF666666),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// Private widget for stat display
-class _StatWidget extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-
-  const _StatWidget({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 16, color: colors.textSecondary),
-        const SizedBox(width: 4),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: colors.textSecondary,
-              ),
+          const SizedBox(width: 6),
+          Text(
+            statusLabel,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: isActive ? colors.successColor : colors.textSecondary,
             ),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: colors.textColor,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-// Private widget for run button
-class _RunButton extends StatelessWidget {
-  const _RunButton();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return ElevatedButton.icon(
-      onPressed: () {},
-      icon: const Icon(Icons.play_arrow, size: 16),
-      label: const Text('Run'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: colors.accentColor,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
+          ),
+        ],
       ),
     );
   }

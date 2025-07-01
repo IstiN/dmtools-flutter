@@ -22,7 +22,7 @@
       "cwd": "${workspaceFolder}",
       "program": "lib/main.dart",
       "args": [
-        "--web-port=8080",
+        "--web-port=8081",
         "-d",
         "chrome",
         "--web-experimental-hot-reload"
