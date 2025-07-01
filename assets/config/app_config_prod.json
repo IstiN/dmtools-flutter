@@ -1,0 +1,9 @@
+{
+  "environment": "production",
+  "baseUrl": "https://dmtools-431977789017.us-central1.run.app",
+  "appName": "DMTools",
+  "appVersion": "1.0.0",
+  "enableLogging": false,
+  "enableMockData": false,
+  "timeoutDuration": 30
+} 

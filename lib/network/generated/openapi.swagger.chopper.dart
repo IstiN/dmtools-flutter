@@ -1,0 +1,894 @@
+// dart format width=80
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'openapi.swagger.dart';
+
+// **************************************************************************
+// ChopperGenerator
+// **************************************************************************
+
+// coverage:ignore-file
+// ignore_for_file: type=lint
+final class _$Openapi extends Openapi {
+  _$Openapi([ChopperClient? client]) {
+    if (client == null) return;
+    this.client = client;
+  }
+
+  @override
+  final Type definitionType = Openapi;
+
+  @override
+  Future<Response<Object>> _mcpGet() {
+    final Uri $url = Uri.parse('/mcp/**');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _mcpPut() {
+    final Uri $url = Uri.parse('/mcp/**');
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _mcpPost() {
+    final Uri $url = Uri.parse('/mcp/**');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _mcpDelete() {
+    final Uri $url = Uri.parse('/mcp/**');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiSettingsUserUserIdKeyGet({
+    required String? userId,
+    required String? key,
+    String? defaultValue,
+  }) {
+    final Uri $url = Uri.parse('/api/settings/user/${userId}/${key}');
+    final Map<String, dynamic> $params = <String, dynamic>{'defaultValue': defaultValue};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiSettingsUserUserIdKeyPut({
+    required String? userId,
+    required String? key,
+    required Object? body,
+  }) {
+    final Uri $url = Uri.parse('/api/settings/user/${userId}/${key}');
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<IntegrationDto>> _apiIntegrationsIdGet({
+    required String? id,
+    bool? includeSensitive,
+  }) {
+    final Uri $url = Uri.parse('/api/integrations/${id}');
+    final Map<String, dynamic> $params = <String, dynamic>{'includeSensitive': includeSensitive};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<IntegrationDto, IntegrationDto>($request);
+  }
+
+  @override
+  Future<Response<IntegrationDto>> _apiIntegrationsIdPut({
+    required String? id,
+    required UpdateIntegrationRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/integrations/${id}');
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<IntegrationDto, IntegrationDto>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiIntegrationsIdDelete({required String? id}) {
+    final Uri $url = Uri.parse('/api/integrations/${id}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<IntegrationDto>> _apiIntegrationsIdEnablePut({required String? id}) {
+    final Uri $url = Uri.parse('/api/integrations/${id}/enable');
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<IntegrationDto, IntegrationDto>($request);
+  }
+
+  @override
+  Future<Response<IntegrationDto>> _apiIntegrationsIdDisablePut({required String? id}) {
+    final Uri $url = Uri.parse('/api/integrations/${id}/disable');
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<IntegrationDto, IntegrationDto>($request);
+  }
+
+  @override
+  Future<Response<String>> _shutdownPost() {
+    final Uri $url = Uri.parse('/shutdown');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  // Removed duplicate MCP methods to fix compilation errors
+  // Original MCP methods from /mcp/** are kept above
+
+  @override
+  Future<Response<List<WorkspaceDto>>> _apiWorkspacesGet() {
+    final Uri $url = Uri.parse('/api/workspaces');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<WorkspaceDto>, WorkspaceDto>($request);
+  }
+
+  @override
+  Future<Response<WorkspaceDto>> _apiWorkspacesPost({required CreateWorkspaceRequest? body}) {
+    final Uri $url = Uri.parse('/api/workspaces');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<WorkspaceDto, WorkspaceDto>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiWorkspacesWorkspaceIdSharePost({
+    required String? workspaceId,
+    required ShareWorkspaceRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/workspaces/${workspaceId}/share');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<WorkspaceDto>> _apiWorkspacesDefaultPost() {
+    final Uri $url = Uri.parse('/api/workspaces/default');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<WorkspaceDto, WorkspaceDto>($request);
+  }
+
+  @override
+  Future<Response<ChatResponse>> _apiV1ChatSimplePost({
+    required String? message,
+    String? model,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/chat/simple');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'message': message,
+      'model': model,
+    };
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<ChatResponse, ChatResponse>($request);
+  }
+
+  @override
+  Future<Response<ChatResponse>> _apiV1ChatCompletionsPost({required ChatRequest? body}) {
+    final Uri $url = Uri.parse('/api/v1/chat/completions');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<ChatResponse, ChatResponse>($request);
+  }
+
+  @override
+  Future<Response<ChatResponse>> _apiV1ChatCompletionsWithFilesPost({
+    required String? chatRequest,
+    required List<List<int>> files,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/chat/completions-with-files');
+    final Map<String, dynamic> $params = <String, dynamic>{'chatRequest': chatRequest};
+    final List<PartValue> $parts = <PartValue>[
+      PartValueFile<List<List<int>>>(
+        'files',
+        files,
+      )
+    ];
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      parts: $parts,
+      multipart: true,
+      parameters: $params,
+    );
+    return client.send<ChatResponse, ChatResponse>($request);
+  }
+
+  @override
+  Future<Response<AgentExecutionResponse>> _apiV1AgentsOrchestratorsExecutePost(
+      {required AgentExecutionRequest? body}) {
+    final Uri $url = Uri.parse('/api/v1/agents/orchestrators/execute');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<AgentExecutionResponse, AgentExecutionResponse>($request);
+  }
+
+  @override
+  Future<Response<AgentExecutionResponse>> _apiV1AgentsOrchestratorsExecuteOrchestratorNamePost({
+    required String? orchestratorName,
+    required Object? body,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/agents/orchestrators/execute/${orchestratorName}');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<AgentExecutionResponse, AgentExecutionResponse>($request);
+  }
+
+  @override
+  Future<Response<AgentExecutionResponse>> _apiV1AgentsExecutePost({required AgentExecutionRequest? body}) {
+    final Uri $url = Uri.parse('/api/v1/agents/execute');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<AgentExecutionResponse, AgentExecutionResponse>($request);
+  }
+
+  @override
+  Future<Response<AgentExecutionResponse>> _apiV1AgentsExecuteAgentNamePost({
+    required String? agentName,
+    required Object? body,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/agents/execute/${agentName}');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<AgentExecutionResponse, AgentExecutionResponse>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiSettingsUserUserIdGet({required String? userId}) {
+    final Uri $url = Uri.parse('/api/settings/user/${userId}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiSettingsUserUserIdPost({
+    required String? userId,
+    required Object? body,
+  }) {
+    final Uri $url = Uri.parse('/api/settings/user/${userId}');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiPresentationScriptPost({
+    required String? userRequest,
+    required ApiPresentationScriptPost$RequestBody? body,
+  }) {
+    final Uri $url = Uri.parse('/api/presentation/script');
+    final Map<String, dynamic> $params = <String, dynamic>{'userRequest': userRequest};
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      parameters: $params,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiPresentationGeneratePost({required GeneratePresentationRequest? body}) {
+    final Uri $url = Uri.parse('/api/presentation/generate');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiOauthInitiatePost({required OAuthInitiateRequest? body}) {
+    final Uri $url = Uri.parse('/api/oauth/initiate');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiOauthExchangePost({required OAuthExchangeRequest? body}) {
+    final Uri $url = Uri.parse('/api/oauth/exchange');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<List<IntegrationDto>>> _apiIntegrationsGet() {
+    final Uri $url = Uri.parse('/api/integrations');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<IntegrationDto>, IntegrationDto>($request);
+  }
+
+  @override
+  Future<Response<IntegrationDto>> _apiIntegrationsPost({required CreateIntegrationRequest? body}) {
+    final Uri $url = Uri.parse('/api/integrations');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<IntegrationDto, IntegrationDto>($request);
+  }
+
+  @override
+  Future<Response<WorkspaceDto>> _apiIntegrationsIdWorkspacesPost({
+    required String? id,
+    required ShareIntegrationWithWorkspaceRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/integrations/${id}/workspaces');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<WorkspaceDto, WorkspaceDto>($request);
+  }
+
+  @override
+  Future<Response<IntegrationUserDto>> _apiIntegrationsIdUsersPost({
+    required String? id,
+    required ShareIntegrationRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/integrations/${id}/users');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<IntegrationUserDto, IntegrationUserDto>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiIntegrationsIdUsagePost({required String? id}) {
+    final Uri $url = Uri.parse('/api/integrations/${id}/usage');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiIntegrationsTestPost({required TestIntegrationRequest? body}) {
+    final Uri $url = Uri.parse('/api/integrations/test');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiExecuteJobPost({required String? body}) {
+    final Uri $url = Uri.parse('/api/executeJob');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthLogoutPost() {
+    final Uri $url = Uri.parse('/api/auth/logout');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthLocalLoginPost({required Object? body}) {
+    final Uri $url = Uri.parse('/api/auth/local-login');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _mcpHealthGet() {
+    final Uri $url = Uri.parse('/mcp/health');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<bool>> _isLocalGet() {
+    final Uri $url = Uri.parse('/is-local');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<bool, bool>($request);
+  }
+
+  @override
+  Future<Response<String>> _healthGet() {
+    final Uri $url = Uri.parse('/health');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<WorkspaceDto>> _apiWorkspacesWorkspaceIdGet({required String? workspaceId}) {
+    final Uri $url = Uri.parse('/api/workspaces/${workspaceId}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<WorkspaceDto, WorkspaceDto>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiWorkspacesWorkspaceIdDelete({required String? workspaceId}) {
+    final Uri $url = Uri.parse('/api/workspaces/${workspaceId}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiV1ChatHealthGet() {
+    final Uri $url = Uri.parse('/api/v1/chat/health');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiV1AgentsOrchestratorsGet({bool? detailed}) {
+    final Uri $url = Uri.parse('/api/v1/agents/orchestrators');
+    final Map<String, dynamic> $params = <String, dynamic>{'detailed': detailed};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<AgentInfo>> _apiV1AgentsOrchestratorsOrchestratorNameInfoGet({required String? orchestratorName}) {
+    final Uri $url = Uri.parse('/api/v1/agents/orchestrators/${orchestratorName}/info');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<AgentInfo, AgentInfo>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiV1AgentsHealthGet() {
+    final Uri $url = Uri.parse('/api/v1/agents/health');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<AgentListResponse>> _apiV1AgentsAvailableGet({bool? detailed}) {
+    final Uri $url = Uri.parse('/api/v1/agents/available');
+    final Map<String, dynamic> $params = <String, dynamic>{'detailed': detailed};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<AgentListResponse, AgentListResponse>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiV1AgentsAgentsGet({bool? detailed}) {
+    final Uri $url = Uri.parse('/api/v1/agents/agents');
+    final Map<String, dynamic> $params = <String, dynamic>{'detailed': detailed};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<AgentInfo>> _apiV1AgentsAgentsAgentNameInfoGet({required String? agentName}) {
+    final Uri $url = Uri.parse('/api/v1/agents/agents/${agentName}/info');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<AgentInfo, AgentInfo>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiPresentationHealthGet() {
+    final Uri $url = Uri.parse('/api/presentation/health');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiOauthProvidersGet() {
+    final Uri $url = Uri.parse('/api/oauth/providers');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<List<IntegrationDto>>> _apiIntegrationsWorkspaceWorkspaceIdGet({required String? workspaceId}) {
+    final Uri $url = Uri.parse('/api/integrations/workspace/${workspaceId}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<IntegrationDto>, IntegrationDto>($request);
+  }
+
+  @override
+  Future<Response<List<IntegrationTypeDto>>> _apiIntegrationsTypesGet() {
+    final Uri $url = Uri.parse('/api/integrations/types');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<List<IntegrationTypeDto>, IntegrationTypeDto>($request);
+  }
+
+  @override
+  Future<Response<IntegrationTypeDto>> _apiIntegrationsTypesTypeSchemaGet({required String? type}) {
+    final Uri $url = Uri.parse('/api/integrations/types/${type}/schema');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<IntegrationTypeDto, IntegrationTypeDto>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiConfigGet() {
+    final Uri $url = Uri.parse('/api/config');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthUserGet() {
+    final Uri $url = Uri.parse('/api/auth/user');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthTestJwtGet() {
+    final Uri $url = Uri.parse('/api/auth/test-jwt');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiAuthSimpleTestGet() {
+    final Uri $url = Uri.parse('/api/auth/simple-test');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthPublicTestGet() {
+    final Uri $url = Uri.parse('/api/auth/public-test');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthLoginProviderGet({required String? provider}) {
+    final Uri $url = Uri.parse('/api/auth/login/${provider}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthIsLocalGet() {
+    final Uri $url = Uri.parse('/api/auth/is-local');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAuthCallbackProviderGet({
+    required String? provider,
+    required String? code,
+  }) {
+    final Uri $url = Uri.parse('/api/auth/callback/${provider}');
+    final Map<String, dynamic> $params = <String, dynamic>{'code': code};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiAuthBasicTestGet() {
+    final Uri $url = Uri.parse('/api/auth/basic-test');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<String>> _ahHealthGet() {
+    final Uri $url = Uri.parse('/_ah/health');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
+    required String? workspaceId,
+    required String? targetUserId,
+  }) {
+    final Uri $url = Uri.parse('/api/workspaces/${workspaceId}/users/${targetUserId}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiIntegrationsIdWorkspacesWorkspaceIdDelete({
+    required String? id,
+    required String? workspaceId,
+  }) {
+    final Uri $url = Uri.parse('/api/integrations/${id}/workspaces/${workspaceId}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiIntegrationsIdUsersUserIdDelete({
+    required String? id,
+    required String? userId,
+  }) {
+    final Uri $url = Uri.parse('/api/integrations/${id}/users/${userId}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+}

@@ -124,52 +124,62 @@ class AppHeader extends StatelessWidget {
             ),
           ],
 
-          // Spacer
-          const Spacer(),
-
-          // Search (if enabled)
+          // Search in the center (if enabled)
           if (showSearch) ...[
-            Flexible(
-              child: ConstrainedBox(
-                constraints: BoxConstraints(maxWidth: searchWidth),
-                child: SearchForm(
-                  hintText: searchHintText,
-                  onSearch: onSearch ?? (_) {},
-                  isTestMode: isTestMode,
-                  testDarkMode: isDarkMode,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: searchWidth),
+                    child: SearchForm(
+                      hintText: searchHintText,
+                      onSearch: onSearch ?? (_) {},
+                      isTestMode: isTestMode,
+                      testDarkMode: isDarkMode,
+                    ),
+                  ),
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+          ] else ...[
+            // If no search, use Spacer to push right-side items to the end
+            const Spacer(),
           ],
 
-          // Actions (if provided)
-          if (actions != null) ...actions!,
+          // Right side actions and profile
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Actions (if provided)
+              if (actions != null) ...actions!,
 
-          // Theme toggle
-          if (onThemeToggle != null) ...[
-            IconButton(
-              icon: Icon(
-                isDarkMode ? Icons.light_mode : Icons.dark_mode,
-                color: colors.textColor,
-              ),
-              onPressed: onThemeToggle,
-              tooltip: isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
-            ),
-          ],
-
-          const SizedBox(width: 8),
-
-          // Profile button
-          profileButton ??
-              CircleAvatar(
-                radius: 16,
-                backgroundColor: Theme.of(context).primaryColor,
-                child: const Text(
-                  'VK',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
+              // Theme toggle
+              if (onThemeToggle != null) ...[
+                IconButton(
+                  icon: Icon(
+                    isDarkMode ? Icons.light_mode : Icons.dark_mode,
+                    color: colors.textColor,
+                  ),
+                  onPressed: onThemeToggle,
+                  tooltip: isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
                 ),
-              ),
+              ],
+
+              const SizedBox(width: 8),
+
+              // Profile button
+              profileButton ??
+                  CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Theme.of(context).primaryColor,
+                    child: const Text(
+                      'VK',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+            ],
+          ),
         ],
       ),
     );

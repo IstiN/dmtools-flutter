@@ -1,0 +1,24 @@
+targets:
+  $default:
+    sources:
+      - lib/**
+      - swagger/**
+    builders:
+      swagger_dart_code_generator:
+        options:
+          input_folder: 'swagger'
+          output_folder: 'lib/network/generated'
+          with_base_url: true
+          with_converter: true
+          build_only_models: false
+          separate_models: true
+          include_if_null: false
+          override_equals_and_hashcode: true
+          use_path_for_request_names: true
+          enums_case_sensitive: true
+          default_values_map:
+            - type_name: 'List<String>'
+              default_value: '[]'
+            - type_name: 'List<int>'
+              default_value: '[]'
+ 

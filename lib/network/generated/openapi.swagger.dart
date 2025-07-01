@@ -1,0 +1,1156 @@
+// ignore_for_file: type=lint
+
+import 'openapi.models.swagger.dart';
+import 'package:chopper/chopper.dart';
+
+import 'client_mapping.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'package:chopper/chopper.dart' as chopper;
+export 'openapi.enums.swagger.dart';
+export 'openapi.models.swagger.dart';
+
+part 'openapi.swagger.chopper.dart';
+
+// **************************************************************************
+// SwaggerChopperGenerator
+// **************************************************************************
+
+@ChopperApi()
+abstract class Openapi extends ChopperService {
+  static Openapi create({
+    ChopperClient? client,
+    http.Client? httpClient,
+    Authenticator? authenticator,
+    ErrorConverter? errorConverter,
+    Converter? converter,
+    Uri? baseUrl,
+    List<Interceptor>? interceptors,
+  }) {
+    if (client != null) {
+      return _$Openapi(client);
+    }
+
+    final newClient = ChopperClient(
+      services: [_$Openapi()],
+      converter: converter ?? $JsonSerializableConverter(),
+      interceptors: interceptors ?? [],
+      client: httpClient,
+      authenticator: authenticator,
+      errorConverter: errorConverter,
+      baseUrl: baseUrl ?? Uri.parse('http://'),
+    );
+    return _$Openapi(newClient);
+  }
+
+  ///
+  Future<chopper.Response<Object>> mcpGet() {
+    return _mcpGet();
+  }
+
+  ///
+  @GET(path: '/mcp/**')
+  Future<chopper.Response<Object>> _mcpGet();
+
+  ///
+  Future<chopper.Response<Object>> mcpPut() {
+    return _mcpPut();
+  }
+
+  ///
+  @PUT(path: '/mcp/**', optionalBody: true)
+  Future<chopper.Response<Object>> _mcpPut();
+
+  ///
+  Future<chopper.Response<Object>> mcpPost() {
+    return _mcpPost();
+  }
+
+  ///
+  @POST(path: '/mcp/**', optionalBody: true)
+  Future<chopper.Response<Object>> _mcpPost();
+
+  ///
+  Future<chopper.Response<Object>> mcpDelete() {
+    return _mcpDelete();
+  }
+
+  ///
+  @DELETE(path: '/mcp/**')
+  Future<chopper.Response<Object>> _mcpDelete();
+
+  ///
+  ///@param userId
+  ///@param key
+  ///@param defaultValue
+  Future<chopper.Response<Object>> apiSettingsUserUserIdKeyGet({
+    required String? userId,
+    required String? key,
+    String? defaultValue,
+  }) {
+    return _apiSettingsUserUserIdKeyGet(
+      userId: userId,
+      key: key,
+      defaultValue: defaultValue,
+    );
+  }
+
+  ///
+  ///@param userId
+  ///@param key
+  ///@param defaultValue
+  @GET(path: '/api/settings/user/{userId}/{key}')
+  Future<chopper.Response<Object>> _apiSettingsUserUserIdKeyGet({
+    @Path('userId') required String? userId,
+    @Path('key') required String? key,
+    @Query('defaultValue') String? defaultValue,
+  });
+
+  ///
+  ///@param userId
+  ///@param key
+  Future<chopper.Response<Object>> apiSettingsUserUserIdKeyPut({
+    required String? userId,
+    required String? key,
+    required Object? body,
+  }) {
+    return _apiSettingsUserUserIdKeyPut(userId: userId, key: key, body: body);
+  }
+
+  ///
+  ///@param userId
+  ///@param key
+  @PUT(path: '/api/settings/user/{userId}/{key}', optionalBody: true)
+  Future<chopper.Response<Object>> _apiSettingsUserUserIdKeyPut({
+    @Path('userId') required String? userId,
+    @Path('key') required String? key,
+    @Body() required Object? body,
+  });
+
+  ///Get integration by ID
+  ///@param id
+  ///@param includeSensitive
+  Future<chopper.Response<IntegrationDto>> apiIntegrationsIdGet({
+    required String? id,
+    bool? includeSensitive,
+  }) {
+    generatedMapping.putIfAbsent(
+      IntegrationDto,
+      () => IntegrationDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsIdGet(id: id, includeSensitive: includeSensitive);
+  }
+
+  ///Get integration by ID
+  ///@param id
+  ///@param includeSensitive
+  @GET(path: '/api/integrations/{id}')
+  Future<chopper.Response<IntegrationDto>> _apiIntegrationsIdGet({
+    @Path('id') required String? id,
+    @Query('includeSensitive') bool? includeSensitive,
+  });
+
+  ///Update integration
+  ///@param id
+  Future<chopper.Response<IntegrationDto>> apiIntegrationsIdPut({
+    required String? id,
+    required UpdateIntegrationRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      IntegrationDto,
+      () => IntegrationDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsIdPut(id: id, body: body);
+  }
+
+  ///Update integration
+  ///@param id
+  @PUT(path: '/api/integrations/{id}', optionalBody: true)
+  Future<chopper.Response<IntegrationDto>> _apiIntegrationsIdPut({
+    @Path('id') required String? id,
+    @Body() required UpdateIntegrationRequest? body,
+  });
+
+  ///Delete integration
+  ///@param id
+  Future<chopper.Response> apiIntegrationsIdDelete({required String? id}) {
+    return _apiIntegrationsIdDelete(id: id);
+  }
+
+  ///Delete integration
+  ///@param id
+  @DELETE(path: '/api/integrations/{id}')
+  Future<chopper.Response> _apiIntegrationsIdDelete({
+    @Path('id') required String? id,
+  });
+
+  ///Enable integration
+  ///@param id
+  Future<chopper.Response<IntegrationDto>> apiIntegrationsIdEnablePut({
+    required String? id,
+  }) {
+    generatedMapping.putIfAbsent(
+      IntegrationDto,
+      () => IntegrationDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsIdEnablePut(id: id);
+  }
+
+  ///Enable integration
+  ///@param id
+  @PUT(path: '/api/integrations/{id}/enable', optionalBody: true)
+  Future<chopper.Response<IntegrationDto>> _apiIntegrationsIdEnablePut({
+    @Path('id') required String? id,
+  });
+
+  ///Disable integration
+  ///@param id
+  Future<chopper.Response<IntegrationDto>> apiIntegrationsIdDisablePut({
+    required String? id,
+  }) {
+    generatedMapping.putIfAbsent(
+      IntegrationDto,
+      () => IntegrationDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsIdDisablePut(id: id);
+  }
+
+  ///Disable integration
+  ///@param id
+  @PUT(path: '/api/integrations/{id}/disable', optionalBody: true)
+  Future<chopper.Response<IntegrationDto>> _apiIntegrationsIdDisablePut({
+    @Path('id') required String? id,
+  });
+
+  ///
+  Future<chopper.Response<String>> shutdownPost() {
+    return _shutdownPost();
+  }
+
+  ///
+  @POST(path: '/shutdown', optionalBody: true)
+  Future<chopper.Response<String>> _shutdownPost();
+
+  // Removed duplicate MCP endpoints to fix compilation errors
+  // Original MCP endpoints from /mcp/** are kept above
+
+  ///
+  Future<chopper.Response<List<WorkspaceDto>>> apiWorkspacesGet() {
+    generatedMapping.putIfAbsent(
+      WorkspaceDto,
+      () => WorkspaceDto.fromJsonFactory,
+    );
+
+    return _apiWorkspacesGet();
+  }
+
+  ///
+  @GET(path: '/api/workspaces')
+  Future<chopper.Response<List<WorkspaceDto>>> _apiWorkspacesGet();
+
+  ///
+  Future<chopper.Response<WorkspaceDto>> apiWorkspacesPost({
+    required CreateWorkspaceRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      WorkspaceDto,
+      () => WorkspaceDto.fromJsonFactory,
+    );
+
+    return _apiWorkspacesPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/workspaces', optionalBody: true)
+  Future<chopper.Response<WorkspaceDto>> _apiWorkspacesPost({
+    @Body() required CreateWorkspaceRequest? body,
+  });
+
+  ///
+  ///@param workspaceId
+  Future<chopper.Response<Object>> apiWorkspacesWorkspaceIdSharePost({
+    required String? workspaceId,
+    required ShareWorkspaceRequest? body,
+  }) {
+    return _apiWorkspacesWorkspaceIdSharePost(
+      workspaceId: workspaceId,
+      body: body,
+    );
+  }
+
+  ///
+  ///@param workspaceId
+  @POST(path: '/api/workspaces/{workspaceId}/share', optionalBody: true)
+  Future<chopper.Response<Object>> _apiWorkspacesWorkspaceIdSharePost({
+    @Path('workspaceId') required String? workspaceId,
+    @Body() required ShareWorkspaceRequest? body,
+  });
+
+  ///
+  Future<chopper.Response<WorkspaceDto>> apiWorkspacesDefaultPost() {
+    generatedMapping.putIfAbsent(
+      WorkspaceDto,
+      () => WorkspaceDto.fromJsonFactory,
+    );
+
+    return _apiWorkspacesDefaultPost();
+  }
+
+  ///
+  @POST(path: '/api/workspaces/default', optionalBody: true)
+  Future<chopper.Response<WorkspaceDto>> _apiWorkspacesDefaultPost();
+
+  ///
+  ///@param message
+  ///@param model
+  Future<chopper.Response<ChatResponse>> apiV1ChatSimplePost({
+    required String? message,
+    String? model,
+  }) {
+    generatedMapping.putIfAbsent(
+      ChatResponse,
+      () => ChatResponse.fromJsonFactory,
+    );
+
+    return _apiV1ChatSimplePost(message: message, model: model);
+  }
+
+  ///
+  ///@param message
+  ///@param model
+  @POST(path: '/api/v1/chat/simple', optionalBody: true)
+  Future<chopper.Response<ChatResponse>> _apiV1ChatSimplePost({
+    @Query('message') required String? message,
+    @Query('model') String? model,
+  });
+
+  ///
+  Future<chopper.Response<ChatResponse>> apiV1ChatCompletionsPost({
+    required ChatRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      ChatResponse,
+      () => ChatResponse.fromJsonFactory,
+    );
+
+    return _apiV1ChatCompletionsPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/v1/chat/completions', optionalBody: true)
+  Future<chopper.Response<ChatResponse>> _apiV1ChatCompletionsPost({
+    @Body() required ChatRequest? body,
+  });
+
+  ///
+  ///@param chatRequest
+  Future<chopper.Response<ChatResponse>> apiV1ChatCompletionsWithFilesPost({
+    required String? chatRequest,
+    required List<List<int>> files,
+  }) {
+    generatedMapping.putIfAbsent(
+      ChatResponse,
+      () => ChatResponse.fromJsonFactory,
+    );
+
+    return _apiV1ChatCompletionsWithFilesPost(
+      chatRequest: chatRequest,
+      files: files,
+    );
+  }
+
+  ///
+  ///@param chatRequest
+  @POST(path: '/api/v1/chat/completions-with-files', optionalBody: true)
+  @Multipart()
+  Future<chopper.Response<ChatResponse>> _apiV1ChatCompletionsWithFilesPost({
+    @Query('chatRequest') required String? chatRequest,
+    @PartFile() required List<List<int>> files,
+  });
+
+  ///
+  Future<chopper.Response<AgentExecutionResponse>> apiV1AgentsOrchestratorsExecutePost(
+      {required AgentExecutionRequest? body}) {
+    generatedMapping.putIfAbsent(
+      AgentExecutionResponse,
+      () => AgentExecutionResponse.fromJsonFactory,
+    );
+
+    return _apiV1AgentsOrchestratorsExecutePost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/v1/agents/orchestrators/execute', optionalBody: true)
+  Future<chopper.Response<AgentExecutionResponse>> _apiV1AgentsOrchestratorsExecutePost({
+    @Body() required AgentExecutionRequest? body,
+  });
+
+  ///
+  ///@param orchestratorName
+  Future<chopper.Response<AgentExecutionResponse>> apiV1AgentsOrchestratorsExecuteOrchestratorNamePost({
+    required String? orchestratorName,
+    required Object? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      AgentExecutionResponse,
+      () => AgentExecutionResponse.fromJsonFactory,
+    );
+
+    return _apiV1AgentsOrchestratorsExecuteOrchestratorNamePost(
+      orchestratorName: orchestratorName,
+      body: body,
+    );
+  }
+
+  ///
+  ///@param orchestratorName
+  @POST(
+    path: '/api/v1/agents/orchestrators/execute/{orchestratorName}',
+    optionalBody: true,
+  )
+  Future<chopper.Response<AgentExecutionResponse>> _apiV1AgentsOrchestratorsExecuteOrchestratorNamePost({
+    @Path('orchestratorName') required String? orchestratorName,
+    @Body() required Object? body,
+  });
+
+  ///
+  Future<chopper.Response<AgentExecutionResponse>> apiV1AgentsExecutePost({
+    required AgentExecutionRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      AgentExecutionResponse,
+      () => AgentExecutionResponse.fromJsonFactory,
+    );
+
+    return _apiV1AgentsExecutePost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/v1/agents/execute', optionalBody: true)
+  Future<chopper.Response<AgentExecutionResponse>> _apiV1AgentsExecutePost({
+    @Body() required AgentExecutionRequest? body,
+  });
+
+  ///
+  ///@param agentName
+  Future<chopper.Response<AgentExecutionResponse>> apiV1AgentsExecuteAgentNamePost({
+    required String? agentName,
+    required Object? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      AgentExecutionResponse,
+      () => AgentExecutionResponse.fromJsonFactory,
+    );
+
+    return _apiV1AgentsExecuteAgentNamePost(agentName: agentName, body: body);
+  }
+
+  ///
+  ///@param agentName
+  @POST(path: '/api/v1/agents/execute/{agentName}', optionalBody: true)
+  Future<chopper.Response<AgentExecutionResponse>> _apiV1AgentsExecuteAgentNamePost({
+    @Path('agentName') required String? agentName,
+    @Body() required Object? body,
+  });
+
+  ///
+  ///@param userId
+  Future<chopper.Response<Object>> apiSettingsUserUserIdGet({
+    required String? userId,
+  }) {
+    return _apiSettingsUserUserIdGet(userId: userId);
+  }
+
+  ///
+  ///@param userId
+  @GET(path: '/api/settings/user/{userId}')
+  Future<chopper.Response<Object>> _apiSettingsUserUserIdGet({
+    @Path('userId') required String? userId,
+  });
+
+  ///
+  ///@param userId
+  Future<chopper.Response<Object>> apiSettingsUserUserIdPost({
+    required String? userId,
+    required Object? body,
+  }) {
+    return _apiSettingsUserUserIdPost(userId: userId, body: body);
+  }
+
+  ///
+  ///@param userId
+  @POST(path: '/api/settings/user/{userId}', optionalBody: true)
+  Future<chopper.Response<Object>> _apiSettingsUserUserIdPost({
+    @Path('userId') required String? userId,
+    @Body() required Object? body,
+  });
+
+  ///
+  ///@param userRequest
+  Future<chopper.Response<String>> apiPresentationScriptPost({
+    required String? userRequest,
+    required ApiPresentationScriptPost$RequestBody? body,
+  }) {
+    return _apiPresentationScriptPost(userRequest: userRequest, body: body);
+  }
+
+  ///
+  ///@param userRequest
+  @POST(path: '/api/presentation/script', optionalBody: true)
+  Future<chopper.Response<String>> _apiPresentationScriptPost({
+    @Query('userRequest') required String? userRequest,
+    @Body() required ApiPresentationScriptPost$RequestBody? body,
+  });
+
+  ///
+  Future<chopper.Response<String>> apiPresentationGeneratePost({
+    required GeneratePresentationRequest? body,
+  }) {
+    return _apiPresentationGeneratePost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/presentation/generate', optionalBody: true)
+  Future<chopper.Response<String>> _apiPresentationGeneratePost({
+    @Body() required GeneratePresentationRequest? body,
+  });
+
+  ///
+  Future<chopper.Response<Object>> apiOauthInitiatePost({
+    required OAuthInitiateRequest? body,
+  }) {
+    return _apiOauthInitiatePost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/oauth/initiate', optionalBody: true)
+  Future<chopper.Response<Object>> _apiOauthInitiatePost({
+    @Body() required OAuthInitiateRequest? body,
+  });
+
+  ///
+  Future<chopper.Response<Object>> apiOauthExchangePost({
+    required OAuthExchangeRequest? body,
+  }) {
+    return _apiOauthExchangePost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/oauth/exchange', optionalBody: true)
+  Future<chopper.Response<Object>> _apiOauthExchangePost({
+    @Body() required OAuthExchangeRequest? body,
+  });
+
+  ///Get all integrations
+  Future<chopper.Response<List<IntegrationDto>>> apiIntegrationsGet() {
+    generatedMapping.putIfAbsent(
+      IntegrationDto,
+      () => IntegrationDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsGet();
+  }
+
+  ///Get all integrations
+  @GET(path: '/api/integrations')
+  Future<chopper.Response<List<IntegrationDto>>> _apiIntegrationsGet();
+
+  ///Create integration
+  Future<chopper.Response<IntegrationDto>> apiIntegrationsPost({
+    required CreateIntegrationRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      IntegrationDto,
+      () => IntegrationDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsPost(body: body);
+  }
+
+  ///Create integration
+  @POST(path: '/api/integrations', optionalBody: true)
+  Future<chopper.Response<IntegrationDto>> _apiIntegrationsPost({
+    @Body() required CreateIntegrationRequest? body,
+  });
+
+  ///Share integration with workspace
+  ///@param id
+  Future<chopper.Response<WorkspaceDto>> apiIntegrationsIdWorkspacesPost({
+    required String? id,
+    required ShareIntegrationWithWorkspaceRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      WorkspaceDto,
+      () => WorkspaceDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsIdWorkspacesPost(id: id, body: body);
+  }
+
+  ///Share integration with workspace
+  ///@param id
+  @POST(path: '/api/integrations/{id}/workspaces', optionalBody: true)
+  Future<chopper.Response<WorkspaceDto>> _apiIntegrationsIdWorkspacesPost({
+    @Path('id') required String? id,
+    @Body() required ShareIntegrationWithWorkspaceRequest? body,
+  });
+
+  ///Share integration with user
+  ///@param id
+  Future<chopper.Response<IntegrationUserDto>> apiIntegrationsIdUsersPost({
+    required String? id,
+    required ShareIntegrationRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      IntegrationUserDto,
+      () => IntegrationUserDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsIdUsersPost(id: id, body: body);
+  }
+
+  ///Share integration with user
+  ///@param id
+  @POST(path: '/api/integrations/{id}/users', optionalBody: true)
+  Future<chopper.Response<IntegrationUserDto>> _apiIntegrationsIdUsersPost({
+    @Path('id') required String? id,
+    @Body() required ShareIntegrationRequest? body,
+  });
+
+  ///Record integration usage
+  ///@param id
+  Future<chopper.Response> apiIntegrationsIdUsagePost({required String? id}) {
+    return _apiIntegrationsIdUsagePost(id: id);
+  }
+
+  ///Record integration usage
+  ///@param id
+  @POST(path: '/api/integrations/{id}/usage', optionalBody: true)
+  Future<chopper.Response> _apiIntegrationsIdUsagePost({
+    @Path('id') required String? id,
+  });
+
+  ///Test integration
+  Future<chopper.Response<Object>> apiIntegrationsTestPost({
+    required TestIntegrationRequest? body,
+  }) {
+    return _apiIntegrationsTestPost(body: body);
+  }
+
+  ///Test integration
+  @POST(path: '/api/integrations/test', optionalBody: true)
+  Future<chopper.Response<Object>> _apiIntegrationsTestPost({
+    @Body() required TestIntegrationRequest? body,
+  });
+
+  ///Execute a job
+  Future<chopper.Response<String>> apiExecuteJobPost({required String? body}) {
+    return _apiExecuteJobPost(body: body);
+  }
+
+  ///Execute a job
+  @POST(path: '/api/executeJob', optionalBody: true)
+  Future<chopper.Response<String>> _apiExecuteJobPost({
+    @Body() required String? body,
+  });
+
+  ///
+  Future<chopper.Response<Object>> apiAuthLogoutPost() {
+    return _apiAuthLogoutPost();
+  }
+
+  ///
+  @POST(path: '/api/auth/logout', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAuthLogoutPost();
+
+  ///
+  Future<chopper.Response<Object>> apiAuthLocalLoginPost({
+    required Object? body,
+  }) {
+    return _apiAuthLocalLoginPost(body: body);
+  }
+
+  ///
+  @POST(path: '/api/auth/local-login', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAuthLocalLoginPost({
+    @Body() required Object? body,
+  });
+
+  ///
+  Future<chopper.Response<Object>> mcpHealthGet() {
+    return _mcpHealthGet();
+  }
+
+  ///
+  @GET(path: '/mcp/health')
+  Future<chopper.Response<Object>> _mcpHealthGet();
+
+  ///
+  Future<chopper.Response<bool>> isLocalGet() {
+    return _isLocalGet();
+  }
+
+  ///
+  @GET(path: '/is-local')
+  Future<chopper.Response<bool>> _isLocalGet();
+
+  ///
+  Future<chopper.Response<String>> healthGet() {
+    return _healthGet();
+  }
+
+  ///
+  @GET(path: '/health')
+  Future<chopper.Response<String>> _healthGet();
+
+  ///
+  ///@param workspaceId
+  Future<chopper.Response<WorkspaceDto>> apiWorkspacesWorkspaceIdGet({
+    required String? workspaceId,
+  }) {
+    generatedMapping.putIfAbsent(
+      WorkspaceDto,
+      () => WorkspaceDto.fromJsonFactory,
+    );
+
+    return _apiWorkspacesWorkspaceIdGet(workspaceId: workspaceId);
+  }
+
+  ///
+  ///@param workspaceId
+  @GET(path: '/api/workspaces/{workspaceId}')
+  Future<chopper.Response<WorkspaceDto>> _apiWorkspacesWorkspaceIdGet({
+    @Path('workspaceId') required String? workspaceId,
+  });
+
+  ///
+  ///@param workspaceId
+  Future<chopper.Response> apiWorkspacesWorkspaceIdDelete({
+    required String? workspaceId,
+  }) {
+    return _apiWorkspacesWorkspaceIdDelete(workspaceId: workspaceId);
+  }
+
+  ///
+  ///@param workspaceId
+  @DELETE(path: '/api/workspaces/{workspaceId}')
+  Future<chopper.Response> _apiWorkspacesWorkspaceIdDelete({
+    @Path('workspaceId') required String? workspaceId,
+  });
+
+  ///
+  Future<chopper.Response<String>> apiV1ChatHealthGet() {
+    return _apiV1ChatHealthGet();
+  }
+
+  ///
+  @GET(path: '/api/v1/chat/health')
+  Future<chopper.Response<String>> _apiV1ChatHealthGet();
+
+  ///
+  ///@param detailed
+  Future<chopper.Response<Object>> apiV1AgentsOrchestratorsGet({
+    bool? detailed,
+  }) {
+    return _apiV1AgentsOrchestratorsGet(detailed: detailed);
+  }
+
+  ///
+  ///@param detailed
+  @GET(path: '/api/v1/agents/orchestrators')
+  Future<chopper.Response<Object>> _apiV1AgentsOrchestratorsGet({
+    @Query('detailed') bool? detailed,
+  });
+
+  ///
+  ///@param orchestratorName
+  Future<chopper.Response<AgentInfo>> apiV1AgentsOrchestratorsOrchestratorNameInfoGet({
+    required String? orchestratorName,
+  }) {
+    generatedMapping.putIfAbsent(AgentInfo, () => AgentInfo.fromJsonFactory);
+
+    return _apiV1AgentsOrchestratorsOrchestratorNameInfoGet(
+      orchestratorName: orchestratorName,
+    );
+  }
+
+  ///
+  ///@param orchestratorName
+  @GET(path: '/api/v1/agents/orchestrators/{orchestratorName}/info')
+  Future<chopper.Response<AgentInfo>> _apiV1AgentsOrchestratorsOrchestratorNameInfoGet({
+    @Path('orchestratorName') required String? orchestratorName,
+  });
+
+  ///
+  Future<chopper.Response<String>> apiV1AgentsHealthGet() {
+    return _apiV1AgentsHealthGet();
+  }
+
+  ///
+  @GET(path: '/api/v1/agents/health')
+  Future<chopper.Response<String>> _apiV1AgentsHealthGet();
+
+  ///
+  ///@param detailed
+  Future<chopper.Response<AgentListResponse>> apiV1AgentsAvailableGet({
+    bool? detailed,
+  }) {
+    generatedMapping.putIfAbsent(
+      AgentListResponse,
+      () => AgentListResponse.fromJsonFactory,
+    );
+
+    return _apiV1AgentsAvailableGet(detailed: detailed);
+  }
+
+  ///
+  ///@param detailed
+  @GET(path: '/api/v1/agents/available')
+  Future<chopper.Response<AgentListResponse>> _apiV1AgentsAvailableGet({
+    @Query('detailed') bool? detailed,
+  });
+
+  ///
+  ///@param detailed
+  Future<chopper.Response<Object>> apiV1AgentsAgentsGet({bool? detailed}) {
+    return _apiV1AgentsAgentsGet(detailed: detailed);
+  }
+
+  ///
+  ///@param detailed
+  @GET(path: '/api/v1/agents/agents')
+  Future<chopper.Response<Object>> _apiV1AgentsAgentsGet({
+    @Query('detailed') bool? detailed,
+  });
+
+  ///
+  ///@param agentName
+  Future<chopper.Response<AgentInfo>> apiV1AgentsAgentsAgentNameInfoGet({
+    required String? agentName,
+  }) {
+    generatedMapping.putIfAbsent(AgentInfo, () => AgentInfo.fromJsonFactory);
+
+    return _apiV1AgentsAgentsAgentNameInfoGet(agentName: agentName);
+  }
+
+  ///
+  ///@param agentName
+  @GET(path: '/api/v1/agents/agents/{agentName}/info')
+  Future<chopper.Response<AgentInfo>> _apiV1AgentsAgentsAgentNameInfoGet({
+    @Path('agentName') required String? agentName,
+  });
+
+  ///
+  Future<chopper.Response<String>> apiPresentationHealthGet() {
+    return _apiPresentationHealthGet();
+  }
+
+  ///
+  @GET(path: '/api/presentation/health')
+  Future<chopper.Response<String>> _apiPresentationHealthGet();
+
+  ///
+  Future<chopper.Response<Object>> apiOauthProvidersGet() {
+    return _apiOauthProvidersGet();
+  }
+
+  ///
+  @GET(path: '/api/oauth/providers')
+  Future<chopper.Response<Object>> _apiOauthProvidersGet();
+
+  ///Get workspace integrations
+  ///@param workspaceId
+  Future<chopper.Response<List<IntegrationDto>>> apiIntegrationsWorkspaceWorkspaceIdGet(
+      {required String? workspaceId}) {
+    generatedMapping.putIfAbsent(
+      IntegrationDto,
+      () => IntegrationDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsWorkspaceWorkspaceIdGet(workspaceId: workspaceId);
+  }
+
+  ///Get workspace integrations
+  ///@param workspaceId
+  @GET(path: '/api/integrations/workspace/{workspaceId}')
+  Future<chopper.Response<List<IntegrationDto>>> _apiIntegrationsWorkspaceWorkspaceIdGet({
+    @Path('workspaceId') required String? workspaceId,
+  });
+
+  ///Get integration types
+  Future<chopper.Response<List<IntegrationTypeDto>>> apiIntegrationsTypesGet() {
+    generatedMapping.putIfAbsent(
+      IntegrationTypeDto,
+      () => IntegrationTypeDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsTypesGet();
+  }
+
+  ///Get integration types
+  @GET(path: '/api/integrations/types')
+  Future<chopper.Response<List<IntegrationTypeDto>>> _apiIntegrationsTypesGet();
+
+  ///Get integration type schema
+  ///@param type
+  Future<chopper.Response<IntegrationTypeDto>> apiIntegrationsTypesTypeSchemaGet({required String? type}) {
+    generatedMapping.putIfAbsent(
+      IntegrationTypeDto,
+      () => IntegrationTypeDto.fromJsonFactory,
+    );
+
+    return _apiIntegrationsTypesTypeSchemaGet(type: type);
+  }
+
+  ///Get integration type schema
+  ///@param type
+  @GET(path: '/api/integrations/types/{type}/schema')
+  Future<chopper.Response<IntegrationTypeDto>> _apiIntegrationsTypesTypeSchemaGet(
+      {@Path('type') required String? type});
+
+  ///Get configuration
+  Future<chopper.Response<Object>> apiConfigGet() {
+    return _apiConfigGet();
+  }
+
+  ///Get configuration
+  @GET(path: '/api/config')
+  Future<chopper.Response<Object>> _apiConfigGet();
+
+  ///
+  Future<chopper.Response<Object>> apiAuthUserGet() {
+    return _apiAuthUserGet();
+  }
+
+  ///
+  @GET(path: '/api/auth/user')
+  Future<chopper.Response<Object>> _apiAuthUserGet();
+
+  ///
+  Future<chopper.Response<Object>> apiAuthTestJwtGet() {
+    return _apiAuthTestJwtGet();
+  }
+
+  ///
+  @GET(path: '/api/auth/test-jwt')
+  Future<chopper.Response<Object>> _apiAuthTestJwtGet();
+
+  ///
+  Future<chopper.Response<String>> apiAuthSimpleTestGet() {
+    return _apiAuthSimpleTestGet();
+  }
+
+  ///
+  @GET(path: '/api/auth/simple-test')
+  Future<chopper.Response<String>> _apiAuthSimpleTestGet();
+
+  ///
+  Future<chopper.Response<Object>> apiAuthPublicTestGet() {
+    return _apiAuthPublicTestGet();
+  }
+
+  ///
+  @GET(path: '/api/auth/public-test')
+  Future<chopper.Response<Object>> _apiAuthPublicTestGet();
+
+  ///
+  ///@param provider
+  Future<chopper.Response<Object>> apiAuthLoginProviderGet({
+    required String? provider,
+  }) {
+    return _apiAuthLoginProviderGet(provider: provider);
+  }
+
+  ///
+  ///@param provider
+  @GET(path: '/api/auth/login/{provider}')
+  Future<chopper.Response<Object>> _apiAuthLoginProviderGet({
+    @Path('provider') required String? provider,
+  });
+
+  ///
+  Future<chopper.Response<Object>> apiAuthIsLocalGet() {
+    return _apiAuthIsLocalGet();
+  }
+
+  ///
+  @GET(path: '/api/auth/is-local')
+  Future<chopper.Response<Object>> _apiAuthIsLocalGet();
+
+  ///
+  ///@param provider
+  ///@param code
+  Future<chopper.Response<Object>> apiAuthCallbackProviderGet({
+    required String? provider,
+    required String? code,
+  }) {
+    return _apiAuthCallbackProviderGet(provider: provider, code: code);
+  }
+
+  ///
+  ///@param provider
+  ///@param code
+  @GET(path: '/api/auth/callback/{provider}')
+  Future<chopper.Response<Object>> _apiAuthCallbackProviderGet({
+    @Path('provider') required String? provider,
+    @Query('code') required String? code,
+  });
+
+  ///
+  Future<chopper.Response<String>> apiAuthBasicTestGet() {
+    return _apiAuthBasicTestGet();
+  }
+
+  ///
+  @GET(path: '/api/auth/basic-test')
+  Future<chopper.Response<String>> _apiAuthBasicTestGet();
+
+  ///
+  Future<chopper.Response<String>> ahHealthGet() {
+    return _ahHealthGet();
+  }
+
+  ///
+  @GET(path: '/_ah/health')
+  Future<chopper.Response<String>> _ahHealthGet();
+
+  ///
+  ///@param workspaceId
+  ///@param targetUserId
+  Future<chopper.Response<Object>> apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
+    required String? workspaceId,
+    required String? targetUserId,
+  }) {
+    return _apiWorkspacesWorkspaceIdUsersTargetUserIdDelete(
+      workspaceId: workspaceId,
+      targetUserId: targetUserId,
+    );
+  }
+
+  ///
+  ///@param workspaceId
+  ///@param targetUserId
+  @DELETE(path: '/api/workspaces/{workspaceId}/users/{targetUserId}')
+  Future<chopper.Response<Object>> _apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
+    @Path('workspaceId') required String? workspaceId,
+    @Path('targetUserId') required String? targetUserId,
+  });
+
+  ///Remove from workspace
+  ///@param id
+  ///@param workspaceId
+  Future<chopper.Response> apiIntegrationsIdWorkspacesWorkspaceIdDelete({
+    required String? id,
+    required String? workspaceId,
+  }) {
+    return _apiIntegrationsIdWorkspacesWorkspaceIdDelete(
+      id: id,
+      workspaceId: workspaceId,
+    );
+  }
+
+  ///Remove from workspace
+  ///@param id
+  ///@param workspaceId
+  @DELETE(path: '/api/integrations/{id}/workspaces/{workspaceId}')
+  Future<chopper.Response> _apiIntegrationsIdWorkspacesWorkspaceIdDelete({
+    @Path('id') required String? id,
+    @Path('workspaceId') required String? workspaceId,
+  });
+
+  ///Remove user access
+  ///@param id
+  ///@param userId
+  Future<chopper.Response> apiIntegrationsIdUsersUserIdDelete({
+    required String? id,
+    required String? userId,
+  }) {
+    return _apiIntegrationsIdUsersUserIdDelete(id: id, userId: userId);
+  }
+
+  ///Remove user access
+  ///@param id
+  ///@param userId
+  @DELETE(path: '/api/integrations/{id}/users/{userId}')
+  Future<chopper.Response> _apiIntegrationsIdUsersUserIdDelete({
+    @Path('id') required String? id,
+    @Path('userId') required String? userId,
+  });
+}
+
+typedef $JsonFactory<T> = T Function(Map<String, dynamic> json);
+
+class $CustomJsonDecoder {
+  $CustomJsonDecoder(this.factories);
+
+  final Map<Type, $JsonFactory> factories;
+
+  dynamic decode<T>(dynamic entity) {
+    if (entity is Iterable) {
+      return _decodeList<T>(entity);
+    }
+
+    if (entity is T) {
+      return entity;
+    }
+
+    if (isTypeOf<T, Map>()) {
+      return entity;
+    }
+
+    if (isTypeOf<T, Iterable>()) {
+      return entity;
+    }
+
+    if (entity is Map<String, dynamic>) {
+      return _decodeMap<T>(entity);
+    }
+
+    return entity;
+  }
+
+  T _decodeMap<T>(Map<String, dynamic> values) {
+    final jsonFactory = factories[T];
+    if (jsonFactory == null || jsonFactory is! $JsonFactory<T>) {
+      return throw "Could not find factory for type $T. Is '$T: $T.fromJsonFactory' included in the CustomJsonDecoder instance creation in bootstrapper.dart?";
+    }
+
+    return jsonFactory(values);
+  }
+
+  List<T> _decodeList<T>(Iterable values) => values.where((v) => v != null).map<T>((v) => decode<T>(v) as T).toList();
+}
+
+class $JsonSerializableConverter extends chopper.JsonConverter {
+  @override
+  FutureOr<chopper.Response<ResultType>> convertResponse<ResultType, Item>(
+    chopper.Response response,
+  ) async {
+    if (response.bodyString.isEmpty) {
+      // In rare cases, when let's say 204 (no content) is returned -
+      // we cannot decode the missing json with the result type specified
+      return chopper.Response(response.base, null, error: response.error);
+    }
+
+    if (ResultType == String) {
+      return response.copyWith();
+    }
+
+    if (ResultType == DateTime) {
+      return response.copyWith(
+        body: DateTime.parse((response.body as String).replaceAll('"', '')) as ResultType,
+      );
+    }
+
+    final jsonRes = await super.convertResponse(response);
+    return jsonRes.copyWith<ResultType>(
+      body: $jsonDecoder.decode<Item>(jsonRes.body) as ResultType,
+    );
+  }
+}
+
+final $jsonDecoder = $CustomJsonDecoder(generatedMapping);
