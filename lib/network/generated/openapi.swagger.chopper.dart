@@ -19,43 +19,10 @@ final class _$Openapi extends Openapi {
   final Type definitionType = Openapi;
 
   @override
-  Future<Response<Object>> _mcpGet() {
-    final Uri $url = Uri.parse('/mcp/**');
+  Future<Response<Object>> _mcpHealthGet() {
+    final Uri $url = Uri.parse('/mcp/health');
     final Request $request = Request(
       'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<Object, Object>($request);
-  }
-
-  @override
-  Future<Response<Object>> _mcpPut() {
-    final Uri $url = Uri.parse('/mcp/**');
-    final Request $request = Request(
-      'PUT',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<Object, Object>($request);
-  }
-
-  @override
-  Future<Response<Object>> _mcpPost() {
-    final Uri $url = Uri.parse('/mcp/**');
-    final Request $request = Request(
-      'POST',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<Object, Object>($request);
-  }
-
-  @override
-  Future<Response<Object>> _mcpDelete() {
-    final Uri $url = Uri.parse('/mcp/**');
-    final Request $request = Request(
-      'DELETE',
       $url,
       client.baseUrl,
     );
@@ -176,30 +143,6 @@ final class _$Openapi extends Openapi {
       client.baseUrl,
     );
     return client.send<String, String>($request);
-  }
-
-  @override
-  Future<Response<String>> _mcpGet() {
-    final Uri $url = Uri.parse('/mcp/');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<String, String>($request);
-  }
-
-  @override
-  Future<Response<Object>> _mcpPost({required Object? body}) {
-    final Uri $url = Uri.parse('/mcp/');
-    final $body = body;
-    final Request $request = Request(
-      'POST',
-      $url,
-      client.baseUrl,
-      body: $body,
-    );
-    return client.send<Object, Object>($request);
   }
 
   @override
@@ -584,17 +527,6 @@ final class _$Openapi extends Openapi {
       $url,
       client.baseUrl,
       body: $body,
-    );
-    return client.send<Object, Object>($request);
-  }
-
-  @override
-  Future<Response<Object>> _mcpHealthGet() {
-    final Uri $url = Uri.parse('/mcp/health');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
     );
     return client.send<Object, Object>($request);
   }
