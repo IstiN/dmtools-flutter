@@ -1,9 +1,5 @@
 // ignore_for_file: type=lint
 
-import 'package:json_annotation/json_annotation.dart';
-import 'package:json_annotation/json_annotation.dart' as json;
-import 'package:collection/collection.dart';
-import 'dart:convert';
 
 import 'openapi.models.swagger.dart';
 import 'package:chopper/chopper.dart';
@@ -11,9 +7,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
-import 'openapi.enums.swagger.dart' as enums;
 export 'openapi.enums.swagger.dart';
 export 'openapi.models.swagger.dart';
 
@@ -51,40 +45,13 @@ abstract class Openapi extends ChopperService {
   }
 
   ///
-  Future<chopper.Response<Object>> mcpGet() {
-    return _mcpGet();
+  Future<chopper.Response<Object>> mcpHealthGet() {
+    return _mcpHealthGet();
   }
 
   ///
-  @GET(path: '/mcp/**')
-  Future<chopper.Response<Object>> _mcpGet();
-
-  ///
-  Future<chopper.Response<Object>> mcpPut() {
-    return _mcpPut();
-  }
-
-  ///
-  @PUT(path: '/mcp/**', optionalBody: true)
-  Future<chopper.Response<Object>> _mcpPut();
-
-  ///
-  Future<chopper.Response<Object>> mcpPost() {
-    return _mcpPost();
-  }
-
-  ///
-  @POST(path: '/mcp/**', optionalBody: true)
-  Future<chopper.Response<Object>> _mcpPost();
-
-  ///
-  Future<chopper.Response<Object>> mcpDelete() {
-    return _mcpDelete();
-  }
-
-  ///
-  @DELETE(path: '/mcp/**')
-  Future<chopper.Response<Object>> _mcpDelete();
+  @GET(path: '/mcp/health')
+  Future<chopper.Response<Object>> _mcpHealthGet();
 
   ///
   ///@param userId
@@ -241,24 +208,6 @@ abstract class Openapi extends ChopperService {
   ///
   @POST(path: '/shutdown', optionalBody: true)
   Future<chopper.Response<String>> _shutdownPost();
-
-  ///
-  Future<chopper.Response<String>> mcpGet() {
-    return _mcpGet();
-  }
-
-  ///
-  @GET(path: '/mcp/')
-  Future<chopper.Response<String>> _mcpGet();
-
-  ///
-  Future<chopper.Response<Object>> mcpPost({required Object? body}) {
-    return _mcpPost(body: body);
-  }
-
-  ///
-  @POST(path: '/mcp/', optionalBody: true)
-  Future<chopper.Response<Object>> _mcpPost({@Body() required Object? body});
 
   ///
   Future<chopper.Response<List<WorkspaceDto>>> apiWorkspacesGet() {
@@ -706,15 +655,6 @@ abstract class Openapi extends ChopperService {
   Future<chopper.Response<Object>> _apiAuthLocalLoginPost({
     @Body() required Object? body,
   });
-
-  ///
-  Future<chopper.Response<Object>> mcpHealthGet() {
-    return _mcpHealthGet();
-  }
-
-  ///
-  @GET(path: '/mcp/health')
-  Future<chopper.Response<Object>> _mcpHealthGet();
 
   ///
   Future<chopper.Response<bool>> isLocalGet() {
