@@ -49,8 +49,9 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
         print('✅ Already authenticated, navigating to dashboard');
       }
       if (mounted) {
-        // Clean up OAuth callback URL parameters (web only)
+        // Clear OAuth parameters from window (web only)
         if (kIsWeb) {
+          clearOAuthParamsFromWindow();
           cleanupOAuthUrl();
         }
         context.go('/dashboard');
@@ -116,6 +117,11 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
 
           // Check if widget is still mounted before using context
           if (mounted) {
+            // Clear OAuth parameters from window (web only)
+            if (kIsWeb) {
+              clearOAuthParamsFromWindow();
+            }
+
             // Navigate to dashboard on successful authentication
             context.go('/dashboard');
           }
@@ -125,6 +131,12 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
           }
           // Clear the processed callback code on failure so user can retry
           OAuthCallbackScreen._processedCallbackCode = null;
+
+          // Clear OAuth parameters from window (web only)
+          if (kIsWeb) {
+            clearOAuthParamsFromWindow();
+          }
+
           setState(() {
             _error = authProvider.error ?? 'Authentication failed or timed out';
             _isProcessing = false;
@@ -138,6 +150,12 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
       if (mounted) {
         // Clear the processed callback code on exception so user can retry
         OAuthCallbackScreen._processedCallbackCode = null;
+
+        // Clear OAuth parameters from window (web only)
+        if (kIsWeb) {
+          clearOAuthParamsFromWindow();
+        }
+
         setState(() {
           _error = 'Authentication failed: $e';
           _isProcessing = false;
