@@ -1,12 +1,19 @@
 // ignore_for_file: type=lint
 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart' as json;
+import 'package:collection/collection.dart';
+import 'dart:convert';
+
 import 'openapi.models.swagger.dart';
 import 'package:chopper/chopper.dart';
 
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
+import 'openapi.enums.swagger.dart' as enums;
 export 'openapi.enums.swagger.dart';
 export 'openapi.models.swagger.dart';
 
@@ -235,8 +242,23 @@ abstract class Openapi extends ChopperService {
   @POST(path: '/shutdown', optionalBody: true)
   Future<chopper.Response<String>> _shutdownPost();
 
-  // Removed duplicate MCP endpoints to fix compilation errors
-  // Original MCP endpoints from /mcp/** are kept above
+  ///
+  Future<chopper.Response<String>> mcpGet() {
+    return _mcpGet();
+  }
+
+  ///
+  @GET(path: '/mcp/')
+  Future<chopper.Response<String>> _mcpGet();
+
+  ///
+  Future<chopper.Response<Object>> mcpPost({required Object? body}) {
+    return _mcpPost(body: body);
+  }
+
+  ///
+  @POST(path: '/mcp/', optionalBody: true)
+  Future<chopper.Response<Object>> _mcpPost({@Body() required Object? body});
 
   ///
   Future<chopper.Response<List<WorkspaceDto>>> apiWorkspacesGet() {
@@ -373,8 +395,8 @@ abstract class Openapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response<AgentExecutionResponse>> apiV1AgentsOrchestratorsExecutePost(
-      {required AgentExecutionRequest? body}) {
+  Future<chopper.Response<AgentExecutionResponse>>
+  apiV1AgentsOrchestratorsExecutePost({required AgentExecutionRequest? body}) {
     generatedMapping.putIfAbsent(
       AgentExecutionResponse,
       () => AgentExecutionResponse.fromJsonFactory,
@@ -385,13 +407,15 @@ abstract class Openapi extends ChopperService {
 
   ///
   @POST(path: '/api/v1/agents/orchestrators/execute', optionalBody: true)
-  Future<chopper.Response<AgentExecutionResponse>> _apiV1AgentsOrchestratorsExecutePost({
+  Future<chopper.Response<AgentExecutionResponse>>
+  _apiV1AgentsOrchestratorsExecutePost({
     @Body() required AgentExecutionRequest? body,
   });
 
   ///
   ///@param orchestratorName
-  Future<chopper.Response<AgentExecutionResponse>> apiV1AgentsOrchestratorsExecuteOrchestratorNamePost({
+  Future<chopper.Response<AgentExecutionResponse>>
+  apiV1AgentsOrchestratorsExecuteOrchestratorNamePost({
     required String? orchestratorName,
     required Object? body,
   }) {
@@ -412,7 +436,8 @@ abstract class Openapi extends ChopperService {
     path: '/api/v1/agents/orchestrators/execute/{orchestratorName}',
     optionalBody: true,
   )
-  Future<chopper.Response<AgentExecutionResponse>> _apiV1AgentsOrchestratorsExecuteOrchestratorNamePost({
+  Future<chopper.Response<AgentExecutionResponse>>
+  _apiV1AgentsOrchestratorsExecuteOrchestratorNamePost({
     @Path('orchestratorName') required String? orchestratorName,
     @Body() required Object? body,
   });
@@ -437,7 +462,8 @@ abstract class Openapi extends ChopperService {
 
   ///
   ///@param agentName
-  Future<chopper.Response<AgentExecutionResponse>> apiV1AgentsExecuteAgentNamePost({
+  Future<chopper.Response<AgentExecutionResponse>>
+  apiV1AgentsExecuteAgentNamePost({
     required String? agentName,
     required Object? body,
   }) {
@@ -452,7 +478,8 @@ abstract class Openapi extends ChopperService {
   ///
   ///@param agentName
   @POST(path: '/api/v1/agents/execute/{agentName}', optionalBody: true)
-  Future<chopper.Response<AgentExecutionResponse>> _apiV1AgentsExecuteAgentNamePost({
+  Future<chopper.Response<AgentExecutionResponse>>
+  _apiV1AgentsExecuteAgentNamePost({
     @Path('agentName') required String? agentName,
     @Body() required Object? body,
   });
@@ -520,28 +547,28 @@ abstract class Openapi extends ChopperService {
   });
 
   ///
-  Future<chopper.Response<Object>> apiOauthInitiatePost({
+  Future<chopper.Response<Object>> apiOauthProxyInitiatePost({
     required OAuthInitiateRequest? body,
   }) {
-    return _apiOauthInitiatePost(body: body);
+    return _apiOauthProxyInitiatePost(body: body);
   }
 
   ///
-  @POST(path: '/api/oauth/initiate', optionalBody: true)
-  Future<chopper.Response<Object>> _apiOauthInitiatePost({
+  @POST(path: '/api/oauth-proxy/initiate', optionalBody: true)
+  Future<chopper.Response<Object>> _apiOauthProxyInitiatePost({
     @Body() required OAuthInitiateRequest? body,
   });
 
   ///
-  Future<chopper.Response<Object>> apiOauthExchangePost({
+  Future<chopper.Response<Object>> apiOauthProxyExchangePost({
     required OAuthExchangeRequest? body,
   }) {
-    return _apiOauthExchangePost(body: body);
+    return _apiOauthProxyExchangePost(body: body);
   }
 
   ///
-  @POST(path: '/api/oauth/exchange', optionalBody: true)
-  Future<chopper.Response<Object>> _apiOauthExchangePost({
+  @POST(path: '/api/oauth-proxy/exchange', optionalBody: true)
+  Future<chopper.Response<Object>> _apiOauthProxyExchangePost({
     @Body() required OAuthExchangeRequest? body,
   });
 
@@ -768,7 +795,8 @@ abstract class Openapi extends ChopperService {
 
   ///
   ///@param orchestratorName
-  Future<chopper.Response<AgentInfo>> apiV1AgentsOrchestratorsOrchestratorNameInfoGet({
+  Future<chopper.Response<AgentInfo>>
+  apiV1AgentsOrchestratorsOrchestratorNameInfoGet({
     required String? orchestratorName,
   }) {
     generatedMapping.putIfAbsent(AgentInfo, () => AgentInfo.fromJsonFactory);
@@ -781,7 +809,8 @@ abstract class Openapi extends ChopperService {
   ///
   ///@param orchestratorName
   @GET(path: '/api/v1/agents/orchestrators/{orchestratorName}/info')
-  Future<chopper.Response<AgentInfo>> _apiV1AgentsOrchestratorsOrchestratorNameInfoGet({
+  Future<chopper.Response<AgentInfo>>
+  _apiV1AgentsOrchestratorsOrchestratorNameInfoGet({
     @Path('orchestratorName') required String? orchestratorName,
   });
 
@@ -854,18 +883,18 @@ abstract class Openapi extends ChopperService {
   Future<chopper.Response<String>> _apiPresentationHealthGet();
 
   ///
-  Future<chopper.Response<Object>> apiOauthProvidersGet() {
-    return _apiOauthProvidersGet();
+  Future<chopper.Response<Object>> apiOauthProxyProvidersGet() {
+    return _apiOauthProxyProvidersGet();
   }
 
   ///
-  @GET(path: '/api/oauth/providers')
-  Future<chopper.Response<Object>> _apiOauthProvidersGet();
+  @GET(path: '/api/oauth-proxy/providers')
+  Future<chopper.Response<Object>> _apiOauthProxyProvidersGet();
 
   ///Get workspace integrations
   ///@param workspaceId
-  Future<chopper.Response<List<IntegrationDto>>> apiIntegrationsWorkspaceWorkspaceIdGet(
-      {required String? workspaceId}) {
+  Future<chopper.Response<List<IntegrationDto>>>
+  apiIntegrationsWorkspaceWorkspaceIdGet({required String? workspaceId}) {
     generatedMapping.putIfAbsent(
       IntegrationDto,
       () => IntegrationDto.fromJsonFactory,
@@ -877,7 +906,8 @@ abstract class Openapi extends ChopperService {
   ///Get workspace integrations
   ///@param workspaceId
   @GET(path: '/api/integrations/workspace/{workspaceId}')
-  Future<chopper.Response<List<IntegrationDto>>> _apiIntegrationsWorkspaceWorkspaceIdGet({
+  Future<chopper.Response<List<IntegrationDto>>>
+  _apiIntegrationsWorkspaceWorkspaceIdGet({
     @Path('workspaceId') required String? workspaceId,
   });
 
@@ -897,7 +927,8 @@ abstract class Openapi extends ChopperService {
 
   ///Get integration type schema
   ///@param type
-  Future<chopper.Response<IntegrationTypeDto>> apiIntegrationsTypesTypeSchemaGet({required String? type}) {
+  Future<chopper.Response<IntegrationTypeDto>>
+  apiIntegrationsTypesTypeSchemaGet({required String? type}) {
     generatedMapping.putIfAbsent(
       IntegrationTypeDto,
       () => IntegrationTypeDto.fromJsonFactory,
@@ -909,8 +940,8 @@ abstract class Openapi extends ChopperService {
   ///Get integration type schema
   ///@param type
   @GET(path: '/api/integrations/types/{type}/schema')
-  Future<chopper.Response<IntegrationTypeDto>> _apiIntegrationsTypesTypeSchemaGet(
-      {@Path('type') required String? type});
+  Future<chopper.Response<IntegrationTypeDto>>
+  _apiIntegrationsTypesTypeSchemaGet({@Path('type') required String? type});
 
   ///Get configuration
   Future<chopper.Response<Object>> apiConfigGet() {
@@ -1021,7 +1052,8 @@ abstract class Openapi extends ChopperService {
   ///
   ///@param workspaceId
   ///@param targetUserId
-  Future<chopper.Response<Object>> apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
+  Future<chopper.Response<Object>>
+  apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
     required String? workspaceId,
     required String? targetUserId,
   }) {
@@ -1035,7 +1067,8 @@ abstract class Openapi extends ChopperService {
   ///@param workspaceId
   ///@param targetUserId
   @DELETE(path: '/api/workspaces/{workspaceId}/users/{targetUserId}')
-  Future<chopper.Response<Object>> _apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
+  Future<chopper.Response<Object>>
+  _apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
     @Path('workspaceId') required String? workspaceId,
     @Path('targetUserId') required String? targetUserId,
   });
@@ -1122,7 +1155,8 @@ class $CustomJsonDecoder {
     return jsonFactory(values);
   }
 
-  List<T> _decodeList<T>(Iterable values) => values.where((v) => v != null).map<T>((v) => decode<T>(v) as T).toList();
+  List<T> _decodeList<T>(Iterable values) =>
+      values.where((v) => v != null).map<T>((v) => decode<T>(v) as T).toList();
 }
 
 class $JsonSerializableConverter extends chopper.JsonConverter {
@@ -1142,7 +1176,9 @@ class $JsonSerializableConverter extends chopper.JsonConverter {
 
     if (ResultType == DateTime) {
       return response.copyWith(
-        body: DateTime.parse((response.body as String).replaceAll('"', '')) as ResultType,
+        body:
+            DateTime.parse((response.body as String).replaceAll('"', ''))
+                as ResultType,
       );
     }
 
