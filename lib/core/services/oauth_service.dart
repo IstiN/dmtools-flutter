@@ -78,12 +78,12 @@ class OAuthService {
     }
   }
 
-  /// Initiate OAuth flow - Step 1: Call /api/oauth/initiate
+  /// Initiate OAuth flow - Step 1: Call /api/oauth-proxy/initiate
   Future<bool> initiateLogin(OAuthProvider provider) async {
     try {
-      // Step 1: Call backend's /api/oauth/initiate endpoint
+      // Step 1: Call backend's /api/oauth-proxy/initiate endpoint
       final response = await http.post(
-        Uri.parse('$_baseUrl/api/oauth/initiate'),
+        Uri.parse('$_baseUrl/api/oauth-proxy/initiate'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -97,7 +97,7 @@ class OAuthService {
       if (kDebugMode) {
         print('🔐 Initiating OAuth login for ${provider.name}');
         print('📍 Client Redirect URI: $_clientRedirectUri');
-        print('📤 Request to: $_baseUrl/api/oauth/initiate');
+        print('📤 Request to: $_baseUrl/api/oauth-proxy/initiate');
         print('📥 Response status: ${response.statusCode}');
       }
 
@@ -196,7 +196,7 @@ class OAuthService {
   Future<OAuthToken?> _exchangeTempCodeForToken(String tempCode, String state) async {
     try {
       final response = await http.post(
-        Uri.parse('$_baseUrl/api/oauth/exchange'),
+        Uri.parse('$_baseUrl/api/oauth-proxy/exchange'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -209,7 +209,7 @@ class OAuthService {
 
       if (kDebugMode) {
         print('🔄 Exchanging temp code for JWT token');
-        print('📤 Request to: $_baseUrl/api/oauth/exchange');
+        print('📤 Request to: $_baseUrl/api/oauth-proxy/exchange');
         print('📥 Response status: ${response.statusCode}');
       }
 
