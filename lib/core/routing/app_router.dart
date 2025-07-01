@@ -40,13 +40,18 @@ class AppRouter {
           print('   🔐 Auth state: $authState, isAuthenticated: $isAuthenticated, isLoading: $isLoading');
         }
 
-        // Check for OAuth parameters on main page - only if not authenticated
-        if (kIsWeb && !isAuthenticated && !_oauthCallbackProcessed && currentPath == '/') {
+        // Check for OAuth parameters on any route - only if not authenticated
+        if (kIsWeb && !isAuthenticated && !_oauthCallbackProcessed) {
           final oauthParams = getOAuthParamsFromWindow();
+
+          if (kDebugMode) {
+            print('🔍 Checking OAuth params on path: $currentPath');
+            print('🔍 OAuth params from window: $oauthParams');
+          }
 
           if (oauthParams != null && oauthParams.containsKey('code')) {
             if (kDebugMode) {
-              print('🚫 OAuth callback detected on main page - processing callback');
+              print('🚫 OAuth callback detected - processing callback');
             }
             _oauthCallbackProcessed = true;
             return '/oauth-processing';

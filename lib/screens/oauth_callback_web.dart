@@ -5,7 +5,15 @@ import 'dart:js' as js;
 /// Get OAuth parameters from JavaScript window.oauthParams
 Map<String, String>? getOAuthParamsFromWindow() {
   try {
+    // Check if OAuth params are ready
+    final oauthReady = js.context['oauthParamsReady'];
     final jsParams = js.context['oauthParams'];
+
+    if (kDebugMode) {
+      print('🔍 OAuth ready flag: $oauthReady');
+      print('🔍 OAuth params object: ${jsParams != null ? 'present' : 'null'}');
+    }
+
     if (jsParams == null) return null;
 
     final params = <String, String>{};
