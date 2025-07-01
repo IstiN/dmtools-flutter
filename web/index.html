@@ -36,10 +36,18 @@
   <script type="text/javascript">
     // Handle OAuth callback parameters
     (function() {
+      console.log('OAuth handler running, URL:', window.location.href);
+      
       var urlParams = new URLSearchParams(window.location.search);
       var code = urlParams.get('code');
       var state = urlParams.get('state');
       var error = urlParams.get('error');
+      
+      console.log('OAuth params:', { 
+        code: code ? code.substring(0, 10) + '...' : 'missing', 
+        state: state ? state.substring(0, 10) + '...' : 'missing',
+        error: error || 'none'
+      });
       
       if (code && state) {
         // Store OAuth parameters for Flutter to read
@@ -49,13 +57,19 @@
           error: error
         };
         
+        // Set a flag that OAuth parameters are ready
+        window.oauthParamsReady = true;
+        
+        console.log('OAuth params stored in window.oauthParams');
+        
         // Clean up URL parameters to avoid showing them in the address bar
         if (window.history && window.history.replaceState) {
           var cleanUrl = window.location.pathname + window.location.hash;
           window.history.replaceState(null, null, cleanUrl);
+          console.log('URL cleaned to:', cleanUrl);
         }
-        
-        console.log('OAuth callback detected:', { code: code ? 'present' : 'missing', state: state ? 'present' : 'missing' });
+      } else {
+        console.log('No OAuth parameters found in URL');
       }
     })();
   </script>
