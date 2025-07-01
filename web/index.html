@@ -31,6 +31,34 @@
 
   <title>dmtools</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- OAuth Callback Handler -->
+  <script type="text/javascript">
+    // Handle OAuth callback parameters
+    (function() {
+      var urlParams = new URLSearchParams(window.location.search);
+      var code = urlParams.get('code');
+      var state = urlParams.get('state');
+      var error = urlParams.get('error');
+      
+      if (code && state) {
+        // Store OAuth parameters for Flutter to read
+        window.oauthParams = {
+          code: code,
+          state: state,
+          error: error
+        };
+        
+        // Clean up URL parameters to avoid showing them in the address bar
+        if (window.history && window.history.replaceState) {
+          var cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState(null, null, cleanUrl);
+        }
+        
+        console.log('OAuth callback detected:', { code: code ? 'present' : 'missing', state: state ? 'present' : 'missing' });
+      }
+    })();
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>

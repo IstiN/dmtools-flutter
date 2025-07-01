@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Page Not Found</title>
+  <script type="text/javascript">
+    // Simple redirect to index.html for any 404 errors
+    // OAuth callbacks are now handled directly by index.html
+    window.location.replace(window.location.origin + window.location.pathname.split('/').slice(0, -1).join('/') + '/index.html');
+  </script>
+</head>
+<body>
+  <p>Redirecting to main page...</p>
+</body>
+</html> 

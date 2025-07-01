@@ -71,8 +71,21 @@ class OAuthService {
 
   static String _getClientRedirectUri() {
     if (kIsWeb) {
-      // Use the Flutter app's port, not the backend port
-      return '${Uri.base.origin}/auth/callback';
+      // Redirect directly to index.html - much simpler for GitHub Pages
+      final base = Uri.base;
+      var basePath = base.path;
+
+      // Remove trailing slash
+      if (basePath.endsWith('/')) {
+        basePath = basePath.substring(0, basePath.length - 1);
+      }
+
+      // Remove index.html if already present
+      if (basePath.endsWith('/index.html')) {
+        basePath = basePath.substring(0, basePath.length - '/index.html'.length);
+      }
+
+      return '${base.origin}$basePath/index.html';
     } else {
       return 'dmtools://auth/callback';
     }

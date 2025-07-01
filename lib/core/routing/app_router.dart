@@ -14,6 +14,9 @@ import '../../screens/pages/users_page.dart';
 import '../../screens/pages/settings_page.dart';
 import '../../screens/pages/api_demo_page.dart';
 
+// Conditional import for web-specific OAuth handling
+import '../../screens/oauth_callback_web.dart' if (dart.library.io) '../../screens/oauth_callback_stub.dart';
+
 class AppRouter {
   static bool _oauthCallbackProcessed = false;
 
@@ -37,26 +40,26 @@ class AppRouter {
           print('   🔐 Auth state: $authState, isAuthenticated: $isAuthenticated, isLoading: $isLoading');
         }
 
-        // Check browser URL directly for OAuth callback - only if not authenticated
-        if (kIsWeb && !isAuthenticated && !_oauthCallbackProcessed) {
-          final browserUrl = Uri.base.toString();
+        // Check for OAuth parameters on main page - only if not authenticated
+        if (kIsWeb && !isAuthenticated && !_oauthCallbackProcessed && currentPath == '/') {
+          final oauthParams = getOAuthParamsFromWindow();
 
-          if (browserUrl.contains('/auth/callback') && !location.contains('/auth/callback')) {
+          if (oauthParams != null && oauthParams.containsKey('code')) {
             if (kDebugMode) {
-              print('🚫 OAuth callback detected - navigating to callback route');
+              print('🚫 OAuth callback detected on main page - processing callback');
             }
             _oauthCallbackProcessed = true;
-            return '/auth/callback';
+            return '/oauth-processing';
           }
         }
 
-        // Reset flag when authenticated or not on callback route
-        if (isAuthenticated || !location.contains('/auth/callback')) {
+        // Reset flag when authenticated or not processing OAuth
+        if (isAuthenticated || currentPath != '/oauth-processing') {
           _oauthCallbackProcessed = false;
         }
 
-        // Never redirect during OAuth callback handling - this is critical!
-        if (currentPath.contains('/auth/callback') || location.contains('/auth/callback')) {
+        // Never redirect during OAuth processing
+        if (currentPath.contains('/oauth-processing')) {
           return null;
         }
 
@@ -86,51 +89,47 @@ class AppRouter {
         return null; // No redirect needed
       },
       routes: [
-        // High-priority OAuth callback route - catches callbacks even with fragments
+        // Root route - redirect to appropriate page
         GoRoute(
           path: '/',
           redirect: (context, state) {
-            if (kIsWeb) {
-              final browserUrl = Uri.base.toString();
-              if (kDebugMode) {
-                print('🔍 Root route check - Browser URL: $browserUrl');
-              }
-
-              // If browser URL contains OAuth callback, redirect to callback route
-              if (browserUrl.contains('/auth/callback')) {
-                if (kDebugMode) {
-                  print('🔄 Root route detected OAuth callback, redirecting...');
-                }
-                return '/auth/callback';
-              }
-            }
-
-            // Otherwise redirect to unauthenticated
+            // Always redirect to unauthenticated from root
+            // OAuth handling is now done through redirect logic above
             return '/unauthenticated';
           },
         ),
 
-        // OAuth callback route - handle fragments and query params explicitly
+        // OAuth processing route - handles OAuth parameters from window
         GoRoute(
-          path: '/auth/callback',
+          path: '/oauth-processing',
           builder: (context, state) {
-            Uri callbackUri;
-
-            // Try to get the real callback URI from browser if available
+            // Create a mock URI with OAuth parameters from window
             if (kIsWeb) {
-              final browserUri = Uri.base;
-
-              // If browser URL contains callback info, use that
-              if (browserUri.path.contains('/auth/callback') || browserUri.toString().contains('/auth/callback')) {
-                callbackUri = browserUri;
-              } else {
-                callbackUri = state.uri;
+              final oauthParams = getOAuthParamsFromWindow();
+              if (oauthParams != null) {
+                final uri = Uri(
+                  scheme: 'https',
+                  host: 'callback',
+                  path: '/oauth-processing',
+                  queryParameters: oauthParams,
+                );
+                return OAuthCallbackScreen(callbackUri: uri);
               }
-            } else {
-              callbackUri = state.uri;
             }
 
-            return OAuthCallbackScreen(callbackUri: callbackUri);
+            // Fallback if no OAuth params found
+            return const Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error, size: 64, color: Colors.red),
+                    SizedBox(height: 16),
+                    Text('OAuth callback error: No parameters found'),
+                  ],
+                ),
+              ),
+            );
           },
         ),
         // Unauthenticated route
