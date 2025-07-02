@@ -28,7 +28,7 @@ class ApiClientConfig {
     }
 
     return ChopperClient(
-      baseUrl: Uri.parse(baseUrl ?? AppConfigManager.instance.baseUrl),
+      baseUrl: Uri.parse(baseUrl ?? AppConfig.baseUrl),
       services: [
         Openapi.create(),
       ],

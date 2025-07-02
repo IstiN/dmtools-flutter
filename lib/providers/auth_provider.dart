@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import '../core/services/oauth_service.dart';
-import '../network/services/api_service.dart';
+import '../network/services/dm_tools_api_service.dart';
 import '../core/models/user.dart';
 
 enum AuthState {
@@ -14,7 +14,7 @@ enum AuthState {
 
 class AuthProvider with ChangeNotifier {
   final OAuthService _oauthService;
-  late final ApiService _apiService;
+  final DmToolsApiService _apiService;
 
   AuthState _authState = AuthState.initial;
   OAuthToken? _currentToken;
@@ -22,9 +22,11 @@ class AuthProvider with ChangeNotifier {
   String? _error;
   bool _isDemoMode = false;
 
-  AuthProvider({OAuthService? oauthService}) : _oauthService = oauthService ?? OAuthService() {
-    _apiService = ApiService(authProvider: this);
-  }
+  AuthProvider({
+    required DmToolsApiService apiService,
+    OAuthService? oauthService,
+  })  : _oauthService = oauthService ?? OAuthService(),
+        _apiService = apiService;
 
   // Getters
   AuthState get authState => _authState;
