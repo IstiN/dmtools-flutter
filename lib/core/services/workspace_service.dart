@@ -4,7 +4,7 @@ import '../config/app_config.dart';
 import '../models/workspace.dart';
 import '../../network/generated/openapi.models.swagger.dart' as api;
 import '../../network/generated/openapi.enums.swagger.dart' as enums;
-import '../../network/services/api_service.dart';
+import '../../network/services/dm_tools_api_service.dart';
 import '../../providers/auth_provider.dart';
 
 class WorkspaceService with ChangeNotifier {
@@ -15,14 +15,14 @@ class WorkspaceService with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   List<Workspace> _workspaces = [];
-  final ApiService? _apiService;
+  final DmToolsApiService? _apiService;
   final AuthProvider? _authProvider;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<Workspace> get workspaces => List.unmodifiable(_workspaces);
 
-  WorkspaceService({ApiService? apiService, AuthProvider? authProvider})
+  WorkspaceService({DmToolsApiService? apiService, AuthProvider? authProvider})
       : _apiService = apiService,
         _authProvider = authProvider {
     _initializeMockData();
@@ -150,10 +150,9 @@ class WorkspaceService with ChangeNotifier {
     try {
       // Log configuration information
       if (kDebugMode) {
-        final config = AppConfigManager.instance;
         print('🔄 Loading workspaces...');
-        print('📍 Base URL: ${config.baseUrl}');
-        print('🔧 Environment: ${config.environment.name}');
+        print('📍 Base URL: ${AppConfig.baseUrl}');
+        print('🔧 Environment: ${AppConfig.environment.name}');
         print('📊 Using mock data: $_shouldUseMockData');
       }
 

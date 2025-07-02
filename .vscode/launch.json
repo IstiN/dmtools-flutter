@@ -11,12 +11,12 @@
         "--web-port=8888",
         "-d",
         "chrome",
-        "--web-experimental-hot-reload"
+        "--web-experimental-hot-reload",
       ],
       "console": "terminal"
     },
     {
-      "name": "Main App (Web)",
+      "name": "[DEV] Main App (Web)",
       "request": "launch",
       "type": "dart",
       "cwd": "${workspaceFolder}",
@@ -25,7 +25,23 @@
         "--web-port=8081",
         "-d",
         "chrome",
-        "--web-experimental-hot-reload"
+        "--web-experimental-hot-reload",
+        "--dart-define-from-file=app_config_dev.json"
+      ],
+      "console": "terminal"
+    },
+    {
+      "name": "[PROD] Main App (Web)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}",
+      "program": "lib/main.dart",
+      "args": [
+        "--web-port=8081",
+        "-d",
+        "chrome",
+        "--web-experimental-hot-reload",
+        "--dart-define-from-file=app_config_prod.json"
       ],
       "console": "terminal"
     },
@@ -44,4 +60,4 @@
       "cwd": "${workspaceFolder}"
     }
   ]
-} 
+}
