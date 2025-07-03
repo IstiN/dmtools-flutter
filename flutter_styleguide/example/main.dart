@@ -3,36 +3,101 @@ import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 void main() {
-  runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
-      child: const ExampleApp(),
-    ),
-  );
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ExampleApp());
 }
 
-class ExampleApp extends StatelessWidget {
+class ExampleApp extends StatefulWidget {
   const ExampleApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
+  State<ExampleApp> createState() => _ExampleAppState();
+}
 
-    return MaterialApp(
-      title: 'DMTools Styleguide Example',
-      theme: ThemeData.light().copyWith(
-        colorScheme: ColorScheme.light(
-          primary: AppColors.light.accentColor,
-        ),
+class _ExampleAppState extends State<ExampleApp> with WidgetsBindingObserver {
+  late ThemeProvider _themeProvider;
+  bool _isThemeInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _themeProvider = ThemeProvider();
+    _initializeTheme();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<void> _initializeTheme() async {
+    try {
+      await _themeProvider.initializeTheme();
+      if (mounted) {
+        setState(() {
+          _isThemeInitialized = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('ExampleApp: Error initializing theme: $e');
+      if (mounted) {
+        setState(() {
+          _isThemeInitialized = true;
+        });
+      }
+    }
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    _themeProvider.updateSystemTheme(brightness);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider.value(
+      value: _themeProvider,
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          if (!_isThemeInitialized) {
+            return const MaterialApp(
+              home: Scaffold(
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text('Loading theme preferences...'),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return MaterialApp(
+            title: 'DMTools Styleguide Example',
+            theme: ThemeData.light().copyWith(
+              colorScheme: ColorScheme.light(
+                primary: AppColors.light.accentColor,
+              ),
+            ),
+            darkTheme: ThemeData.dark().copyWith(
+              colorScheme: ColorScheme.dark(
+                primary: AppColors.dark.accentColor,
+              ),
+            ),
+            themeMode: themeProvider.currentThemeMode,
+            home: const ExampleHomePage(),
+            debugShowCheckedModeBanner: false,
+          );
+        },
       ),
-      darkTheme: ThemeData.dark().copyWith(
-        colorScheme: ColorScheme.dark(
-          primary: AppColors.dark.accentColor,
-        ),
-      ),
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: const ExampleHomePage(),
     );
   }
 }
