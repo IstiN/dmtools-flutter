@@ -49,6 +49,7 @@ export 'widgets/styleguide/color_swatch_widget.dart';
 export 'widgets/styleguide/code_snippet.dart';
 export 'widgets/styleguide/component_display.dart';
 export 'widgets/styleguide/component_item.dart';
+export 'widgets/styleguide/theme_switch.dart';
 
 // Components (Legacy - only non-conflicting exports)
 export 'components/atoms/app_button.dart';

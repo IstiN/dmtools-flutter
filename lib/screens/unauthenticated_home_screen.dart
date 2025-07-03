@@ -24,7 +24,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
           AppHeader(
             showTitle: false, // Hide header text
             showSearch: false, // Hide search as requested
-            onThemeToggle: () => Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
+            onThemeToggle: () async => await Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
             actions: const [], // Remove actions as we'll use profileButton
             profileButton: UserProfileButton(
               loginState: LoginState.loggedOut,

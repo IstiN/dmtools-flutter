@@ -45,6 +45,37 @@ class MoleculesPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
+        const ComponentDisplay(
+          title: 'Enhanced Theme Selector',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Enhanced theme selector supports system, light, and dark modes with persistence.'),
+              SizedBox(height: AppDimensions.spacingM),
+              Text('Full selector with labels:', style: TextStyle(fontWeight: FontWeight.w600)),
+              SizedBox(height: AppDimensions.spacingS),
+              ThemeSelector(),
+              SizedBox(height: AppDimensions.spacingL),
+              Text('Compact selector without labels:', style: TextStyle(fontWeight: FontWeight.w600)),
+              SizedBox(height: AppDimensions.spacingS),
+              ThemeSelector(showLabels: false),
+              SizedBox(height: AppDimensions.spacingL),
+              Text('Compact dropdown selector:', style: TextStyle(fontWeight: FontWeight.w600)),
+              SizedBox(height: AppDimensions.spacingS),
+              ThemeSelector(isCompact: true),
+              SizedBox(height: AppDimensions.spacingM),
+              Text(
+                'Features:\n'
+                '• Persists user preference to local storage\n'
+                '• Automatically follows system theme when "System" is selected\n'
+                '• Updates when system theme changes\n'
+                '• Provides three options: System, Light, Dark',
+                style: TextStyle(fontSize: 14),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
         ComponentDisplay(
           title: 'Card',
           child: Column(

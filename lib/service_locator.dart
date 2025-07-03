@@ -3,14 +3,11 @@ import 'package:dmtools/network/services/dm_tools_api_service.dart';
 import 'package:dmtools/network/services/dm_tools_api_service_impl.dart';
 import 'package:dmtools/network/services/dm_tools_api_service_mock.dart';
 import 'package:dmtools/providers/auth_provider.dart';
-import 'package:dmtools_styleguide/theme/app_theme.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 
 abstract final class ServiceLocator {
   static void init() {
-    GetIt.I.registerLazySingleton(ThemeProvider.new);
-
     // Create AuthProvider first (no dependencies)
     GetIt.I.registerLazySingleton(() => AuthProvider());
 

@@ -41,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onSearch: (query) {
               debugPrint('Searching for: $query');
             },
-            onThemeToggle: () => themeProvider.toggleTheme(),
+            onThemeToggle: () async => await themeProvider.toggleTheme(),
             onLogoPressed: () {
               context.go('/dashboard');
             },
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
             showTitle: false,
             showHamburgerMenu: true,
             onHamburgerPressed: () => _scaffoldKey.currentState?.openDrawer(),
-            onThemeToggle: () => themeProvider.toggleTheme(),
+            onThemeToggle: () async => await themeProvider.toggleTheme(),
             onLogoPressed: () {
               context.go('/dashboard');
             },

@@ -1,22 +1,164 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:google_fonts/google_fonts.dart'; // Unused
 import 'app_colors.dart';
 
+enum ThemePreference {
+  system,
+  light,
+  dark,
+}
+
 class ThemeProvider with ChangeNotifier {
+  static const String _themePreferenceKey = 'theme_preference';
+
   bool _isDarkMode = false;
   bool _isTestMode = false;
   bool _testDarkMode = false;
+  bool _isInitialized = false;
+  ThemePreference _themePreference = ThemePreference.system;
 
   bool get isDarkMode => _isTestMode ? _testDarkMode : _isDarkMode;
   bool get isTestMode => _isTestMode;
   bool get testDarkMode => _testDarkMode;
-  ThemeMode get currentThemeMode => isDarkMode ? ThemeMode.dark : ThemeMode.light;
+  bool get isInitialized => _isInitialized;
+  ThemePreference get themePreference => _themePreference;
+  ThemeMode get currentThemeMode {
+    switch (_themePreference) {
+      case ThemePreference.light:
+        return ThemeMode.light;
+      case ThemePreference.dark:
+        return ThemeMode.dark;
+      case ThemePreference.system:
+        return ThemeMode.system;
+    }
+  }
+
   ThemeData get currentTheme => isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
 
-  void toggleTheme() {
-    _isDarkMode = !_isDarkMode;
+  /// Initialize theme from saved preferences and system settings
+  Future<void> initializeTheme() async {
+    if (_isInitialized) return;
+
+    debugPrint('ThemeProvider: Starting theme initialization...');
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedPreference = prefs.getString(_themePreferenceKey);
+
+      debugPrint('ThemeProvider: Saved preference = $savedPreference');
+
+      if (savedPreference != null) {
+        // Load saved user preference
+        _themePreference = ThemePreference.values.firstWhere(
+          (e) => e.toString() == savedPreference,
+          orElse: () => ThemePreference.system,
+        );
+        debugPrint('ThemeProvider: Using saved preference: $_themePreference');
+      } else {
+        // No saved preference, use system default
+        _themePreference = ThemePreference.system;
+        debugPrint('ThemeProvider: No saved preference, using system default');
+      }
+
+      // Update dark mode based on preference
+      await _updateThemeFromPreference();
+
+      debugPrint('ThemeProvider: Theme initialized - isDarkMode: $_isDarkMode, preference: $_themePreference');
+
+      _isInitialized = true;
+      notifyListeners();
+    } catch (e) {
+      // Fallback to system theme if there's an error
+      debugPrint('Error initializing theme: $e');
+      _themePreference = ThemePreference.system;
+      await _updateThemeFromPreference();
+      _isInitialized = true;
+      notifyListeners();
+    }
+  }
+
+  /// Update theme based on current preference
+  Future<void> _updateThemeFromPreference() async {
+    switch (_themePreference) {
+      case ThemePreference.light:
+        _isDarkMode = false;
+        debugPrint('ThemeProvider: Set to light mode');
+        break;
+      case ThemePreference.dark:
+        _isDarkMode = true;
+        debugPrint('ThemeProvider: Set to dark mode');
+        break;
+      case ThemePreference.system:
+        _isDarkMode = _getSystemTheme();
+        debugPrint('ThemeProvider: Set to system mode, isDarkMode = $_isDarkMode');
+        break;
+    }
+  }
+
+  /// Get system theme preference
+  bool _getSystemTheme() {
+    try {
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      final isDark = brightness == Brightness.dark;
+      debugPrint('ThemeProvider: System brightness = $brightness, isDark = $isDark');
+
+      return isDark;
+    } catch (e) {
+      // Fallback to light theme if system theme detection fails
+      debugPrint('ThemeProvider: Error getting system theme: $e');
+      return false;
+    }
+  }
+
+  /// Toggle between light and dark themes (sets user preference)
+  Future<void> toggleTheme() async {
+    if (_isTestMode) return;
+
+    // Toggle between light and dark (not system)
+    if (_themePreference == ThemePreference.dark) {
+      await setThemePreference(ThemePreference.light);
+    } else {
+      await setThemePreference(ThemePreference.dark);
+    }
+  }
+
+  /// Set specific theme preference
+  Future<void> setThemePreference(ThemePreference preference) async {
+    if (_isTestMode) return;
+
+    _themePreference = preference;
+    await _updateThemeFromPreference();
+    await _saveThemePreference();
     notifyListeners();
+  }
+
+  /// Save theme preference to local storage
+  Future<void> _saveThemePreference() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_themePreferenceKey, _themePreference.toString());
+      debugPrint('ThemeProvider: Saved preference: $_themePreference');
+    } catch (e) {
+      debugPrint('ThemeProvider: Error saving theme preference: $e');
+    }
+  }
+
+  /// Update theme when system theme changes (for system preference)
+  Future<void> updateSystemTheme(Brightness systemBrightness) async {
+    if (_themePreference == ThemePreference.system && !_isTestMode) {
+      final newDarkMode = systemBrightness == Brightness.dark;
+      if (_isDarkMode != newDarkMode) {
+        _isDarkMode = newDarkMode;
+        notifyListeners();
+      }
+    }
+  }
+
+  /// Reset to system theme
+  Future<void> resetToSystemTheme() async {
+    await setThemePreference(ThemePreference.system);
   }
 
   void setTestMode(bool isTestMode, {bool darkMode = false}) {
