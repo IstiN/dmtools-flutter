@@ -46,7 +46,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/img/
-    - assets/config/
   
   # Use google_fonts instead of custom fonts
   # fonts:
