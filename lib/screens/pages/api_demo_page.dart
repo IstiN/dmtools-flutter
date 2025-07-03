@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../network/services/api_service.dart';
+import '../../network/services/dm_tools_api_service.dart';
 import '../../network/generated/openapi.models.swagger.dart';
 import '../../network/generated/openapi.enums.swagger.dart' as enums;
 import '../../providers/auth_provider.dart';
@@ -15,7 +15,7 @@ class ApiDemoPage extends StatefulWidget {
 }
 
 class _ApiDemoPageState extends State<ApiDemoPage> {
-  late ApiService _apiService;
+  late DmToolsApiService _apiService;
   late AuthProvider _authProvider;
   List<WorkspaceDto> _workspaces = [];
   UserDto? _currentUser;
@@ -27,7 +27,7 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
   @override
   void initState() {
     super.initState();
-    _apiService = context.read<ApiService>();
+    _apiService = context.read<DmToolsApiService>();
     _authProvider = context.read<AuthProvider>();
     _loadWorkspaces();
     _loadCurrentUser();

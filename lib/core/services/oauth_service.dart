@@ -67,7 +67,7 @@ class OAuthService {
     FlutterSecureStorage? secureStorage,
   })  : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
         _clientRedirectUri = _getClientRedirectUri(),
-        _baseUrl = AppConfigManager.instance.baseUrl;
+        _baseUrl = AppConfig.baseUrl;
 
   static String _getClientRedirectUri() {
     if (kIsWeb) {

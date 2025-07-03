@@ -1,28 +1,22 @@
+import 'package:dmtools/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
-import 'core/config/app_config.dart';
 import 'core/routing/app_router.dart';
 import 'providers/auth_provider.dart';
-import 'network/services/api_service.dart';
+import 'network/services/dm_tools_api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize app configuration
-  await AppConfigManager.initialize();
+  ServiceLocator.init();
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ProxyProvider<AuthProvider, ApiService>(
-          update: (_, authProvider, __) => ApiService(
-            baseUrl: AppConfigManager.instance.baseUrl,
-            authProvider: authProvider,
-          ),
-        ),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<ThemeProvider>()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<AuthProvider>()),
+        Provider<DmToolsApiService>(create: (_) => ServiceLocator.get()),
       ],
       child: const DMToolsApp(),
     ),
