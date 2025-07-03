@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../service_locator.dart';
 
 // Conditional imports for web-specific functionality
 import 'oauth_callback_web.dart' if (dart.library.io) 'oauth_callback_stub.dart';
@@ -36,6 +37,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
 
   Future<void> _handleCallback() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final router = GoRouter.of(context);
     final tempCode = widget.callbackUri.queryParameters['code'];
 
     if (kDebugMode) {
@@ -54,7 +56,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
           clearOAuthParamsFromWindow();
           cleanupOAuthUrl();
         }
-        context.go('/dashboard');
+        router.go('/dashboard');
       }
       return;
     }
@@ -72,9 +74,9 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
 
         // Redirect based on current auth state
         if (authProvider.isAuthenticated) {
-          context.go('/dashboard');
+          router.go('/dashboard');
         } else {
-          context.go('/unauthenticated');
+          router.go('/unauthenticated');
         }
       }
       return;
@@ -122,8 +124,11 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
               clearOAuthParamsFromWindow();
             }
 
+            // Load user info from API
+            await ServiceLocator.initializeUserInfo();
+
             // Navigate to dashboard on successful authentication
-            context.go('/dashboard');
+            router.go('/dashboard');
           }
         } else {
           if (kDebugMode) {
@@ -203,7 +208,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: () {
-                    context.go('/unauthenticated');
+                    GoRouter.of(context).go('/unauthenticated');
                   },
                   child: const Text('Try Again'),
                 ),

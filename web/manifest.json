@@ -1,11 +1,11 @@
 {
-    "name": "dmtools",
-    "short_name": "dmtools",
+    "name": "DMTools",
+    "short_name": "DMTools",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#466af1",
+    "theme_color": "#466af1",
+    "description": "DMTools - Development and Management Tools Platform",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
