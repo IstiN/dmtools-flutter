@@ -35,9 +35,14 @@ class _DMToolsAppState extends State<DMToolsApp> {
   void initState() {
     super.initState();
     // Initialize authentication state
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      authProvider.initialize();
+      await authProvider.initialize();
+
+      // Load user info from API if authenticated
+      if (authProvider.isAuthenticated) {
+        await ServiceLocator.initializeUserInfo();
+      }
     });
   }
 

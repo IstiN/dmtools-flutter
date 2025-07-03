@@ -6,6 +6,8 @@ import 'dart:convert';
 
 import '../generated/openapi.enums.swagger.dart' as enums;
 import 'package:dmtools/core/models/user.dart';
+import '../../providers/auth_provider.dart';
+import 'package:flutter/foundation.dart';
 
 class DmToolsApiServiceImpl implements DmToolsApiService {
   final ChopperClient _client;
@@ -13,9 +15,11 @@ class DmToolsApiServiceImpl implements DmToolsApiService {
 
   DmToolsApiServiceImpl({
     String? baseUrl,
+    AuthProvider? authProvider,
     bool enableLogging = true,
   }) : _client = ApiClientConfig.createClient(
           baseUrl: baseUrl,
+          authProvider: authProvider,
           enableLogging: enableLogging,
         ) {
     _api = _client.getService<Openapi>();
@@ -29,15 +33,26 @@ class DmToolsApiServiceImpl implements DmToolsApiService {
         // The API returns Object, so we need to parse it manually
         final responseBody = response.body!;
 
+        UserDto user;
         if (responseBody is Map<String, dynamic>) {
-          return UserDto.fromJson(responseBody);
+          user = UserDto.fromJson(responseBody);
         } else if (responseBody is String) {
           // If it's returned as JSON string, parse it first
           final jsonData = jsonDecode(responseBody) as Map<String, dynamic>;
-          return UserDto.fromJson(jsonData);
+          user = UserDto.fromJson(jsonData);
         } else {
           throw ApiException('Unexpected response format from /api/auth/user: ${responseBody.runtimeType}');
         }
+
+        if (kDebugMode) {
+          print('✅ User info loaded from API:');
+          print('   - Name: ${user.name}');
+          print('   - Email: ${user.email}');
+          print('   - ID: ${user.id}');
+          print('   - Picture: ${user.picture}');
+        }
+
+        return user;
       } else {
         throw ApiException('Failed to get current user', response.statusCode);
       }

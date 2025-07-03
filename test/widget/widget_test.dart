@@ -21,7 +21,8 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
-          ChangeNotifierProvider(create: (_) => AuthProvider(apiService: DmToolsApiServiceMock())),
+          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          Provider<DmToolsApiServiceMock>(create: (_) => DmToolsApiServiceMock()),
         ],
         child: const DMToolsApp(),
       ),

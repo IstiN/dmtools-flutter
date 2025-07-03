@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import '../core/services/oauth_service.dart';
-import '../network/services/dm_tools_api_service.dart';
 import '../core/models/user.dart';
 
 enum AuthState {
@@ -14,7 +13,6 @@ enum AuthState {
 
 class AuthProvider with ChangeNotifier {
   final OAuthService _oauthService;
-  final DmToolsApiService _apiService;
 
   AuthState _authState = AuthState.initial;
   OAuthToken? _currentToken;
@@ -23,10 +21,8 @@ class AuthProvider with ChangeNotifier {
   bool _isDemoMode = false;
 
   AuthProvider({
-    required DmToolsApiService apiService,
     OAuthService? oauthService,
-  })  : _oauthService = oauthService ?? OAuthService(),
-        _apiService = apiService;
+  }) : _oauthService = oauthService ?? OAuthService();
 
   // Getters
   AuthState get authState => _authState;
@@ -50,7 +46,7 @@ class AuthProvider with ChangeNotifier {
         if (kDebugMode) {
           print('🔄 Demo mode disabled - real authentication detected');
         }
-        await _loadUserInfo();
+        _decodeJwtAndSetUser();
         _setAuthenticated();
       } else {
         _setUnauthenticated();
@@ -96,7 +92,7 @@ class AuthProvider with ChangeNotifier {
           if (kDebugMode) {
             print('🔄 Demo mode disabled - OAuth callback successful');
           }
-          await _loadUserInfo();
+          _decodeJwtAndSetUser();
           _setAuthenticated();
           return true;
         }
@@ -158,25 +154,15 @@ class AuthProvider with ChangeNotifier {
     return null;
   }
 
-  /// Load user information from the backend API
-  Future<void> _loadUserInfo() async {
-    try {
-      if (_currentToken != null) {
-        final user = await _apiService.getCurrentUser();
-        _currentUser = user;
-        _forceResetDemoMode(); // Force reset demo mode when real user data is loaded
-        if (kDebugMode) {
-          print('✅ User info loaded from API: ${_currentUser?.name}');
-          print('📧 User email from API: ${_currentUser?.email}');
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ Failed to load user info from API: $e');
-      }
-      // Fallback to JWT decoding if API fails
-      _decodeJwtAndSetUser();
+  /// Set user information (to be called externally after API service is available)
+  void setUserInfo(UserDto user) {
+    _currentUser = user;
+    _forceResetDemoMode(); // Force reset demo mode when real user data is loaded
+    if (kDebugMode) {
+      print('✅ User info set externally: ${_currentUser?.name}');
+      print('📧 User email: ${_currentUser?.email}');
     }
+    notifyListeners();
   }
 
   /// Decode JWT and set a partial user object
@@ -192,7 +178,11 @@ class AuthProvider with ChangeNotifier {
         );
         _forceResetDemoMode(); // Force reset demo mode when real JWT is decoded
         if (kDebugMode) {
-          print('✅ User info loaded from JWT: ${_currentUser?.name}');
+          print('✅ User info loaded from JWT:');
+          print('   - Name: ${_currentUser?.name}');
+          print('   - Email: ${_currentUser?.email}');
+          print('   - ID: ${_currentUser?.id}');
+          print('   - Picture: ${_currentUser?.picture}');
         }
       }
     } catch (e) {

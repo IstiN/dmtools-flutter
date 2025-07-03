@@ -1,6 +1,7 @@
 import 'package:dmtools/core/models/user.dart';
 import 'package:dmtools/network/generated/openapi.models.swagger.dart';
 import 'package:dmtools/network/services/dm_tools_api_service.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:dmtools/network/generated/openapi.enums.swagger.dart' as enums;
 
@@ -57,11 +58,21 @@ class DmToolsApiServiceMock implements DmToolsApiService {
   /// Get the current authenticated user's profile
   @override
   Future<UserDto> getCurrentUser() async {
-    return const UserDto(
+    const user = UserDto(
       id: 'demo_user_123',
       name: 'Demo User',
       email: 'demo@dmtools.com',
     );
+
+    if (kDebugMode) {
+      print('✅ User info loaded from MOCK API (Demo Mode):');
+      print('   - Name: ${user.name}');
+      print('   - Email: ${user.email}');
+      print('   - ID: ${user.id}');
+      print('   - Picture: ${user.picture}');
+    }
+
+    return user;
   }
 
   @override
