@@ -16,14 +16,15 @@ import '../../widgets/atoms/buttons/app_buttons.dart';
 import '../../widgets/styleguide/theme_switch.dart';
 import '../../widgets/molecules/chat_message.dart';
 import '../../widgets/atoms/status_dot.dart';
+import '../../widgets/molecules/integration_card.dart';
+import '../../widgets/molecules/integration_type_selector.dart';
+import '../../widgets/molecules/integration_config_form.dart';
 
 class MoleculesPage extends StatelessWidget {
   const MoleculesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-
     return ListView(
       padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
@@ -35,7 +36,7 @@ class MoleculesPage extends StatelessWidget {
               const Text('The theme switch component allows users to toggle between light and dark modes.'),
               const SizedBox(height: AppDimensions.spacingM),
               ThemeSwitch(
-                isDarkMode: themeProvider.isDarkMode,
+                isDarkMode: context.isDarkMode,
                 onToggle: () {
                   Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
                 },
@@ -49,10 +50,11 @@ class MoleculesPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Cards are used to group related information. The base style provides background, border, shadow, and rounded corners.'),
+              const Text(
+                  'Cards are used to group related information. The base style provides background, border, shadow, and rounded corners.'),
               const SizedBox(height: AppDimensions.spacingM),
               SizedBox(
-                width: 300,
+                width: AppDimensions.dialogWidth * 0.625, // 300px equivalent
                 child: CustomCard(
                   child: Padding(
                     padding: AppDimensions.cardPaddingM,
@@ -61,7 +63,8 @@ class MoleculesPage extends StatelessWidget {
                       children: [
                         Text('Card Title', style: Theme.of(context).textTheme.titleLarge),
                         const SizedBox(height: AppDimensions.spacingXs),
-                        Text('This is some content within a basic card.', style: Theme.of(context).textTheme.bodyMedium),
+                        Text('This is some content within a basic card.',
+                            style: Theme.of(context).textTheme.bodyMedium),
                       ],
                     ),
                   ),
@@ -103,13 +106,15 @@ class MoleculesPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Cards specifically designed for displaying agent information with status, description, and actions.'),
+              const Text(
+                  'Cards specifically designed for displaying agent information with status, description, and actions.'),
               const SizedBox(height: AppDimensions.spacingM),
               SizedBox(
-                width: 400,
+                width: AppDimensions.dialogWidth * 0.833, // 400px equivalent
                 child: AgentCard(
                   title: 'Sample Agent',
-                  description: 'This is a sample agent description that explains what the agent does and its capabilities.',
+                  description:
+                      'This is a sample agent description that explains what the agent does and its capabilities.',
                   status: StatusType.online,
                   statusLabel: 'Active',
                   tags: const ['Category'],
@@ -225,7 +230,8 @@ class MoleculesPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('A simple horizontal group of action buttons, typically used for form submissions or main actions in a section.'),
+              const Text(
+                  'A simple horizontal group of action buttons, typically used for form submissions or main actions in a section.'),
               const SizedBox(height: AppDimensions.spacingM),
               ActionButtonGroup(
                 buttons: [
@@ -341,7 +347,156 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Integration Card',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Displays integration information with status, usage, and action buttons.'),
+              const SizedBox(height: AppDimensions.spacingM),
+              SizedBox(
+                width: AppDimensions.dialogWidth * 0.833, // 400px equivalent
+                child: IntegrationCard(
+                  id: '1',
+                  name: 'GitHub Integration',
+                  description: 'Connect to GitHub repositories',
+                  type: 'github',
+                  displayName: 'GitHub',
+                  enabled: true,
+                  usageCount: 42,
+                  createdAt: DateTime.now().subtract(const Duration(days: 7)),
+                  createdByName: 'John Doe',
+                  workspaces: const ['Development Team'],
+                  lastUsedAt: DateTime.now().subtract(const Duration(hours: 2)),
+                  onEnable: () {},
+                  onDisable: () {},
+                  onTest: () {},
+                  onEdit: () {},
+                  onDelete: () {},
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Integration Type Selector',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Grid-based selector for choosing integration types when creating new integrations.'),
+              const SizedBox(height: AppDimensions.spacingM),
+              SizedBox(
+                height: 300,
+                child: IntegrationTypeSelector(
+                  integrationTypes: const [
+                    IntegrationType(
+                      type: 'github',
+                      displayName: 'GitHub',
+                      description: 'Connect to GitHub repositories',
+                      configParams: [
+                        ConfigParam(
+                          key: 'token',
+                          displayName: 'Token',
+                          description: 'API Token',
+                          required: true,
+                          sensitive: true,
+                          type: 'string',
+                          options: [],
+                        )
+                      ],
+                    ),
+                    IntegrationType(
+                      type: 'slack',
+                      displayName: 'Slack',
+                      description: 'Send notifications to Slack',
+                      configParams: [
+                        ConfigParam(
+                          key: 'webhook_url',
+                          displayName: 'Webhook URL',
+                          description: 'Slack webhook URL',
+                          required: true,
+                          sensitive: true,
+                          type: 'string',
+                          options: [],
+                        )
+                      ],
+                    ),
+                    IntegrationType(
+                      type: 'google',
+                      displayName: 'Google Cloud',
+                      description: 'Connect to Google Cloud services',
+                      configParams: [
+                        ConfigParam(
+                          key: 'service_account',
+                          displayName: 'Service Account',
+                          description: 'Service account credentials',
+                          required: true,
+                          sensitive: true,
+                          type: 'string',
+                          options: [],
+                        )
+                      ],
+                    ),
+                  ],
+                  selectedType: const IntegrationType(
+                    type: 'github',
+                    displayName: 'GitHub',
+                    description: 'Connect to GitHub repositories',
+                    configParams: [],
+                  ),
+                  onTypeSelected: (type) {},
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Integration Config Form',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Dynamic configuration form that adapts to different integration type requirements.'),
+              const SizedBox(height: AppDimensions.spacingM),
+              SizedBox(
+                height: 400,
+                child: IntegrationConfigForm(
+                  integrationType: const IntegrationType(
+                    type: 'github',
+                    displayName: 'GitHub',
+                    description: 'Connect to GitHub repositories',
+                    configParams: [
+                      ConfigParam(
+                        key: 'token',
+                        displayName: 'Personal Access Token',
+                        description: 'GitHub personal access token with repo access',
+                        required: true,
+                        sensitive: true,
+                        type: 'string',
+                        options: [],
+                      ),
+                      ConfigParam(
+                        key: 'repository',
+                        displayName: 'Repository',
+                        description: 'Repository name (owner/repo)',
+                        required: true,
+                        sensitive: false,
+                        type: 'string',
+                        options: [],
+                      )
+                    ],
+                  ),
+                  initialValues: const {'token': 'ghp_example123', 'repository': 'owner/repo'},
+                  onConfigChanged: (config) {},
+                  onTestConnection: () {},
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
-} 
+}

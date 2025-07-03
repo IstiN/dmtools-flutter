@@ -19,11 +19,11 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
   bool _showAddWorkspace = false;
   bool _showEditWorkspace = false;
   WorkspaceCard? _selectedWorkspace;
-  
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -40,7 +40,6 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Workspace Management'),
-        backgroundColor: colors.accentColor,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -57,7 +56,6 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
               style: Theme.of(context).textTheme.bodyLarge,
             ),
             const SizedBox(height: 32),
-            
             ComponentDisplay(
               title: 'Workspace List',
               description: 'Display of workspaces with interactive cards.',
@@ -105,15 +103,9 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
                 ],
               ),
             ),
-            
-            if (_showAddWorkspace)
-              _buildAddWorkspaceForm(colors, isDarkMode),
-              
-            if (_showEditWorkspace && _selectedWorkspace != null)
-              _buildEditWorkspaceForm(colors, isDarkMode),
-            
+            if (_showAddWorkspace) _buildAddWorkspaceForm(colors, isDarkMode),
+            if (_showEditWorkspace && _selectedWorkspace != null) _buildEditWorkspaceForm(colors, isDarkMode),
             const SizedBox(height: 48),
-            
             ComponentDisplay(
               title: 'Empty State',
               description: 'Display when no workspaces are available.',
@@ -130,9 +122,7 @@ class _WorkspaceManagementPageState extends State<WorkspaceManagementPage> {
                 ],
               ),
             ),
-            
             const SizedBox(height: 48),
-            
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -203,7 +193,7 @@ WorkspaceManagement(
       ),
     );
   }
-  
+
   Widget _buildAddWorkspaceForm(dynamic colors, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.only(top: 24.0),
@@ -285,7 +275,7 @@ WorkspaceManagement(
       ),
     );
   }
-  
+
   Widget _buildEditWorkspaceForm(dynamic colors, bool isDarkMode) {
     return Padding(
       padding: const EdgeInsets.only(top: 24.0),
@@ -378,4 +368,4 @@ WorkspaceManagement(
       ),
     );
   }
-} 
+}
