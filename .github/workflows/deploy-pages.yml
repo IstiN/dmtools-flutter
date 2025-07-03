@@ -65,7 +65,7 @@ jobs:
 
       - name: Build Main App for Web
         run: |
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/ --dart-define=FLUTTER_ENV=production
+          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/ --dart-define=FLUTTER_ENV=production --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
 
       - name: Build Styleguide for Web
         run: |
