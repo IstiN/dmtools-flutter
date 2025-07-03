@@ -31,7 +31,6 @@ class ChatModulePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Chat Module'),
-        backgroundColor: colors.accentColor,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),

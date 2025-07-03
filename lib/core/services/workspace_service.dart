@@ -270,40 +270,70 @@ class WorkspaceService with ChangeNotifier {
     _clearError();
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 1000));
+      if (kDebugMode) {
+        print('🆕 Creating workspace: ${request.name}');
+        print('📊 Using mock data: $_shouldUseMockData');
+      }
 
-      final now = DateTime.now();
-      final workspaceId = 'ws-${Random().nextInt(10000)}';
+      if (_shouldUseMockData) {
+        // Simulate network delay for mock data
+        await Future.delayed(const Duration(milliseconds: 1000));
 
-      final newWorkspace = Workspace(
-        id: workspaceId,
-        name: request.name,
-        description: request.description,
-        ownerId: _currentUserId,
-        ownerName: _currentUserName,
-        ownerEmail: _currentUserEmail,
-        currentUserRole: WorkspaceRole.admin,
-        userCount: 1,
-        createdAt: now,
-        updatedAt: now,
-        users: [
-          WorkspaceUser(
-            id: 'wu-${Random().nextInt(10000)}',
-            userId: _currentUserId,
-            userName: _currentUserName,
-            userEmail: _currentUserEmail,
-            role: WorkspaceRole.admin,
-            joinedAt: now,
-            updatedAt: now,
-          ),
-        ],
-      );
+        final now = DateTime.now();
+        final workspaceId = 'ws-${Random().nextInt(10000)}';
 
-      _workspaces.add(newWorkspace);
-      notifyListeners();
+        final newWorkspace = Workspace(
+          id: workspaceId,
+          name: request.name,
+          description: request.description,
+          ownerId: _currentUserId,
+          ownerName: _currentUserName,
+          ownerEmail: _currentUserEmail,
+          currentUserRole: WorkspaceRole.admin,
+          userCount: 1,
+          createdAt: now,
+          updatedAt: now,
+          users: [
+            WorkspaceUser(
+              id: 'wu-${Random().nextInt(10000)}',
+              userId: _currentUserId,
+              userName: _currentUserName,
+              userEmail: _currentUserEmail,
+              role: WorkspaceRole.admin,
+              joinedAt: now,
+              updatedAt: now,
+            ),
+          ],
+        );
+
+        _workspaces.add(newWorkspace);
+        notifyListeners();
+        if (kDebugMode) {
+          print('✅ Created mock workspace: ${newWorkspace.id}');
+        }
+      } else {
+        // Use real API service
+        if (_apiService != null) {
+          if (kDebugMode) {
+            print('🌐 Making real API call to create workspace');
+          }
+          final apiWorkspace = await _apiService!.createWorkspace(
+            name: request.name,
+            description: request.description,
+          );
+          final newWorkspace = _convertApiWorkspaceToLocal(apiWorkspace);
+          _workspaces.add(newWorkspace);
+          notifyListeners();
+          if (kDebugMode) {
+            print('✅ Created workspace via API: ${newWorkspace.id}');
+          }
+        } else {
+          throw Exception('ApiService not available for real data');
+        }
+      }
+
       _setLoading(false);
-      return newWorkspace;
+      return _workspaces.last;
     } catch (e) {
       _setError('Failed to create workspace: ${e.toString()}');
       _setLoading(false);
@@ -312,12 +342,22 @@ class WorkspaceService with ChangeNotifier {
   }
 
   /// Update workspace
+  /// Note: Currently only works in demo mode as the API doesn't support workspace updates yet
   Future<Workspace?> updateWorkspace(String workspaceId, UpdateWorkspaceRequest request) async {
     _setLoading(true);
     _clearError();
 
     try {
-      // Simulate network delay
+      if (kDebugMode) {
+        print('✏️ Updating workspace: $workspaceId');
+        print('📊 Using mock data: $_shouldUseMockData');
+        if (!_shouldUseMockData) {
+          print('⚠️ Update workspace API not available - using mock behavior');
+        }
+      }
+
+      // TODO: Implement real API call when workspace update endpoint is available
+      // For now, always simulate locally regardless of demo mode
       await Future.delayed(const Duration(milliseconds: 800));
 
       final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
@@ -349,16 +389,47 @@ class WorkspaceService with ChangeNotifier {
     _clearError();
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 600));
-
-      final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
-      if (index == -1) {
-        throw Exception('Workspace not found');
+      if (kDebugMode) {
+        print('🗑️ Deleting workspace: $workspaceId');
+        print('📊 Using mock data: $_shouldUseMockData');
       }
 
-      _workspaces.removeAt(index);
-      notifyListeners();
+      if (_shouldUseMockData) {
+        // Simulate network delay for mock data
+        await Future.delayed(const Duration(milliseconds: 600));
+
+        final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
+        if (index == -1) {
+          throw Exception('Workspace not found');
+        }
+
+        _workspaces.removeAt(index);
+        notifyListeners();
+        if (kDebugMode) {
+          print('✅ Deleted mock workspace: $workspaceId');
+        }
+      } else {
+        // Use real API service
+        if (_apiService != null) {
+          if (kDebugMode) {
+            print('🌐 Making real API call to delete workspace');
+          }
+          await _apiService!.deleteWorkspace(workspaceId);
+
+          // Remove from local list after successful API call
+          final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
+          if (index != -1) {
+            _workspaces.removeAt(index);
+            notifyListeners();
+          }
+          if (kDebugMode) {
+            print('✅ Deleted workspace via API: $workspaceId');
+          }
+        } else {
+          throw Exception('ApiService not available for real data');
+        }
+      }
+
       _setLoading(false);
       return true;
     } catch (e) {
@@ -374,50 +445,81 @@ class WorkspaceService with ChangeNotifier {
     _clearError();
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 1000));
-
-      final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
-      if (index == -1) {
-        throw Exception('Workspace not found');
+      if (kDebugMode) {
+        print('🤝 Sharing workspace $workspaceId with ${request.email}');
+        print('📊 Using mock data: $_shouldUseMockData');
       }
 
-      final workspace = _workspaces[index];
-      final now = DateTime.now();
+      if (_shouldUseMockData) {
+        // Simulate network delay for mock data
+        await Future.delayed(const Duration(milliseconds: 1000));
 
-      // Check if user is already in workspace
-      final existingUserIndex = workspace.users.indexWhere((user) => user.userEmail == request.email);
+        final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
+        if (index == -1) {
+          throw Exception('Workspace not found');
+        }
 
-      if (existingUserIndex != -1) {
-        // Update existing user role
-        final existingUser = workspace.users[existingUserIndex];
-        final updatedUser = existingUser.copyWith(
-          role: _convertApiRoleToLocal(request.role),
+        final workspace = _workspaces[index];
+        final now = DateTime.now();
+
+        // Check if user is already in workspace
+        final existingUserIndex = workspace.users.indexWhere((user) => user.userEmail == request.email);
+
+        if (existingUserIndex != -1) {
+          // Update existing user role
+          final existingUser = workspace.users[existingUserIndex];
+          final updatedUser = existingUser.copyWith(
+            role: _convertApiRoleToLocal(request.role),
+            updatedAt: now,
+          );
+          workspace.users[existingUserIndex] = updatedUser;
+        } else {
+          // Add new user
+          final newUser = WorkspaceUser(
+            id: 'wu-${Random().nextInt(10000)}',
+            userId: 'user-${Random().nextInt(10000)}',
+            userName: request.email.split('@')[0], // Use email prefix as name
+            userEmail: request.email,
+            role: _convertApiRoleToLocal(request.role),
+            joinedAt: now,
+            updatedAt: now,
+          );
+          workspace.users.add(newUser);
+        }
+
+        // Update workspace user count
+        final updatedWorkspace = workspace.copyWith(
+          userCount: workspace.users.length,
           updatedAt: now,
         );
-        workspace.users[existingUserIndex] = updatedUser;
+
+        _workspaces[index] = updatedWorkspace;
+        notifyListeners();
+        if (kDebugMode) {
+          print('✅ Shared mock workspace with ${request.email}');
+        }
       } else {
-        // Add new user
-        final newUser = WorkspaceUser(
-          id: 'wu-${Random().nextInt(10000)}',
-          userId: 'user-${Random().nextInt(10000)}',
-          userName: request.email.split('@')[0], // Use email prefix as name
-          userEmail: request.email,
-          role: _convertApiRoleToLocal(request.role),
-          joinedAt: now,
-          updatedAt: now,
-        );
-        workspace.users.add(newUser);
+        // Use real API service
+        if (_apiService != null) {
+          if (kDebugMode) {
+            print('🌐 Making real API call to share workspace');
+          }
+          await _apiService!.shareWorkspace(
+            workspaceId: workspaceId,
+            userEmail: request.email,
+            role: request.role,
+          );
+
+          // Reload workspaces to get updated data after successful share
+          await loadWorkspaces();
+          if (kDebugMode) {
+            print('✅ Shared workspace via API with ${request.email}');
+          }
+        } else {
+          throw Exception('ApiService not available for real data');
+        }
       }
 
-      // Update workspace user count
-      final updatedWorkspace = workspace.copyWith(
-        userCount: workspace.users.length,
-        updatedAt: now,
-      );
-
-      _workspaces[index] = updatedWorkspace;
-      notifyListeners();
       _setLoading(false);
       return true;
     } catch (e) {
@@ -433,25 +535,55 @@ class WorkspaceService with ChangeNotifier {
     _clearError();
 
     try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 600));
-
-      final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
-      if (index == -1) {
-        throw Exception('Workspace not found');
+      if (kDebugMode) {
+        print('👋 Removing user $userId from workspace $workspaceId');
+        print('📊 Using mock data: $_shouldUseMockData');
       }
 
-      final workspace = _workspaces[index];
-      workspace.users.removeWhere((user) => user.userId == userId);
+      if (_shouldUseMockData) {
+        // Simulate network delay for mock data
+        await Future.delayed(const Duration(milliseconds: 600));
 
-      // Update workspace user count
-      final updatedWorkspace = workspace.copyWith(
-        userCount: workspace.users.length,
-        updatedAt: DateTime.now(),
-      );
+        final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
+        if (index == -1) {
+          throw Exception('Workspace not found');
+        }
 
-      _workspaces[index] = updatedWorkspace;
-      notifyListeners();
+        final workspace = _workspaces[index];
+        workspace.users.removeWhere((user) => user.userId == userId);
+
+        // Update workspace user count
+        final updatedWorkspace = workspace.copyWith(
+          userCount: workspace.users.length,
+          updatedAt: DateTime.now(),
+        );
+
+        _workspaces[index] = updatedWorkspace;
+        notifyListeners();
+        if (kDebugMode) {
+          print('✅ Removed user from mock workspace');
+        }
+      } else {
+        // Use real API service
+        if (_apiService != null) {
+          if (kDebugMode) {
+            print('🌐 Making real API call to remove user from workspace');
+          }
+          await _apiService!.removeUserFromWorkspace(
+            workspaceId: workspaceId,
+            targetUserId: userId,
+          );
+
+          // Reload workspaces to get updated data after successful removal
+          await loadWorkspaces();
+          if (kDebugMode) {
+            print('✅ Removed user from workspace via API');
+          }
+        } else {
+          throw Exception('ApiService not available for real data');
+        }
+      }
+
       _setLoading(false);
       return true;
     } catch (e) {

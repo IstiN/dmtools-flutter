@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../theme/app_theme.dart';
-import '../../theme/app_colors.dart';
-import '../../theme/app_dimensions.dart';
-import '../../widgets/responsive/responsive_builder.dart';
+import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'organisms/page_header_page.dart';
 import 'organisms/welcome_banner_page.dart';
 import 'organisms/panel_base_page.dart';
 import 'organisms/chat_module_page.dart';
 import 'organisms/workspace_management_page.dart';
+import 'organisms/integration_management_page.dart';
 
 class OrganismCard {
   final String title;
@@ -31,10 +28,6 @@ class OrganismsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeProvider = Provider.of<ThemeProvider>(context);
-    final isDarkMode = themeProvider.isDarkMode;
-    final colors = isDarkMode ? AppColors.dark : AppColors.light;
-
     final organisms = [
       OrganismCard(
         title: 'Page Header',
@@ -71,6 +64,14 @@ class OrganismsPage extends StatelessWidget {
         pageBuilder: (context) => const WorkspaceManagementPage(),
         icon: Icons.group_work,
       ),
+      OrganismCard(
+        title: 'Integration Management',
+        code: '.integration-*',
+        description:
+            'Complete integration management system with discovery, cards, forms, configuration, and CRUD operations.',
+        pageBuilder: (context) => const IntegrationManagementPage(),
+        icon: Icons.integration_instructions,
+      ),
     ];
 
     return ListView(
@@ -88,26 +89,29 @@ class OrganismsPage extends StatelessWidget {
         const SizedBox(height: AppDimensions.spacingL),
 
         // Organism cards grid
-        GridView.builder(
+        GridView.count(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: ResponsiveUtils.getGridColumnCount(context),
-            crossAxisSpacing: AppDimensions.spacingM,
-            mainAxisSpacing: AppDimensions.spacingM,
-            childAspectRatio: 1.2,
-          ),
-          itemCount: organisms.length,
-          itemBuilder: (context, index) {
-            final organism = organisms[index];
-            return _buildOrganismCard(context, organism, colors);
-          },
+          crossAxisCount: ResponsiveUtils.getGridColumnCount(context),
+          crossAxisSpacing: AppDimensions.spacingM,
+          mainAxisSpacing: AppDimensions.spacingM,
+          childAspectRatio: 1.2,
+          children: organisms.map((organism) => _OrganismCard(organism: organism)).toList(),
         ),
       ],
     );
   }
+}
 
-  Widget _buildOrganismCard(BuildContext context, OrganismCard organism, dynamic colors) {
+class _OrganismCard extends StatelessWidget {
+  final OrganismCard organism;
+
+  const _OrganismCard({required this.organism});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
     return Card(
       elevation: 2,
       color: colors.cardBg,
@@ -128,9 +132,9 @@ class OrganismsPage extends StatelessWidget {
                   Icon(
                     organism.icon,
                     color: colors.accentColor,
-                    size: 28,
+                    size: AppDimensions.iconSizeL + 4, // 28px equivalent
                   ),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: AppDimensions.spacingS),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -143,12 +147,12 @@ class OrganismsPage extends StatelessWidget {
                             color: colors.textColor,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppDimensions.spacingXxs),
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: colors.bgColor,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
                           ),
                           child: Text(
                             organism.code,
@@ -164,17 +168,19 @@ class OrganismsPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              Expanded(
+              const SizedBox(height: AppDimensions.spacingM),
+              Flexible(
                 child: Text(
                   organism.description,
                   style: TextStyle(
                     color: colors.textSecondary,
                     height: 1.4,
                   ),
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppDimensions.spacingM),
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton.icon(
@@ -188,7 +194,8 @@ class OrganismsPage extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.accentColor,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppDimensions.spacingS, vertical: AppDimensions.spacingXs),
                     textStyle: const TextStyle(fontSize: 14),
                   ),
                 ),

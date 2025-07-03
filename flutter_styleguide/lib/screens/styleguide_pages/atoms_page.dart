@@ -7,6 +7,9 @@ import '../../widgets/atoms/form_elements.dart';
 import '../../widgets/atoms/status_dot.dart';
 import '../../widgets/atoms/tag_chip.dart';
 import '../../widgets/atoms/texts/app_text.dart';
+import '../../widgets/atoms/integration_type_icon.dart';
+import '../../widgets/atoms/sensitive_field_input.dart';
+import '../../widgets/atoms/integration_status_badge.dart';
 
 class AtomsPage extends StatefulWidget {
   const AtomsPage({super.key});
@@ -83,7 +86,7 @@ class AtomsPageState extends State<AtomsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(
-                width: 300,
+                width: AppDimensions.dialogWidth * 0.625, // 300px equivalent
                 child: FormGroup(
                   label: 'Text Label',
                   child: TextInput(
@@ -93,7 +96,7 @@ class AtomsPageState extends State<AtomsPage> {
               ),
               const SizedBox(height: AppDimensions.spacingL),
               const SizedBox(
-                width: 300,
+                width: AppDimensions.dialogWidth * 0.625, // 300px equivalent
                 child: FormGroup(
                   label: 'Password Label',
                   child: PasswordInput(
@@ -103,7 +106,7 @@ class AtomsPageState extends State<AtomsPage> {
               ),
               const SizedBox(height: AppDimensions.spacingL),
               SizedBox(
-                width: 300,
+                width: AppDimensions.dialogWidth * 0.625, // 300px equivalent
                 child: FormGroup(
                   label: 'Select Label',
                   child: SelectDropdown(
@@ -276,7 +279,80 @@ class AtomsPageState extends State<AtomsPage> {
             ),
           ),
         ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        const ComponentDisplay(
+          title: 'Integration Type Icons',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Icons for different integration types with fallback support.'),
+              SizedBox(height: AppDimensions.spacingM),
+              Wrap(
+                spacing: AppDimensions.spacingL,
+                runSpacing: AppDimensions.spacingM,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  IntegrationTypeIcon(integrationType: 'github'),
+                  IntegrationTypeIcon(integrationType: 'slack'),
+                  IntegrationTypeIcon(integrationType: 'google'),
+                  IntegrationTypeIcon(integrationType: 'microsoft'),
+                  IntegrationTypeIcon(integrationType: 'jira'),
+                  IntegrationTypeIcon(integrationType: 'unknown'),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        const ComponentDisplay(
+          title: 'Integration Status Badges',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Status indicators for integrations with appropriate colors.'),
+              SizedBox(height: AppDimensions.spacingM),
+              Wrap(
+                spacing: AppDimensions.spacingL,
+                runSpacing: AppDimensions.spacingM,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  IntegrationStatusBadge(status: IntegrationStatus.enabled),
+                  IntegrationStatusBadge(status: IntegrationStatus.disabled),
+                  IntegrationStatusBadge(status: IntegrationStatus.error),
+                  IntegrationStatusBadge(status: IntegrationStatus.testing),
+                  IntegrationStatusBadge(status: IntegrationStatus.connected),
+                  IntegrationStatusBadge(status: IntegrationStatus.disconnected),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Sensitive Field Input',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Secure input fields for API keys and sensitive data with toggle visibility.'),
+              const SizedBox(height: AppDimensions.spacingM),
+              SizedBox(
+                width: 400,
+                child: SensitiveFieldInput(
+                  placeholder: 'Enter your API key...',
+                  controller: TextEditingController(text: 'sk-1234567890abcdef'),
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(
+                width: 400,
+                child: SensitiveFieldInput(
+                  placeholder: 'Enter your access token...',
+                ),
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
-} 
+}
