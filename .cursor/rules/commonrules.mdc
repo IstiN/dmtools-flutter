@@ -11,6 +11,29 @@ run "flutter test" from flutter_styleguide directory when you're changing flutte
 
 Create golden tests for all new UI elements and review output image result to be sure that you developed UI elements correctly.
 
+To not use color switching by theme in build methods like `theme.dark ? theme.colors.black : theme.colors.red`. Colors should come directly from ThemeProvider
+
+Try to avoid if-else statements in widgets with more than 10 lines per conditional
+
+Do not create methods that returns Widget, use private widgets instead
+
+To use `const` instead of `final` in hardcoded data (if possible)
+
+To not use ListView with `shrinkWrap: true` if it's possible
+
+To not use dynamic. Use it only in exceptional cases
+
+Do not use Container widget. Replace it by Padding, DecoratedBox, ColoredBox or another widget
+
+Use only final/var/conse before wariables. Do not mention type before it like `Widget body = ...` -> `final body = ...`
+
+If field reflects status of something, or another thing looks like enumerable - create enum for it
+
+Make all constructors constant, if class is immutable
+
+Do use package imports instead of relative imports
+
+Do create export files, that exports all files in folder
 
 Use "temp" folder for temporary scripts
 Use "prototyping" folder for prototypes
