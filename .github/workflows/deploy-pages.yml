@@ -65,12 +65,12 @@ jobs:
 
       - name: Build Main App for Web
         run: |
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/ --dart-define=FLUTTER_ENV=production --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
+          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/ --dart-define=FLUTTER_ENV=production --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
 
       - name: Build Styleguide for Web
         run: |
           cd flutter_styleguide
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/dmtools-flutter/styleguide/ --dart-define=FLUTTER_ENV=production --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/styleguide/ --dart-define=FLUTTER_ENV=production --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
           cd ..
 
       - name: Create deployment structure
@@ -158,7 +158,7 @@ jobs:
                   
                   <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #dee2e6;">
                       <p style="color: #6c757d; font-size: 14px; text-align: center;">
-                          Built with Flutter • 
+                          Built with Flutter • Hosted on ai-native.agency • 
                           <a href="https://github.com/IstiN/dmtools-flutter" style="color: #007bff;">View on GitHub</a>
                       </p>
                   </div>
