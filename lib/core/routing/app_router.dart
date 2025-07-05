@@ -157,49 +157,73 @@ class AppRouter {
         // Dashboard route - directly accessible
         GoRoute(
           path: '/dashboard',
-          builder: (context, state) => const HomeScreen(child: DashboardPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: DashboardPage()),
+          ),
         ),
 
         // Agents route
         GoRoute(
           path: '/agents',
-          builder: (context, state) => const HomeScreen(child: AgentsPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: AgentsPage()),
+          ),
         ),
 
         // Workspaces route
         GoRoute(
           path: '/workspaces',
-          builder: (context, state) => const HomeScreen(child: WorkspacesPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: WorkspacesPage()),
+          ),
         ),
 
         // Applications route
         GoRoute(
           path: '/applications',
-          builder: (context, state) => const HomeScreen(child: ApplicationsPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: ApplicationsPage()),
+          ),
         ),
 
         // Integrations route
         GoRoute(
           path: '/integrations',
-          builder: (context, state) => const HomeScreen(child: IntegrationsPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: IntegrationsPage()),
+          ),
         ),
 
         // Users route
         GoRoute(
           path: '/users',
-          builder: (context, state) => const HomeScreen(child: UsersPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: UsersPage()),
+          ),
         ),
 
         // Settings route
         GoRoute(
           path: '/settings',
-          builder: (context, state) => const HomeScreen(child: SettingsPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: SettingsPage()),
+          ),
         ),
 
         // API Demo route
         GoRoute(
           path: '/api-demo',
-          builder: (context, state) => const HomeScreen(child: ApiDemoPage()),
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: ApiDemoPage()),
+          ),
         ),
       ],
       errorBuilder: (context, state) => Scaffold(
@@ -235,6 +259,21 @@ class AppRouter {
       '/api-demo',
     ];
     return protectedRoutes.contains(path);
+  }
+
+  // Helper method to create a fade transition page
+  static Page<void> _buildFadePage(GoRouterState state, Widget child) {
+    return CustomTransitionPage<void>(
+      key: state.pageKey,
+      child: child,
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        return FadeTransition(
+          opacity: animation,
+          child: child,
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 200),
+    );
   }
 }
 
