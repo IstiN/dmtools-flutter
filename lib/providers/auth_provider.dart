@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'dart:convert';
 import '../core/services/oauth_service.dart';
 import '../core/models/user.dart';
 
@@ -40,18 +39,61 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final token = await _oauthService.getCurrentToken();
-      if (token != null) {
+      if (token != null && !token.isExpired) {
         _currentToken = token;
-        _isDemoMode = false; // Disable demo mode for real authentication
-        if (kDebugMode) {
-          print('🔄 Demo mode disabled - real authentication detected');
+        _isDemoMode = false;
+
+        // Try to fetch user data and validate authentication
+        try {
+          final user = await _oauthService.getUserData();
+          if (user != null) {
+            _currentUser = user;
+            _setAuthenticated();
+            if (kDebugMode) {
+              print('✅ User authenticated successfully: ${user.name}');
+              print('📧 User email: ${user.email}');
+              print('🔐 Authenticated: ${user.authenticated}');
+            }
+          } else {
+            // User data indicates not authenticated, clear token and logout
+            if (kDebugMode) {
+              print('❌ User authentication validation failed - clearing token');
+            }
+            await _oauthService.logout();
+            _currentToken = null;
+            _setUnauthenticated();
+          }
+        } catch (userDataError) {
+          // User data fetch failed (network error, server down, etc.)
+          // but we have a valid token, so stay authenticated with limited user info
+          if (kDebugMode) {
+            print('⚠️ User data fetch failed but token is valid: $userDataError');
+            print('   Staying authenticated with limited token-based info');
+          }
+
+          // Create basic user info from token if possible
+          _currentUser = const UserDto(
+            id: 'token_user',
+            name: 'Authenticated User',
+            email: 'user@token.auth',
+            authenticated: true,
+          );
+          _setAuthenticated();
         }
-        _decodeJwtAndSetUser();
-        _setAuthenticated();
       } else {
+        if (kDebugMode) {
+          if (token != null && token.isExpired) {
+            print('🔄 Token expired, logging out');
+          } else {
+            print('🔄 No token found, setting unauthenticated');
+          }
+        }
         _setUnauthenticated();
       }
     } catch (e) {
+      if (kDebugMode) {
+        print('❌ Authentication initialization failed: $e');
+      }
       _setError('Failed to initialize authentication: $e');
     }
   }
@@ -62,9 +104,23 @@ class AuthProvider with ChangeNotifier {
     _clearError();
 
     try {
-      final success = await _oauthService.initiateLogin(provider);
-      if (!success) {
+      // Step 1: Initiate OAuth flow
+      final initResult = await _oauthService.initiateLogin(provider);
+      if (initResult == null) {
         _setError('Failed to initiate OAuth login');
+        return false;
+      }
+
+      final authUrl = initResult['auth_url'] as String?;
+      if (authUrl == null) {
+        _setError('No auth URL received from server');
+        return false;
+      }
+
+      // Step 2: Launch OAuth URL in browser
+      final launchSuccess = await _oauthService.launchOAuthUrl(authUrl);
+      if (!launchSuccess) {
+        _setError('Failed to launch OAuth URL');
         return false;
       }
 
@@ -83,18 +139,31 @@ class AuthProvider with ChangeNotifier {
     _clearError();
 
     try {
+      // Step 3: Handle OAuth callback and exchange code for token
       final success = await _oauthService.handleCallback(callbackUri);
       if (success) {
+        // Step 4: Get updated token
         final token = await _oauthService.getCurrentToken();
         if (token != null) {
           _currentToken = token;
-          _isDemoMode = false; // Disable demo mode for real authentication
-          if (kDebugMode) {
-            print('🔄 Demo mode disabled - OAuth callback successful');
+          _isDemoMode = false;
+
+          // Step 5: Fetch user data and validate authentication
+          final user = await _oauthService.getUserData();
+          if (user != null) {
+            _currentUser = user;
+            _setAuthenticated();
+            if (kDebugMode) {
+              print('🎉 OAuth authentication successful');
+              print('👤 User: ${user.name} (${user.email})');
+              print('🔐 Authenticated: ${user.authenticated}');
+              print('🏢 Provider: ${user.provider}');
+            }
+            return true;
+          } else {
+            _setError('User authentication validation failed');
+            return false;
           }
-          _decodeJwtAndSetUser();
-          _setAuthenticated();
-          return true;
         }
       }
 
@@ -165,127 +234,27 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Decode JWT and set a partial user object
-  void _decodeJwtAndSetUser() {
-    try {
-      if (_currentToken?.accessToken != null) {
-        final userInfo = _extractUserInfoFromJWT(_currentToken!.accessToken);
-        _currentUser = UserDto(
-          id: userInfo['sub'] as String?,
-          name: userInfo['name'] as String? ?? userInfo['preferred_username'] as String?,
-          email: userInfo['email'] as String?,
-          picture: userInfo['picture'] as String?,
-        );
-        _forceResetDemoMode(); // Force reset demo mode when real JWT is decoded
-        if (kDebugMode) {
-          print('✅ User info loaded from JWT:');
-          print('   - Name: ${_currentUser?.name}');
-          print('   - Email: ${_currentUser?.email}');
-          print('   - ID: ${_currentUser?.id}');
-          print('   - Picture: ${_currentUser?.picture}');
-        }
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ Failed to load user info from JWT: $e');
-      }
-    }
-  }
-
-  /// Extract user information from JWT token payload
-  Map<String, dynamic> _extractUserInfoFromJWT(String token) {
-    try {
-      // JWT tokens have 3 parts separated by dots: header.payload.signature
-      final parts = token.split('.');
-      if (parts.length != 3) {
-        throw Exception('Invalid JWT token format');
-      }
-
-      // Decode the payload (second part)
-      final payload = parts[1];
-
-      // Add padding if needed for base64 decoding
-      final normalizedPayload = _normalizeBase64(payload);
-
-      // Decode base64
-      final decoded = utf8.decode(base64.decode(normalizedPayload));
-
-      // Parse JSON
-      final Map<String, dynamic> claims = jsonDecode(decoded);
-
-      if (kDebugMode) {
-        print('🔍 JWT Claims: $claims');
-      }
-
-      return claims;
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ JWT decode error: $e');
-      }
-      return {};
-    }
-  }
-
-  /// Normalize base64 string by adding padding if needed
-  String _normalizeBase64(String base64) {
-    // Base64 strings should be multiples of 4 characters
-    final remainder = base64.length % 4;
-    if (remainder != 0) {
-      final padding = 4 - remainder;
-      return base64 + '=' * padding;
-    }
-    return base64;
-  }
-
-  /// Set loading state
-  void _setLoading() {
-    _authState = AuthState.loading;
-    notifyListeners();
-  }
-
-  /// Set authenticated state
-  void _setAuthenticated() {
-    _authState = AuthState.authenticated;
-    _error = null;
-    notifyListeners();
-  }
-
-  /// Set unauthenticated state
-  void _setUnauthenticated() {
-    _authState = AuthState.unauthenticated;
-    _error = null;
-    notifyListeners();
-  }
-
-  /// Set error state
-  void _setError(String error) {
-    _authState = AuthState.error;
-    _error = error;
+  /// Toggle demo mode
+  void toggleDemoMode() {
+    _isDemoMode = !_isDemoMode;
     if (kDebugMode) {
-      print('❌ Auth error: $error');
+      print('🔄 Demo mode toggled: $_isDemoMode');
     }
     notifyListeners();
   }
 
-  /// Clear error state
-  void _clearError() {
-    _error = null;
-    _currentUser = null;
-  }
-
-  /// Check if user has specific scope
-  bool hasScope(String scope) {
-    return _currentToken?.scopes.contains(scope) ?? false;
-  }
-
-  /// Get token type for Authorization header
-  String get authorizationHeader {
-    final token = _currentToken;
-    if (token != null) {
-      return '${token.tokenType} ${token.accessToken}';
+  /// Force reset demo mode (internal method)
+  void _forceResetDemoMode() {
+    if (_isDemoMode) {
+      _isDemoMode = false;
+      if (kDebugMode) {
+        print('🔄 Demo mode force reset to false');
+      }
     }
-    return '';
   }
+
+  /// Check if should use mock data
+  bool get shouldUseMockData => _isDemoMode;
 
   /// Enable demo mode with mock data
   Future<void> enableDemoMode() async {
@@ -297,6 +266,7 @@ class AuthProvider with ChangeNotifier {
       id: 'demo_user_123',
       name: 'Demo User',
       email: 'demo@dmtools.com',
+      authenticated: true,
     );
 
     _setAuthenticated();
@@ -318,25 +288,46 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Force reset demo mode for real authentication
-  void _forceResetDemoMode() {
-    if (_isDemoMode) {
-      _isDemoMode = false;
-      if (kDebugMode) {
-        print('🔄 Demo mode forcefully disabled - real auth detected');
-      }
-    }
+  /// Check if user has specific scope
+  bool hasScope(String scope) {
+    return _currentToken?.scopes.contains(scope) ?? false;
   }
 
-  /// Check if app should use mock data
-  bool get shouldUseMockData {
-    if (kDebugMode) {
-      print('🔍 AuthProvider shouldUseMockData check:');
-      print('   - _isDemoMode: $_isDemoMode');
-      print('   - isAuthenticated: $isAuthenticated');
-      print('   - currentUser: ${_currentUser?.name} (${_currentUser?.email})');
-      print('   - Will use mock data: $_isDemoMode');
+  /// Get token type for Authorization header
+  String get authorizationHeader {
+    final token = _currentToken;
+    if (token != null) {
+      return '${token.tokenType} ${token.accessToken}';
     }
-    return _isDemoMode;
+    return '';
+  }
+
+  // Private state management methods
+  void _setLoading() {
+    _authState = AuthState.loading;
+    notifyListeners();
+  }
+
+  void _setAuthenticated() {
+    _authState = AuthState.authenticated;
+    _error = null;
+    notifyListeners();
+  }
+
+  void _setUnauthenticated() {
+    _authState = AuthState.unauthenticated;
+    _error = null;
+    notifyListeners();
+  }
+
+  void _setError(String message) {
+    _authState = AuthState.error;
+    _error = message;
+    notifyListeners();
+  }
+
+  void _clearError() {
+    _error = null;
+    notifyListeners();
   }
 }

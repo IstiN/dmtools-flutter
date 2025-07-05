@@ -214,7 +214,16 @@ class MockOAuthService extends OAuthService {
   Future<OAuthToken?> getCurrentToken() async => null;
 
   @override
-  Future<bool> initiateLogin(OAuthProvider provider) async => true;
+  Future<Map<String, dynamic>?> initiateLogin(OAuthProvider provider) async {
+    return {
+      'auth_url': 'https://example.com/oauth',
+      'state': 'test_state',
+      'expires_in': 900,
+    };
+  }
+
+  @override
+  Future<bool> launchOAuthUrl(String authUrl) async => true;
 
   @override
   Future<bool> handleCallback(Uri callbackUri) async => true;
@@ -223,7 +232,12 @@ class MockOAuthService extends OAuthService {
   Future<void> logout() async {}
 
   @override
-  Future<bool> isAuthenticated() async => false;
+  Future<UserDto?> getUserData() async => const UserDto(
+        id: 'test_user',
+        name: 'Test User',
+        email: 'test@example.com',
+        authenticated: true,
+      );
 }
 
 // Helper functions to test JWT parsing logic independently

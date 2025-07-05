@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../screens/home_screen.dart';
+import '../../screens/loading_screen.dart';
 import '../../screens/unauthenticated_home_screen.dart';
 import '../../screens/oauth_callback_screen.dart';
 import '../../screens/pages/dashboard_page.dart';
@@ -22,7 +23,7 @@ class AppRouter {
 
   static GoRouter createRouter(AuthProvider authProvider) {
     return GoRouter(
-      initialLocation: '/unauthenticated',
+      initialLocation: '/',
       refreshListenable: authProvider,
       redirect: (context, state) {
         final authState = authProvider.authState;
@@ -45,6 +46,7 @@ class AppRouter {
           final oauthParams = getOAuthParamsFromWindow();
 
           if (kDebugMode) {
+            print('🔍 OAuth params object: $oauthParams');
             print('🔍 Checking OAuth params on path: $currentPath');
             print('🔍 OAuth params from window: $oauthParams');
           }
@@ -68,23 +70,26 @@ class AppRouter {
           return null;
         }
 
-        // If still initializing and not on unauthenticated page, go to unauthenticated
-        if (authState == AuthState.initial && currentPath != '/unauthenticated') {
-          return '/unauthenticated';
-        }
-
-        // Don't redirect during loading unless we know the user should be redirected
-        if (isLoading) {
+        // Show loading screen during initial authentication check or loading state
+        if (authState == AuthState.initial || isLoading) {
+          if (currentPath != '/loading') {
+            return '/loading';
+          }
           return null;
         }
 
         // If not authenticated and trying to access protected routes, redirect to unauthenticated
-        if (!isAuthenticated && currentPath != '/unauthenticated') {
+        if (!isAuthenticated && _isProtectedRoute(currentPath)) {
           return '/unauthenticated';
         }
 
         // If authenticated and on unauthenticated page, redirect to dashboard
         if (isAuthenticated && currentPath == '/unauthenticated') {
+          return '/dashboard';
+        }
+
+        // If authenticated and on root path, redirect to dashboard
+        if (isAuthenticated && currentPath == '/') {
           return '/dashboard';
         }
 
@@ -94,12 +99,11 @@ class AppRouter {
         return null; // No redirect needed
       },
       routes: [
-        // Root route - redirect to appropriate page
+        // Root route - redirect to unauthenticated by default
         GoRoute(
           path: '/',
           redirect: (context, state) {
-            // Always redirect to unauthenticated from root
-            // OAuth handling is now done through redirect logic above
+            // Always redirect to unauthenticated, let main redirect logic handle auth
             return '/unauthenticated';
           },
         ),
@@ -137,50 +141,65 @@ class AppRouter {
             );
           },
         ),
+
+        // Loading route - shown during authentication initialization
+        GoRoute(
+          path: '/loading',
+          builder: (context, state) => const LoadingScreen(),
+        ),
+
         // Unauthenticated route
         GoRoute(
           path: '/unauthenticated',
           builder: (context, state) => const UnauthenticatedHomeScreen(),
         ),
-        // Protected routes - wrapped in shell route
-        ShellRoute(
-          builder: (context, state, child) {
-            return HomeScreen(child: child);
-          },
-          routes: [
-            GoRoute(
-              path: '/dashboard',
-              builder: (context, state) => const DashboardPage(),
-            ),
-            GoRoute(
-              path: '/agents',
-              builder: (context, state) => const AgentsPage(),
-            ),
-            GoRoute(
-              path: '/workspaces',
-              builder: (context, state) => const WorkspacesPage(),
-            ),
-            GoRoute(
-              path: '/applications',
-              builder: (context, state) => const ApplicationsPage(),
-            ),
-            GoRoute(
-              path: '/integrations',
-              builder: (context, state) => const IntegrationsPage(),
-            ),
-            GoRoute(
-              path: '/users',
-              builder: (context, state) => const UsersPage(),
-            ),
-            GoRoute(
-              path: '/settings',
-              builder: (context, state) => const SettingsPage(),
-            ),
-            GoRoute(
-              path: '/api-demo',
-              builder: (context, state) => const ApiDemoPage(),
-            ),
-          ],
+
+        // Dashboard route - directly accessible
+        GoRoute(
+          path: '/dashboard',
+          builder: (context, state) => const HomeScreen(child: DashboardPage()),
+        ),
+
+        // Agents route
+        GoRoute(
+          path: '/agents',
+          builder: (context, state) => const HomeScreen(child: AgentsPage()),
+        ),
+
+        // Workspaces route
+        GoRoute(
+          path: '/workspaces',
+          builder: (context, state) => const HomeScreen(child: WorkspacesPage()),
+        ),
+
+        // Applications route
+        GoRoute(
+          path: '/applications',
+          builder: (context, state) => const HomeScreen(child: ApplicationsPage()),
+        ),
+
+        // Integrations route
+        GoRoute(
+          path: '/integrations',
+          builder: (context, state) => const HomeScreen(child: IntegrationsPage()),
+        ),
+
+        // Users route
+        GoRoute(
+          path: '/users',
+          builder: (context, state) => const HomeScreen(child: UsersPage()),
+        ),
+
+        // Settings route
+        GoRoute(
+          path: '/settings',
+          builder: (context, state) => const HomeScreen(child: SettingsPage()),
+        ),
+
+        // API Demo route
+        GoRoute(
+          path: '/api-demo',
+          builder: (context, state) => const HomeScreen(child: ApiDemoPage()),
         ),
       ],
       errorBuilder: (context, state) => Scaffold(
@@ -201,6 +220,21 @@ class AppRouter {
         ),
       ),
     );
+  }
+
+  // Helper method to check if a route is protected
+  static bool _isProtectedRoute(String path) {
+    const protectedRoutes = [
+      '/dashboard',
+      '/agents',
+      '/workspaces',
+      '/applications',
+      '/integrations',
+      '/users',
+      '/settings',
+      '/api-demo',
+    ];
+    return protectedRoutes.contains(path);
   }
 }
 

@@ -25,6 +25,7 @@ class OAuthCallbackScreen extends StatefulWidget {
 class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
   bool _isProcessing = true;
   String? _error;
+  String _currentStep = 'Initializing authentication...';
 
   @override
   void initState() {
@@ -33,6 +34,14 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _handleCallback();
     });
+  }
+
+  void _updateStep(String step) {
+    if (mounted) {
+      setState(() {
+        _currentStep = step;
+      });
+    }
   }
 
   Future<void> _handleCallback() async {
@@ -44,6 +53,8 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
       print('🔄 OAuth Callback Screen handling URI: ${widget.callbackUri}');
       print('📋 Query parameters: ${widget.callbackUri.queryParameters}');
     }
+
+    _updateStep('Checking authentication status...');
 
     // Don't process callback if already authenticated
     if (authProvider.isAuthenticated) {
@@ -88,6 +99,8 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
     }
 
     try {
+      _updateStep('Processing OAuth callback...');
+
       final success = await authProvider.handleCallback(widget.callbackUri).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
@@ -100,6 +113,8 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
 
       if (mounted) {
         if (success) {
+          _updateStep('Authentication successful! Redirecting...');
+
           if (kDebugMode) {
             print('✅ OAuth callback successful, navigating to dashboard');
           }
@@ -123,6 +138,8 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
             if (kIsWeb) {
               clearOAuthParamsFromWindow();
             }
+
+            _updateStep('Loading user information...');
 
             // Load user info from API
             await ServiceLocator.initializeUserInfo();
@@ -171,52 +188,166 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              if (_isProcessing) ...[
-                const CircularProgressIndicator(),
-                const SizedBox(height: 24),
-                const Text(
-                  'Completing authentication...',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ] else if (_error != null) ...[
-                const Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 64,
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Authentication Failed',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  _error!,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 16),
-                ),
-                const SizedBox(height: 32),
-                ElevatedButton(
-                  onPressed: () {
-                    GoRouter.of(context).go('/unauthenticated');
-                  },
-                  child: const Text('Try Again'),
+          child: Container(
+            width: 480,
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: theme.cardColor,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
                 ),
               ],
-            ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_isProcessing) ...[
+                  // Loading animation
+                  SizedBox(
+                    width: 64,
+                    height: 64,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 3,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        theme.primaryColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  // Title
+                  Text(
+                    'Completing Authentication',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Step description
+                  Text(
+                    _currentStep,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.textTheme.bodyMedium?.color,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 24),
+
+                  // Progress steps
+                  _buildProgressSteps(),
+                ] else if (_error != null) ...[
+                  // Error state
+                  const Icon(
+                    Icons.error_outline,
+                    color: Colors.red,
+                    size: 64,
+                  ),
+                  const SizedBox(height: 24),
+
+                  Text(
+                    'Authentication Failed',
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.red.shade50,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.red.shade200),
+                    ),
+                    child: Text(
+                      _error!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.red.shade700,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        GoRouter.of(context).go('/unauthenticated');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: const Text('Try Again'),
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildProgressSteps() {
+    final theme = Theme.of(context);
+    final steps = [
+      'Validating OAuth code',
+      'Exchanging for access token',
+      'Fetching user information',
+      'Validating authentication',
+      'Completing sign-in',
+    ];
+
+    return Column(
+      children: steps.map((step) {
+        final isActive = _currentStep.toLowerCase().contains(step.toLowerCase().split(' ')[0]);
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Row(
+            children: [
+              Container(
+                width: 8,
+                height: 8,
+                decoration: BoxDecoration(
+                  color: isActive ? theme.primaryColor : theme.dividerColor,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  step,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: isActive ? theme.primaryColor : theme.textTheme.bodyMedium?.color,
+                    fontWeight: isActive ? FontWeight.w500 : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
     );
   }
 }
