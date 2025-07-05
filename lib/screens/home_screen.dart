@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
-import '../core/routing/app_router.dart';
+import '../core/routing/app_router.dart' as app_router;
 import '../providers/auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -88,7 +88,10 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: Row(
               children: [
-                _buildSidebar(context, isMobile: false),
+                NavigationSidebar(
+                  items: _convertNavigationItems(app_router.navigationItems),
+                  currentRoute: GoRouterState.of(context).uri.toString(),
+                ),
                 Container(
                   width: 1,
                   color: colors.borderColor,
@@ -169,101 +172,33 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       drawer: Drawer(
-        child: _buildSidebar(context, isMobile: true),
+        child: NavigationSidebar(
+          items: _convertNavigationItems(app_router.navigationItems),
+          currentRoute: GoRouterState.of(context).uri.toString(),
+          isMobile: true,
+          onItemTap: () => Navigator.of(context).pop(),
+        ),
       ),
     );
   }
 
-  Widget _buildSidebar(BuildContext context, {required bool isMobile}) {
-    final colors = context.colorsListening;
-
-    return Container(
-      width: 240,
-      color: colors.cardBg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (isMobile) ...[
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: NetworkNodesLogo(
-                size: LogoSize.small,
-                isDarkMode: context.isDarkMode,
-              ),
-            ),
-            Divider(color: colors.borderColor, height: 1),
-          ],
-          const SizedBox(height: 24),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                for (int i = 0; i < navigationItems.length; i++) _buildNavItem(i, context, isMobile: isMobile),
-              ],
-            ),
-          ),
-          if (!isMobile) ...[
-            Divider(color: colors.borderColor, height: 1),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                '© 2025 DMTools. All rights reserved.',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: colors.textSecondary,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(int index, BuildContext context, {required bool isMobile}) {
-    final item = navigationItems[index];
-    final colors = context.colorsListening;
-    final currentLocation = GoRouterState.of(context).uri.toString();
-    final isSelected = currentLocation == item.route;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-      decoration: BoxDecoration(
-        color: isSelected ? colors.accentColor.withValues(alpha: 0.1) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(
-          item.icon,
-          color: isSelected ? colors.accentColor : colors.textSecondary,
-          size: 20,
-        ),
-        title: Text(
-          item.label,
-          style: TextStyle(
-            color: isSelected ? colors.accentColor : colors.textSecondary,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-            fontSize: 14,
-          ),
-        ),
-        onTap: () {
-          context.go(item.route);
-          if (isMobile) {
-            Navigator.of(context).pop();
-          }
-        },
-        dense: true,
-        visualDensity: VisualDensity.compact,
-      ),
-    );
+  // Convert app router NavigationItem to styleguide NavigationItem
+  List<NavigationItem> _convertNavigationItems(List<app_router.NavigationItem> items) {
+    return items
+        .map((item) => NavigationItem(
+              icon: item.icon,
+              label: item.label,
+              route: item.route,
+            ))
+        .toList();
   }
 
   Widget _buildPageContent() {
     final colors = context.colorsListening;
     final currentLocation = GoRouterState.of(context).uri.toString();
-    final currentRoute = navigationItems.firstWhere(
+    final currentRoute = app_router.navigationItems.firstWhere(
       (item) => item.route == currentLocation,
-      orElse: () => navigationItems.first,
+      orElse: () => app_router.navigationItems.first,
     );
 
     return Container(

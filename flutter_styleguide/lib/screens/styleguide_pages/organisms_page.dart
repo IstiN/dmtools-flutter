@@ -6,6 +6,7 @@ import 'organisms/panel_base_page.dart';
 import 'organisms/chat_module_page.dart';
 import 'organisms/workspace_management_page.dart';
 import 'organisms/integration_management_page.dart';
+import 'organisms/navigation_sidebar_page.dart';
 
 class OrganismCard {
   final String title;
@@ -56,6 +57,13 @@ class OrganismsPage extends StatelessWidget {
         description: 'Interactive chat component with message display and input area.',
         pageBuilder: (context) => const ChatModulePage(),
         icon: Icons.chat,
+      ),
+      OrganismCard(
+        title: 'Navigation Sidebar',
+        code: '.navigation-sidebar',
+        description: 'Consistent navigation component for application with proper theming and responsive behavior.',
+        pageBuilder: (context) => const NavigationSidebarPage(),
+        icon: Icons.menu,
       ),
       OrganismCard(
         title: 'Workspace Management',
