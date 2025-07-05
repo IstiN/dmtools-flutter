@@ -13,6 +13,9 @@ class UserDto {
     this.preferredUsername,
     this.givenName,
     this.familyName,
+    this.authenticated,
+    this.provider,
+    this.pictureUrl,
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
@@ -44,6 +47,15 @@ class UserDto {
   @JsonKey(name: 'family_name', includeIfNull: false)
   final String? familyName;
 
+  @JsonKey(name: 'authenticated', includeIfNull: false)
+  final bool? authenticated;
+
+  @JsonKey(name: 'provider', includeIfNull: false)
+  final String? provider;
+
+  @JsonKey(name: 'pictureUrl', includeIfNull: false)
+  final String? pictureUrl;
+
   static const fromJsonFactory = _$UserDtoFromJson;
 
   @override
@@ -53,14 +65,18 @@ class UserDto {
             (identical(other.id, id) || (other.id != null && other.id == id)) &&
             (identical(other.name, name) || (other.name != null && other.name == name)) &&
             (identical(other.email, email) || (other.email != null && other.email == email)) &&
-            (identical(other.picture, picture) || (other.picture != null && other.picture == picture)));
+            (identical(other.picture, picture) || (other.picture != null && other.picture == picture)) &&
+            (identical(other.authenticated, authenticated) ||
+                (other.authenticated != null && other.authenticated == authenticated)) &&
+            (identical(other.provider, provider) || (other.provider != null && other.provider == provider)));
   }
 
   @override
-  String toString() => 'UserDto(id: $id, name: $name, email: $email, picture: $picture)';
+  String toString() =>
+      'UserDto(id: $id, name: $name, email: $email, picture: $picture, authenticated: $authenticated, provider: $provider)';
 
   @override
-  int get hashCode => Object.hash(id, name, email, picture);
+  int get hashCode => Object.hash(id, name, email, picture, authenticated, provider);
 
   UserDto copyWith({
     String? id,
@@ -71,6 +87,9 @@ class UserDto {
     String? preferredUsername,
     String? givenName,
     String? familyName,
+    bool? authenticated,
+    String? provider,
+    String? pictureUrl,
   }) {
     return UserDto(
       id: id ?? this.id,
@@ -81,6 +100,9 @@ class UserDto {
       preferredUsername: preferredUsername ?? this.preferredUsername,
       givenName: givenName ?? this.givenName,
       familyName: familyName ?? this.familyName,
+      authenticated: authenticated ?? this.authenticated,
+      provider: provider ?? this.provider,
+      pictureUrl: pictureUrl ?? this.pictureUrl,
     );
   }
 }

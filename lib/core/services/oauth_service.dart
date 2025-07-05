@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import '../config/app_config.dart';
+import '../models/user.dart';
 
 enum OAuthProvider {
   google,
@@ -71,28 +72,18 @@ class OAuthService {
 
   static String _getClientRedirectUri() {
     if (kIsWeb) {
-      // Redirect directly to index.html - much simpler for GitHub Pages
+      // Use the current host base URL for SPA deployment
+      // OAuth provider will redirect to base URL with query parameters
+      // and Flutter will detect them via JavaScript in index.html
       final base = Uri.base;
-      var basePath = base.path;
-
-      // Remove trailing slash
-      if (basePath.endsWith('/')) {
-        basePath = basePath.substring(0, basePath.length - 1);
-      }
-
-      // Remove index.html if already present
-      if (basePath.endsWith('/index.html')) {
-        basePath = basePath.substring(0, basePath.length - '/index.html'.length);
-      }
-
-      return '${base.origin}$basePath/index.html';
+      return base.origin;
     } else {
       return 'dmtools://auth/callback';
     }
   }
 
   /// Initiate OAuth flow - Step 1: Call /api/oauth-proxy/initiate
-  Future<bool> initiateLogin(OAuthProvider provider) async {
+  Future<Map<String, dynamic>?> initiateLogin(OAuthProvider provider) async {
     try {
       // Step 1: Call backend's /api/oauth-proxy/initiate endpoint
       final response = await http.post(
@@ -104,12 +95,15 @@ class OAuthService {
         body: jsonEncode({
           'provider': provider.name.toLowerCase(),
           'client_redirect_uri': _clientRedirectUri,
+          'client_type': 'web',
+          'environment': AppConfig.environment.value,
         }),
       );
 
       if (kDebugMode) {
         print('🔐 Initiating OAuth login for ${provider.name}');
         print('📍 Client Redirect URI: $_clientRedirectUri');
+        print('🌍 Environment: ${AppConfig.environment.value}');
         print('📤 Request to: $_baseUrl/api/oauth-proxy/initiate');
         print('📥 Response status: ${response.statusCode}');
       }
@@ -117,34 +111,21 @@ class OAuthService {
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body) as Map<String, dynamic>;
         final authUrl = responseData['auth_url'] as String?;
+        final state = responseData['state'] as String?;
+        final expiresIn = responseData['expires_in'] as int?;
 
         if (authUrl != null) {
           if (kDebugMode) {
             print('🔗 Auth URL received: $authUrl');
+            print('🔍 State: ${state?.substring(0, 10)}...');
+            print('⏰ Expires in: $expiresIn seconds');
           }
 
-          // Step 2: Redirect user to the auth URL returned by backend
-          if (kIsWeb) {
-            // For web, use same-window navigation to avoid Safari popup blocking
-            if (await canLaunchUrl(Uri.parse(authUrl))) {
-              return await launchUrl(
-                Uri.parse(authUrl),
-                webOnlyWindowName: '_self', // Navigate in same window to avoid popup blockers
-              );
-            } else {
-              throw Exception('Could not launch OAuth URL');
-            }
-          } else {
-            // For mobile, use external application
-            if (await canLaunchUrl(Uri.parse(authUrl))) {
-              return await launchUrl(
-                Uri.parse(authUrl),
-                mode: LaunchMode.externalApplication,
-              );
-            } else {
-              throw Exception('Could not launch OAuth URL');
-            }
-          }
+          return {
+            'auth_url': authUrl,
+            'state': state,
+            'expires_in': expiresIn,
+          };
         } else {
           throw Exception('No auth_url received from backend');
         }
@@ -157,6 +138,39 @@ class OAuthService {
     } catch (e) {
       if (kDebugMode) {
         print('❌ OAuth initiation failed: $e');
+      }
+      return null;
+    }
+  }
+
+  /// Launch OAuth URL in browser
+  Future<bool> launchOAuthUrl(String authUrl) async {
+    try {
+      // Step 2: Redirect user to the auth URL returned by backend
+      if (kIsWeb) {
+        // For web, use same-window navigation to avoid Safari popup blocking
+        if (await canLaunchUrl(Uri.parse(authUrl))) {
+          return await launchUrl(
+            Uri.parse(authUrl),
+            webOnlyWindowName: '_self', // Navigate in same window to avoid popup blockers
+          );
+        } else {
+          throw Exception('Could not launch OAuth URL');
+        }
+      } else {
+        // For mobile, use external application
+        if (await canLaunchUrl(Uri.parse(authUrl))) {
+          return await launchUrl(
+            Uri.parse(authUrl),
+            mode: LaunchMode.externalApplication,
+          );
+        } else {
+          throw Exception('Could not launch OAuth URL');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ OAuth URL launch failed: $e');
       }
       return false;
     }
@@ -191,7 +205,6 @@ class OAuthService {
       final token = await _exchangeTempCodeForToken(tempCode, state);
       if (token != null) {
         await _storeToken(token);
-        await _cleanupOAuthState();
         return true;
       }
 
@@ -200,7 +213,6 @@ class OAuthService {
       if (kDebugMode) {
         print('❌ OAuth callback handling failed: $e');
       }
-      await _cleanupOAuthState();
       return false;
     }
   }
@@ -229,7 +241,7 @@ class OAuthService {
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body) as Map<String, dynamic>;
 
-        // Assuming the backend returns JWT tokens in this format
+        // The backend returns JWT tokens in this format
         final accessToken = json['access_token'] as String?;
         final refreshToken = json['refresh_token'] as String?;
         final tokenType = json['token_type'] as String? ?? 'Bearer';
@@ -262,6 +274,67 @@ class OAuthService {
     } catch (e) {
       if (kDebugMode) {
         print('❌ Token exchange error: $e');
+      }
+      return null;
+    }
+  }
+
+  /// Get user data from /api/auth/user endpoint - Step 5
+  Future<UserDto?> getUserData() async {
+    try {
+      final token = await getCurrentToken();
+      if (token == null) {
+        if (kDebugMode) {
+          print('❌ No token available for user data request');
+        }
+        return null;
+      }
+
+      final response = await http.get(
+        Uri.parse('$_baseUrl/api/auth/user'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ${token.accessToken}',
+        },
+      );
+
+      if (kDebugMode) {
+        print('🔄 Fetching user data');
+        print('📤 Request to: $_baseUrl/api/auth/user');
+        print('📥 Response status: ${response.statusCode}');
+      }
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body) as Map<String, dynamic>;
+        final user = UserDto.fromJson(json);
+
+        if (kDebugMode) {
+          print('✅ User data received successfully');
+          print('👤 User: ${user.name} (${user.email})');
+          print('🔐 Authenticated: ${user.authenticated}');
+          print('🏢 Provider: ${user.provider}');
+        }
+
+        // Check if user is authenticated
+        if (user.authenticated != true) {
+          if (kDebugMode) {
+            print('❌ User is not authenticated, clearing token');
+          }
+          await _clearToken();
+          return null;
+        }
+
+        return user;
+      } else {
+        if (kDebugMode) {
+          print('❌ User data fetch failed: ${response.statusCode} ${response.body}');
+        }
+        return null;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ User data fetch error: $e');
       }
       return null;
     }
@@ -356,23 +429,11 @@ class OAuthService {
     }
   }
 
-  /// Cleanup OAuth state (no longer needed since backend handles state)
-  Future<void> _cleanupOAuthState() async {
-    // No cleanup needed - backend handles OAuth state
-  }
-
   /// Logout and clear all tokens
   Future<void> logout() async {
     await _clearToken();
-    await _cleanupOAuthState();
     if (kDebugMode) {
-      print('🚪 User logged out');
+      print('📤 Logout completed');
     }
-  }
-
-  /// Check if user is authenticated
-  Future<bool> isAuthenticated() async {
-    final token = await getCurrentToken();
-    return token != null && !token.isExpired;
   }
 }

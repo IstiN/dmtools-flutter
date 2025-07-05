@@ -4,6 +4,6 @@
   "appName": "DMTools",
   "appVersion": "1.0.0",
   "enableLogging": true,
-  "enableMockData": true,
+  "enableMockData": false,
   "timeoutDuration": 30
 }

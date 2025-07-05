@@ -15,6 +15,9 @@ UserDto _$UserDtoFromJson(Map<String, dynamic> json) => UserDto(
       preferredUsername: json['preferred_username'] as String?,
       givenName: json['given_name'] as String?,
       familyName: json['family_name'] as String?,
+      authenticated: json['authenticated'] as bool?,
+      provider: json['provider'] as String?,
+      pictureUrl: json['pictureUrl'] as String?,
     );
 
 Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
@@ -27,4 +30,7 @@ Map<String, dynamic> _$UserDtoToJson(UserDto instance) => <String, dynamic>{
         'preferred_username': value,
       if (instance.givenName case final value?) 'given_name': value,
       if (instance.familyName case final value?) 'family_name': value,
+      if (instance.authenticated case final value?) 'authenticated': value,
+      if (instance.provider case final value?) 'provider': value,
+      if (instance.pictureUrl case final value?) 'pictureUrl': value,
     };
