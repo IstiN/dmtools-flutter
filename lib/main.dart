@@ -1,6 +1,7 @@
 import 'package:dmtools/service_locator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import 'core/routing/app_router.dart';
 import 'providers/auth_provider.dart';
@@ -32,6 +33,7 @@ class DMToolsApp extends StatefulWidget {
 class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
   late ThemeProvider _themeProvider;
   bool _isThemeInitialized = false;
+  GoRouter? _router;
 
   @override
   void initState() {
@@ -93,33 +95,18 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
       value: _themeProvider,
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          // Show loading indicator while theme is initializing
-          if (!_isThemeInitialized) {
-            return const MaterialApp(
-              home: Scaffold(
-                body: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CircularProgressIndicator(),
-                      SizedBox(height: 16),
-                      Text('Loading DMTools...'),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-
           final authProvider = Provider.of<AuthProvider>(context);
+
+          // Create router only once
+          _router ??= AppRouter.createRouter(authProvider);
 
           return MaterialApp.router(
             title: 'DMTools',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: themeProvider.currentThemeMode,
-            routerConfig: AppRouter.createRouter(authProvider),
+            themeMode: _isThemeInitialized ? themeProvider.currentThemeMode : ThemeMode.system,
+            routerConfig: _router!,
           );
         },
       ),

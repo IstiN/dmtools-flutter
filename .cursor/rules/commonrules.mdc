@@ -244,3 +244,5 @@ MANDATORY: After any theme or UI changes:
 
 ** IMPORTANT RULE **
 Run flutter lint tools after changes to be sure that there is no errors and warnings.
+
+use context7 to get up to date documentation of frameworks

@@ -8,8 +8,8 @@
     The path provided below has to start and end with a slash "/" in order for
     it to work correctly.
 
-    For more details, see:
-    https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
 
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
@@ -18,676 +18,114 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="DMTools Styleguide Flutter Implementation">
+  <meta name="description" content="A new Flutter project.">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="dmtools_styleguide">
+  <meta name="apple-mobile-web-app-title" content="flutter_styleguide">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
-
-  <!-- Inter font from Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <!-- Custom CSS to match web version typography exactly -->
-  <style>
-    /* Hide default browser and Flutter loading indicators */
-    ::-webkit-progress-bar {
-      display: none !important;
-    }
-    
-    ::-webkit-progress-value {
-      display: none !important;
-    }
-    
-    progress {
-      display: none !important;
-    }
-    
-    /* Hide any Flutter default loading elements */
-    flutter-view {
-      --flutter-loading-indicator-color: transparent !important;
-    }
-    
-    /* Hide any potential top loading bars */
-    *[class*="loading-bar"],
-    *[class*="progress-bar"],
-    *[id*="loading-bar"],
-    *[id*="progress-bar"],
-    .flutter-progress-indicator,
-    #flutter-progress-indicator {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-    }
-    
-    /* Hide browser's default loading indicator */
-    html {
-      overflow-x: hidden;
-    }
-    
-    /* Ensure no blue line appears at top */
-    body::before,
-    html::before {
-      display: none !important;
-    }
-    
-    /* Aggressively hide all loading indicators */
-    * {
-      -webkit-appearance: none !important;
-    }
-    
-    /* Hide Flutter's built-in loading */
-    .flutter-loader {
-      display: none !important;
-    }
-    
-    /* Block any top progress bars with absolute positioning */
-    *::before,
-    *::after {
-      background: transparent !important;
-      border-top: none !important;
-      box-shadow: none !important;
-    }
-    
-    /* Override any potential top border/progress styling */
-    html,
-    body,
-    #app,
-    flutter-view,
-    flutter-element {
-      border-top: none !important;
-      box-shadow: none !important;
-      background-image: none !important;
-    }
-    
-    /* Force hide any fixed positioned loading elements at top */
-    *[style*="position: fixed"][style*="top: 0"] {
-      display: none !important;
-    }
-    
-    :root {
-      --font-family: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    }
-    
-    body {
-      font-family: var(--font-family);
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-      background-color: #f8f9fa; /* Light theme background */
-      transition: background-color 0.2s ease;
-    }
-    
-    /* Dark theme detection - system preference */
-    @media (prefers-color-scheme: dark) {
-      html, body {
-        background-color: #121212; /* Dark theme background */
-      }
-    }
-    
-    /* Manual dark theme override */
-    html.theme-dark, html.theme-dark body {
-      background-color: #121212 !important;
-    }
-    
-    /* Manual light theme override */
-    html.theme-light, html.theme-light body {
-      background-color: #f8f9fa !important;
-    }
-    
-    /* Match heading sizes from styleguide.css */
-    h1, .h1 {
-      font-size: 32px !important;
-      font-weight: bold !important;
-    }
-    
-    h2, .h2 {
-      font-size: 28px !important;
-      font-weight: bold !important;
-    }
-    
-    h3, .h3 {
-      font-size: 24px !important;
-      font-weight: bold !important;
-    }
-    
-    h4, .h4 {
-      font-size: 20px !important;
-      font-weight: bold !important;
-    }
-    
-    h5, .h5 {
-      font-size: 16px !important;
-      font-weight: bold !important;
-    }
-    
-    h6, .h6 {
-      font-size: 14px !important;
-      font-weight: bold !important;
-    }
-    
-    p {
-      font-size: 16px !important;
-      line-height: 1.6 !important;
-    }
-    
-    /* Professional Network Loading Animation */
-    #loading {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      font-family: var(--font-family);
-    }
-    
-    .loading-container {
-      position: relative;
-      width: 200px;
-      height: 120px;
-      margin: 0 auto 20px;
-    }
-    
-    .loading-network {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-    
-    .network-dot {
-      position: absolute;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #466AF1, #6988F5);
-      box-shadow: 0 0 20px rgba(70, 106, 241, 0.3);
-    }
-    
-    /* Varied star sizes for realistic constellation */
-    .network-dot:nth-child(1) { width: 16px; height: 16px; } /* Brightest star - head */
-    .network-dot:nth-child(2) { width: 12px; height: 12px; } /* Medium star */
-    .network-dot:nth-child(3) { width: 12px; height: 12px; } /* Medium star */
-    .network-dot:nth-child(4) { width: 10px; height: 10px; } /* Small star */
-    .network-dot:nth-child(5) { width: 10px; height: 10px; } /* Small star */
-    .network-dot:nth-child(6) { width: 14px; height: 14px; } /* Large star - body center */
-    .network-dot:nth-child(7) { width: 11px; height: 11px; } /* Medium-small star */
-    .network-dot:nth-child(8) { width: 11px; height: 11px; } /* Medium-small star */
-    
-    /* Virgo Constellation Layout - Elegant maiden figure */
-    .network-dot:nth-child(1) {
-      top: 10px;
-      left: 100px;
-      animation: pulse1 4s ease-in-out infinite;
-    }
-    
-    .network-dot:nth-child(2) {
-      top: 30px;
-      left: 80px;
-      animation: pulse2 4s ease-in-out infinite 0.5s;
-    }
-    
-    .network-dot:nth-child(3) {
-      top: 30px;
-      left: 120px;
-      animation: pulse3 4s ease-in-out infinite 1.0s;
-    }
-    
-    .network-dot:nth-child(4) {
-      top: 50px;
-      left: 60px;
-      animation: pulse4 4s ease-in-out infinite 1.5s;
-    }
-    
-    .network-dot:nth-child(5) {
-      top: 50px;
-      left: 140px;
-      animation: pulse5 4s ease-in-out infinite 2.0s;
-    }
-    
-    .network-dot:nth-child(6) {
-      top: 75px;
-      left: 100px;
-      animation: pulse6 4s ease-in-out infinite 2.5s;
-    }
-    
-    .network-dot:nth-child(7) {
-      top: 95px;
-      left: 85px;
-      animation: pulse7 4s ease-in-out infinite 3.0s;
-    }
-    
-    .network-dot:nth-child(8) {
-      top: 95px;
-      left: 115px;
-      animation: pulse8 4s ease-in-out infinite 3.5s;
-    }
-    
-    .connecting-lines {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 200px;
-      height: 120px;
-      pointer-events: none;
-    }
-    
-    .connection-line {
-      stroke: #466AF1;
-      stroke-width: 1.5;
-      fill: none;
-      opacity: 0.4;
-    }
-    
-    .loading-text {
-      font-family: var(--font-family);
-      font-size: 16px;
-      font-weight: 500;
-      color: #6c757d;
-      margin-top: 10px;
-      animation: textPulse 2s ease-in-out infinite;
-    }
-    
-    /* Beautiful pulsing animations for constellation stars */
-    @keyframes pulse1 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 20px rgba(70, 106, 241, 0.3), 0 0 40px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.3);
-        box-shadow: 0 0 30px rgba(70, 106, 241, 0.6), 0 0 60px rgba(70, 106, 241, 0.3);
-      }
-    }
-    
-    @keyframes pulse2 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 15px rgba(70, 106, 241, 0.3), 0 0 30px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.2);
-        box-shadow: 0 0 25px rgba(70, 106, 241, 0.5), 0 0 50px rgba(70, 106, 241, 0.2);
-      }
-    }
-    
-    @keyframes pulse3 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 15px rgba(70, 106, 241, 0.3), 0 0 30px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.25);
-        box-shadow: 0 0 25px rgba(70, 106, 241, 0.5), 0 0 50px rgba(70, 106, 241, 0.2);
-      }
-    }
-    
-    @keyframes pulse4 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 12px rgba(70, 106, 241, 0.3), 0 0 24px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.15);
-        box-shadow: 0 0 20px rgba(70, 106, 241, 0.4), 0 0 40px rgba(70, 106, 241, 0.15);
-      }
-    }
-    
-    @keyframes pulse5 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 12px rgba(70, 106, 241, 0.3), 0 0 24px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.18);
-        box-shadow: 0 0 20px rgba(70, 106, 241, 0.4), 0 0 40px rgba(70, 106, 241, 0.15);
-      }
-    }
-    
-    @keyframes pulse6 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 18px rgba(70, 106, 241, 0.3), 0 0 36px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.35);
-        box-shadow: 0 0 28px rgba(70, 106, 241, 0.6), 0 0 56px rgba(70, 106, 241, 0.25);
-      }
-    }
-    
-    @keyframes pulse7 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 14px rgba(70, 106, 241, 0.3), 0 0 28px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.22);
-        box-shadow: 0 0 22px rgba(70, 106, 241, 0.45), 0 0 44px rgba(70, 106, 241, 0.18);
-      }
-    }
-    
-    @keyframes pulse8 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 14px rgba(70, 106, 241, 0.3), 0 0 28px rgba(70, 106, 241, 0.1);
-      }
-      50% { 
-        transform: scale(1.2);
-        box-shadow: 0 0 22px rgba(70, 106, 241, 0.45), 0 0 44px rgba(70, 106, 241, 0.18);
-      }
-    }
-    
-
-    
-    @keyframes textPulse {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 1; }
-    }
-    
-    /* Dark theme pulsing animations */
-    @keyframes pulseDark1 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 25px rgba(91, 123, 240, 0.4), 0 0 50px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.3);
-        box-shadow: 0 0 35px rgba(91, 123, 240, 0.7), 0 0 70px rgba(91, 123, 240, 0.4);
-      }
-    }
-    
-    @keyframes pulseDark2 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 20px rgba(91, 123, 240, 0.4), 0 0 40px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.2);
-        box-shadow: 0 0 30px rgba(91, 123, 240, 0.6), 0 0 60px rgba(91, 123, 240, 0.3);
-      }
-    }
-    
-    @keyframes pulseDark3 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 20px rgba(91, 123, 240, 0.4), 0 0 40px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.25);
-        box-shadow: 0 0 30px rgba(91, 123, 240, 0.6), 0 0 60px rgba(91, 123, 240, 0.3);
-      }
-    }
-    
-    @keyframes pulseDark4 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 18px rgba(91, 123, 240, 0.4), 0 0 36px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.15);
-        box-shadow: 0 0 25px rgba(91, 123, 240, 0.5), 0 0 50px rgba(91, 123, 240, 0.25);
-      }
-    }
-    
-    @keyframes pulseDark5 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 18px rgba(91, 123, 240, 0.4), 0 0 36px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.18);
-        box-shadow: 0 0 25px rgba(91, 123, 240, 0.5), 0 0 50px rgba(91, 123, 240, 0.25);
-      }
-    }
-    
-    @keyframes pulseDark6 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 23px rgba(91, 123, 240, 0.4), 0 0 46px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.35);
-        box-shadow: 0 0 33px rgba(91, 123, 240, 0.7), 0 0 66px rgba(91, 123, 240, 0.35);
-      }
-    }
-    
-    @keyframes pulseDark7 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 19px rgba(91, 123, 240, 0.4), 0 0 38px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.22);
-        box-shadow: 0 0 27px rgba(91, 123, 240, 0.55), 0 0 54px rgba(91, 123, 240, 0.28);
-      }
-    }
-    
-    @keyframes pulseDark8 {
-      0%, 100% { 
-        transform: scale(1);
-        box-shadow: 0 0 19px rgba(91, 123, 240, 0.4), 0 0 38px rgba(91, 123, 240, 0.2);
-      }
-      50% { 
-        transform: scale(1.2);
-        box-shadow: 0 0 27px rgba(91, 123, 240, 0.55), 0 0 54px rgba(91, 123, 240, 0.28);
-      }
-    }
-    
-    /* Beautiful pulsing line animations - varying opacity */
-    @keyframes linePulse1 {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 0.8; }
-    }
-    
-    @keyframes linePulse2 {
-      0%, 100% { opacity: 0.25; }
-      50% { opacity: 0.75; }
-    }
-    
-    @keyframes linePulse3 {
-      0%, 100% { opacity: 0.15; }
-      50% { opacity: 0.7; }
-    }
-    
-    @keyframes linePulse4 {
-      0%, 100% { opacity: 0.3; }
-      50% { opacity: 0.85; }
-    }
-    
-    @keyframes linePulse5 {
-      0%, 100% { opacity: 0.35; }
-      50% { opacity: 0.9; }
-    }
-    
-    @keyframes linePulse6 {
-      0%, 100% { opacity: 0.2; }
-      50% { opacity: 0.75; }
-    }
-    
-    @keyframes linePulse7 {
-      0%, 100% { opacity: 0.25; }
-      50% { opacity: 0.8; }
-    }
-    
-    @keyframes linePulse8 {
-      0%, 100% { opacity: 0.18; }
-      50% { opacity: 0.72; }
-    }
-    
-    @keyframes linePulse9 {
-      0%, 100% { opacity: 0.22; }
-      50% { opacity: 0.78; }
-    }
-    
-    /* Dark theme adjustments - system preference */
-    @media (prefers-color-scheme: dark) {
-      .loading-text {
-        color: #adb5bd;
-      }
-      
-      .network-dot {
-        background: linear-gradient(135deg, #5B7BF0, #7B9AF5);
-        box-shadow: 0 0 25px rgba(91, 123, 240, 0.4);
-      }
-      
-      .connection-line {
-        stroke: #5B7BF0;
-        opacity: 0.7;
-      }
-    }
-    
-    /* Manual dark theme override */
-    html.theme-dark .loading-text {
-      color: #adb5bd !important;
-    }
-    
-    html.theme-dark .network-dot {
-      background: linear-gradient(135deg, #5B7BF0, #7B9AF5) !important;
-    }
-    
-    /* Dark theme pulsing adjustments */
-    html.theme-dark .network-dot:nth-child(1) {
-      animation: pulseDark1 4s ease-in-out infinite !important;
-    }
-    html.theme-dark .network-dot:nth-child(2) {
-      animation: pulseDark2 4s ease-in-out infinite 0.5s !important;
-    }
-    html.theme-dark .network-dot:nth-child(3) {
-      animation: pulseDark3 4s ease-in-out infinite 1.0s !important;
-    }
-    html.theme-dark .network-dot:nth-child(4) {
-      animation: pulseDark4 4s ease-in-out infinite 1.5s !important;
-    }
-    html.theme-dark .network-dot:nth-child(5) {
-      animation: pulseDark5 4s ease-in-out infinite 2.0s !important;
-    }
-    html.theme-dark .network-dot:nth-child(6) {
-      animation: pulseDark6 4s ease-in-out infinite 2.5s !important;
-    }
-    html.theme-dark .network-dot:nth-child(7) {
-      animation: pulseDark7 4s ease-in-out infinite 3.0s !important;
-    }
-    html.theme-dark .network-dot:nth-child(8) {
-      animation: pulseDark8 4s ease-in-out infinite 3.5s !important;
-    }
-    
-    /* Manual light theme override */
-    html.theme-light .loading-text {
-      color: #6c757d !important;
-    }
-    
-    html.theme-light .network-dot {
-      background: linear-gradient(135deg, #466AF1, #6988F5) !important;
-    }
-  </style>
+  <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>DMTools Styleguide</title>
   <link rel="manifest" href="manifest.json">
 
+  <style>
+    /* Aggressively hide all default loading indicators */
+    progress,
+    .flutter-loader,
+    *[class*="loading-bar"],
+    *[id*="loading-bar"] {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+
+    html.theme-dark, html.theme-dark body {
+      background-color: #1E1E1E !important;
+      color: #FFFFFF !important;
+    }
+    html.theme-light, html.theme-light body {
+      background-color: #FFFFFF !important;
+      color: #000000 !important;
+    }
+    
+    html.theme-dark #loading-indicator p {
+      color: #CCCCCC !important;
+    }
+    html.theme-light #loading-indicator p {
+      color: #666666 !important;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    #loading-indicator {
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+
   <!-- Theme Detection Script -->
   <script type="text/javascript">
-    // Check saved theme preference immediately
+    // Immediately set the theme based on preference or system settings
     (function() {
       try {
         const savedTheme = localStorage.getItem('flutter.theme_preference');
-        console.log('Saved theme preference:', savedTheme);
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
-        if (savedTheme === '"ThemePreference.dark"') {
+        if (savedTheme === '"ThemePreference.dark"' || (savedTheme !== '"ThemePreference.light"' && prefersDark)) {
           document.documentElement.className = 'theme-dark';
-          console.log('Applied dark theme from saved preference');
-        } else if (savedTheme === '"ThemePreference.light"') {
-          document.documentElement.className = 'theme-light';
-          console.log('Applied light theme from saved preference');
         } else {
-          // Use system preference as fallback
-          const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-          document.documentElement.className = prefersDark ? 'theme-dark' : 'theme-light';
-          console.log('Applied', prefersDark ? 'dark' : 'light', 'theme from system preference');
+          document.documentElement.className = 'theme-light';
         }
       } catch (e) {
-        console.error('Error reading theme preference:', e);
+        // Fallback to dark theme on error
+        document.documentElement.className = 'theme-dark';
       }
     })();
   </script>
-
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
-  </script>
-  <!-- This script adds the flutter initialization JS code -->
-  <script src="flutter.js" defer></script>
+  <script src="flutter_bootstrap.js" async></script>
 </head>
 <body>
-  <div id="loading">
-    <div class="loading-container">
-      <div class="loading-network">
-                  <div class="network-dot"></div>
-          <div class="network-dot"></div>
-          <div class="network-dot"></div>
-          <div class="network-dot"></div>
-          <div class="network-dot"></div>
-          <div class="network-dot"></div>
-          <div class="network-dot"></div>
-          <div class="network-dot"></div>
-          
-          <!-- Pulsing constellation lines -->
-          <svg class="connecting-lines" viewBox="0 0 200 120">
-            <!-- Virgo Constellation - Head and shoulders -->
-            <path class="connection-line" d="M 106 16 L 86 36" style="animation: linePulse1 4s ease-in-out infinite;"></path>
-            <path class="connection-line" d="M 106 16 L 126 36" style="animation: linePulse2 4s ease-in-out infinite 0.5s;"></path>
-            
-            <!-- Arms extending -->
-            <path class="connection-line" d="M 86 36 L 66 56" style="animation: linePulse3 4s ease-in-out infinite 1.0s;"></path>
-            <path class="connection-line" d="M 126 36 L 146 56" style="animation: linePulse4 4s ease-in-out infinite 1.5s;"></path>
-            
-            <!-- Central body line -->
-            <path class="connection-line" d="M 106 16 L 106 81" style="animation: linePulse5 4s ease-in-out infinite 2.0s;"></path>
-            
-            <!-- Lower body connections -->
-            <path class="connection-line" d="M 106 81 L 91 101" style="animation: linePulse6 4s ease-in-out infinite 2.5s;"></path>
-            <path class="connection-line" d="M 106 81 L 121 101" style="animation: linePulse7 4s ease-in-out infinite 3.0s;"></path>
-            
-            <!-- Elegant connecting curves -->
-            <path class="connection-line" d="M 86 36 Q 96 58 106 81" style="animation: linePulse8 4s ease-in-out infinite 3.5s;"></path>
-            <path class="connection-line" d="M 126 36 Q 116 58 106 81" style="animation: linePulse9 4s ease-in-out infinite 0.8s;"></path>
-          </svg>
- 
-        </div>
-    </div>
-    <div class="loading-text">Loading DMTools Styleguide...</div>
+  <div id="loading-indicator">
+    <canvas id="dna-loader" width="300" height="150"></canvas>
+    <p style="margin-top: 24px; font-family: sans-serif; font-size: 16px;">Loading DMTools Styleguide...</p>
+    <script>
+      // Check for OffscreenCanvas and Worker support
+      if ('OffscreenCanvas' in window && 'Worker' in window) {
+        const canvas = document.getElementById('dna-loader');
+        // Transfer control to a new worker thread
+        const offscreen = canvas.transferControlToOffscreen();
+        const worker = new Worker('animation_worker.js');
+        // Send the canvas to the worker
+        worker.postMessage({ canvas: offscreen }, [offscreen]);
+      } else {
+        // Fallback for older browsers that don't support OffscreenCanvas
+        console.log("Browser does not support OffscreenCanvas. Animation will run on the main thread.");
+        // You could potentially load a simpler, CSS-based animation here as a fallback
+        const script = document.createElement('script');
+        script.src = 'animation_fallback.js'; // A non-worker version of the script
+        document.body.appendChild(script);
+      }
+    </script>
   </div>
+  
   <script>
-
-    
-    window.addEventListener('load', function(ev) {
-      // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-            // Hide loading indicator when Flutter app loads
-            setTimeout(function() {
-              const loading = document.getElementById('loading');
-              if (loading) {
-                loading.style.display = 'none';
-              }
-            }, 100);
-          });
-        }
-      });
-      
-      // Safe cleanup after Flutter loads
-      setTimeout(function() {
-        // Only remove obvious loading elements, not Flutter components
-        const potentialLoaders = document.querySelectorAll('progress[style*="position: fixed"]');
-        potentialLoaders.forEach(el => el.remove());
-      }, 1000);
+    // Hide loading indicator when Flutter is ready
+    window.addEventListener('flutter-first-frame', function() {
+      const loadingIndicator = document.getElementById('loading-indicator');
+      if (loadingIndicator) {
+        loadingIndicator.style.display = 'none';
+      }
     });
   </script>
 </body>
