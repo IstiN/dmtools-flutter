@@ -23,7 +23,8 @@ class AppRouter {
 
   static GoRouter createRouter(AuthProvider authProvider) {
     return GoRouter(
-      initialLocation: '/',
+      // Don't force initial location, let it use the current URL
+      // initialLocation: '/',
       refreshListenable: authProvider,
       redirect: (context, state) {
         final authState = authProvider.authState;
@@ -39,6 +40,7 @@ class AppRouter {
           print('   📍 Location: $location');
           print('   📍 Matched Location: $matchedLocation');
           print('   🔐 Auth state: $authState, isAuthenticated: $isAuthenticated, isLoading: $isLoading');
+          print('   🛡️ Is protected route: ${_isProtectedRoute(currentPath)}');
         }
 
         // Check for OAuth parameters on any route - only if not authenticated
@@ -73,23 +75,29 @@ class AppRouter {
         // Show loading screen during initial authentication check or loading state
         if (authState == AuthState.initial || isLoading) {
           if (currentPath != '/loading') {
-            return '/loading';
+            // By returning null, we prevent the router from navigating to the '/loading'
+            // screen, which would obscure our HTML pre-loader. The UI will simply
+            // show nothing until authentication is complete.
+            return null;
           }
           return null;
         }
 
         // If not authenticated and trying to access protected routes, redirect to unauthenticated
         if (!isAuthenticated && _isProtectedRoute(currentPath)) {
+          if (kDebugMode) print('🚫 Redirecting to unauthenticated: not authenticated on protected route');
           return '/unauthenticated';
         }
 
         // If authenticated and on unauthenticated page, redirect to dashboard
         if (isAuthenticated && currentPath == '/unauthenticated') {
+          if (kDebugMode) print('🏠 Redirecting to dashboard: authenticated on unauthenticated page');
           return '/dashboard';
         }
 
         // If authenticated and on root path, redirect to dashboard
-        if (isAuthenticated && currentPath == '/') {
+        if (isAuthenticated && (currentPath == '/' || currentPath == '')) {
+          if (kDebugMode) print('🏠 Redirecting to dashboard: authenticated on root path ($currentPath)');
           return '/dashboard';
         }
 
@@ -104,6 +112,7 @@ class AppRouter {
           path: '/',
           redirect: (context, state) {
             // Always redirect to unauthenticated, let main redirect logic handle auth
+            if (kDebugMode) print('🔄 Root route redirect: / → /unauthenticated');
             return '/unauthenticated';
           },
         ),

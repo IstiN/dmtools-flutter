@@ -164,6 +164,14 @@ class WorkspaceService with ChangeNotifier {
           print('✅ Using mock workspaces (${_workspaces.length})');
         }
       } else {
+        // Check if user is authenticated before making API calls
+        if (_authProvider?.isAuthenticated != true) {
+          if (kDebugMode) {
+            print('⏳ User not authenticated yet, waiting for authentication...');
+          }
+          throw Exception('User not authenticated');
+        }
+
         // Use real API service
         if (_apiService != null) {
           if (kDebugMode) {

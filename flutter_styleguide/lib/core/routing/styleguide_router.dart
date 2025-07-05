@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../screens/styleguide_home.dart';
+import '../../screens/styleguide_pages/welcome_page.dart' as welcome;
 import '../../screens/styleguide_pages/colors_typography_page.dart';
 import '../../screens/styleguide_pages/atoms_page.dart';
 import '../../screens/styleguide_pages/molecules_page.dart';
@@ -10,6 +11,7 @@ import '../../screens/styleguide_pages/logos_page.dart';
 import '../../screens/styleguide_pages/headers_page.dart';
 import '../../screens/styleguide_pages/profile_page.dart';
 import '../../screens/styleguide_pages/auth_page.dart';
+import '../../screens/styleguide_pages/loading_indicators_page.dart';
 
 class StyleguideRouter {
   static final GoRouter router = GoRouter(
@@ -27,7 +29,7 @@ class StyleguideRouter {
           GoRoute(
             path: '/welcome',
             pageBuilder: (context, state) => const NoTransitionPage(
-              child: WelcomePage(),
+              child: welcome.WelcomePage(),
             ),
           ),
           GoRoute(
@@ -84,6 +86,12 @@ class StyleguideRouter {
               child: AuthPage(),
             ),
           ),
+          GoRoute(
+            path: '/loading-indicators',
+            pageBuilder: (context, state) => const NoTransitionPage(
+              child: LoadingIndicatorsPage(),
+            ),
+          ),
         ],
       ),
     ],
@@ -115,6 +123,8 @@ const List<StyleguideNavigationItem> styleguideNavigationItems = [
   StyleguideNavigationItem(icon: Icons.view_headline_outlined, label: 'Headers', route: '/headers'),
   StyleguideNavigationItem(icon: Icons.person_outlined, label: 'User Profile', route: '/user-profile'),
   StyleguideNavigationItem(icon: Icons.login_outlined, label: 'Authentication', route: '/authentication'),
+  StyleguideNavigationItem(
+      icon: Icons.hourglass_empty_outlined, label: 'Loading Indicators', route: '/loading-indicators'),
 ];
 
 // Shell that wraps all styleguide pages

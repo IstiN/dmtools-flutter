@@ -22,6 +22,7 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
   bool _showEditForm = false;
   bool _showShareForm = false;
   Workspace? _selectedWorkspace;
+  bool _hasLoadedWorkspaces = false;
 
   final _createNameController = TextEditingController();
   final _createDescriptionController = TextEditingController();
@@ -40,7 +41,12 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
       apiService: apiService,
       authProvider: authProvider,
     );
-    _loadWorkspaces();
+
+    // Load workspaces only if already authenticated, otherwise wait for auth
+    if (authProvider.isAuthenticated) {
+      _loadWorkspaces();
+      _hasLoadedWorkspaces = true;
+    }
   }
 
   @override
@@ -159,6 +165,16 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
+
+    // Check if we need to load workspaces after authentication
+    final authProvider = Provider.of<app_auth.AuthProvider>(context);
+    if (authProvider.isAuthenticated && !_hasLoadedWorkspaces && !_workspaceService.isLoading) {
+      // Use post-frame callback to avoid calling setState during build
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _loadWorkspaces();
+        _hasLoadedWorkspaces = true;
+      });
+    }
 
     return ChangeNotifierProvider.value(
       value: _workspaceService,
