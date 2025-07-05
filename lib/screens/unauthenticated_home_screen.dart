@@ -82,7 +82,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                           final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
                           await authProvider.enableDemoMode();
                         },
-                        logoAssetPath: 'assets/img/dmtools-icon.svg',
+                        logoAssetPath: 'assets/img/dmtools-logo-intelligent-network-fusion-white.svg',
                       ),
                     ),
 
