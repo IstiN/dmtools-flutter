@@ -9,7 +9,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final colors = context.colorsListening;
 
     // Calculate the total width of the three cards with spacing
     const cardWidth = 300.0;
