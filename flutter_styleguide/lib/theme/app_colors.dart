@@ -108,6 +108,7 @@ class AppColors {
 
   // Input Colors
   static const Color inputBg = Color(0xFFFFFFFF); // #ffffff
+  static const Color darkInputBg = Color(0xFF2A2A2A); // #2A2A2A (lighter than card bg)
   static const Color inputFocusBorder = Color(0xFF466AF1); // #466af1 (same as accent)
 
   // Banner Colors
@@ -297,7 +298,7 @@ class _DarkColors implements ThemeColorSet {
   @override
   final Color disabledLightText = AppColors.disabledLightText;
   @override
-  final Color inputBg = AppColors.darkCardBg;
+  final Color inputBg = AppColors.darkInputBg;
   @override
   final Color inputFocusBorder = AppColors.inputFocusBorder;
   @override
