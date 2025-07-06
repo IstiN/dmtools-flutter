@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+import 'package:dmtools_styleguide/widgets/atoms/logos/dna_logo.dart';
 import '../widgets/auth_login_widget.dart';
 import '../providers/auth_provider.dart' as app_auth;
 
@@ -82,7 +83,10 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                           final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
                           await authProvider.enableDemoMode();
                         },
-                        logoAssetPath: 'assets/img/dmtools-logo-intelligent-network-fusion-white.svg',
+                        logoWidget: DnaLogo(
+                          color1: Colors.white.withOpacity(0.9),
+                          color2: Colors.white.withOpacity(0.6),
+                        ),
                       ),
                     ),
 
