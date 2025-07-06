@@ -6,7 +6,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'app_colors.dart';
 
 // Web-only import for HTML messaging
-import 'dart:html' as html show window;
+// Conditional imports for web-only functionality
+import 'web_theme_helper.dart' if (dart.library.io) 'stub_theme_helper.dart' as theme_helper;
 
 enum ThemePreference {
   system,
@@ -159,16 +160,7 @@ class ThemeProvider with ChangeNotifier {
   /// Notify HTML layer about theme changes (web only)
   void _notifyHtmlThemeChange() {
     if (kIsWeb) {
-      try {
-        final themeString = _isDarkMode ? 'dark' : 'light';
-        html.window.postMessage({
-          'type': 'flutter-theme-change',
-          'theme': themeString,
-        }, '*');
-        debugPrint('ThemeProvider: Notified HTML of theme change: $themeString');
-      } catch (e) {
-        debugPrint('ThemeProvider: Error notifying HTML of theme change: $e');
-      }
+      theme_helper.notifyHtmlThemeChange(_isDarkMode);
     }
   }
 
