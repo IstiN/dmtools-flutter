@@ -5,6 +5,7 @@ import '../../../theme/app_colors.dart';
 import '../../../theme/app_dimensions.dart';
 import '../../../widgets/organisms/welcome_banner.dart';
 import '../../../widgets/styleguide/component_display.dart';
+import 'package:dmtools_styleguide/widgets/atoms/logos/dna_logo.dart';
 
 /// Styleguide showcase page displaying various WelcomeBanner component configurations
 class WelcomeBannerShowcasePage extends StatelessWidget {
@@ -57,8 +58,8 @@ class WelcomeBannerShowcasePage extends StatelessWidget {
 
           // Welcome Banner with Logo
           ComponentDisplay(
-            title: 'Welcome Banner with Connected Logo',
-            description: 'Banner with connected network logo, text, and action buttons.',
+            title: 'Welcome Banner with DNA Logo',
+            description: 'Banner with the DNA logo, text, and action buttons.',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -68,7 +69,11 @@ class WelcomeBannerShowcasePage extends StatelessWidget {
                   subtitle: 'Build, deploy, and manage AI agents with our powerful platform.',
                   onPrimaryAction: () {},
                   onSecondaryAction: () {},
-                  logoAssetPath: 'assets/img/dmtools-logo-connected-jai-dark-fusion.svg',
+                  logoWidget: DnaLogo(
+                    size: 140,
+                    color1: Colors.white.withOpacity(0.9),
+                    color2: Colors.white.withOpacity(0.6),
+                  ),
                   isTestMode: true,
                   testDarkMode: isDarkMode,
                 ),

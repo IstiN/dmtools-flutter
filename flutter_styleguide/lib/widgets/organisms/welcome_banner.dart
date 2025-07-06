@@ -15,6 +15,7 @@ class WelcomeBanner extends StatelessWidget {
   final bool isTestMode;
   final bool testDarkMode;
   final String? logoAssetPath;
+  final Widget? logoWidget;
 
   const WelcomeBanner({
     required this.title,
@@ -27,7 +28,8 @@ class WelcomeBanner extends StatelessWidget {
     this.isTestMode = false,
     this.testDarkMode = false,
     this.logoAssetPath,
-  });
+    this.logoWidget,
+  }) : assert(logoAssetPath == null || logoWidget == null, 'Cannot provide both a logoAssetPath and a logoWidget.');
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +102,13 @@ class WelcomeBanner extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (logoAssetPath != null) ...[
+                  if (logoWidget != null) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: logoWidget,
+                    ),
+                    const SizedBox(height: 32),
+                  ] else if (logoAssetPath != null) ...[
                     SizedBox(
                       height: 70,
                       child: logoAssetPath!.endsWith('.svg')

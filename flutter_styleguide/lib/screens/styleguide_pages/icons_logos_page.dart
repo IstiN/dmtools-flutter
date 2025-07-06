@@ -7,6 +7,7 @@ import 'package:dmtools_styleguide/widgets/styleguide/component_item.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/theme/app_theme.dart';
 import 'package:dmtools_styleguide/widgets/atoms/texts/app_text.dart';
+import 'package:dmtools_styleguide/widgets/atoms/logos/dna_logo.dart';
 
 class IconsLogosPage extends StatelessWidget {
   const IconsLogosPage({super.key});
@@ -37,11 +38,24 @@ class IconsLogosPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        const ComponentDisplay(
+        ComponentDisplay(
           title: 'New AI & Themed Concepts',
           child: Column(
             children: [
+              const ComponentItem(
+                title: 'Logo - DNA Helix (Interwoven)',
+                child: DnaLogo(),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
+                title: 'Logo - DNA Helix (Interwoven - Custom Colors)',
+                child: DnaLogo(
+                  color1: Colors.cyan.shade400,
+                  color2: Colors.amber.shade600,
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
                 title: 'Logo - DMTools Connected Dots',
                 child: LogoDisplay(
                   lightAsset: 'assets/img/dmtools-logo-connected-dots.svg',
@@ -49,8 +63,8 @@ class IconsLogosPage extends StatelessWidget {
                   assetName: '../img/dmtools-logo-connected-dots.svg',
                 ),
               ),
-              SizedBox(height: AppDimensions.spacingL),
-              ComponentItem(
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
                 title: 'Logo - JAI Circuitry Monogram',
                 child: LogoDisplay(
                   lightAsset: 'assets/img/dmtools-logo-jai-circuitry-monogram.svg',
