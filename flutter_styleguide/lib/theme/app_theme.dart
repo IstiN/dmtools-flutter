@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:google_fonts/google_fonts.dart'; // Unused
 import 'app_colors.dart';
+
+// Web-only import for HTML messaging
+import 'dart:html' as html show window;
 
 enum ThemePreference {
   system,
@@ -68,6 +72,10 @@ class ThemeProvider with ChangeNotifier {
       debugPrint('ThemeProvider: Theme initialized - isDarkMode: $_isDarkMode, preference: $_themePreference');
 
       _isInitialized = true;
+
+      // Notify HTML layer of initial theme
+      _notifyHtmlThemeChange();
+
       notifyListeners();
     } catch (e) {
       // Fallback to system theme if there's an error
@@ -140,8 +148,27 @@ class ThemeProvider with ChangeNotifier {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_themePreferenceKey, _themePreference.toString());
       debugPrint('ThemeProvider: Saved preference: $_themePreference');
+
+      // Notify HTML layer of theme change (web only)
+      _notifyHtmlThemeChange();
     } catch (e) {
       debugPrint('ThemeProvider: Error saving theme preference: $e');
+    }
+  }
+
+  /// Notify HTML layer about theme changes (web only)
+  void _notifyHtmlThemeChange() {
+    if (kIsWeb) {
+      try {
+        final themeString = _isDarkMode ? 'dark' : 'light';
+        html.window.postMessage({
+          'type': 'flutter-theme-change',
+          'theme': themeString,
+        }, '*');
+        debugPrint('ThemeProvider: Notified HTML of theme change: $themeString');
+      } catch (e) {
+        debugPrint('ThemeProvider: Error notifying HTML of theme change: $e');
+      }
     }
   }
 
@@ -151,6 +178,10 @@ class ThemeProvider with ChangeNotifier {
       final newDarkMode = systemBrightness == Brightness.dark;
       if (_isDarkMode != newDarkMode) {
         _isDarkMode = newDarkMode;
+
+        // Notify HTML layer of system theme change
+        _notifyHtmlThemeChange();
+
         notifyListeners();
       }
     }
