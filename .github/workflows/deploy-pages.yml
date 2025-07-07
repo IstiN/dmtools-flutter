@@ -42,6 +42,12 @@ jobs:
           flutter pub get
           cd ..
 
+      - name: Sync shared assets
+        run: |
+          echo "🔄 Synchronizing shared assets for deployment..."
+          chmod +x scripts/sync-shared-assets.sh
+          ./scripts/sync-shared-assets.sh
+
       - name: Run tests - Main App (if tests exist)
         run: |
           if [ -d "test" ]; then

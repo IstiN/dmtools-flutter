@@ -219,5 +219,53 @@ MANDATORY: After any theme or UI changes:
 - Never run Flutter commands from parent directories
 - Check current directory before running any Flutter commands
 
+** SHARED ASSETS ARCHITECTURE RULES **
+CRITICAL: Use centralized shared assets to ensure consistency and reduce duplication.
+
+SHARED CSS ARCHITECTURE:
+✅ Use shared-theme.css for all common theme and Flutter-related styles
+✅ Master file: assets/css/shared-theme.css (single source of truth)
+✅ Synced copies: web/css/shared-theme.css and flutter_styleguide/web/css/shared-theme.css
+✅ Use ./scripts/sync-shared-css.sh to synchronize changes
+✅ Never edit CSS directly in index.html - use shared CSS file instead
+
+FORBIDDEN CSS PATTERNS:
+❌ Inline styles in index.html files
+❌ Duplicated CSS between main app and styleguide
+❌ Manual copying of CSS files without script
+❌ Direct editing of synced copies (web/css/ or flutter_styleguide/web/css/)
+
+REQUIRED CSS WORKFLOW:
+1. Edit master file: assets/css/shared-theme.css
+2. Run: ./scripts/sync-shared-css.sh
+3. Verify both applications load CSS correctly
+4. Test theme switching in both apps
+5. Commit all three CSS files together
+
+CSS FILE STRUCTURE:
+- assets/css/shared-theme.css - Master file (edit this)
+- web/css/shared-theme.css - Main app copy (auto-synced)
+- flutter_styleguide/web/css/shared-theme.css - Styleguide copy (auto-synced)
+- Both index.html files import: <link rel="stylesheet" href="css/shared-theme.css">
+
+SHARED JAVASCRIPT ARCHITECTURE:
+✅ Use shared-theme.js for common theme detection and management logic
+✅ Master file: assets/js/shared-theme.js (single source of truth)
+✅ Synced copies: web/js/shared-theme.js and flutter_styleguide/web/js/shared-theme.js
+✅ Use ./scripts/sync-shared-js.sh to synchronize changes
+
+REQUIRED JS WORKFLOW:
+1. Edit master file: assets/js/shared-theme.js
+2. Run: ./scripts/sync-shared-js.sh
+3. Verify theme detection works in both apps
+4. Test theme persistence and switching
+5. Commit all three JS files together
+
+DEPLOYMENT CONSIDERATIONS:
+- GitHub Actions workflows must include shared asset files
+- Build processes should copy shared assets to correct locations
+- Verify asset paths are correct for production builds
+- Test shared assets work in deployed environments
+
 ** IMPORTANT RULE **
 Run flutter lint tools after changes to be sure that there is no errors and warnings.

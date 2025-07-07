@@ -1,0 +1,136 @@
+/* ==========================================================================
+   DMTools Shared Theme Styles
+   Used by both main app and styleguide to ensure consistency
+   ========================================================================== */
+
+/* Loading Indicators - Hide all default Flutter loading elements */
+progress,
+.flutter-loader,
+*[class*="loading-bar"],
+*[id*="loading-bar"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Base Layout */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Default background - will be overridden by JavaScript */
+html, body {
+  background-color: #F8F9FA; /* Default to light, JS will override */
+}
+
+/* ==========================================================================
+   Dark Theme Styles
+   ========================================================================== */
+
+html.theme-dark, 
+html.theme-dark body,
+html.theme-dark flt-glass-pane,
+html.theme-dark flutter-view,
+html.theme-dark #root {
+  background-color: #121212 !important;
+  color: #E9ECEF !important;
+}
+
+html.theme-dark #loading-indicator p {
+  color: #CED4DA !important;
+}
+
+/* Dark theme Flutter elements */
+html.theme-dark flt-glass-pane,
+html.theme-dark flutter-view {
+  background-color: #121212 !important;
+}
+
+/* Dark theme canvas elements */
+html.theme-dark canvas:not(#dna-loader),
+html.theme-dark canvas[data-flt-renderer],
+html.theme-dark canvas[data-flt-renderer="html"],
+html.theme-dark canvas[data-flt-renderer="canvaskit"],
+html.theme-dark flt-scene-host,
+html.theme-dark flt-scene,
+html.theme-dark flt-transform-origin {
+  background-color: #121212 !important;
+}
+
+/* ==========================================================================
+   Light Theme Styles
+   ========================================================================== */
+
+html.theme-light, 
+html.theme-light body,
+html.theme-light flt-glass-pane,
+html.theme-light flutter-view,
+html.theme-light #root {
+  background-color: #F8F9FA !important;
+  color: #212529 !important;
+}
+
+html.theme-light #loading-indicator p {
+  color: #495057 !important;
+}
+
+/* Light theme Flutter elements */
+html.theme-light flt-glass-pane,
+html.theme-light flutter-view {
+  background-color: #F8F9FA !important;
+}
+
+/* Light theme canvas elements */
+html.theme-light canvas:not(#dna-loader),
+html.theme-light canvas[data-flt-renderer],
+html.theme-light canvas[data-flt-renderer="html"],
+html.theme-light canvas[data-flt-renderer="canvaskit"],
+html.theme-light flt-scene-host,
+html.theme-light flt-scene,
+html.theme-light flt-transform-origin {
+  background-color: #F8F9FA !important;
+}
+
+/* ==========================================================================
+   Loading Indicator Styles
+   ========================================================================== */
+
+#loading-indicator,
+#loading-indicator * {
+  background-color: transparent !important;
+}
+
+#loading-indicator {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#loading-indicator p {
+  margin-top: 24px;
+  font-family: sans-serif;
+  font-size: 16px;
+  /* Color will be overridden by theme-specific rules above */
+}
+
+/* ==========================================================================
+   Theme-specific background overrides for main containers
+   These ensure consistent theming across all container elements
+   ========================================================================== */
+
+html.theme-dark,
+html.theme-dark body,
+html.theme-dark #root {
+  background-color: #121212 !important;
+}
+
+html.theme-light,
+html.theme-light body,
+html.theme-light #root {
+  background-color: #F8F9FA !important;
+} 

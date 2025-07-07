@@ -31,106 +31,16 @@
 
   <title>DMTools Styleguide</title>
   <link rel="manifest" href="manifest.json">
+  
+  <!-- Shared theme styles -->
+  <link rel="stylesheet" href="css/shared-theme.css">
+  
+  <!-- Shared theme management -->
+  <script src="js/shared-theme.js"></script>
 
-  <style>
-    /* Aggressively hide all default loading indicators */
-    progress,
-    .flutter-loader,
-    *[class*="loading-bar"],
-    *[id*="loading-bar"] {
-      display: none !important;
-      visibility: hidden !important;
-      opacity: 0 !important;
-    }
 
-    html.theme-dark, 
-    html.theme-dark body,
-    html.theme-dark flt-glass-pane,
-    html.theme-dark flutter-view,
-    html.theme-dark #root {
-      background-color: #121212 !important;
-      color: #E9ECEF !important;
-    }
-    html.theme-light, 
-    html.theme-light body,
-    html.theme-light flt-glass-pane,
-    html.theme-light flutter-view,
-    html.theme-light #root {
-      background-color: #F8F9FA !important;
-      color: #212529 !important;
-    }
-    
-    html.theme-dark #loading-indicator p {
-      color: #CED4DA !important;
-    }
-    html.theme-light #loading-indicator p {
-      color: #495057 !important;
-    }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-      overflow: hidden;
-    }
-    
-    /* Ensure all Flutter elements inherit the theme background */
-    html.theme-dark *,
-    html.theme-dark flt-glass-pane * {
-      background-color: inherit !important;
-    }
-    
-    /* Force background on all container elements */
-    html.theme-dark div:not(#loading-indicator):not(#loading-indicator *),
-    html.theme-dark flt-glass-pane,
-    html.theme-dark flutter-view {
-      background-color: #121212 !important;
-    }
-    
-    html.theme-light div:not(#loading-indicator):not(#loading-indicator *),
-    html.theme-light flt-glass-pane,
-    html.theme-light flutter-view {
-      background-color: #F8F9FA !important;
-    }
-    #loading-indicator {
-      height: 100%;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-    }
-    #loading-indicator p {
-      margin-top: 24px;
-      font-family: sans-serif;
-      font-size: 16px;
-      /* Color will be overridden by theme-specific rules above */
-    }
-  </style>
-
-  <!-- Theme Detection Script -->
-  <script type="text/javascript">
-    // Immediately set the theme based on preference or system settings
-    (function() {
-      try {
-        const savedTheme = localStorage.getItem('flutter.theme_preference');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        
-        console.log('Theme detection:', { savedTheme, prefersDark });
-        
-        if (savedTheme === '"ThemePreference.dark"' || (savedTheme !== '"ThemePreference.light"' && prefersDark)) {
-          document.documentElement.className = 'theme-dark';
-          console.log('Applied theme-dark class');
-        } else {
-          document.documentElement.className = 'theme-light';
-          console.log('Applied theme-light class');
-        }
-      } catch (e) {
-        // Fallback to dark theme on error
-        console.log('Theme detection error:', e);
-        document.documentElement.className = 'theme-dark';
-      }
-    })();
-  </script>
+  <!-- Theme detection now handled by shared-theme.js -->
   <script src="flutter_bootstrap.js" async></script>
 </head>
 <body>
