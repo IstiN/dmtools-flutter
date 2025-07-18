@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 
@@ -23,49 +21,16 @@ class IntegrationTypeIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors =
+        isTestMode == true ? (testDarkMode == true ? AppColors.dark : AppColors.light) : context.colorsListening;
 
     // Return icon based on integration type with fallback
     return _buildIcon(colors);
   }
 
   Widget _buildIcon(ThemeColorSet colors) {
-    // If iconUrl is provided, try to load it
-    if (iconUrl != null && iconUrl!.isNotEmpty) {
-      if (iconUrl!.endsWith('.svg')) {
-        return SvgPicture.network(
-          iconUrl!,
-          width: size,
-          height: size,
-          colorFilter: ColorFilter.mode(colors.textColor, BlendMode.srcIn),
-          placeholderBuilder: (context) => _getDefaultIcon(colors),
-        );
-      } else {
-        return Image.network(
-          iconUrl!,
-          width: size,
-          height: size,
-          errorBuilder: (context, error, stackTrace) => _getDefaultIcon(colors),
-        );
-      }
-    }
-
-    // Use predefined icons for common integration types
+    // Always use the default icon fallback approach for now
+    // This prevents SVG loading errors from crashing the app
     return _getDefaultIcon(colors);
   }
 
@@ -113,7 +78,59 @@ class IntegrationTypeIcon extends StatelessWidget {
         iconColor = colors.textColor;
         break;
       case 'database':
+      case 'postgresql':
+      case 'mongodb':
         iconData = Icons.storage;
+        iconColor = colors.textColor;
+        break;
+      case 'confluence':
+        iconData = Icons.description;
+        iconColor = colors.textColor;
+        break;
+      case 'linear':
+        iconData = Icons.timeline;
+        iconColor = colors.textColor;
+        break;
+      case 'asana':
+        iconData = Icons.assignment;
+        iconColor = colors.textColor;
+        break;
+      case 'bitbucket':
+        iconData = Icons.source;
+        iconColor = colors.textColor;
+        break;
+      case 'gitlab':
+        iconData = Icons.merge;
+        iconColor = colors.textColor;
+        break;
+      case 'teams':
+        iconData = Icons.video_call;
+        iconColor = colors.textColor;
+        break;
+      case 'discord':
+        iconData = Icons.forum;
+        iconColor = colors.textColor;
+        break;
+      case 'aws':
+        iconData = Icons.cloud_queue;
+        iconColor = colors.textColor;
+        break;
+      case 'gcp':
+      case 'azure':
+        iconData = Icons.cloud_circle;
+        iconColor = colors.textColor;
+        break;
+      case 'jenkins':
+      case 'circleci':
+        iconData = Icons.build_circle;
+        iconColor = colors.textColor;
+        break;
+      case 'gemini':
+        iconData = Icons.auto_awesome;
+        iconColor = colors.textColor;
+        break;
+      case 'openai':
+        iconData = Icons.psychology;
         iconColor = colors.textColor;
         break;
       default:

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 
 enum LoginState {
@@ -85,13 +84,9 @@ class _UserProfileButtonState extends State<UserProfileButton> {
         if (widget.isTestMode) {
           isDarkMode = widget.testDarkMode;
         } else {
-          try {
-            isDarkMode = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-          } catch (e) {
-            isDarkMode = Theme.of(context).brightness == Brightness.dark;
-          }
+          isDarkMode = context.isDarkMode;
         }
-        
+
         final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
         return Positioned(
@@ -207,13 +202,9 @@ class _UserProfileButtonState extends State<UserProfileButton> {
     if (widget.isTestMode) {
       isDarkMode = widget.testDarkMode;
     } else {
-      try {
-        isDarkMode = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-      } catch (e) {
-        isDarkMode = Theme.of(context).brightness == Brightness.dark;
-      }
+      isDarkMode = context.isDarkMode;
     }
-    
+
     final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
 
     return CompositedTransformTarget(
@@ -400,4 +391,4 @@ class _UserProfileButtonState extends State<UserProfileButton> {
       return parts.first[0].toUpperCase();
     }
   }
-} 
+}

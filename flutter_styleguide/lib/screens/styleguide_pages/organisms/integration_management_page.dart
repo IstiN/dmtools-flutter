@@ -84,11 +84,11 @@ class IntegrationManagementPage extends StatelessWidget {
         child: IntegrationManagement(
           integrations: _sampleIntegrations,
           availableTypes: _sampleTypes,
-          onCreateIntegration: (type, config) {
-            debugPrint('Creating integration: ${type.displayName} with config: $config');
+          onCreateIntegration: (type, name, config) {
+            debugPrint('Creating integration: ${type.displayName} with name: $name and config: $config');
           },
-          onUpdateIntegration: (id, config) {
-            debugPrint('Updating integration $id with config: $config');
+          onUpdateIntegration: (id, name, config) {
+            debugPrint('Updating integration $id with name: $name and config: $config');
           },
           onDeleteIntegration: (id) {
             debugPrint('Deleting integration: $id');
@@ -101,6 +101,18 @@ class IntegrationManagementPage extends StatelessWidget {
           },
           onTestIntegration: (id, config) {
             debugPrint('Testing integration $id with config: $config');
+          },
+          onGetIntegrationDetails: (id) async {
+            // Simulate fetching detailed integration data
+            await Future.delayed(const Duration(milliseconds: 500));
+
+            final integration = _sampleIntegrations.firstWhere(
+              (integration) => integration.id == id,
+              orElse: () => _sampleIntegrations.first,
+            );
+
+            debugPrint('Fetching integration details for: $id');
+            return integration;
           },
         ),
       ),

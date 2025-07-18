@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/services.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 
@@ -34,22 +34,7 @@ class _SensitiveFieldInputState extends State<SensitiveFieldInput> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (widget.isTestMode == true) {
-      isDarkMode = widget.testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return TextField(
       controller: widget.controller,
@@ -70,6 +55,8 @@ class _SensitiveFieldInputState extends State<SensitiveFieldInput> {
         ),
         filled: true,
         fillColor: colors.inputBg,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.borderColor),
@@ -81,6 +68,10 @@ class _SensitiveFieldInputState extends State<SensitiveFieldInput> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 12,
@@ -100,52 +91,82 @@ class _SensitiveFieldInputState extends State<SensitiveFieldInput> {
           minHeight: 16,
         ),
         // Suffix with visibility toggle and copy button
-        suffixIcon: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Show/hide button
-            IconButton(
-              icon: Icon(
-                _obscureText ? Icons.visibility : Icons.visibility_off,
-                size: 16,
-                color: colors.textMuted,
-              ),
-              onPressed: widget.isDisabled
-                  ? null
-                  : () {
-                      setState(() {
-                        _obscureText = !_obscureText;
-                      });
-                    },
-              tooltip: _obscureText ? 'Show value' : 'Hide value',
-              splashRadius: 20,
-            ),
-            // Copy button (optional)
-            if (widget.showCopyButton && widget.controller?.text.isNotEmpty == true)
-              IconButton(
-                icon: Icon(
-                  Icons.copy,
-                  size: 16,
-                  color: colors.textMuted,
-                ),
-                onPressed: widget.isDisabled
-                    ? null
-                    : () {
-                        // TODO: Implement clipboard copy
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: const Text('Value copied to clipboard'),
-                            backgroundColor: colors.successColor,
-                            duration: const Duration(seconds: 2),
-                          ),
-                        );
-                      },
-                tooltip: 'Copy to clipboard',
-                splashRadius: 20,
-              ),
-          ],
-        ),
+        suffixIcon: _buildSuffixActions(colors),
       ),
     );
+  }
+
+  Widget _buildSuffixActions(ThemeColorSet colors) {
+    final actions = <Widget>[];
+
+    // Visibility toggle
+    actions.add(
+      IconButton(
+        icon: Icon(
+          _obscureText ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+          size: 18,
+          color: colors.textMuted,
+        ),
+        onPressed: () {
+          setState(() {
+            _obscureText = !_obscureText;
+          });
+        },
+        tooltip: _obscureText ? 'Show value' : 'Hide value',
+        constraints: const BoxConstraints(
+          minWidth: 36,
+          minHeight: 36,
+        ),
+        padding: const EdgeInsets.all(8),
+      ),
+    );
+
+    // Copy button (if enabled and has controller)
+    if (widget.showCopyButton && widget.controller != null) {
+      actions.add(
+        IconButton(
+          icon: Icon(
+            Icons.copy_outlined,
+            size: 18,
+            color: colors.textMuted,
+          ),
+          onPressed: () => _copyToClipboard(colors),
+          tooltip: 'Copy to clipboard',
+          constraints: const BoxConstraints(
+            minWidth: 36,
+            minHeight: 36,
+          ),
+          padding: const EdgeInsets.all(8),
+        ),
+      );
+    }
+
+    if (actions.length == 1) {
+      return actions.first;
+    }
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: actions,
+    );
+  }
+
+  void _copyToClipboard(ThemeColorSet colors) {
+    if (widget.controller?.text.isNotEmpty == true) {
+      Clipboard.setData(ClipboardData(text: widget.controller!.text));
+
+      // Show feedback
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Copied to clipboard',
+            style: TextStyle(color: colors.textColor),
+          ),
+          backgroundColor: colors.cardBg,
+          behavior: SnackBarBehavior.floating,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }

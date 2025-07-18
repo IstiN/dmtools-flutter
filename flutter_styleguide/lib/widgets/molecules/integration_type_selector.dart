@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
@@ -70,14 +69,8 @@ class IntegrationTypeSelector extends StatelessWidget {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
     } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
+      colors = context.colors;
+      isDarkMode = context.isDarkMode;
     }
 
     return LayoutBuilder(
@@ -336,14 +329,8 @@ class IntegrationTypeDetails extends StatelessWidget {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
     } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
+      colors = context.colors;
+      isDarkMode = context.isDarkMode;
     }
 
     return Container(

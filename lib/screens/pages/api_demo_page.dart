@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:dmtools_styleguide/theme/app_theme.dart';
 
 import '../../network/services/dm_tools_api_service.dart';
 import '../../network/generated/openapi.models.swagger.dart';
@@ -177,21 +178,77 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Workspace Name',
-                hintText: 'Enter workspace name',
-              ),
+            Builder(
+              builder: (context) {
+                final colors = context.colorsListening;
+                return TextField(
+                  controller: nameController,
+                  style: TextStyle(color: colors.textColor),
+                  decoration: InputDecoration(
+                    labelText: 'Workspace Name',
+                    hintText: 'Enter workspace name',
+                    labelStyle: TextStyle(color: colors.textSecondary),
+                    hintStyle: TextStyle(color: colors.textMuted),
+                    filled: true,
+                    fillColor: colors.inputBg,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.accentColor, width: 2),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
+                    ),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 16),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(
-                labelText: 'Description (Optional)',
-                hintText: 'Enter workspace description',
-              ),
-              maxLines: 3,
+            Builder(
+              builder: (context) {
+                final colors = context.colorsListening;
+                return TextField(
+                  controller: descriptionController,
+                  style: TextStyle(color: colors.textColor),
+                  decoration: InputDecoration(
+                    labelText: 'Description (Optional)',
+                    hintText: 'Enter workspace description',
+                    labelStyle: TextStyle(color: colors.textSecondary),
+                    hintStyle: TextStyle(color: colors.textMuted),
+                    filled: true,
+                    fillColor: colors.inputBg,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.accentColor, width: 2),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
+                    ),
+                  ),
+                  maxLines: 3,
+                );
+              },
             ),
           ],
         ),
@@ -242,36 +299,92 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'User Email',
-                  hintText: 'Enter user email',
-                ),
-                keyboardType: TextInputType.emailAddress,
+              Builder(
+                builder: (context) {
+                  final colors = context.colorsListening;
+                  return TextField(
+                    controller: emailController,
+                    style: TextStyle(color: colors.textColor),
+                    decoration: InputDecoration(
+                      labelText: 'User Email',
+                      hintText: 'Enter user email',
+                      labelStyle: TextStyle(color: colors.textSecondary),
+                      hintStyle: TextStyle(color: colors.textMuted),
+                      filled: true,
+                      fillColor: colors.inputBg,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.borderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.borderColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.accentColor, width: 2),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                  );
+                },
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<enums.ShareWorkspaceRequestRole>(
-                value: selectedRole,
-                decoration: const InputDecoration(
-                  labelText: 'Role',
-                ),
-                items: const [
-                  DropdownMenuItem(
-                    value: enums.ShareWorkspaceRequestRole.user,
-                    child: Text('User'),
-                  ),
-                  DropdownMenuItem(
-                    value: enums.ShareWorkspaceRequestRole.admin,
-                    child: Text('Admin'),
-                  ),
-                ],
-                onChanged: (value) {
-                  if (value != null) {
-                    setDialogState(() {
-                      selectedRole = value;
-                    });
-                  }
+              Builder(
+                builder: (context) {
+                  final colors = context.colorsListening;
+                  return DropdownButtonFormField<enums.ShareWorkspaceRequestRole>(
+                    value: selectedRole,
+                    style: TextStyle(color: colors.textColor),
+                    decoration: InputDecoration(
+                      labelText: 'Role',
+                      labelStyle: TextStyle(color: colors.textSecondary),
+                      filled: true,
+                      fillColor: colors.inputBg,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.borderColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.borderColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.accentColor, width: 2),
+                      ),
+                      disabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(4),
+                        borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
+                      ),
+                    ),
+                    dropdownColor: colors.inputBg,
+                    items: const [
+                      DropdownMenuItem(
+                        value: enums.ShareWorkspaceRequestRole.user,
+                        child: Text('User'),
+                      ),
+                      DropdownMenuItem(
+                        value: enums.ShareWorkspaceRequestRole.admin,
+                        child: Text('Admin'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setDialogState(() {
+                          selectedRole = value;
+                        });
+                      }
+                    },
+                  );
                 },
               ),
             ],

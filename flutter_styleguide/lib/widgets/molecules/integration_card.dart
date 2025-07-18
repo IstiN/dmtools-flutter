@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
-import '../atoms/integration_type_icon.dart';
-import '../atoms/integration_status_badge.dart';
 
 /// Comprehensive card component for displaying integration information
 class IntegrationCard extends StatelessWidget {

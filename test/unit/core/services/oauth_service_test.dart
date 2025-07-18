@@ -63,12 +63,10 @@ void main() {
   group('OAuthService', () {
     late OAuthService oauthService;
     late MockFlutterSecureStorage mockSecureStorage;
-    late MockHttpClient mockHttpClient;
 
     setUp(() {
       mockSecureStorage = MockFlutterSecureStorage();
       mockSecureStorage.clear();
-      mockHttpClient = MockHttpClient();
       oauthService = OAuthService(
         secureStorage: mockSecureStorage,
       );

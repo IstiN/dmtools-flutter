@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
-import '../../theme/app_colors.dart';
 
-typedef SearchCallback = void Function(String query);
-
+/// Reusable search form component
 class SearchForm extends StatefulWidget {
-  final SearchCallback? onSearch;
   final String hintText;
   final bool autofocus;
+  final ValueChanged<String>? onSearch;
   final bool? isTestMode;
   final bool? testDarkMode;
 
   const SearchForm({
-    super.key,
-    this.onSearch,
     this.hintText = 'Search...',
     this.autofocus = false,
-    this.isTestMode,
-    this.testDarkMode,
+    this.onSearch,
+    this.isTestMode = false,
+    this.testDarkMode = false,
+    super.key,
   });
 
   @override
@@ -26,7 +23,7 @@ class SearchForm extends StatefulWidget {
 }
 
 class _SearchFormState extends State<SearchForm> {
-  final _controller = TextEditingController();
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void dispose() {
@@ -42,13 +39,7 @@ class _SearchFormState extends State<SearchForm> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDarkMode;
-    if (widget.isTestMode == true) {
-      isDarkMode = widget.testDarkMode ?? false;
-    } else {
-      isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-    }
-    final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
+    final colors = context.colorsListening;
 
     return Container(
       height: 40,
@@ -85,40 +76,19 @@ class _SearchFormState extends State<SearchForm> {
           ),
           filled: true,
           fillColor: colors.inputBg,
-          suffixIcon: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: _handleSearch,
-              borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(4),
-                bottomRight: Radius.circular(4),
-              ),
-              hoverColor: colors.accentHover,
-              child: Container(
-                width: 100,
-                decoration: BoxDecoration(
-                  color: colors.accentColor,
-                  borderRadius: const BorderRadius.only(
-                    topRight: Radius.circular(4),
-                    bottomRight: Radius.circular(4),
-                  ),
-                ),
-                child: Center(
-                  child: Text(
-                    'Search',
-                    style: TextStyle(
-                      color: colors.primaryTextOnAccent,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+          focusColor: Colors.transparent,
+          hoverColor: Colors.transparent,
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(4),
+            borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
           ),
-          suffixIconConstraints: const BoxConstraints(
-            minWidth: 100,
-            minHeight: 40,
+          suffixIcon: IconButton(
+            icon: Icon(
+              Icons.search,
+              color: colors.textMuted,
+              size: 20,
+            ),
+            onPressed: _handleSearch,
           ),
         ),
       ),

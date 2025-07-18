@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_colors.dart';
 import '../../atoms/logos/logos.dart';
@@ -44,18 +43,8 @@ class AppHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    if (isTestMode) {
-      isDarkMode = testDarkMode;
-    } else {
-      try {
-        isDarkMode = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-      } catch (e) {
-        isDarkMode = Theme.of(context).brightness == Brightness.dark;
-      }
-    }
-
-    final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
+    final colors = isTestMode ? (testDarkMode ? AppColors.dark : AppColors.light) : context.colorsListening;
+    final isDarkMode = isTestMode ? testDarkMode : context.isDarkMode;
     final theme = Theme.of(context);
 
     return Container(

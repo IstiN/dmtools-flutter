@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'package:provider/provider.dart';
-import '../../widgets/atoms/integration_type_icon.dart';
-import '../../widgets/atoms/sensitive_field_input.dart';
-import '../../widgets/atoms/integration_status_badge.dart';
-import '../../widgets/molecules/integration_card.dart';
-import '../../widgets/molecules/integration_type_selector.dart';
-import '../../widgets/molecules/integration_config_form.dart';
-import '../../widgets/organisms/integration_management.dart';
 
 class IntegrationsPage extends StatefulWidget {
   const IntegrationsPage({super.key});
@@ -393,12 +386,24 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
               child: IntegrationManagement(
                 integrations: _sampleIntegrations,
                 availableTypes: _sampleIntegrationTypes,
-                onCreateIntegration: (type, config) => _showActionDialog('Create ${type.displayName} integration'),
-                onUpdateIntegration: (id, config) => _showActionDialog('Update integration $id'),
+                onCreateIntegration: (type, name, config) =>
+                    _showActionDialog('Create ${type.displayName} integration with name: $name'),
+                onUpdateIntegration: (id, name, config) => _showActionDialog('Update integration $id with name: $name'),
                 onDeleteIntegration: (id) => _showActionDialog('Delete integration $id'),
                 onEnableIntegration: (id) => _showActionDialog('Enable integration $id'),
                 onDisableIntegration: (id) => _showActionDialog('Disable integration $id'),
                 onTestIntegration: (id, config) => _showActionDialog('Test integration $id'),
+                onGetIntegrationDetails: (id) async {
+                  // Simulate fetching detailed integration data
+                  await Future.delayed(const Duration(milliseconds: 300));
+
+                  final integration = _sampleIntegrations.firstWhere(
+                    (integration) => integration.id == id,
+                    orElse: () => _sampleIntegrations.first,
+                  );
+
+                  return integration;
+                },
                 isTestMode: true,
                 testDarkMode: context.isDarkMode,
               ),
@@ -447,7 +452,7 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
 IntegrationManagement(
   integrations: userIntegrations,
   availableTypes: supportedTypes,
-  onCreateIntegration: (type, config) async {
+  onCreateIntegration: (type, name, config) async {
     final integration = await apiService.createIntegration(type, config);
     // Handle success
   },

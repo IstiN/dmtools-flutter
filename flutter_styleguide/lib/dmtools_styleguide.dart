@@ -21,6 +21,9 @@ export 'widgets/atoms/status_dot.dart';
 export 'widgets/atoms/tag_chip.dart';
 export 'widgets/atoms/form_elements.dart';
 export 'widgets/atoms/logos/logos.dart';
+export 'widgets/atoms/integration_type_icon.dart';
+export 'widgets/atoms/integration_status_badge.dart';
+export 'widgets/atoms/sensitive_field_input.dart';
 
 // Widgets - Molecules (existing files only)
 export 'widgets/molecules/agent_card.dart';
@@ -32,6 +35,9 @@ export 'widgets/molecules/cards/feature_card.dart';
 export 'widgets/molecules/login_provider_selector.dart';
 export 'widgets/molecules/notification_message.dart';
 export 'widgets/molecules/section_header.dart';
+export 'widgets/molecules/integration_card.dart';
+export 'widgets/molecules/integration_type_selector.dart';
+export 'widgets/molecules/integration_config_form.dart';
 
 // Widgets - Organisms
 export 'widgets/organisms/chat_module.dart';
@@ -39,6 +45,8 @@ export 'widgets/organisms/page_header.dart';
 export 'widgets/organisms/panel_base.dart';
 export 'widgets/organisms/welcome_banner.dart';
 export 'widgets/organisms/navigation_sidebar.dart';
+export 'widgets/organisms/integration_management.dart';
+export 'widgets/organisms/integration_detail.dart';
 
 // Widgets - Responsive
 export 'widgets/responsive/responsive_breakpoints.dart';

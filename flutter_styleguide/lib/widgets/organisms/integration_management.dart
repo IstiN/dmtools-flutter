@@ -16,43 +16,17 @@ enum IntegrationManagementView {
   edit,
 }
 
-/// Data model for integration definition with DMTools-specific integrations
-class IntegrationDefinition {
-  final String type;
-  final String displayName;
-  final String description;
-  final String category;
-  final List<String> tags;
-  final String? iconUrl;
-  final bool isPopular;
-  final String setupDifficulty; // easy, medium, hard
-  final List<String> features;
-  final String? documentationUrl;
-
-  const IntegrationDefinition({
-    required this.type,
-    required this.displayName,
-    required this.description,
-    required this.category,
-    required this.tags,
-    required this.features,
-    this.iconUrl,
-    this.isPopular = false,
-    this.setupDifficulty = 'medium',
-    this.documentationUrl,
-  });
-}
-
 /// Complete integration management interface organism
 class IntegrationManagement extends StatefulWidget {
   final List<IntegrationData> integrations;
   final List<IntegrationType> availableTypes;
-  final Function(IntegrationType, Map<String, String>) onCreateIntegration;
-  final Function(String, Map<String, String>) onUpdateIntegration;
+  final Function(IntegrationType, String, Map<String, String>) onCreateIntegration;
+  final Function(String, String, Map<String, String>) onUpdateIntegration;
   final Function(String) onDeleteIntegration;
   final Function(String) onEnableIntegration;
   final Function(String) onDisableIntegration;
   final Function(String, Map<String, String>) onTestIntegration;
+  final Future<IntegrationData?> Function(String)? onGetIntegrationDetails;
   final bool? isTestMode;
   final bool? testDarkMode;
 
@@ -65,6 +39,7 @@ class IntegrationManagement extends StatefulWidget {
     required this.onEnableIntegration,
     required this.onDisableIntegration,
     required this.onTestIntegration,
+    this.onGetIntegrationDetails,
     this.isTestMode = false,
     this.testDarkMode = false,
     super.key,
@@ -79,6 +54,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
   IntegrationType? _selectedType;
   IntegrationData? _editingIntegration;
   Map<String, String> _configValues = {};
+  String _integrationName = '';
   bool _isLoading = false;
   String? _testResult;
 
@@ -135,6 +111,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                   _selectedType = null;
                   _editingIntegration = null;
                   _configValues.clear();
+                  _integrationName = '';
                   _testResult = null;
                 });
               },
@@ -288,8 +265,8 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
   }
 
   Widget _buildDiscoveryView(ThemeColorSet colors) {
-    // DMTools-specific integrations based on the development tools platform
-    final dmtoolsIntegrations = _getDMToolsIntegrations();
+    // Use actual API-provided integration types instead of hardcoded ones
+    final availableIntegrations = widget.availableTypes;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -317,7 +294,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
               ),
               const SizedBox(height: AppDimensions.spacingL),
               Text(
-                '${dmtoolsIntegrations.length} integration${dmtoolsIntegrations.length != 1 ? 's' : ''} available',
+                '${availableIntegrations.length} integration${availableIntegrations.length != 1 ? 's' : ''} available',
                 style: TextStyle(
                   fontSize: 14,
                   color: colors.textMuted,
@@ -341,10 +318,10 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
               mainAxisSpacing: AppDimensions.spacingM,
               childAspectRatio: ResponsiveUtils.isMobile(context) ? 1.5 : 1.3,
             ),
-            itemCount: dmtoolsIntegrations.length,
+            itemCount: availableIntegrations.length,
             itemBuilder: (context, index) {
-              final integration = dmtoolsIntegrations[index];
-              return _buildIntegrationDiscoveryCard(integration, colors);
+              final integration = availableIntegrations[index];
+              return _buildIntegrationTypeCard(integration, colors);
             },
           ),
         ),
@@ -464,9 +441,15 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
           IntegrationConfigForm(
             integrationType: _selectedType!,
             initialValues: _configValues,
+            initialName: _integrationName.isNotEmpty ? _integrationName : '${_selectedType!.displayName} Integration',
             onConfigChanged: (values) {
               setState(() {
                 _configValues = values;
+              });
+            },
+            onNameChanged: (name) {
+              setState(() {
+                _integrationName = name;
               });
             },
             onTestConnection: () => _testConfiguration(_selectedType!, _configValues),
@@ -489,6 +472,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                       _currentView = IntegrationManagementView.list;
                       _selectedType = null;
                       _configValues.clear();
+                      _integrationName = '';
                       _testResult = null;
                     });
                   },
@@ -527,9 +511,15 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
           IntegrationConfigForm(
             integrationType: integrationType,
             initialValues: _configValues,
+            initialName: _integrationName.isNotEmpty ? _integrationName : _editingIntegration!.name,
             onConfigChanged: (values) {
               setState(() {
                 _configValues = values;
+              });
+            },
+            onNameChanged: (name) {
+              setState(() {
+                _integrationName = name;
               });
             },
             onTestConnection: () => _testConfiguration(integrationType, _configValues),
@@ -549,6 +539,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                       _currentView = IntegrationManagementView.list;
                       _editingIntegration = null;
                       _configValues.clear();
+                      _integrationName = '';
                       _testResult = null;
                     });
                   },
@@ -605,17 +596,84 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
     return requiredParams.every((param) => _configValues[param.key]?.isNotEmpty == true);
   }
 
-  void _testIntegration(IntegrationData integration) {
-    widget.onTestIntegration(integration.id, integration.configParams);
+  Future<void> _testIntegration(IntegrationData integration) async {
+    if (widget.onGetIntegrationDetails != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        final detailedIntegration = await widget.onGetIntegrationDetails!(integration.id);
+        if (detailedIntegration != null) {
+          widget.onTestIntegration(detailedIntegration.id, detailedIntegration.configParams);
+        } else {
+          // Fallback to original integration data if detailed fetch fails
+          widget.onTestIntegration(integration.id, integration.configParams);
+        }
+      } catch (e) {
+        // Fallback to original integration data if detailed fetch fails
+        widget.onTestIntegration(integration.id, integration.configParams);
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } else {
+      // Fallback to original behavior if callback not provided
+      widget.onTestIntegration(integration.id, integration.configParams);
+    }
   }
 
-  void _editIntegration(IntegrationData integration) {
+  Future<void> _editIntegration(IntegrationData integration) async {
     setState(() {
-      _currentView = IntegrationManagementView.edit;
-      _editingIntegration = integration;
-      _configValues = Map.from(integration.configParams);
-      _testResult = null;
+      _isLoading = true;
     });
+
+    if (widget.onGetIntegrationDetails != null) {
+      try {
+        final detailedIntegration = await widget.onGetIntegrationDetails!(integration.id);
+        if (detailedIntegration != null) {
+          setState(() {
+            _currentView = IntegrationManagementView.edit;
+            _editingIntegration = detailedIntegration;
+            _configValues = Map.from(detailedIntegration.configParams);
+            _integrationName = detailedIntegration.name;
+            _testResult = null;
+            _isLoading = false;
+          });
+        } else {
+          // Fallback to original integration data if detailed fetch fails
+          setState(() {
+            _currentView = IntegrationManagementView.edit;
+            _editingIntegration = integration;
+            _configValues = Map.from(integration.configParams);
+            _integrationName = integration.name;
+            _testResult = null;
+            _isLoading = false;
+          });
+        }
+      } catch (e) {
+        // Fallback to original integration data if detailed fetch fails
+        setState(() {
+          _currentView = IntegrationManagementView.edit;
+          _editingIntegration = integration;
+          _configValues = Map.from(integration.configParams);
+          _integrationName = integration.name;
+          _testResult = null;
+          _isLoading = false;
+        });
+      }
+    } else {
+      // Fallback to original behavior if callback not provided
+      setState(() {
+        _currentView = IntegrationManagementView.edit;
+        _editingIntegration = integration;
+        _configValues = Map.from(integration.configParams);
+        _integrationName = integration.name;
+        _testResult = null;
+        _isLoading = false;
+      });
+    }
   }
 
   void _deleteIntegration(IntegrationData integration) {
@@ -649,7 +707,9 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
       _testResult = null;
     });
 
-    widget.onTestIntegration('test', config);
+    // Use a special format to indicate this is a configuration test with the actual type
+    // Format: "test:<integration_type>" so the main app can extract the type
+    widget.onTestIntegration('test:${type.type}', config);
 
     // Simulate test result
     Future.delayed(const Duration(seconds: 2), () {
@@ -664,7 +724,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
 
   void _createIntegration() {
     if (_selectedType != null && _canCreateIntegration()) {
-      widget.onCreateIntegration(_selectedType!, _configValues);
+      widget.onCreateIntegration(_selectedType!, _integrationName, _configValues);
       setState(() {
         _currentView = IntegrationManagementView.list;
         _selectedType = null;
@@ -676,7 +736,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
 
   void _updateIntegration() {
     if (_editingIntegration != null) {
-      widget.onUpdateIntegration(_editingIntegration!.id, _configValues);
+      widget.onUpdateIntegration(_editingIntegration!.id, _integrationName, _configValues);
       setState(() {
         _currentView = IntegrationManagementView.list;
         _editingIntegration = null;
@@ -686,197 +746,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
     }
   }
 
-  // DMTools-specific integrations
-  List<IntegrationDefinition> _getDMToolsIntegrations() {
-    return [
-      // Version Control & Code Management
-      const IntegrationDefinition(
-        type: 'github',
-        displayName: 'GitHub',
-        description: 'Connect to GitHub repositories, manage issues, and automate workflows',
-        category: 'Version Control',
-        tags: ['Git', 'Code', 'Repositories', 'CI/CD', 'Issues'],
-        isPopular: true,
-        features: ['Repository access', 'Issue tracking', 'Pull requests', 'Actions integration', 'Code analysis'],
-        documentationUrl: 'https://docs.github.com/en/developers',
-      ),
-      const IntegrationDefinition(
-        type: 'gitlab',
-        displayName: 'GitLab',
-        description: 'Integrate with GitLab for DevOps lifecycle management',
-        category: 'Version Control',
-        tags: ['Git', 'DevOps', 'CI/CD', 'Merge Requests'],
-        isPopular: true,
-        features: ['Repository management', 'CI/CD pipelines', 'Issue tracking', 'Security scanning'],
-        documentationUrl: 'https://docs.gitlab.com/ee/api/',
-      ),
-      const IntegrationDefinition(
-        type: 'bitbucket',
-        displayName: 'Bitbucket',
-        description: 'Connect to Bitbucket for code collaboration and deployment',
-        category: 'Version Control',
-        tags: ['Git', 'Atlassian', 'Pipelines'],
-        features: ['Repository access', 'Pipelines', 'Pull requests', 'Branch permissions'],
-        documentationUrl: 'https://developer.atlassian.com/cloud/bitbucket/',
-      ),
-
-      // Communication & Notifications
-      const IntegrationDefinition(
-        type: 'slack',
-        displayName: 'Slack',
-        description: 'Send notifications and updates to Slack channels and users',
-        category: 'Communication',
-        tags: ['Chat', 'Notifications', 'Team', 'Bot'],
-        isPopular: true,
-        setupDifficulty: 'easy',
-        features: ['Channel notifications', 'Direct messages', 'File sharing', 'Bot integration', 'Workflows'],
-        documentationUrl: 'https://api.slack.com/',
-      ),
-      const IntegrationDefinition(
-        type: 'teams',
-        displayName: 'Microsoft Teams',
-        description: 'Integrate with Microsoft Teams for team collaboration',
-        category: 'Communication',
-        tags: ['Microsoft', 'Chat', 'Collaboration'],
-        features: ['Team notifications', 'Meeting integration', 'File sharing', 'Workflow bots'],
-        documentationUrl: 'https://docs.microsoft.com/en-us/graph/teams-concept-overview',
-      ),
-      const IntegrationDefinition(
-        type: 'discord',
-        displayName: 'Discord',
-        description: 'Send updates and notifications to Discord servers',
-        category: 'Communication',
-        tags: ['Chat', 'Gaming', 'Community'],
-        setupDifficulty: 'easy',
-        features: ['Server notifications', 'Webhooks', 'Bot commands', 'Voice channel integration'],
-        documentationUrl: 'https://discord.com/developers/docs',
-      ),
-
-      // Project Management
-      const IntegrationDefinition(
-        type: 'jira',
-        displayName: 'Jira',
-        description: 'Sync with Jira for issue tracking and project management',
-        category: 'Project Management',
-        tags: ['Issues', 'Agile', 'Atlassian', 'Tickets'],
-        isPopular: true,
-        features: ['Issue sync', 'Sprint management', 'Workflow automation', 'Custom fields', 'Reporting'],
-        documentationUrl: 'https://developer.atlassian.com/cloud/jira/',
-      ),
-      const IntegrationDefinition(
-        type: 'linear',
-        displayName: 'Linear',
-        description: 'Connect with Linear for modern issue tracking',
-        category: 'Project Management',
-        tags: ['Issues', 'Modern', 'Fast', 'Keyboard'],
-        setupDifficulty: 'easy',
-        features: ['Issue tracking', 'Project sync', 'Cycle management', 'Triage automation'],
-        documentationUrl: 'https://developers.linear.app/',
-      ),
-      const IntegrationDefinition(
-        type: 'asana',
-        displayName: 'Asana',
-        description: 'Manage tasks and projects with Asana integration',
-        category: 'Project Management',
-        tags: ['Tasks', 'Projects', 'Teams'],
-        features: ['Task management', 'Project tracking', 'Team collaboration', 'Timeline view'],
-        documentationUrl: 'https://developers.asana.com/',
-      ),
-
-      // Cloud Services
-      const IntegrationDefinition(
-        type: 'aws',
-        displayName: 'AWS',
-        description: 'Connect to Amazon Web Services for cloud operations',
-        category: 'Cloud Services',
-        tags: ['Cloud', 'Infrastructure', 'DevOps'],
-        isPopular: true,
-        setupDifficulty: 'hard',
-        features: ['Resource monitoring', 'CloudWatch integration', 'S3 storage', 'Lambda functions'],
-        documentationUrl: 'https://docs.aws.amazon.com/',
-      ),
-      const IntegrationDefinition(
-        type: 'gcp',
-        displayName: 'Google Cloud',
-        description: 'Integrate with Google Cloud Platform services',
-        category: 'Cloud Services',
-        tags: ['Google', 'Cloud', 'Analytics'],
-        setupDifficulty: 'hard',
-        features: ['Resource monitoring', 'BigQuery integration', 'Cloud Storage', 'Compute Engine'],
-        documentationUrl: 'https://cloud.google.com/docs',
-      ),
-      const IntegrationDefinition(
-        type: 'azure',
-        displayName: 'Azure',
-        description: 'Connect to Microsoft Azure cloud services',
-        category: 'Cloud Services',
-        tags: ['Microsoft', 'Cloud', 'DevOps'],
-        setupDifficulty: 'hard',
-        features: ['Resource management', 'Azure DevOps', 'Storage accounts', 'Monitoring'],
-        documentationUrl: 'https://docs.microsoft.com/en-us/azure/',
-      ),
-
-      // CI/CD & Automation
-      const IntegrationDefinition(
-        type: 'jenkins',
-        displayName: 'Jenkins',
-        description: 'Automate builds and deployments with Jenkins',
-        category: 'CI/CD',
-        tags: ['Automation', 'Build', 'Deploy'],
-        features: ['Build triggers', 'Pipeline monitoring', 'Artifact management', 'Plugin ecosystem'],
-        documentationUrl: 'https://www.jenkins.io/doc/book/using/remote-access-api/',
-      ),
-      const IntegrationDefinition(
-        type: 'circleci',
-        displayName: 'CircleCI',
-        description: 'Continuous integration and delivery platform',
-        category: 'CI/CD',
-        tags: ['CI/CD', 'Automation', 'Testing'],
-        features: ['Pipeline monitoring', 'Test results', 'Deployment tracking', 'Artifact storage'],
-        documentationUrl: 'https://circleci.com/docs/api/',
-      ),
-
-      // Database & Analytics
-      const IntegrationDefinition(
-        type: 'postgresql',
-        displayName: 'PostgreSQL',
-        description: 'Connect to PostgreSQL databases for data operations',
-        category: 'Databases',
-        tags: ['Database', 'SQL', 'Analytics'],
-        features: ['Query execution', 'Schema monitoring', 'Performance metrics', 'Backup management'],
-      ),
-      const IntegrationDefinition(
-        type: 'mongodb',
-        displayName: 'MongoDB',
-        description: 'NoSQL database integration for document storage',
-        category: 'Databases',
-        tags: ['NoSQL', 'Documents', 'Scaling'],
-        features: ['Collection monitoring', 'Query analytics', 'Index optimization', 'Cluster management'],
-        documentationUrl: 'https://docs.mongodb.com/manual/reference/api/',
-      ),
-
-      // Custom Integrations
-      const IntegrationDefinition(
-        type: 'webhook',
-        displayName: 'Webhook',
-        description: 'Create custom HTTP webhooks for any external service',
-        category: 'Custom',
-        tags: ['HTTP', 'Custom', 'API', 'Events'],
-        setupDifficulty: 'easy',
-        features: ['Custom endpoints', 'Event triggers', 'Flexible payloads', 'Authentication'],
-      ),
-      const IntegrationDefinition(
-        type: 'api',
-        displayName: 'REST API',
-        description: 'Connect to any REST API endpoint',
-        category: 'Custom',
-        tags: ['REST', 'HTTP', 'Custom'],
-        features: ['HTTP methods', 'Authentication headers', 'JSON payloads', 'Response handling'],
-      ),
-    ];
-  }
-
-  Widget _buildIntegrationDiscoveryCard(IntegrationDefinition integration, ThemeColorSet colors) {
+  Widget _buildIntegrationTypeCard(IntegrationType integration, ThemeColorSet colors) {
     return Card(
       elevation: 2,
       color: colors.cardBg,
@@ -898,46 +768,30 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                       color: colors.accentColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(AppDimensions.radiusS),
                     ),
-                    child: IntegrationTypeIcon(integrationType: integration.type),
+                    child: IntegrationTypeIcon(
+                      integrationType: integration.type,
+                      iconUrl: integration.iconUrl,
+                      isTestMode: widget.isTestMode,
+                      testDarkMode: widget.testDarkMode,
+                    ),
                   ),
                   const SizedBox(width: AppDimensions.spacingM),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                integration.displayName,
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: colors.textColor,
-                                ),
-                              ),
-                            ),
-                            if (integration.isPopular)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: colors.accentColor.withValues(alpha: 0.2),
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Text(
-                                  'Popular',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w500,
-                                    color: colors.accentColor,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 2),
                         Text(
-                          integration.category,
+                          integration.displayName,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: colors.textColor,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          _getIntegrationCategory(integration.type),
                           style: TextStyle(
                             fontSize: 12,
                             color: colors.textMuted,
@@ -948,62 +802,41 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                   ),
                 ],
               ),
-
-              const SizedBox(height: AppDimensions.spacingS),
+              const SizedBox(height: AppDimensions.spacingM),
 
               // Description
-              Expanded(
-                child: Text(
-                  integration.description,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: colors.textSecondary,
-                    height: 1.3,
-                  ),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
+              Text(
+                integration.description,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: colors.textSecondary,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: AppDimensions.spacingM),
+
+              // Configuration info
+              Text(
+                'Configuration parameters: ${integration.configParams.length}',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: colors.textMuted,
                 ),
               ),
-
               const SizedBox(height: AppDimensions.spacingS),
 
-              // Tags
-              Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: integration.tags
-                    .take(3)
-                    .map((tag) => Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: colors.bgColor,
-                            borderRadius: BorderRadius.circular(4),
-                            border: Border.all(color: colors.borderColor),
-                          ),
-                          child: Text(
-                            tag,
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: colors.textMuted,
-                            ),
-                          ),
-                        ))
-                    .toList(),
-              ),
-
-              const SizedBox(height: AppDimensions.spacingS),
-
-              // Setup difficulty
+              // Action button
               Row(
                 children: [
                   Icon(
-                    _getDifficultyIcon(integration.setupDifficulty),
+                    Icons.settings,
                     size: 14,
-                    color: _getDifficultyColor(integration.setupDifficulty, colors),
+                    color: colors.textMuted,
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${integration.setupDifficulty.capitalize()} setup',
+                    'Setup available',
                     style: TextStyle(
                       fontSize: 11,
                       color: colors.textMuted,
@@ -1024,206 +857,47 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
     );
   }
 
-  void _selectIntegrationFromDiscovery(IntegrationDefinition integrationDef) {
-    // Find or create the corresponding IntegrationType
-    IntegrationType? integrationType;
-    try {
-      integrationType = widget.availableTypes.firstWhere(
-        (type) => type.type == integrationDef.type,
-      );
-    } catch (e) {
-      // If not found in available types, create a basic one
-      integrationType = IntegrationType(
-        type: integrationDef.type,
-        displayName: integrationDef.displayName,
-        description: integrationDef.description,
-        configParams: _getDefaultConfigParams(integrationDef.type),
-      );
-    }
-
+  void _selectIntegrationFromDiscovery(IntegrationType integration) {
     setState(() {
-      _selectedType = integrationType;
+      _selectedType = integration;
       _currentView = IntegrationManagementView.create;
       _configValues.clear();
       _testResult = null;
     });
   }
 
-  List<ConfigParam> _getDefaultConfigParams(String type) {
+  String _getIntegrationCategory(String type) {
     switch (type.toLowerCase()) {
       case 'github':
       case 'gitlab':
       case 'bitbucket':
-        return [
-          const ConfigParam(
-            key: 'token',
-            displayName: 'Access Token',
-            description: 'Personal access token with appropriate permissions',
-            required: true,
-            sensitive: true,
-            type: 'string',
-            options: [],
-          ),
-          const ConfigParam(
-            key: 'base_url',
-            displayName: 'Base URL',
-            description: 'API base URL (leave empty for default)',
-            required: false,
-            sensitive: false,
-            type: 'string',
-            options: [],
-          ),
-        ];
+        return 'Version Control';
       case 'slack':
+      case 'teams':
       case 'discord':
-        return [
-          const ConfigParam(
-            key: 'webhook_url',
-            displayName: 'Webhook URL',
-            description: 'Webhook URL for sending messages',
-            required: true,
-            sensitive: true,
-            type: 'string',
-            options: [],
-          ),
-        ];
+        return 'Communication';
       case 'jira':
       case 'linear':
       case 'asana':
-        return [
-          const ConfigParam(
-            key: 'api_key',
-            displayName: 'API Key',
-            description: 'API key for authentication',
-            required: true,
-            sensitive: true,
-            type: 'string',
-            options: [],
-          ),
-          const ConfigParam(
-            key: 'base_url',
-            displayName: 'Instance URL',
-            description: 'Your instance URL',
-            required: true,
-            sensitive: false,
-            type: 'string',
-            options: [],
-          ),
-        ];
+      case 'trello':
+        return 'Project Management';
       case 'aws':
       case 'gcp':
       case 'azure':
-        return [
-          const ConfigParam(
-            key: 'access_key',
-            displayName: 'Access Key',
-            description: 'Cloud service access key',
-            required: true,
-            sensitive: true,
-            type: 'string',
-            options: [],
-          ),
-          const ConfigParam(
-            key: 'secret_key',
-            displayName: 'Secret Key',
-            description: 'Cloud service secret key',
-            required: true,
-            sensitive: true,
-            type: 'string',
-            options: [],
-          ),
-          const ConfigParam(
-            key: 'region',
-            displayName: 'Region',
-            description: 'Cloud service region',
-            required: true,
-            sensitive: false,
-            type: 'string',
-            options: [],
-          ),
-        ];
+        return 'Cloud Services';
+      case 'jenkins':
+      case 'circleci':
+        return 'CI/CD';
       case 'postgresql':
       case 'mongodb':
-        return [
-          const ConfigParam(
-            key: 'connection_string',
-            displayName: 'Connection String',
-            description: 'Database connection string',
-            required: true,
-            sensitive: true,
-            type: 'string',
-            options: [],
-          ),
-        ];
+        return 'Databases';
       case 'webhook':
       case 'api':
-        return [
-          const ConfigParam(
-            key: 'url',
-            displayName: 'URL',
-            description: 'Endpoint URL',
-            required: true,
-            sensitive: false,
-            type: 'string',
-            options: [],
-          ),
-          const ConfigParam(
-            key: 'method',
-            displayName: 'HTTP Method',
-            description: 'HTTP method to use',
-            required: true,
-            sensitive: false,
-            type: 'select',
-            options: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-          ),
-          const ConfigParam(
-            key: 'headers',
-            displayName: 'Headers',
-            description: 'HTTP headers (JSON format)',
-            required: false,
-            sensitive: false,
-            type: 'textarea',
-            options: [],
-          ),
-        ];
+        return 'Custom';
+      case 'confluence':
+        return 'Documentation';
       default:
-        return [
-          const ConfigParam(
-            key: 'api_key',
-            displayName: 'API Key',
-            description: 'API key for authentication',
-            required: true,
-            sensitive: true,
-            type: 'string',
-            options: [],
-          ),
-        ];
-    }
-  }
-
-  IconData _getDifficultyIcon(String difficulty) {
-    switch (difficulty.toLowerCase()) {
-      case 'easy':
-        return Icons.check_circle;
-      case 'medium':
-        return Icons.remove_circle;
-      case 'hard':
-        return Icons.warning;
-      default:
-        return Icons.help;
-    }
-  }
-
-  Color _getDifficultyColor(String difficulty, ThemeColorSet colors) {
-    switch (difficulty.toLowerCase()) {
-      case 'easy':
-        return Colors.green;
-      case 'medium':
-        return Colors.orange;
-      case 'hard':
-        return Colors.red;
-      default:
-        return colors.textMuted;
+        return 'Integration';
     }
   }
 }

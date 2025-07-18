@@ -54,6 +54,35 @@ abstract interface class DmToolsApiService {
   /// Create a default workspace
   Future<WorkspaceDto> createDefaultWorkspace();
 
+  // Integration methods
+
+  /// Get all integrations for the current user
+  Future<List<IntegrationDto>> getIntegrations();
+
+  /// Get available integration types
+  Future<List<IntegrationTypeDto>> getIntegrationTypes();
+
+  /// Get integration by ID
+  Future<IntegrationDto> getIntegration(String id, {bool includeSensitive = false});
+
+  /// Create a new integration
+  Future<IntegrationDto> createIntegration(CreateIntegrationRequest request);
+
+  /// Update an existing integration
+  Future<IntegrationDto> updateIntegration(String id, UpdateIntegrationRequest request);
+
+  /// Delete an integration
+  Future<void> deleteIntegration(String id);
+
+  /// Enable an integration
+  Future<IntegrationDto> enableIntegration(String id);
+
+  /// Disable an integration
+  Future<IntegrationDto> disableIntegration(String id);
+
+  /// Test an integration
+  Future<Object> testIntegration(TestIntegrationRequest request);
+
   /// Dispose the service and clean up resources
   void dispose();
 }

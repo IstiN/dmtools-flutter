@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
@@ -12,7 +11,9 @@ import 'integration_type_selector.dart';
 class IntegrationConfigForm extends StatefulWidget {
   final IntegrationType integrationType;
   final Map<String, String> initialValues;
+  final String? initialName;
   final ValueChanged<Map<String, String>> onConfigChanged;
+  final ValueChanged<String>? onNameChanged;
   final VoidCallback? onTestConnection;
   final bool isLoading;
   final String? testResult;
@@ -23,6 +24,8 @@ class IntegrationConfigForm extends StatefulWidget {
     required this.integrationType,
     required this.initialValues,
     required this.onConfigChanged,
+    this.initialName,
+    this.onNameChanged,
     this.onTestConnection,
     this.isLoading = false,
     this.testResult,
@@ -37,6 +40,7 @@ class IntegrationConfigForm extends StatefulWidget {
 
 class _IntegrationConfigFormState extends State<IntegrationConfigForm> {
   late Map<String, TextEditingController> _controllers;
+  late TextEditingController _nameController;
   late Map<String, String> _currentValues;
 
   @override
@@ -48,6 +52,14 @@ class _IntegrationConfigFormState extends State<IntegrationConfigForm> {
   void _initializeControllers() {
     _controllers = {};
     _currentValues = Map.from(widget.initialValues);
+
+    // Initialize name controller
+    _nameController = TextEditingController(
+      text: widget.initialName ?? '${widget.integrationType.displayName} Integration',
+    );
+    _nameController.addListener(() {
+      widget.onNameChanged?.call(_nameController.text);
+    });
 
     for (final param in widget.integrationType.configParams) {
       _controllers[param.key] = TextEditingController(
@@ -62,6 +74,7 @@ class _IntegrationConfigFormState extends State<IntegrationConfigForm> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     for (final controller in _controllers.values) {
       controller.dispose();
     }
@@ -77,14 +90,8 @@ class _IntegrationConfigFormState extends State<IntegrationConfigForm> {
       isDarkMode = widget.testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
     } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
+      colors = context.colorsListening;
+      isDarkMode = context.isDarkMode;
     }
 
     return Container(
@@ -126,6 +133,21 @@ class _IntegrationConfigFormState extends State<IntegrationConfigForm> {
               ),
             ),
             const SizedBox(height: AppDimensions.spacingL),
+
+            // Integration Name field
+            FormGroup(
+              label: 'Integration Name *',
+              helperText: 'A descriptive name for this integration instance',
+              isTestMode: widget.isTestMode,
+              testDarkMode: widget.testDarkMode,
+              child: TextInput(
+                controller: _nameController,
+                placeholder: 'Enter integration name',
+                isTestMode: widget.isTestMode,
+                testDarkMode: widget.testDarkMode,
+              ),
+            ),
+            const SizedBox(height: AppDimensions.spacingM),
 
             // Configuration fields
             ...widget.integrationType.configParams.map((param) => Padding(

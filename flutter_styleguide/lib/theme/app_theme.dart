@@ -72,11 +72,13 @@ class ThemeProvider with ChangeNotifier {
 
       debugPrint('ThemeProvider: Theme initialized - isDarkMode: $_isDarkMode, preference: $_themePreference');
 
+      // Mark as initialized BEFORE notifying listeners to prevent race conditions
       _isInitialized = true;
 
       // Notify HTML layer of initial theme
       _notifyHtmlThemeChange();
 
+      // Finally notify listeners after everything is set up
       notifyListeners();
     } catch (e) {
       // Fallback to system theme if there's an error
@@ -84,6 +86,10 @@ class ThemeProvider with ChangeNotifier {
       _themePreference = ThemePreference.system;
       await _updateThemeFromPreference();
       _isInitialized = true;
+
+      // Notify HTML layer even in error case
+      _notifyHtmlThemeChange();
+
       notifyListeners();
     }
   }
@@ -369,10 +375,16 @@ extension ThemeContext on BuildContext {
   ThemeColorSet get colors {
     try {
       final themeProvider = Provider.of<ThemeProvider>(this, listen: false);
+      // If not initialized yet, wait for initialization to prevent race conditions
+      if (!themeProvider.isInitialized) {
+        // During initialization, use system theme as fallback
+        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+      }
       return themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
     } catch (e) {
-      // Fallback to theme-based colors if Provider is not available
-      final brightness = Theme.of(this).brightness;
+      // Fallback to system brightness if Provider is not available
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
       return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
     }
   }
@@ -381,10 +393,16 @@ extension ThemeContext on BuildContext {
   ThemeColorSet get colorsListening {
     try {
       final themeProvider = Provider.of<ThemeProvider>(this);
+      // If not initialized yet, wait for initialization to prevent race conditions
+      if (!themeProvider.isInitialized) {
+        // During initialization, use system theme as fallback
+        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+      }
       return themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
     } catch (e) {
-      // Fallback to theme-based colors if Provider is not available
-      final brightness = Theme.of(this).brightness;
+      // Fallback to system brightness if Provider is not available
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
       return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
     }
   }
@@ -392,9 +410,16 @@ extension ThemeContext on BuildContext {
   /// Check if current theme is dark mode
   bool get isDarkMode {
     try {
-      return Provider.of<ThemeProvider>(this, listen: false).isDarkMode;
+      final themeProvider = Provider.of<ThemeProvider>(this, listen: false);
+      // If not initialized yet, use system theme
+      if (!themeProvider.isInitialized) {
+        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+        return brightness == Brightness.dark;
+      }
+      return themeProvider.isDarkMode;
     } catch (e) {
-      return Theme.of(this).brightness == Brightness.dark;
+      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+      return brightness == Brightness.dark;
     }
   }
 }
