@@ -3,6 +3,7 @@ import 'package:dmtools/network/services/dm_tools_api_service.dart';
 import 'package:dmtools/network/services/dm_tools_api_service_impl.dart';
 import 'package:dmtools/network/services/dm_tools_api_service_mock.dart';
 import 'package:dmtools/providers/auth_provider.dart';
+import 'package:dmtools/providers/integration_provider.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 
@@ -37,6 +38,14 @@ abstract final class ServiceLocator {
         ),
       );
     }
+
+    // Create IntegrationProvider with dependencies
+    GetIt.I.registerLazySingleton<IntegrationProvider>(
+      () => IntegrationProvider(
+        apiService: get<DmToolsApiService>(),
+        authProvider: get<AuthProvider>(),
+      ),
+    );
   }
 
   static T get<T extends Object>() => GetIt.I.get<T>();

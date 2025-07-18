@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_dimensions.dart';
 import '../../../theme/app_colors.dart';
-import 'package:provider/provider.dart';
 import '../../../theme/app_theme.dart';
 
 class BaseSectionHeader extends StatelessWidget {
@@ -15,7 +14,8 @@ class BaseSectionHeader extends StatelessWidget {
   final bool testDarkMode;
 
   const BaseSectionHeader({
-    required this.title, super.key,
+    required this.title,
+    super.key,
     this.subtitle,
     this.viewAllText,
     this.onViewAll,
@@ -27,18 +27,7 @@ class BaseSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    if (isTestMode) {
-      isDarkMode = testDarkMode;
-    } else {
-      try {
-        isDarkMode = Provider.of<ThemeProvider>(context, listen: false).isDarkMode;
-      } catch (e) {
-        isDarkMode = Theme.of(context).brightness == Brightness.dark;
-      }
-    }
-    
-    final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
+    final colors = isTestMode ? (testDarkMode ? AppColors.dark : AppColors.light) : context.colorsListening;
     final theme = Theme.of(context);
 
     return Padding(
@@ -50,7 +39,7 @@ class BaseSectionHeader extends StatelessWidget {
             leading!,
             const SizedBox(width: AppDimensions.spacingM),
           ],
-          
+
           // Title and subtitle
           Expanded(
             child: Column(
@@ -76,10 +65,10 @@ class BaseSectionHeader extends StatelessWidget {
               ],
             ),
           ),
-          
+
           // Actions (if provided)
           if (actions != null) ...actions!,
-          
+
           // View all button (if provided)
           if (viewAllText != null && onViewAll != null) ...[
             TextButton(
@@ -108,4 +97,4 @@ class BaseSectionHeader extends StatelessWidget {
       ),
     );
   }
-} 
+}

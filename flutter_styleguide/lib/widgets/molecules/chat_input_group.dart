@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/widgets/atoms/buttons/app_buttons.dart';
+import '../../theme/app_theme.dart';
 
 class ChatInputGroup extends StatelessWidget {
   final TextEditingController controller;
@@ -17,10 +18,12 @@ class ChatInputGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colorsListening;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
+        color: colors.cardBg,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Row(
@@ -28,9 +31,26 @@ class ChatInputGroup extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: controller,
-              decoration: const InputDecoration(
+              style: TextStyle(color: colors.textColor),
+              decoration: InputDecoration(
                 hintText: 'Type your message...',
-                border: OutlineInputBorder(),
+                hintStyle: TextStyle(color: colors.textMuted),
+                filled: true,
+                fillColor: colors.inputBg,
+                focusColor: Colors.transparent,
+                hoverColor: Colors.transparent,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(color: colors.borderColor),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(color: colors.borderColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                ),
               ),
               maxLines: 3,
               minLines: 1,

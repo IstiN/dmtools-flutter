@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
-import '../../theme/app_colors.dart';
 
 /// Form Group wrapper that provides consistent styling for form elements
 class FormGroup extends StatelessWidget {
@@ -22,23 +20,7 @@ class FormGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,33 +71,20 @@ class TextInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return TextField(
       controller: controller,
       onChanged: onChanged,
       enabled: !isDisabled,
+      style: TextStyle(color: colors.textColor),
       decoration: InputDecoration(
         hintText: placeholder,
         hintStyle: TextStyle(color: colors.textMuted),
         filled: true,
         fillColor: colors.inputBg,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.borderColor),
@@ -127,6 +96,10 @@ class TextInput extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
@@ -162,34 +135,21 @@ class _PasswordInputState extends State<PasswordInput> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (widget.isTestMode == true) {
-      isDarkMode = widget.testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return TextField(
       controller: widget.controller,
       onChanged: widget.onChanged,
       enabled: !widget.isDisabled,
       obscureText: _obscureText,
+      style: TextStyle(color: colors.textColor),
       decoration: InputDecoration(
         hintText: widget.placeholder,
         hintStyle: TextStyle(color: colors.textMuted),
         filled: true,
         fillColor: colors.inputBg,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.borderColor),
@@ -201,6 +161,10 @@ class _PasswordInputState extends State<PasswordInput> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         suffixIcon: IconButton(
@@ -240,34 +204,21 @@ class NumberInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return TextField(
       controller: controller,
       onChanged: onChanged,
       enabled: !isDisabled,
       keyboardType: TextInputType.number,
+      style: TextStyle(color: colors.textColor),
       decoration: InputDecoration(
         hintText: placeholder,
         hintStyle: TextStyle(color: colors.textMuted),
         filled: true,
         fillColor: colors.inputBg,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.borderColor),
@@ -279,6 +230,10 @@ class NumberInput extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
@@ -311,23 +266,7 @@ class TextArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return TextField(
       controller: controller,
@@ -335,11 +274,14 @@ class TextArea extends StatelessWidget {
       enabled: !isDisabled,
       minLines: minLines,
       maxLines: maxLines,
+      style: TextStyle(color: colors.textColor),
       decoration: InputDecoration(
         hintText: placeholder,
         hintStyle: TextStyle(color: colors.textMuted),
         filled: true,
         fillColor: colors.inputBg,
+        focusColor: Colors.transparent,
+        hoverColor: Colors.transparent,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.borderColor),
@@ -351,6 +293,10 @@ class TextArea extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(4),
           borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(4),
+          borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
@@ -379,23 +325,7 @@ class SelectDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -443,36 +373,25 @@ class CheckboxInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return Row(
       children: [
         Checkbox(
           value: value,
-          onChanged: isDisabled ? null : onChanged,
+          onChanged: isDisabled ? null : (val) => onChanged?.call(val ?? false),
           activeColor: colors.accentColor,
+          checkColor: colors.whiteColor,
+          side: BorderSide(color: colors.borderColor),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: colors.textColor,
-            fontSize: 14,
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDisabled ? colors.textMuted : colors.textColor,
+            ),
           ),
         ),
       ],
@@ -503,23 +422,7 @@ class RadioInput<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return Row(
       children: [
@@ -529,11 +432,14 @@ class RadioInput<T> extends StatelessWidget {
           onChanged: isDisabled ? null : onChanged,
           activeColor: colors.accentColor,
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: colors.textColor,
-            fontSize: 14,
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDisabled ? colors.textMuted : colors.textColor,
+            ),
           ),
         ),
       ],
@@ -543,57 +449,42 @@ class RadioInput<T> extends StatelessWidget {
 
 /// View All Link component
 class ViewAllLink extends StatelessWidget {
-  final String text;
-  final VoidCallback? onTap;
+  final VoidCallback onPressed;
   final bool? isTestMode;
   final bool? testDarkMode;
 
   const ViewAllLink({
-    required this.text,
+    required this.onPressed,
     super.key,
-    this.onTap,
     this.isTestMode = false,
     this.testDarkMode = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
+    final colors = context.colorsListening;
 
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
-
-    return InkWell(
-      onTap: onTap,
+    return TextButton(
+      onPressed: onPressed,
+      style: TextButton.styleFrom(
+        padding: EdgeInsets.zero,
+        minimumSize: Size.zero,
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Flexible(
-            child: Text(
-              text,
-              style: TextStyle(
-                color: colors.accentColor,
-                fontWeight: FontWeight.w500,
-              ),
-              overflow: TextOverflow.ellipsis,
+          Text(
+            'View All',
+            style: TextStyle(
+              color: colors.accentColor,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(width: 4),
           Icon(
-            Icons.chevron_right,
+            Icons.arrow_forward,
             size: 16,
             color: colors.accentColor,
           ),
@@ -603,6 +494,7 @@ class ViewAllLink extends StatelessWidget {
   }
 }
 
+/// Demo widget for form elements showcase
 class FormElementsWidget extends StatelessWidget {
   final bool? isTestMode;
   final bool? testDarkMode;
@@ -615,15 +507,33 @@ class FormElementsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colorsListening;
+
     return Column(
       children: [
         // Basic text input
         TextFormField(
+          style: TextStyle(color: colors.textColor),
           decoration: InputDecoration(
             labelText: 'Text Input',
+            labelStyle: TextStyle(color: colors.textSecondary),
             hintText: 'Enter text here',
+            hintStyle: TextStyle(color: colors.textMuted),
+            filled: true,
+            fillColor: colors.inputBg,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
             ),
           ),
         ),
@@ -632,29 +542,70 @@ class FormElementsWidget extends StatelessWidget {
         // Password input
         TextFormField(
           obscureText: true,
+          style: TextStyle(color: colors.textColor),
           decoration: InputDecoration(
             labelText: 'Password',
+            labelStyle: TextStyle(color: colors.textSecondary),
             hintText: 'Enter password',
+            hintStyle: TextStyle(color: colors.textMuted),
+            filled: true,
+            fillColor: colors.inputBg,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.borderColor),
             ),
-            suffixIcon: const Icon(Icons.visibility_off),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+            ),
+            suffixIcon: Icon(Icons.visibility_off, color: colors.textMuted),
           ),
         ),
         const SizedBox(height: 16),
 
         // Dropdown
         DropdownButtonFormField<String>(
+          style: TextStyle(color: colors.textColor),
+          dropdownColor: colors.cardBg,
           decoration: InputDecoration(
             labelText: 'Select Option',
+            labelStyle: TextStyle(color: colors.textSecondary),
+            filled: true,
+            fillColor: colors.inputBg,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.borderColor),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
             ),
           ),
-          items: const [
-            DropdownMenuItem(value: 'option1', child: Text('Option 1')),
-            DropdownMenuItem(value: 'option2', child: Text('Option 2')),
-            DropdownMenuItem(value: 'option3', child: Text('Option 3')),
+          items: [
+            DropdownMenuItem(
+              value: 'option1',
+              child: Text('Option 1', style: TextStyle(color: colors.textColor)),
+            ),
+            DropdownMenuItem(
+              value: 'option2',
+              child: Text('Option 2', style: TextStyle(color: colors.textColor)),
+            ),
+            DropdownMenuItem(
+              value: 'option3',
+              child: Text('Option 3', style: TextStyle(color: colors.textColor)),
+            ),
           ],
           onChanged: (value) {},
         ),

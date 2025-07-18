@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../theme/app_colors.dart';
 import '../../theme/app_theme.dart';
 import 'dart:ui';
 
@@ -27,17 +25,8 @@ class _EmptyStateState extends State<EmptyState> {
 
   @override
   Widget build(BuildContext context) {
-    // Try to get theme from provider, fallback to Theme.of(context) for tests
-    bool isDark = false;
-    try {
-      final themeProvider = Provider.of<ThemeProvider>(context, listen: false);
-      isDark = themeProvider.isDarkMode;
-    } catch (e) {
-      // Fallback for tests where Provider might not be available
-      isDark = Theme.of(context).brightness == Brightness.dark;
-    }
-
-    final colors = isDark ? AppColors.dark : AppColors.light;
+    final colors = context.colors;
+    final isDark = context.isDarkMode;
 
     // Colors based on the web version
     final borderColor = _isHovering

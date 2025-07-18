@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
-import '../../theme/app_colors.dart';
 import '../responsive/responsive_breakpoints.dart';
 import '../atoms/buttons/app_buttons.dart';
 
@@ -101,23 +99,7 @@ class ChatInterfaceState extends State<ChatInterface> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    dynamic colors;
-
-    if (widget.isTestMode == true) {
-      isDarkMode = widget.testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors = context.colorsListening;
 
     return Container(
       height: 400,
@@ -199,15 +181,27 @@ class ChatInterfaceState extends State<ChatInterface> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    style: TextStyle(color: colors.textColor),
                     decoration: InputDecoration(
                       hintText: 'Type a message...',
                       hintStyle: TextStyle(color: colors.textMuted),
+                      filled: true,
+                      fillColor: colors.inputBg,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(8),
                         borderSide: BorderSide(color: colors.borderColor),
                       ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: colors.borderColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                      ),
                     ),
-                    style: TextStyle(color: colors.textColor),
                     onSubmitted: (_) => _sendMessage(),
                   ),
                 ),
@@ -218,7 +212,7 @@ class ChatInterfaceState extends State<ChatInterface> {
                   icon: Icons.send,
                   isLoading: _isLoading,
                   isTestMode: widget.isTestMode ?? false,
-                  testDarkMode: isDarkMode,
+                  testDarkMode: context.isDarkMode,
                 ),
               ],
             ),

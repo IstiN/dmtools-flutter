@@ -640,11 +640,14 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
           controller: controller,
           maxLines: maxLines,
           onChanged: onChanged,
+          style: TextStyle(color: colors.textColor),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(color: colors.textMuted),
             filled: true,
             fillColor: colors.inputBg,
+            focusColor: Colors.transparent,
+            hoverColor: Colors.transparent,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: colors.borderColor),
@@ -656,6 +659,10 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: colors.borderColor.withValues(alpha: 0.5)),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
           ),

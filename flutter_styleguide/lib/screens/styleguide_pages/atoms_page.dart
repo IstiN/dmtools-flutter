@@ -227,7 +227,7 @@ class AtomsPageState extends State<AtomsPage> {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
-        const ComponentDisplay(
+        ComponentDisplay(
           title: 'Links',
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -235,7 +235,7 @@ class AtomsPageState extends State<AtomsPage> {
               ComponentItem(
                 title: 'View All Link',
                 child: ViewAllLink(
-                  text: 'View all items',
+                  onPressed: () {},
                 ),
               ),
             ],

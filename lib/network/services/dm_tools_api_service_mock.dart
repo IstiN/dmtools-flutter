@@ -120,6 +120,53 @@ class DmToolsApiServiceMock implements DmToolsApiService {
   @override
   Future<WorkspaceDto> createDefaultWorkspace() => Future.value(const WorkspaceDto());
 
+  // Integration methods
+
+  @override
+  Future<List<IntegrationDto>> getIntegrations() async {
+    return [];
+  }
+
+  @override
+  Future<List<IntegrationTypeDto>> getIntegrationTypes() async {
+    return [];
+  }
+
+  @override
+  Future<IntegrationDto> getIntegration(String id, {bool includeSensitive = false}) async {
+    return const IntegrationDto();
+  }
+
+  @override
+  Future<IntegrationDto> createIntegration(CreateIntegrationRequest request) async {
+    return const IntegrationDto();
+  }
+
+  @override
+  Future<IntegrationDto> updateIntegration(String id, UpdateIntegrationRequest request) async {
+    return const IntegrationDto();
+  }
+
+  @override
+  Future<void> deleteIntegration(String id) async {
+    // Mock implementation
+  }
+
+  @override
+  Future<IntegrationDto> enableIntegration(String id) async {
+    return const IntegrationDto();
+  }
+
+  @override
+  Future<IntegrationDto> disableIntegration(String id) async {
+    return const IntegrationDto();
+  }
+
+  @override
+  Future<Object> testIntegration(TestIntegrationRequest request) async {
+    return {};
+  }
+
   @override
   void dispose() {}
 }

@@ -1,0 +1,7 @@
+---
+description: When I'm askin to prepare description of feature before starting implementation
+alwaysApply: false
+---
+If I ask to develop some jira ticket. First you need to read jira ticket information and act as business analist you need to ask questions or clarification to make nice description of the feature / story. You can ask them in chat but then you need to update jira ticket with all required details. Use Jira MCP for that.
+
+You need to use proper jira markdown syntax to write nice looking descriptions and comments.

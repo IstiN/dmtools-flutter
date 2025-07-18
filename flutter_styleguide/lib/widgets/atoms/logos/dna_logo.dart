@@ -47,7 +47,7 @@ class _DnaLogoPainter extends CustomPainter {
     const totalAngle = twists * 2 * pi;
 
     final rungPaint = Paint()
-      ..color = Colors.white.withOpacity(0.5)
+      ..color = Colors.white.withValues(alpha: 0.5)
       ..strokeWidth = strokeWidth / 8
       ..strokeCap = StrokeCap.round;
 

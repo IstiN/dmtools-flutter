@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../styleguide/theme_switch.dart';
@@ -22,23 +21,9 @@ class PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    ThemeColorSet colors;
-
-    if (isTestMode == true) {
-      isDarkMode = testDarkMode ?? false;
-      colors = isDarkMode ? AppColors.dark : AppColors.light;
-    } else {
-      try {
-        final themeProvider = Provider.of<ThemeProvider>(context);
-        isDarkMode = themeProvider.isDarkMode;
-        colors = isDarkMode ? AppColors.dark : AppColors.light;
-      } catch (e) {
-        // Fallback for tests
-        isDarkMode = false;
-        colors = AppColors.light;
-      }
-    }
+    final colors =
+        isTestMode == true ? (testDarkMode == true ? AppColors.dark : AppColors.light) : context.colorsListening;
+    final isDarkMode = isTestMode == true ? testDarkMode == true : context.isDarkMode;
 
     return Container(
       height: 80,

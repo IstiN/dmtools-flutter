@@ -210,14 +210,27 @@ WorkspaceManagement(
               children: [
                 TextFormField(
                   controller: _nameController,
+                  style: TextStyle(color: colors.textColor),
                   decoration: InputDecoration(
                     labelText: 'Workspace Name',
                     labelStyle: TextStyle(color: colors.textSecondary),
+                    filled: true,
+                    fillColor: colors.inputBg,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
                     border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
                       borderSide: BorderSide(color: colors.borderColor),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                    ),
                   ),
-                  style: TextStyle(color: colors.textColor),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a workspace name';
@@ -228,14 +241,27 @@ WorkspaceManagement(
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,
+                  style: TextStyle(color: colors.textColor),
                   decoration: InputDecoration(
                     labelText: 'Description',
                     labelStyle: TextStyle(color: colors.textSecondary),
+                    filled: true,
+                    fillColor: colors.inputBg,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
                     border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
                       borderSide: BorderSide(color: colors.borderColor),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                    ),
                   ),
-                  style: TextStyle(color: colors.textColor),
                   maxLines: 3,
                 ),
                 const SizedBox(height: 24),
@@ -303,14 +329,27 @@ WorkspaceManagement(
               children: [
                 TextFormField(
                   controller: _nameController,
+                  style: TextStyle(color: colors.textColor),
                   decoration: InputDecoration(
                     labelText: 'Workspace Name',
                     labelStyle: TextStyle(color: colors.textSecondary),
+                    filled: true,
+                    fillColor: colors.inputBg,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
                     border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
                       borderSide: BorderSide(color: colors.borderColor),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                    ),
                   ),
-                  style: TextStyle(color: colors.textColor),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a workspace name';
@@ -321,14 +360,27 @@ WorkspaceManagement(
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _descriptionController,
+                  style: TextStyle(color: colors.textColor),
                   decoration: InputDecoration(
                     labelText: 'Description',
                     labelStyle: TextStyle(color: colors.textSecondary),
+                    filled: true,
+                    fillColor: colors.inputBg,
+                    focusColor: Colors.transparent,
+                    hoverColor: Colors.transparent,
                     border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
                       borderSide: BorderSide(color: colors.borderColor),
                     ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.borderColor),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(4),
+                      borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                    ),
                   ),
-                  style: TextStyle(color: colors.textColor),
                   maxLines: 3,
                 ),
                 const SizedBox(height: 24),

@@ -61,11 +61,26 @@ class _StyleguideAppState extends State<StyleguideApp> with WidgetsBindingObserv
       value: _themeProvider,
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
+          // Show loading screen until theme is initialized
+          if (!_isThemeInitialized) {
+            return MaterialApp(
+              title: 'DMTools Styleguide',
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              debugShowCheckedModeBanner: false,
+              home: const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            );
+          }
+
           return MaterialApp.router(
             title: 'DMTools Styleguide',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
-            themeMode: _isThemeInitialized ? themeProvider.currentThemeMode : ThemeMode.system,
+            themeMode: themeProvider.currentThemeMode,
             routerConfig: StyleguideRouter.router,
             debugShowCheckedModeBanner: false,
           );

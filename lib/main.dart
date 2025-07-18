@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import 'core/routing/app_router.dart';
 import 'providers/auth_provider.dart';
+import 'providers/integration_provider.dart';
 import 'network/services/dm_tools_api_service.dart';
 
 void main() async {
@@ -17,6 +18,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ServiceLocator.get<AuthProvider>()),
         Provider<DmToolsApiService>(create: (_) => ServiceLocator.get()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<IntegrationProvider>()),
       ],
       child: const DMToolsApp(),
     ),

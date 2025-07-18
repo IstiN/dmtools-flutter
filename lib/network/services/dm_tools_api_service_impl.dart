@@ -177,6 +177,132 @@ class DmToolsApiServiceImpl implements DmToolsApiService {
     }
   }
 
+  // Integration methods
+
+  @override
+  Future<List<IntegrationDto>> getIntegrations() async {
+    try {
+      final response = await _api.apiIntegrationsGet();
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to get integrations', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<List<IntegrationTypeDto>> getIntegrationTypes() async {
+    try {
+      final response = await _api.apiIntegrationsTypesGet();
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to get integration types', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<IntegrationDto> getIntegration(String id, {bool includeSensitive = false}) async {
+    try {
+      final response = await _api.apiIntegrationsIdGet(id: id, includeSensitive: includeSensitive);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to get integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<IntegrationDto> createIntegration(CreateIntegrationRequest request) async {
+    try {
+      final response = await _api.apiIntegrationsPost(body: request);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to create integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<IntegrationDto> updateIntegration(String id, UpdateIntegrationRequest request) async {
+    try {
+      final response = await _api.apiIntegrationsIdPut(id: id, body: request);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to update integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> deleteIntegration(String id) async {
+    try {
+      final response = await _api.apiIntegrationsIdDelete(id: id);
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to delete integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<IntegrationDto> enableIntegration(String id) async {
+    try {
+      final response = await _api.apiIntegrationsIdEnablePut(id: id);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to enable integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<IntegrationDto> disableIntegration(String id) async {
+    try {
+      final response = await _api.apiIntegrationsIdDisablePut(id: id);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to disable integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<Object> testIntegration(TestIntegrationRequest request) async {
+    try {
+      final response = await _api.apiIntegrationsTestPost(body: request);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to test integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
   Exception _handleError(dynamic error) {
     if (error is ApiException) {
       return error;

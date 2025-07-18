@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 
@@ -10,13 +9,14 @@ class NotificationMessage extends StatelessWidget {
   final NotificationType type;
 
   const NotificationMessage({
-    required this.message, required this.type, super.key,
+    required this.message,
+    required this.type,
+    super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Provider.of<ThemeProvider>(context);
-    final colors = theme.isDarkMode ? AppColors.dark : AppColors.light;
+    final colors = context.colors;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -59,4 +59,4 @@ class NotificationMessage extends StatelessWidget {
         return Icons.warning;
     }
   }
-} 
+}

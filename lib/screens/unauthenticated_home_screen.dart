@@ -84,8 +84,8 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                           await authProvider.enableDemoMode();
                         },
                         logoWidget: DnaLogo(
-                          color1: Colors.white.withOpacity(0.9),
-                          color2: Colors.white.withOpacity(0.6),
+                          color1: Colors.white.withValues(alpha: 0.9),
+                          color2: Colors.white.withValues(alpha: 0.6),
                         ),
                       ),
                     ),

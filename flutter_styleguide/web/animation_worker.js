@@ -1,4 +1,8 @@
-// This script runs in a separate thread and handles the animation logic.
+/**
+ * DMTools Shared Animation Worker
+ * DNA animation logic for loading screens
+ * Used by both main app and styleguide
+ */
 
 let canvas;
 let ctx;
