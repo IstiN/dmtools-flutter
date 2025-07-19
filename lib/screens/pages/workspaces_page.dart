@@ -173,6 +173,7 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
             return SecondaryButton(
               text: 'Debug Auth',
               icon: Icons.bug_report,
+              size: ButtonSize.small,
               onPressed: () {
                 _showAuthDebugDialog(authProvider);
               },
@@ -187,6 +188,7 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
       PrimaryButton(
         text: 'Create Workspace',
         icon: Icons.add,
+        size: ButtonSize.small,
         onPressed: _showCreateForm
             ? null
             : () {
@@ -703,15 +705,6 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Your Workspaces (${workspaces.length})',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: colors.textColor,
-          ),
-        ),
-        const SizedBox(height: 16),
         ...workspaces.map((workspace) => _buildWorkspaceCard(workspace, colors)),
       ],
     );
