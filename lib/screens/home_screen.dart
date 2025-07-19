@@ -200,6 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
       color: colors.bgColor,
       width: double.infinity,
       height: double.infinity,
+      padding: const EdgeInsets.all(24),
       child: widget.child ?? const SizedBox.shrink(),
     );
   }
