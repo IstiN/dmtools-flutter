@@ -195,37 +195,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildPageContent() {
     final colors = context.colorsListening;
-    final currentLocation = GoRouterState.of(context).uri.toString();
-    final currentRoute = app_router.navigationItems.firstWhere(
-      (item) => item.route == currentLocation,
-      orElse: () => app_router.navigationItems.first,
-    );
 
     return Container(
       color: colors.bgColor,
       width: double.infinity,
       height: double.infinity,
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Page Title
-          Text(
-            currentRoute.label,
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: colors.textColor,
-            ),
-          ),
-          const SizedBox(height: 24),
-
-          // Page Content from router - constrained to available height
-          Expanded(
-            child: widget.child ?? const SizedBox.shrink(),
-          ),
-        ],
-      ),
+      child: widget.child ?? const SizedBox.shrink(),
     );
   }
 }
