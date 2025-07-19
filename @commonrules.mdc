@@ -1,8 +1,3 @@
----
-description: 
-globs: 
-alwaysApply: false
----
 FLUTTER DEVELOPMENT RULES:
 
 You must develop new UI elements in flutter_styleguide according to flutter_styleguide/README.md rules
@@ -22,6 +17,37 @@ Use README.MD to understand process of development in flutter styleguide.
 ** IMPORTANT RULES **
 - You must not hardcode colors, you must use colors from styleguide lib.
 - You must not develop UI elements in main app - instead you must develop UI elements in styleguide, write tests, and then use the elements in main app.
+- You must not hardcode dimensions - use constants from AppDimensions class instead.
+- Components must be used directly as OOP objects, not wrapped in display components for demonstration.
+
+** COMPONENT USAGE RULES **
+CRITICAL: Use OOP components directly in styleguide pages to demonstrate real usage patterns.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ Wrapping components in ComponentDisplay for demonstration
+❌ Using components only for showcase without showing real usage
+❌ Hardcoded dimensions like `height: 56.0` instead of `AppDimensions.headerMinHeight`
+❌ Hardcoded spacing like `padding: 20.0` instead of `AppDimensions.spacingM`
+
+REQUIRED PATTERNS:
+✅ Use components directly as they would be used in real applications
+✅ Create OOP component instances with proper configuration
+✅ All dimensions must be defined as constants in AppDimensions class
+✅ Use AppDimensions constants throughout the codebase for consistency
+
+Examples:
+✅ PageActionBar(title: 'My Page', actions: [...]) - direct component usage
+✅ AppDimensions.headerMinHeight instead of hardcoded 56.0
+✅ AppDimensions.spacingL instead of hardcoded 24.0
+❌ ComponentDisplay(child: PageActionBar(...)) - wrapping for showcase only
+❌ height: 56.0 - hardcoded dimensions
+❌ padding: EdgeInsets.all(24.0) - hardcoded padding
+
+DIMENSION MANAGEMENT:
+- All UI dimensions must be defined in AppDimensions class
+- Use semantic naming: headerMinHeight, loadingIndicatorSize, overflowMenuIconSize
+- Group related dimensions together with comments
+- Always use constants instead of hardcoded values
 
 ** LINT MANAGEMENT AND CODE QUALITY RULES **
 CRITICAL: Maintain consistent code quality through automated linting and fixing.
@@ -265,6 +291,11 @@ DEPLOYMENT CONSIDERATIONS:
 - GitHub Actions workflows must include shared asset files
 - Build processes should copy shared assets to correct locations
 - Verify asset paths are correct for production builds
+- Test shared assets work in deployed environments
+
+** IMPORTANT RULE **
+Run flutter lint tools after changes to be sure that there is no errors and warnings.
+
 - Test shared assets work in deployed environments
 
 ** IMPORTANT RULE **

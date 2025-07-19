@@ -59,7 +59,7 @@ class AppDimensions {
   // Form element dimensions
   static const double inputHeight = 40.0;
   static const EdgeInsets inputPadding = EdgeInsets.symmetric(horizontal: spacingM, vertical: spacingS);
-  
+
   // Animation durations
   static const Duration animationDurationFast = Duration(milliseconds: 150);
   static const Duration animationDurationMedium = Duration(milliseconds: 250);
@@ -74,6 +74,13 @@ class AppDimensions {
   // Dialog dimensions
   static const double dialogWidth = 480.0;
   static const EdgeInsets dialogPadding = EdgeInsets.all(spacingXl);
+
+  // Header dimensions
+  static const double headerMinHeight = 56.0;
+  static const double headerBorderOpacity = 0.3;
+  static const double loadingIndicatorSize = 20.0;
+  static const double loadingIndicatorStrokeWidth = 2.0;
+  static const double overflowMenuIconSize = 20.0;
 }
 
 /// Button size enum for use with AppDimensions
@@ -81,4 +88,4 @@ enum ButtonSize {
   small,
   medium,
   large,
-} 
+}
