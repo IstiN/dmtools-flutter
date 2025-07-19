@@ -3,8 +3,8 @@ import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
 import '../atoms/integration_type_icon.dart';
-import '../atoms/buttons/primary_button.dart';
-
+import '../atoms/buttons/app_buttons.dart';
+import '../molecules/headers/page_action_bar.dart';
 import '../molecules/integration_type_selector.dart';
 
 /// Detailed integration page showing comprehensive information and setup
@@ -43,46 +43,51 @@ class _IntegrationDetailState extends State<IntegrationDetail> {
       colors = context.colors;
     }
 
-    return Scaffold(
-      backgroundColor: colors.bgColor,
-      appBar: AppBar(
-        backgroundColor: colors.cardBg,
-        elevation: 0,
-        leading: widget.onBack != null
-            ? IconButton(
-                icon: Icon(Icons.arrow_back, color: colors.textColor),
-                onPressed: widget.onBack,
-              )
-            : null,
-        title: Text(
-          widget.integration.displayName,
-          style: TextStyle(
-            color: colors.textColor,
-            fontWeight: FontWeight.bold,
+    return Container(
+      color: colors.bgColor,
+      child: Column(
+        children: [
+          PageActionBar(
+            title: widget.integration.displayName,
+            showBorder: true,
+            actions: widget.onBack != null
+                ? [
+                    AppIconButton(
+                      text: 'Back',
+                      icon: Icons.arrow_back,
+                      onPressed: widget.onBack!,
+                      size: ButtonSize.small,
+                      isTestMode: widget.isTestMode ?? false,
+                    ),
+                  ]
+                : [],
+            isTestMode: widget.isTestMode ?? false,
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppDimensions.spacingL),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Integration header
-            _buildIntegrationHeader(colors),
-            const SizedBox(height: AppDimensions.spacingXl),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(AppDimensions.spacingL),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Integration header
+                  _buildIntegrationHeader(colors),
+                  const SizedBox(height: AppDimensions.spacingXl),
 
-            // Description
-            _buildDescription(colors),
-            const SizedBox(height: AppDimensions.spacingXl),
+                  // Description
+                  _buildDescription(colors),
+                  const SizedBox(height: AppDimensions.spacingXl),
 
-            // Configuration
-            _buildConfiguration(colors),
-            const SizedBox(height: AppDimensions.spacingXl),
+                  // Configuration
+                  _buildConfiguration(colors),
+                  const SizedBox(height: AppDimensions.spacingXl),
 
-            // Setup button
-            _buildSetupButton(colors),
-          ],
-        ),
+                  // Setup button
+                  _buildSetupButton(colors),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
