@@ -230,6 +230,7 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
               // Header with PageActionBar
               PageActionBar(
                 title: 'Workspace Management',
+                showBorder: true,
                 actions: _getHeaderActions(),
               ),
               const SizedBox(height: 24),
