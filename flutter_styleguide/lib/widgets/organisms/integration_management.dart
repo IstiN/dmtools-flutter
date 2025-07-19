@@ -6,6 +6,7 @@ import '../atoms/buttons/app_buttons.dart';
 import '../molecules/integration_card.dart';
 import '../molecules/integration_type_selector.dart';
 import '../molecules/integration_config_form.dart';
+import '../molecules/headers/page_action_bar.dart';
 import '../atoms/integration_type_icon.dart';
 import '../responsive/responsive_builder.dart';
 
@@ -77,8 +78,34 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(colors),
-          const SizedBox(height: AppDimensions.spacingL),
+          PageActionBar(
+            title: _getHeaderTitle(),
+            showBorder: true,
+            actions: _getHeaderActions(),
+            isTestMode: widget.isTestMode ?? false,
+          ),
+          // Show subtitle below the header for better UX
+          if (_currentView != IntegrationManagementView.list)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppDimensions.spacingL,
+                vertical: AppDimensions.spacingM,
+              ),
+              decoration: BoxDecoration(
+                color: colors.cardBg,
+                border: Border(
+                  bottom: BorderSide(color: colors.borderColor.withValues(alpha: 0.1)),
+                ),
+              ),
+              child: Text(
+                _getHeaderSubtitle(),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: colors.textSecondary,
+                ),
+              ),
+            ),
           Expanded(
             child: _buildContent(colors),
           ),
@@ -87,75 +114,44 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
     );
   }
 
-  Widget _buildHeader(ThemeColorSet colors) {
-    return Container(
-      padding: const EdgeInsets.all(AppDimensions.spacingL),
-      decoration: BoxDecoration(
-        color: colors.cardBg,
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(AppDimensions.radiusL),
-          topRight: Radius.circular(AppDimensions.radiusL),
-        ),
-        border: Border(
-          bottom: BorderSide(color: colors.borderColor),
-        ),
-      ),
-      child: Row(
-        children: [
-          if (_currentView != IntegrationManagementView.list) ...[
-            IconButton(
-              icon: Icon(Icons.arrow_back, color: colors.textColor),
-              onPressed: () {
-                setState(() {
-                  _currentView = IntegrationManagementView.list;
-                  _selectedType = null;
-                  _editingIntegration = null;
-                  _configValues.clear();
-                  _integrationName = '';
-                  _testResult = null;
-                });
-              },
-            ),
-            const SizedBox(width: AppDimensions.spacingS),
-          ],
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _getHeaderTitle(),
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: colors.textColor,
-                  ),
-                ),
-                Text(
-                  _getHeaderSubtitle(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: colors.textSecondary,
-                  ),
-                ),
-              ],
-            ),
+  List<Widget> _getHeaderActions() {
+    switch (_currentView) {
+      case IntegrationManagementView.list:
+        return [
+          PrimaryButton(
+            text: 'Add Integration',
+            icon: Icons.add,
+            onPressed: () {
+              setState(() {
+                _currentView = IntegrationManagementView.discovery;
+              });
+            },
+            size: ButtonSize.small,
+            isTestMode: widget.isTestMode ?? false,
           ),
-          if (_currentView == IntegrationManagementView.list) ...[
-            PrimaryButton(
-              text: 'Add Integration',
-              icon: Icons.add,
-              onPressed: () {
-                setState(() {
-                  _currentView = IntegrationManagementView.discovery;
-                });
-              },
-              isTestMode: widget.isTestMode ?? false,
-              testDarkMode: widget.testDarkMode ?? false,
-            ),
-          ],
-        ],
-      ),
-    );
+        ];
+      case IntegrationManagementView.discovery:
+      case IntegrationManagementView.create:
+      case IntegrationManagementView.edit:
+        return [
+          AppIconButton(
+            text: 'Back',
+            icon: Icons.arrow_back,
+            onPressed: () {
+              setState(() {
+                _currentView = IntegrationManagementView.list;
+                _selectedType = null;
+                _editingIntegration = null;
+                _configValues.clear();
+                _integrationName = '';
+                _testResult = null;
+              });
+            },
+            size: ButtonSize.small,
+            isTestMode: widget.isTestMode ?? false,
+          ),
+        ];
+    }
   }
 
   Widget _buildContent(ThemeColorSet colors) {

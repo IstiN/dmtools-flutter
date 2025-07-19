@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../widgets/organisms/integration_management.dart';
 import '../../../widgets/molecules/integration_type_selector.dart';
-import '../../../theme/app_dimensions.dart';
 
 class IntegrationManagementPage extends StatelessWidget {
   const IntegrationManagementPage({super.key});
@@ -76,45 +75,39 @@ class IntegrationManagementPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Integration Management'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(AppDimensions.spacingM),
-        child: IntegrationManagement(
-          integrations: _sampleIntegrations,
-          availableTypes: _sampleTypes,
-          onCreateIntegration: (type, name, config) {
-            debugPrint('Creating integration: ${type.displayName} with name: $name and config: $config');
-          },
-          onUpdateIntegration: (id, name, config) {
-            debugPrint('Updating integration $id with name: $name and config: $config');
-          },
-          onDeleteIntegration: (id) {
-            debugPrint('Deleting integration: $id');
-          },
-          onEnableIntegration: (id) {
-            debugPrint('Enabling integration: $id');
-          },
-          onDisableIntegration: (id) {
-            debugPrint('Disabling integration: $id');
-          },
-          onTestIntegration: (id, config) {
-            debugPrint('Testing integration $id with config: $config');
-          },
-          onGetIntegrationDetails: (id) async {
-            // Simulate fetching detailed integration data
-            await Future.delayed(const Duration(milliseconds: 500));
+      body: IntegrationManagement(
+        integrations: _sampleIntegrations,
+        availableTypes: _sampleTypes,
+        onCreateIntegration: (type, name, config) {
+          debugPrint('Creating integration: ${type.displayName} with name: $name and config: $config');
+        },
+        onUpdateIntegration: (id, name, config) {
+          debugPrint('Updating integration $id with name: $name and config: $config');
+        },
+        onDeleteIntegration: (id) {
+          debugPrint('Deleting integration: $id');
+        },
+        onEnableIntegration: (id) {
+          debugPrint('Enabling integration: $id');
+        },
+        onDisableIntegration: (id) {
+          debugPrint('Disabling integration: $id');
+        },
+        onTestIntegration: (id, config) {
+          debugPrint('Testing integration $id with config: $config');
+        },
+        onGetIntegrationDetails: (id) async {
+          // Simulate fetching detailed integration data
+          await Future.delayed(const Duration(milliseconds: 500));
 
-            final integration = _sampleIntegrations.firstWhere(
-              (integration) => integration.id == id,
-              orElse: () => _sampleIntegrations.first,
-            );
+          final integration = _sampleIntegrations.firstWhere(
+            (integration) => integration.id == id,
+            orElse: () => _sampleIntegrations.first,
+          );
 
-            debugPrint('Fetching integration details for: $id');
-            return integration;
-          },
-        ),
+          debugPrint('Fetching integration details for: $id');
+          return integration;
+        },
       ),
     );
   }
