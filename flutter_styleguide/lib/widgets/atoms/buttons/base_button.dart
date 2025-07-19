@@ -155,7 +155,9 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
                   fontSize: fontSizes[widget.size],
                   fontWeight: FontWeight.w500,
                   color: isHovering ? hoverTextColor : textColor,
+                  height: 1.2, // Add line height for better text centering
                 ),
+            textAlign: TextAlign.center, // Ensure text is centered
           ),
         ],
       );

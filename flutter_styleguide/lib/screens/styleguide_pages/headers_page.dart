@@ -3,6 +3,7 @@ import '../../theme/app_dimensions.dart';
 import '../../widgets/styleguide/component_display.dart';
 import '../../widgets/molecules/headers/headers.dart';
 import '../../widgets/molecules/user_profile_button.dart';
+import '../../widgets/atoms/buttons/app_buttons.dart';
 
 class HeadersPage extends StatelessWidget {
   const HeadersPage({super.key});
@@ -250,7 +251,115 @@ class HeadersPage extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: AppDimensions.spacingL),
+
+        // PageActionBar Examples - Direct Component Usage
+        const Divider(),
+        const SizedBox(height: AppDimensions.spacingL),
+
+        // Basic page action bar
+        const PageActionBar(
+          title: 'Basic Page Action Bar',
+          isTestMode: true,
+        ),
+        const SizedBox(height: AppDimensions.spacingL),
+
+        // Page action bar with actions
+        PageActionBar(
+          title: 'Page with Actions',
+          actions: [
+            PrimaryButton(
+              text: 'Primary',
+              onPressed: () {},
+              size: ButtonSize.small,
+              isTestMode: true,
+            ),
+            SecondaryButton(
+              text: 'Secondary',
+              onPressed: () {},
+              size: ButtonSize.small,
+              isTestMode: true,
+            ),
+            AppIconButton(
+              text: 'Add',
+              icon: Icons.add,
+              onPressed: () {},
+              size: ButtonSize.small,
+              isTestMode: true,
+            ),
+          ],
+          isTestMode: true,
+        ),
+        const SizedBox(height: AppDimensions.spacingL),
+
+        // Page action bar with border
+        PageActionBar(
+          title: 'Page with Border',
+          showBorder: true,
+          actions: [
+            PrimaryButton(
+              text: 'Action',
+              onPressed: () {},
+              size: ButtonSize.small,
+              isTestMode: true,
+            ),
+          ],
+          isTestMode: true,
+        ),
+        const SizedBox(height: AppDimensions.spacingL),
+
+        // Loading state page action bar
+        PageActionBar(
+          title: 'Loading Actions',
+          isLoading: true,
+          actions: [
+            PrimaryButton(
+              text: 'Process',
+              onPressed: () {},
+              size: ButtonSize.small,
+              isTestMode: true,
+            ),
+          ],
+          isTestMode: true,
+        ),
+        const SizedBox(height: AppDimensions.spacingL),
+
+        // Mobile layout demonstration
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 350),
+          child: PageActionBar(
+            title: 'Mobile Page Layout',
+            actions: [
+              PrimaryButton(
+                text: 'Action 1',
+                onPressed: () {},
+                size: ButtonSize.small,
+                isTestMode: true,
+              ),
+              SecondaryButton(
+                text: 'Action 2',
+                onPressed: () {},
+                size: ButtonSize.small,
+                isTestMode: true,
+              ),
+              OutlineButton(
+                text: 'Action 3',
+                onPressed: () {},
+                size: ButtonSize.small,
+                isTestMode: true,
+              ),
+              AppTextButton(
+                text: 'Action 4',
+                onPressed: () {},
+                size: ButtonSize.small,
+                isTestMode: true,
+              ),
+            ],
+            isTestMode: true,
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingL),
       ],
     );
   }
-} 
+}
