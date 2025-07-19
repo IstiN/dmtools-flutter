@@ -162,6 +162,48 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
     }
   }
 
+  List<Widget> _getHeaderActions() {
+    final actions = <Widget>[];
+
+    // Debug button (only in debug mode)
+    if (kDebugMode) {
+      actions.add(
+        Consumer<app_auth.AuthProvider>(
+          builder: (context, authProvider, child) {
+            return SecondaryButton(
+              text: 'Debug Auth',
+              icon: Icons.bug_report,
+              onPressed: () {
+                _showAuthDebugDialog(authProvider);
+              },
+            );
+          },
+        ),
+      );
+    }
+
+    // Create Workspace button
+    actions.add(
+      PrimaryButton(
+        text: 'Create Workspace',
+        icon: Icons.add,
+        onPressed: _showCreateForm
+            ? null
+            : () {
+                setState(() {
+                  _showCreateForm = true;
+                  _showEditForm = false;
+                  _showShareForm = false;
+                  _createNameController.clear();
+                  _createDescriptionController.clear();
+                });
+              },
+      ),
+    );
+
+    return actions;
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
@@ -183,8 +225,11 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Header - fixed at top
-              _buildHeader(colors),
+              // Header with PageActionBar
+              PageActionBar(
+                title: 'Workspace Management',
+                actions: _getHeaderActions(),
+              ),
               const SizedBox(height: 24),
 
               // Scrollable content area
@@ -233,56 +278,6 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
           );
         },
       ),
-    );
-  }
-
-  Widget _buildHeader(ThemeColorSet colors) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Workspace Management',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: colors.textColor,
-          ),
-        ),
-        Row(
-          children: [
-            // Debug button (only in debug mode)
-            if (kDebugMode) ...[
-              Consumer<app_auth.AuthProvider>(
-                builder: (context, authProvider, child) {
-                  return SecondaryButton(
-                    text: 'Debug Auth',
-                    icon: Icons.bug_report,
-                    onPressed: () {
-                      _showAuthDebugDialog(authProvider);
-                    },
-                  );
-                },
-              ),
-              const SizedBox(width: 12),
-            ],
-            PrimaryButton(
-              text: 'Create Workspace',
-              icon: Icons.add,
-              onPressed: _showCreateForm
-                  ? null
-                  : () {
-                      setState(() {
-                        _showCreateForm = true;
-                        _showEditForm = false;
-                        _showShareForm = false;
-                        _createNameController.clear();
-                        _createDescriptionController.clear();
-                      });
-                    },
-            ),
-          ],
-        ),
-      ],
     );
   }
 
