@@ -4,6 +4,7 @@ import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
 import '../atoms/buttons/app_buttons.dart';
+import '../molecules/headers/page_action_bar.dart';
 import 'panel_base.dart';
 
 class WorkspaceCard {
@@ -30,7 +31,8 @@ class WorkspaceManagement extends StatelessWidget {
   final bool? testDarkMode;
 
   const WorkspaceManagement({
-    required this.workspaces, super.key,
+    required this.workspaces,
+    super.key,
     this.onWorkspaceSelected,
     this.onCreateWorkspace,
     this.isTestMode = false,
@@ -41,7 +43,7 @@ class WorkspaceManagement extends StatelessWidget {
   Widget build(BuildContext context) {
     bool isDarkMode;
     dynamic colors;
-    
+
     if (isTestMode == true) {
       isDarkMode = testDarkMode ?? false;
       colors = isDarkMode ? AppColors.dark : AppColors.light;
@@ -60,18 +62,10 @@ class WorkspaceManagement extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Header section
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Workspaces',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: colors.textColor,
-              ),
-            ),
+        // Header with PageActionBar
+        PageActionBar(
+          title: 'Workspaces',
+          actions: [
             PrimaryButton(
               text: 'Create Workspace',
               onPressed: onCreateWorkspace,
@@ -80,9 +74,10 @@ class WorkspaceManagement extends StatelessWidget {
               testDarkMode: isDarkMode,
             ),
           ],
+          isTestMode: isTestMode ?? false,
         ),
         const SizedBox(height: 24),
-        
+
         // Workspaces list or empty state
         if (workspaces.isEmpty)
           _buildEmptyState(isDarkMode, colors)
@@ -93,8 +88,7 @@ class WorkspaceManagement extends StatelessWidget {
             testDarkMode: isDarkMode,
             content: Column(
               children: [
-                for (var workspace in workspaces)
-                  _buildWorkspaceCard(context, workspace, colors, isDarkMode),
+                for (var workspace in workspaces) _buildWorkspaceCard(context, workspace, colors, isDarkMode),
               ],
             ),
           ),
@@ -270,7 +264,7 @@ class WorkspaceManagement extends StatelessWidget {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       return 'Today';
     } else if (difference.inDays == 1) {
@@ -281,4 +275,4 @@ class WorkspaceManagement extends StatelessWidget {
       return '${date.day}/${date.month}/${date.year}';
     }
   }
-} 
+}
