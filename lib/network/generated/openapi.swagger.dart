@@ -44,14 +44,62 @@ abstract class Openapi extends ChopperService {
     return _$Openapi(newClient);
   }
 
-  ///
-  Future<chopper.Response<Object>> mcpHealthGet() {
-    return _mcpHealthGet();
+  ///Get job configuration by ID
+  ///@param id Job configuration ID
+  Future<chopper.Response<JobConfigurationDto>> apiV1JobConfigurationsIdGet({
+    required String? id,
+  }) {
+    generatedMapping.putIfAbsent(
+      JobConfigurationDto,
+      () => JobConfigurationDto.fromJsonFactory,
+    );
+
+    return _apiV1JobConfigurationsIdGet(id: id);
   }
 
-  ///
-  @GET(path: '/mcp/health')
-  Future<chopper.Response<Object>> _mcpHealthGet();
+  ///Get job configuration by ID
+  ///@param id Job configuration ID
+  @GET(path: '/api/v1/job-configurations/{id}')
+  Future<chopper.Response<JobConfigurationDto>> _apiV1JobConfigurationsIdGet({
+    @Path('id') required String? id,
+  });
+
+  ///Update job configuration
+  ///@param id Job configuration ID
+  Future<chopper.Response<JobConfigurationDto>> apiV1JobConfigurationsIdPut({
+    required String? id,
+    required UpdateJobConfigurationRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      JobConfigurationDto,
+      () => JobConfigurationDto.fromJsonFactory,
+    );
+
+    return _apiV1JobConfigurationsIdPut(id: id, body: body);
+  }
+
+  ///Update job configuration
+  ///@param id Job configuration ID
+  @PUT(path: '/api/v1/job-configurations/{id}', optionalBody: true)
+  Future<chopper.Response<JobConfigurationDto>> _apiV1JobConfigurationsIdPut({
+    @Path('id') required String? id,
+    @Body() required UpdateJobConfigurationRequest? body,
+  });
+
+  ///Delete job configuration
+  ///@param id Job configuration ID
+  Future<chopper.Response> apiV1JobConfigurationsIdDelete({
+    required String? id,
+  }) {
+    return _apiV1JobConfigurationsIdDelete(id: id);
+  }
+
+  ///Delete job configuration
+  ///@param id Job configuration ID
+  @DELETE(path: '/api/v1/job-configurations/{id}')
+  Future<chopper.Response> _apiV1JobConfigurationsIdDelete({
+    @Path('id') required String? id,
+  });
 
   ///
   ///@param userId
@@ -274,6 +322,127 @@ abstract class Openapi extends ChopperService {
   ///
   @POST(path: '/api/workspaces/default', optionalBody: true)
   Future<chopper.Response<WorkspaceDto>> _apiWorkspacesDefaultPost();
+
+  ///Execute a job in server-managed mode
+  Future<chopper.Response<Object>> apiV1JobsExecutePost({
+    required JobExecutionRequest? body,
+  }) {
+    return _apiV1JobsExecutePost(body: body);
+  }
+
+  ///Execute a job in server-managed mode
+  @POST(path: '/api/v1/jobs/execute', optionalBody: true)
+  Future<chopper.Response<Object>> _apiV1JobsExecutePost({
+    @Body() required JobExecutionRequest? body,
+  });
+
+  ///Execute a saved job configuration
+  ///@param configId Job configuration ID
+  Future<chopper.Response<Object>> apiV1JobsConfigurationsConfigIdExecutePost({
+    required String? configId,
+    required ExecuteJobConfigurationRequest? body,
+  }) {
+    return _apiV1JobsConfigurationsConfigIdExecutePost(
+      configId: configId,
+      body: body,
+    );
+  }
+
+  ///Execute a saved job configuration
+  ///@param configId Job configuration ID
+  @POST(
+    path: '/api/v1/jobs/configurations/{configId}/execute',
+    optionalBody: true,
+  )
+  Future<chopper.Response<Object>> _apiV1JobsConfigurationsConfigIdExecutePost({
+    @Path('configId') required String? configId,
+    @Body() required ExecuteJobConfigurationRequest? body,
+  });
+
+  ///Get all job configurations
+  ///@param enabled Only return enabled configurations
+  Future<chopper.Response<List<JobConfigurationDto>>>
+  apiV1JobConfigurationsGet({bool? enabled}) {
+    generatedMapping.putIfAbsent(
+      JobConfigurationDto,
+      () => JobConfigurationDto.fromJsonFactory,
+    );
+
+    return _apiV1JobConfigurationsGet(enabled: enabled);
+  }
+
+  ///Get all job configurations
+  ///@param enabled Only return enabled configurations
+  @GET(path: '/api/v1/job-configurations')
+  Future<chopper.Response<List<JobConfigurationDto>>>
+  _apiV1JobConfigurationsGet({@Query('enabled') bool? enabled});
+
+  ///Create a new job configuration
+  Future<chopper.Response<JobConfigurationDto>> apiV1JobConfigurationsPost({
+    required CreateJobConfigurationRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      JobConfigurationDto,
+      () => JobConfigurationDto.fromJsonFactory,
+    );
+
+    return _apiV1JobConfigurationsPost(body: body);
+  }
+
+  ///Create a new job configuration
+  @POST(path: '/api/v1/job-configurations', optionalBody: true)
+  Future<chopper.Response<JobConfigurationDto>> _apiV1JobConfigurationsPost({
+    @Body() required CreateJobConfigurationRequest? body,
+  });
+
+  ///Webhook endpoint for job execution
+  ///@param id Job configuration ID
+  ///@param X-API-Key API key for authentication (future enhancement)
+  Future<chopper.Response<Object>> apiV1JobConfigurationsIdWebhookPost({
+    required String? id,
+    String? xAPIKey,
+    required ExecuteJobConfigurationRequest? body,
+  }) {
+    return _apiV1JobConfigurationsIdWebhookPost(
+      id: id,
+      xAPIKey: xAPIKey?.toString(),
+      body: body,
+    );
+  }
+
+  ///Webhook endpoint for job execution
+  ///@param id Job configuration ID
+  ///@param X-API-Key API key for authentication (future enhancement)
+  @POST(path: '/api/v1/job-configurations/{id}/webhook', optionalBody: true)
+  Future<chopper.Response<Object>> _apiV1JobConfigurationsIdWebhookPost({
+    @Path('id') required String? id,
+    @Header('X-API-Key') String? xAPIKey,
+    @Body() required ExecuteJobConfigurationRequest? body,
+  });
+
+  ///Execute a saved job configuration
+  ///@param id Job configuration ID
+  Future<chopper.Response<ExecutionParametersDto>>
+  apiV1JobConfigurationsIdExecutePost({
+    required String? id,
+    required ExecuteJobConfigurationRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      ExecutionParametersDto,
+      () => ExecutionParametersDto.fromJsonFactory,
+    );
+
+    return _apiV1JobConfigurationsIdExecutePost(id: id, body: body);
+  }
+
+  ///Execute a saved job configuration
+  ///@param id Job configuration ID
+  @POST(path: '/api/v1/job-configurations/{id}/execute', optionalBody: true)
+  Future<chopper.Response<ExecutionParametersDto>>
+  _apiV1JobConfigurationsIdExecutePost({
+    @Path('id') required String? id,
+    @Body() required ExecuteJobConfigurationRequest? body,
+  });
 
   ///
   ///@param message
@@ -709,6 +878,56 @@ abstract class Openapi extends ChopperService {
     @Path('workspaceId') required String? workspaceId,
   });
 
+  ///Get required integrations for a job
+  ///@param jobName Name of the job
+  Future<chopper.Response> apiV1JobsJobNameIntegrationsGet({
+    required String? jobName,
+  }) {
+    return _apiV1JobsJobNameIntegrationsGet(jobName: jobName);
+  }
+
+  ///Get required integrations for a job
+  ///@param jobName Name of the job
+  @GET(path: '/api/v1/jobs/{jobName}/integrations')
+  Future<chopper.Response> _apiV1JobsJobNameIntegrationsGet({
+    @Path('jobName') required String? jobName,
+  });
+
+  ///Get job types
+  Future<chopper.Response> apiV1JobsTypesGet() {
+    return _apiV1JobsTypesGet();
+  }
+
+  ///Get job types
+  @GET(path: '/api/v1/jobs/types')
+  Future<chopper.Response> _apiV1JobsTypesGet();
+
+  ///Get job type details
+  ///@param jobName Name of the job type
+  Future<chopper.Response<JobTypeDto>> apiV1JobsTypesJobNameGet({
+    required String? jobName,
+  }) {
+    generatedMapping.putIfAbsent(JobTypeDto, () => JobTypeDto.fromJsonFactory);
+
+    return _apiV1JobsTypesJobNameGet(jobName: jobName);
+  }
+
+  ///Get job type details
+  ///@param jobName Name of the job type
+  @GET(path: '/api/v1/jobs/types/{jobName}')
+  Future<chopper.Response<JobTypeDto>> _apiV1JobsTypesJobNameGet({
+    @Path('jobName') required String? jobName,
+  });
+
+  ///Get available jobs
+  Future<chopper.Response> apiV1JobsAvailableGet() {
+    return _apiV1JobsAvailableGet();
+  }
+
+  ///Get available jobs
+  @GET(path: '/api/v1/jobs/available')
+  Future<chopper.Response> _apiV1JobsAvailableGet();
+
   ///
   Future<chopper.Response<String>> apiV1ChatHealthGet() {
     return _apiV1ChatHealthGet();
@@ -882,6 +1101,28 @@ abstract class Openapi extends ChopperService {
   @GET(path: '/api/integrations/types/{type}/schema')
   Future<chopper.Response<IntegrationTypeDto>>
   _apiIntegrationsTypesTypeSchemaGet({@Path('type') required String? type});
+
+  ///Get integration setup documentation
+  ///@param type
+  ///@param locale
+  Future<chopper.Response<String>> apiIntegrationsTypesTypeDocumentationGet({
+    required String? type,
+    String? locale,
+  }) {
+    return _apiIntegrationsTypesTypeDocumentationGet(
+      type: type,
+      locale: locale,
+    );
+  }
+
+  ///Get integration setup documentation
+  ///@param type
+  ///@param locale
+  @GET(path: '/api/integrations/types/{type}/documentation')
+  Future<chopper.Response<String>> _apiIntegrationsTypesTypeDocumentationGet({
+    @Path('type') required String? type,
+    @Query('locale') String? locale,
+  });
 
   ///Get configuration
   Future<chopper.Response<Object>> apiConfigGet() {

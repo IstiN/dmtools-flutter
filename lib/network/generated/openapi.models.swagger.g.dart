@@ -6,6 +6,92 @@ part of 'openapi.models.swagger.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+JsonNode _$JsonNodeFromJson(Map<String, dynamic> json) => JsonNode();
+
+Map<String, dynamic> _$JsonNodeToJson(JsonNode instance) => <String, dynamic>{};
+
+UpdateJobConfigurationRequest _$UpdateJobConfigurationRequestFromJson(
+        Map<String, dynamic> json) =>
+    UpdateJobConfigurationRequest(
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+      jobType: json['jobType'] as String?,
+      jobParameters: json['jobParameters'] == null
+          ? null
+          : JsonNode.fromJson(json['jobParameters'] as Map<String, dynamic>),
+      integrationMappings: json['integrationMappings'] == null
+          ? null
+          : JsonNode.fromJson(
+              json['integrationMappings'] as Map<String, dynamic>),
+      enabled: json['enabled'] as bool?,
+    );
+
+Map<String, dynamic> _$UpdateJobConfigurationRequestToJson(
+        UpdateJobConfigurationRequest instance) =>
+    <String, dynamic>{
+      if (instance.name case final value?) 'name': value,
+      if (instance.description case final value?) 'description': value,
+      if (instance.jobType case final value?) 'jobType': value,
+      if (instance.jobParameters?.toJson() case final value?)
+        'jobParameters': value,
+      if (instance.integrationMappings?.toJson() case final value?)
+        'integrationMappings': value,
+      if (instance.enabled case final value?) 'enabled': value,
+    };
+
+JobConfigurationDto _$JobConfigurationDtoFromJson(Map<String, dynamic> json) =>
+    JobConfigurationDto(
+      id: json['id'] as String?,
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+      jobType: json['jobType'] as String?,
+      createdById: json['createdById'] as String?,
+      createdByName: json['createdByName'] as String?,
+      createdByEmail: json['createdByEmail'] as String?,
+      jobParameters: json['jobParameters'] == null
+          ? null
+          : JsonNode.fromJson(json['jobParameters'] as Map<String, dynamic>),
+      integrationMappings: json['integrationMappings'] == null
+          ? null
+          : JsonNode.fromJson(
+              json['integrationMappings'] as Map<String, dynamic>),
+      enabled: json['enabled'] as bool?,
+      executionCount: (json['executionCount'] as num?)?.toInt(),
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
+      lastExecutedAt: json['lastExecutedAt'] == null
+          ? null
+          : DateTime.parse(json['lastExecutedAt'] as String),
+    );
+
+Map<String, dynamic> _$JobConfigurationDtoToJson(
+        JobConfigurationDto instance) =>
+    <String, dynamic>{
+      if (instance.id case final value?) 'id': value,
+      if (instance.name case final value?) 'name': value,
+      if (instance.description case final value?) 'description': value,
+      if (instance.jobType case final value?) 'jobType': value,
+      if (instance.createdById case final value?) 'createdById': value,
+      if (instance.createdByName case final value?) 'createdByName': value,
+      if (instance.createdByEmail case final value?) 'createdByEmail': value,
+      if (instance.jobParameters?.toJson() case final value?)
+        'jobParameters': value,
+      if (instance.integrationMappings?.toJson() case final value?)
+        'integrationMappings': value,
+      if (instance.enabled case final value?) 'enabled': value,
+      if (instance.executionCount case final value?) 'executionCount': value,
+      if (instance.createdAt?.toIso8601String() case final value?)
+        'createdAt': value,
+      if (instance.updatedAt?.toIso8601String() case final value?)
+        'updatedAt': value,
+      if (instance.lastExecutedAt?.toIso8601String() case final value?)
+        'lastExecutedAt': value,
+    };
+
 ConfigParam _$ConfigParamFromJson(Map<String, dynamic> json) => ConfigParam(
       $value: json['value'] as String?,
       sensitive: json['sensitive'] as bool?,
@@ -229,6 +315,109 @@ Map<String, dynamic> _$ShareWorkspaceRequestToJson(
         'role': value,
     };
 
+JSONObject _$JSONObjectFromJson(Map<String, dynamic> json) => JSONObject(
+      empty: json['empty'] as bool?,
+    );
+
+Map<String, dynamic> _$JSONObjectToJson(JSONObject instance) =>
+    <String, dynamic>{
+      if (instance.empty case final value?) 'empty': value,
+    };
+
+JobExecutionRequest _$JobExecutionRequestFromJson(Map<String, dynamic> json) =>
+    JobExecutionRequest(
+      jobName: json['jobName'] as String?,
+      params: json['params'] == null
+          ? null
+          : JSONObject.fromJson(json['params'] as Map<String, dynamic>),
+      requiredIntegrations: (json['requiredIntegrations'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$JobExecutionRequestToJson(
+        JobExecutionRequest instance) =>
+    <String, dynamic>{
+      if (instance.jobName case final value?) 'jobName': value,
+      if (instance.params?.toJson() case final value?) 'params': value,
+      if (instance.requiredIntegrations case final value?)
+        'requiredIntegrations': value,
+    };
+
+ExecuteJobConfigurationRequest _$ExecuteJobConfigurationRequestFromJson(
+        Map<String, dynamic> json) =>
+    ExecuteJobConfigurationRequest(
+      parameterOverrides: json['parameterOverrides'] == null
+          ? null
+          : JsonNode.fromJson(
+              json['parameterOverrides'] as Map<String, dynamic>),
+      integrationOverrides: json['integrationOverrides'] == null
+          ? null
+          : JsonNode.fromJson(
+              json['integrationOverrides'] as Map<String, dynamic>),
+      executionMode: json['executionMode'] as String?,
+    );
+
+Map<String, dynamic> _$ExecuteJobConfigurationRequestToJson(
+        ExecuteJobConfigurationRequest instance) =>
+    <String, dynamic>{
+      if (instance.parameterOverrides?.toJson() case final value?)
+        'parameterOverrides': value,
+      if (instance.integrationOverrides?.toJson() case final value?)
+        'integrationOverrides': value,
+      if (instance.executionMode case final value?) 'executionMode': value,
+    };
+
+CreateJobConfigurationRequest _$CreateJobConfigurationRequestFromJson(
+        Map<String, dynamic> json) =>
+    CreateJobConfigurationRequest(
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      jobType: json['jobType'] as String,
+      jobParameters:
+          JsonNode.fromJson(json['jobParameters'] as Map<String, dynamic>),
+      integrationMappings: JsonNode.fromJson(
+          json['integrationMappings'] as Map<String, dynamic>),
+      enabled: json['enabled'] as bool?,
+    );
+
+Map<String, dynamic> _$CreateJobConfigurationRequestToJson(
+        CreateJobConfigurationRequest instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      if (instance.description case final value?) 'description': value,
+      'jobType': instance.jobType,
+      'jobParameters': instance.jobParameters.toJson(),
+      'integrationMappings': instance.integrationMappings.toJson(),
+      if (instance.enabled case final value?) 'enabled': value,
+    };
+
+ExecutionParametersDto _$ExecutionParametersDtoFromJson(
+        Map<String, dynamic> json) =>
+    ExecutionParametersDto(
+      jobType: json['jobType'] as String?,
+      jobParameters: json['jobParameters'] == null
+          ? null
+          : JsonNode.fromJson(json['jobParameters'] as Map<String, dynamic>),
+      integrationMappings: json['integrationMappings'] == null
+          ? null
+          : JsonNode.fromJson(
+              json['integrationMappings'] as Map<String, dynamic>),
+      executionMode: json['executionMode'] as String?,
+    );
+
+Map<String, dynamic> _$ExecutionParametersDtoToJson(
+        ExecutionParametersDto instance) =>
+    <String, dynamic>{
+      if (instance.jobType case final value?) 'jobType': value,
+      if (instance.jobParameters?.toJson() case final value?)
+        'jobParameters': value,
+      if (instance.integrationMappings?.toJson() case final value?)
+        'integrationMappings': value,
+      if (instance.executionMode case final value?) 'executionMode': value,
+    };
+
 AgentExecutionResponse _$AgentExecutionResponseFromJson(
         Map<String, dynamic> json) =>
     AgentExecutionResponse(
@@ -388,10 +577,6 @@ Map<String, dynamic> _$GeneratePresentationRequestToJson(
         'paramsForJs': value,
     };
 
-JsonNode _$JsonNodeFromJson(Map<String, dynamic> json) => JsonNode();
-
-Map<String, dynamic> _$JsonNodeToJson(JsonNode instance) => <String, dynamic>{};
-
 OAuthInitiateRequest _$OAuthInitiateRequestFromJson(
         Map<String, dynamic> json) =>
     OAuthInitiateRequest(
@@ -484,6 +669,90 @@ Map<String, dynamic> _$TestIntegrationRequestToJson(
     <String, dynamic>{
       if (instance.type case final value?) 'type': value,
       if (instance.configParams case final value?) 'configParams': value,
+    };
+
+ConfigParamDefinition _$ConfigParamDefinitionFromJson(
+        Map<String, dynamic> json) =>
+    ConfigParamDefinition(
+      key: json['key'] as String?,
+      displayName: json['displayName'] as String?,
+      description: json['description'] as String?,
+      instructions: json['instructions'] as String?,
+      required: json['required'] as bool?,
+      sensitive: json['sensitive'] as bool?,
+      type: json['type'] as String?,
+      defaultValue: json['defaultValue'] as String?,
+      options: (json['options'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      examples: (json['examples'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$ConfigParamDefinitionToJson(
+        ConfigParamDefinition instance) =>
+    <String, dynamic>{
+      if (instance.key case final value?) 'key': value,
+      if (instance.displayName case final value?) 'displayName': value,
+      if (instance.description case final value?) 'description': value,
+      if (instance.instructions case final value?) 'instructions': value,
+      if (instance.required case final value?) 'required': value,
+      if (instance.sensitive case final value?) 'sensitive': value,
+      if (instance.type case final value?) 'type': value,
+      if (instance.defaultValue case final value?) 'defaultValue': value,
+      if (instance.options case final value?) 'options': value,
+      if (instance.examples case final value?) 'examples': value,
+    };
+
+JobTypeDto _$JobTypeDtoFromJson(Map<String, dynamic> json) => JobTypeDto(
+      type: json['type'] as String?,
+      displayName: json['displayName'] as String?,
+      description: json['description'] as String?,
+      iconUrl: json['iconUrl'] as String?,
+      categories: (json['categories'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      setupDocumentationUrl: json['setupDocumentationUrl'] as String?,
+      executionModes: (json['executionModes'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      requiredIntegrations: (json['requiredIntegrations'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      optionalIntegrations: (json['optionalIntegrations'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      configParams: (json['configParams'] as List<dynamic>?)
+              ?.map((e) =>
+                  ConfigParamDefinition.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$JobTypeDtoToJson(JobTypeDto instance) =>
+    <String, dynamic>{
+      if (instance.type case final value?) 'type': value,
+      if (instance.displayName case final value?) 'displayName': value,
+      if (instance.description case final value?) 'description': value,
+      if (instance.iconUrl case final value?) 'iconUrl': value,
+      if (instance.categories case final value?) 'categories': value,
+      if (instance.setupDocumentationUrl case final value?)
+        'setupDocumentationUrl': value,
+      if (instance.executionModes case final value?) 'executionModes': value,
+      if (instance.requiredIntegrations case final value?)
+        'requiredIntegrations': value,
+      if (instance.optionalIntegrations case final value?)
+        'optionalIntegrations': value,
+      if (instance.configParams?.map((e) => e.toJson()).toList()
+          case final value?)
+        'configParams': value,
     };
 
 AgentInfo _$AgentInfoFromJson(Map<String, dynamic> json) => AgentInfo(
@@ -586,41 +855,17 @@ Map<String, dynamic> _$AgentListResponseToJson(AgentListResponse instance) =>
       if (instance.detailed case final value?) 'detailed': value,
     };
 
-ConfigParamDefinition _$ConfigParamDefinitionFromJson(
-        Map<String, dynamic> json) =>
-    ConfigParamDefinition(
-      key: json['key'] as String?,
-      displayName: json['displayName'] as String?,
-      description: json['description'] as String?,
-      required: json['required'] as bool?,
-      sensitive: json['sensitive'] as bool?,
-      defaultValue: json['defaultValue'] as String?,
-      type: json['type'] as String?,
-      options: (json['options'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$ConfigParamDefinitionToJson(
-        ConfigParamDefinition instance) =>
-    <String, dynamic>{
-      if (instance.key case final value?) 'key': value,
-      if (instance.displayName case final value?) 'displayName': value,
-      if (instance.description case final value?) 'description': value,
-      if (instance.required case final value?) 'required': value,
-      if (instance.sensitive case final value?) 'sensitive': value,
-      if (instance.defaultValue case final value?) 'defaultValue': value,
-      if (instance.type case final value?) 'type': value,
-      if (instance.options case final value?) 'options': value,
-    };
-
 IntegrationTypeDto _$IntegrationTypeDtoFromJson(Map<String, dynamic> json) =>
     IntegrationTypeDto(
       type: json['type'] as String?,
       displayName: json['displayName'] as String?,
       description: json['description'] as String?,
       iconUrl: json['iconUrl'] as String?,
+      categories: (json['categories'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+      setupDocumentationUrl: json['setupDocumentationUrl'] as String?,
       configParams: (json['configParams'] as List<dynamic>?)
               ?.map((e) =>
                   ConfigParamDefinition.fromJson(e as Map<String, dynamic>))
@@ -634,6 +879,9 @@ Map<String, dynamic> _$IntegrationTypeDtoToJson(IntegrationTypeDto instance) =>
       if (instance.displayName case final value?) 'displayName': value,
       if (instance.description case final value?) 'description': value,
       if (instance.iconUrl case final value?) 'iconUrl': value,
+      if (instance.categories case final value?) 'categories': value,
+      if (instance.setupDocumentationUrl case final value?)
+        'setupDocumentationUrl': value,
       if (instance.configParams?.map((e) => e.toJson()).toList()
           case final value?)
         'configParams': value,

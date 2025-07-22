@@ -9,6 +9,372 @@ import 'openapi.enums.swagger.dart' as enums;
 part 'openapi.models.swagger.g.dart';
 
 @JsonSerializable(explicitToJson: true)
+class JsonNode {
+  const JsonNode();
+
+  factory JsonNode.fromJson(Map<String, dynamic> json) =>
+      _$JsonNodeFromJson(json);
+
+  static const toJsonFactory = _$JsonNodeToJson;
+  Map<String, dynamic> toJson() => _$JsonNodeToJson(this);
+
+  static const fromJsonFactory = _$JsonNodeFromJson;
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+}
+
+@JsonSerializable(explicitToJson: true)
+class UpdateJobConfigurationRequest {
+  const UpdateJobConfigurationRequest({
+    this.name,
+    this.description,
+    this.jobType,
+    this.jobParameters,
+    this.integrationMappings,
+    this.enabled,
+  });
+
+  factory UpdateJobConfigurationRequest.fromJson(Map<String, dynamic> json) =>
+      _$UpdateJobConfigurationRequestFromJson(json);
+
+  static const toJsonFactory = _$UpdateJobConfigurationRequestToJson;
+  Map<String, dynamic> toJson() => _$UpdateJobConfigurationRequestToJson(this);
+
+  @JsonKey(name: 'name', includeIfNull: false)
+  final String? name;
+  @JsonKey(name: 'description', includeIfNull: false)
+  final String? description;
+  @JsonKey(name: 'jobType', includeIfNull: false)
+  final String? jobType;
+  @JsonKey(name: 'jobParameters', includeIfNull: false)
+  final JsonNode? jobParameters;
+  @JsonKey(name: 'integrationMappings', includeIfNull: false)
+  final JsonNode? integrationMappings;
+  @JsonKey(name: 'enabled', includeIfNull: false)
+  final bool? enabled;
+  static const fromJsonFactory = _$UpdateJobConfigurationRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is UpdateJobConfigurationRequest &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.jobType, jobType) ||
+                const DeepCollectionEquality().equals(
+                  other.jobType,
+                  jobType,
+                )) &&
+            (identical(other.jobParameters, jobParameters) ||
+                const DeepCollectionEquality().equals(
+                  other.jobParameters,
+                  jobParameters,
+                )) &&
+            (identical(other.integrationMappings, integrationMappings) ||
+                const DeepCollectionEquality().equals(
+                  other.integrationMappings,
+                  integrationMappings,
+                )) &&
+            (identical(other.enabled, enabled) ||
+                const DeepCollectionEquality().equals(other.enabled, enabled)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(jobType) ^
+      const DeepCollectionEquality().hash(jobParameters) ^
+      const DeepCollectionEquality().hash(integrationMappings) ^
+      const DeepCollectionEquality().hash(enabled) ^
+      runtimeType.hashCode;
+}
+
+extension $UpdateJobConfigurationRequestExtension
+    on UpdateJobConfigurationRequest {
+  UpdateJobConfigurationRequest copyWith({
+    String? name,
+    String? description,
+    String? jobType,
+    JsonNode? jobParameters,
+    JsonNode? integrationMappings,
+    bool? enabled,
+  }) {
+    return UpdateJobConfigurationRequest(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      jobType: jobType ?? this.jobType,
+      jobParameters: jobParameters ?? this.jobParameters,
+      integrationMappings: integrationMappings ?? this.integrationMappings,
+      enabled: enabled ?? this.enabled,
+    );
+  }
+
+  UpdateJobConfigurationRequest copyWithWrapped({
+    Wrapped<String?>? name,
+    Wrapped<String?>? description,
+    Wrapped<String?>? jobType,
+    Wrapped<JsonNode?>? jobParameters,
+    Wrapped<JsonNode?>? integrationMappings,
+    Wrapped<bool?>? enabled,
+  }) {
+    return UpdateJobConfigurationRequest(
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      jobType: (jobType != null ? jobType.value : this.jobType),
+      jobParameters: (jobParameters != null
+          ? jobParameters.value
+          : this.jobParameters),
+      integrationMappings: (integrationMappings != null
+          ? integrationMappings.value
+          : this.integrationMappings),
+      enabled: (enabled != null ? enabled.value : this.enabled),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobConfigurationDto {
+  const JobConfigurationDto({
+    this.id,
+    this.name,
+    this.description,
+    this.jobType,
+    this.createdById,
+    this.createdByName,
+    this.createdByEmail,
+    this.jobParameters,
+    this.integrationMappings,
+    this.enabled,
+    this.executionCount,
+    this.createdAt,
+    this.updatedAt,
+    this.lastExecutedAt,
+  });
+
+  factory JobConfigurationDto.fromJson(Map<String, dynamic> json) =>
+      _$JobConfigurationDtoFromJson(json);
+
+  static const toJsonFactory = _$JobConfigurationDtoToJson;
+  Map<String, dynamic> toJson() => _$JobConfigurationDtoToJson(this);
+
+  @JsonKey(name: 'id', includeIfNull: false)
+  final String? id;
+  @JsonKey(name: 'name', includeIfNull: false)
+  final String? name;
+  @JsonKey(name: 'description', includeIfNull: false)
+  final String? description;
+  @JsonKey(name: 'jobType', includeIfNull: false)
+  final String? jobType;
+  @JsonKey(name: 'createdById', includeIfNull: false)
+  final String? createdById;
+  @JsonKey(name: 'createdByName', includeIfNull: false)
+  final String? createdByName;
+  @JsonKey(name: 'createdByEmail', includeIfNull: false)
+  final String? createdByEmail;
+  @JsonKey(name: 'jobParameters', includeIfNull: false)
+  final JsonNode? jobParameters;
+  @JsonKey(name: 'integrationMappings', includeIfNull: false)
+  final JsonNode? integrationMappings;
+  @JsonKey(name: 'enabled', includeIfNull: false)
+  final bool? enabled;
+  @JsonKey(name: 'executionCount', includeIfNull: false)
+  final int? executionCount;
+  @JsonKey(name: 'createdAt', includeIfNull: false)
+  final DateTime? createdAt;
+  @JsonKey(name: 'updatedAt', includeIfNull: false)
+  final DateTime? updatedAt;
+  @JsonKey(name: 'lastExecutedAt', includeIfNull: false)
+  final DateTime? lastExecutedAt;
+  static const fromJsonFactory = _$JobConfigurationDtoFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobConfigurationDto &&
+            (identical(other.id, id) ||
+                const DeepCollectionEquality().equals(other.id, id)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.jobType, jobType) ||
+                const DeepCollectionEquality().equals(
+                  other.jobType,
+                  jobType,
+                )) &&
+            (identical(other.createdById, createdById) ||
+                const DeepCollectionEquality().equals(
+                  other.createdById,
+                  createdById,
+                )) &&
+            (identical(other.createdByName, createdByName) ||
+                const DeepCollectionEquality().equals(
+                  other.createdByName,
+                  createdByName,
+                )) &&
+            (identical(other.createdByEmail, createdByEmail) ||
+                const DeepCollectionEquality().equals(
+                  other.createdByEmail,
+                  createdByEmail,
+                )) &&
+            (identical(other.jobParameters, jobParameters) ||
+                const DeepCollectionEquality().equals(
+                  other.jobParameters,
+                  jobParameters,
+                )) &&
+            (identical(other.integrationMappings, integrationMappings) ||
+                const DeepCollectionEquality().equals(
+                  other.integrationMappings,
+                  integrationMappings,
+                )) &&
+            (identical(other.enabled, enabled) ||
+                const DeepCollectionEquality().equals(
+                  other.enabled,
+                  enabled,
+                )) &&
+            (identical(other.executionCount, executionCount) ||
+                const DeepCollectionEquality().equals(
+                  other.executionCount,
+                  executionCount,
+                )) &&
+            (identical(other.createdAt, createdAt) ||
+                const DeepCollectionEquality().equals(
+                  other.createdAt,
+                  createdAt,
+                )) &&
+            (identical(other.updatedAt, updatedAt) ||
+                const DeepCollectionEquality().equals(
+                  other.updatedAt,
+                  updatedAt,
+                )) &&
+            (identical(other.lastExecutedAt, lastExecutedAt) ||
+                const DeepCollectionEquality().equals(
+                  other.lastExecutedAt,
+                  lastExecutedAt,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(id) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(jobType) ^
+      const DeepCollectionEquality().hash(createdById) ^
+      const DeepCollectionEquality().hash(createdByName) ^
+      const DeepCollectionEquality().hash(createdByEmail) ^
+      const DeepCollectionEquality().hash(jobParameters) ^
+      const DeepCollectionEquality().hash(integrationMappings) ^
+      const DeepCollectionEquality().hash(enabled) ^
+      const DeepCollectionEquality().hash(executionCount) ^
+      const DeepCollectionEquality().hash(createdAt) ^
+      const DeepCollectionEquality().hash(updatedAt) ^
+      const DeepCollectionEquality().hash(lastExecutedAt) ^
+      runtimeType.hashCode;
+}
+
+extension $JobConfigurationDtoExtension on JobConfigurationDto {
+  JobConfigurationDto copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? jobType,
+    String? createdById,
+    String? createdByName,
+    String? createdByEmail,
+    JsonNode? jobParameters,
+    JsonNode? integrationMappings,
+    bool? enabled,
+    int? executionCount,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    DateTime? lastExecutedAt,
+  }) {
+    return JobConfigurationDto(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      jobType: jobType ?? this.jobType,
+      createdById: createdById ?? this.createdById,
+      createdByName: createdByName ?? this.createdByName,
+      createdByEmail: createdByEmail ?? this.createdByEmail,
+      jobParameters: jobParameters ?? this.jobParameters,
+      integrationMappings: integrationMappings ?? this.integrationMappings,
+      enabled: enabled ?? this.enabled,
+      executionCount: executionCount ?? this.executionCount,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      lastExecutedAt: lastExecutedAt ?? this.lastExecutedAt,
+    );
+  }
+
+  JobConfigurationDto copyWithWrapped({
+    Wrapped<String?>? id,
+    Wrapped<String?>? name,
+    Wrapped<String?>? description,
+    Wrapped<String?>? jobType,
+    Wrapped<String?>? createdById,
+    Wrapped<String?>? createdByName,
+    Wrapped<String?>? createdByEmail,
+    Wrapped<JsonNode?>? jobParameters,
+    Wrapped<JsonNode?>? integrationMappings,
+    Wrapped<bool?>? enabled,
+    Wrapped<int?>? executionCount,
+    Wrapped<DateTime?>? createdAt,
+    Wrapped<DateTime?>? updatedAt,
+    Wrapped<DateTime?>? lastExecutedAt,
+  }) {
+    return JobConfigurationDto(
+      id: (id != null ? id.value : this.id),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      jobType: (jobType != null ? jobType.value : this.jobType),
+      createdById: (createdById != null ? createdById.value : this.createdById),
+      createdByName: (createdByName != null
+          ? createdByName.value
+          : this.createdByName),
+      createdByEmail: (createdByEmail != null
+          ? createdByEmail.value
+          : this.createdByEmail),
+      jobParameters: (jobParameters != null
+          ? jobParameters.value
+          : this.jobParameters),
+      integrationMappings: (integrationMappings != null
+          ? integrationMappings.value
+          : this.integrationMappings),
+      enabled: (enabled != null ? enabled.value : this.enabled),
+      executionCount: (executionCount != null
+          ? executionCount.value
+          : this.executionCount),
+      createdAt: (createdAt != null ? createdAt.value : this.createdAt),
+      updatedAt: (updatedAt != null ? updatedAt.value : this.updatedAt),
+      lastExecutedAt: (lastExecutedAt != null
+          ? lastExecutedAt.value
+          : this.lastExecutedAt),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class ConfigParam {
   const ConfigParam({this.$value, this.sensitive});
 
@@ -989,6 +1355,433 @@ extension $ShareWorkspaceRequestExtension on ShareWorkspaceRequest {
 }
 
 @JsonSerializable(explicitToJson: true)
+class JSONObject {
+  const JSONObject({this.empty});
+
+  factory JSONObject.fromJson(Map<String, dynamic> json) =>
+      _$JSONObjectFromJson(json);
+
+  static const toJsonFactory = _$JSONObjectToJson;
+  Map<String, dynamic> toJson() => _$JSONObjectToJson(this);
+
+  @JsonKey(name: 'empty', includeIfNull: false)
+  final bool? empty;
+  static const fromJsonFactory = _$JSONObjectFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JSONObject &&
+            (identical(other.empty, empty) ||
+                const DeepCollectionEquality().equals(other.empty, empty)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(empty) ^ runtimeType.hashCode;
+}
+
+extension $JSONObjectExtension on JSONObject {
+  JSONObject copyWith({bool? empty}) {
+    return JSONObject(empty: empty ?? this.empty);
+  }
+
+  JSONObject copyWithWrapped({Wrapped<bool?>? empty}) {
+    return JSONObject(empty: (empty != null ? empty.value : this.empty));
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobExecutionRequest {
+  const JobExecutionRequest({
+    this.jobName,
+    this.params,
+    this.requiredIntegrations,
+  });
+
+  factory JobExecutionRequest.fromJson(Map<String, dynamic> json) =>
+      _$JobExecutionRequestFromJson(json);
+
+  static const toJsonFactory = _$JobExecutionRequestToJson;
+  Map<String, dynamic> toJson() => _$JobExecutionRequestToJson(this);
+
+  @JsonKey(name: 'jobName', includeIfNull: false)
+  final String? jobName;
+  @JsonKey(name: 'params', includeIfNull: false)
+  final JSONObject? params;
+  @JsonKey(
+    name: 'requiredIntegrations',
+    includeIfNull: false,
+    defaultValue: <String>[],
+  )
+  final List<String>? requiredIntegrations;
+  static const fromJsonFactory = _$JobExecutionRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobExecutionRequest &&
+            (identical(other.jobName, jobName) ||
+                const DeepCollectionEquality().equals(
+                  other.jobName,
+                  jobName,
+                )) &&
+            (identical(other.params, params) ||
+                const DeepCollectionEquality().equals(other.params, params)) &&
+            (identical(other.requiredIntegrations, requiredIntegrations) ||
+                const DeepCollectionEquality().equals(
+                  other.requiredIntegrations,
+                  requiredIntegrations,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(jobName) ^
+      const DeepCollectionEquality().hash(params) ^
+      const DeepCollectionEquality().hash(requiredIntegrations) ^
+      runtimeType.hashCode;
+}
+
+extension $JobExecutionRequestExtension on JobExecutionRequest {
+  JobExecutionRequest copyWith({
+    String? jobName,
+    JSONObject? params,
+    List<String>? requiredIntegrations,
+  }) {
+    return JobExecutionRequest(
+      jobName: jobName ?? this.jobName,
+      params: params ?? this.params,
+      requiredIntegrations: requiredIntegrations ?? this.requiredIntegrations,
+    );
+  }
+
+  JobExecutionRequest copyWithWrapped({
+    Wrapped<String?>? jobName,
+    Wrapped<JSONObject?>? params,
+    Wrapped<List<String>?>? requiredIntegrations,
+  }) {
+    return JobExecutionRequest(
+      jobName: (jobName != null ? jobName.value : this.jobName),
+      params: (params != null ? params.value : this.params),
+      requiredIntegrations: (requiredIntegrations != null
+          ? requiredIntegrations.value
+          : this.requiredIntegrations),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ExecuteJobConfigurationRequest {
+  const ExecuteJobConfigurationRequest({
+    this.parameterOverrides,
+    this.integrationOverrides,
+    this.executionMode,
+  });
+
+  factory ExecuteJobConfigurationRequest.fromJson(Map<String, dynamic> json) =>
+      _$ExecuteJobConfigurationRequestFromJson(json);
+
+  static const toJsonFactory = _$ExecuteJobConfigurationRequestToJson;
+  Map<String, dynamic> toJson() => _$ExecuteJobConfigurationRequestToJson(this);
+
+  @JsonKey(name: 'parameterOverrides', includeIfNull: false)
+  final JsonNode? parameterOverrides;
+  @JsonKey(name: 'integrationOverrides', includeIfNull: false)
+  final JsonNode? integrationOverrides;
+  @JsonKey(name: 'executionMode', includeIfNull: false)
+  final String? executionMode;
+  static const fromJsonFactory = _$ExecuteJobConfigurationRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ExecuteJobConfigurationRequest &&
+            (identical(other.parameterOverrides, parameterOverrides) ||
+                const DeepCollectionEquality().equals(
+                  other.parameterOverrides,
+                  parameterOverrides,
+                )) &&
+            (identical(other.integrationOverrides, integrationOverrides) ||
+                const DeepCollectionEquality().equals(
+                  other.integrationOverrides,
+                  integrationOverrides,
+                )) &&
+            (identical(other.executionMode, executionMode) ||
+                const DeepCollectionEquality().equals(
+                  other.executionMode,
+                  executionMode,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(parameterOverrides) ^
+      const DeepCollectionEquality().hash(integrationOverrides) ^
+      const DeepCollectionEquality().hash(executionMode) ^
+      runtimeType.hashCode;
+}
+
+extension $ExecuteJobConfigurationRequestExtension
+    on ExecuteJobConfigurationRequest {
+  ExecuteJobConfigurationRequest copyWith({
+    JsonNode? parameterOverrides,
+    JsonNode? integrationOverrides,
+    String? executionMode,
+  }) {
+    return ExecuteJobConfigurationRequest(
+      parameterOverrides: parameterOverrides ?? this.parameterOverrides,
+      integrationOverrides: integrationOverrides ?? this.integrationOverrides,
+      executionMode: executionMode ?? this.executionMode,
+    );
+  }
+
+  ExecuteJobConfigurationRequest copyWithWrapped({
+    Wrapped<JsonNode?>? parameterOverrides,
+    Wrapped<JsonNode?>? integrationOverrides,
+    Wrapped<String?>? executionMode,
+  }) {
+    return ExecuteJobConfigurationRequest(
+      parameterOverrides: (parameterOverrides != null
+          ? parameterOverrides.value
+          : this.parameterOverrides),
+      integrationOverrides: (integrationOverrides != null
+          ? integrationOverrides.value
+          : this.integrationOverrides),
+      executionMode: (executionMode != null
+          ? executionMode.value
+          : this.executionMode),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateJobConfigurationRequest {
+  const CreateJobConfigurationRequest({
+    required this.name,
+    this.description,
+    required this.jobType,
+    required this.jobParameters,
+    required this.integrationMappings,
+    this.enabled,
+  });
+
+  factory CreateJobConfigurationRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateJobConfigurationRequestFromJson(json);
+
+  static const toJsonFactory = _$CreateJobConfigurationRequestToJson;
+  Map<String, dynamic> toJson() => _$CreateJobConfigurationRequestToJson(this);
+
+  @JsonKey(name: 'name', includeIfNull: false)
+  final String name;
+  @JsonKey(name: 'description', includeIfNull: false)
+  final String? description;
+  @JsonKey(name: 'jobType', includeIfNull: false)
+  final String jobType;
+  @JsonKey(name: 'jobParameters', includeIfNull: false)
+  final JsonNode jobParameters;
+  @JsonKey(name: 'integrationMappings', includeIfNull: false)
+  final JsonNode integrationMappings;
+  @JsonKey(name: 'enabled', includeIfNull: false)
+  final bool? enabled;
+  static const fromJsonFactory = _$CreateJobConfigurationRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CreateJobConfigurationRequest &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.jobType, jobType) ||
+                const DeepCollectionEquality().equals(
+                  other.jobType,
+                  jobType,
+                )) &&
+            (identical(other.jobParameters, jobParameters) ||
+                const DeepCollectionEquality().equals(
+                  other.jobParameters,
+                  jobParameters,
+                )) &&
+            (identical(other.integrationMappings, integrationMappings) ||
+                const DeepCollectionEquality().equals(
+                  other.integrationMappings,
+                  integrationMappings,
+                )) &&
+            (identical(other.enabled, enabled) ||
+                const DeepCollectionEquality().equals(other.enabled, enabled)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(jobType) ^
+      const DeepCollectionEquality().hash(jobParameters) ^
+      const DeepCollectionEquality().hash(integrationMappings) ^
+      const DeepCollectionEquality().hash(enabled) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateJobConfigurationRequestExtension
+    on CreateJobConfigurationRequest {
+  CreateJobConfigurationRequest copyWith({
+    String? name,
+    String? description,
+    String? jobType,
+    JsonNode? jobParameters,
+    JsonNode? integrationMappings,
+    bool? enabled,
+  }) {
+    return CreateJobConfigurationRequest(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      jobType: jobType ?? this.jobType,
+      jobParameters: jobParameters ?? this.jobParameters,
+      integrationMappings: integrationMappings ?? this.integrationMappings,
+      enabled: enabled ?? this.enabled,
+    );
+  }
+
+  CreateJobConfigurationRequest copyWithWrapped({
+    Wrapped<String>? name,
+    Wrapped<String?>? description,
+    Wrapped<String>? jobType,
+    Wrapped<JsonNode>? jobParameters,
+    Wrapped<JsonNode>? integrationMappings,
+    Wrapped<bool?>? enabled,
+  }) {
+    return CreateJobConfigurationRequest(
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      jobType: (jobType != null ? jobType.value : this.jobType),
+      jobParameters: (jobParameters != null
+          ? jobParameters.value
+          : this.jobParameters),
+      integrationMappings: (integrationMappings != null
+          ? integrationMappings.value
+          : this.integrationMappings),
+      enabled: (enabled != null ? enabled.value : this.enabled),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ExecutionParametersDto {
+  const ExecutionParametersDto({
+    this.jobType,
+    this.jobParameters,
+    this.integrationMappings,
+    this.executionMode,
+  });
+
+  factory ExecutionParametersDto.fromJson(Map<String, dynamic> json) =>
+      _$ExecutionParametersDtoFromJson(json);
+
+  static const toJsonFactory = _$ExecutionParametersDtoToJson;
+  Map<String, dynamic> toJson() => _$ExecutionParametersDtoToJson(this);
+
+  @JsonKey(name: 'jobType', includeIfNull: false)
+  final String? jobType;
+  @JsonKey(name: 'jobParameters', includeIfNull: false)
+  final JsonNode? jobParameters;
+  @JsonKey(name: 'integrationMappings', includeIfNull: false)
+  final JsonNode? integrationMappings;
+  @JsonKey(name: 'executionMode', includeIfNull: false)
+  final String? executionMode;
+  static const fromJsonFactory = _$ExecutionParametersDtoFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ExecutionParametersDto &&
+            (identical(other.jobType, jobType) ||
+                const DeepCollectionEquality().equals(
+                  other.jobType,
+                  jobType,
+                )) &&
+            (identical(other.jobParameters, jobParameters) ||
+                const DeepCollectionEquality().equals(
+                  other.jobParameters,
+                  jobParameters,
+                )) &&
+            (identical(other.integrationMappings, integrationMappings) ||
+                const DeepCollectionEquality().equals(
+                  other.integrationMappings,
+                  integrationMappings,
+                )) &&
+            (identical(other.executionMode, executionMode) ||
+                const DeepCollectionEquality().equals(
+                  other.executionMode,
+                  executionMode,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(jobType) ^
+      const DeepCollectionEquality().hash(jobParameters) ^
+      const DeepCollectionEquality().hash(integrationMappings) ^
+      const DeepCollectionEquality().hash(executionMode) ^
+      runtimeType.hashCode;
+}
+
+extension $ExecutionParametersDtoExtension on ExecutionParametersDto {
+  ExecutionParametersDto copyWith({
+    String? jobType,
+    JsonNode? jobParameters,
+    JsonNode? integrationMappings,
+    String? executionMode,
+  }) {
+    return ExecutionParametersDto(
+      jobType: jobType ?? this.jobType,
+      jobParameters: jobParameters ?? this.jobParameters,
+      integrationMappings: integrationMappings ?? this.integrationMappings,
+      executionMode: executionMode ?? this.executionMode,
+    );
+  }
+
+  ExecutionParametersDto copyWithWrapped({
+    Wrapped<String?>? jobType,
+    Wrapped<JsonNode?>? jobParameters,
+    Wrapped<JsonNode?>? integrationMappings,
+    Wrapped<String?>? executionMode,
+  }) {
+    return ExecutionParametersDto(
+      jobType: (jobType != null ? jobType.value : this.jobType),
+      jobParameters: (jobParameters != null
+          ? jobParameters.value
+          : this.jobParameters),
+      integrationMappings: (integrationMappings != null
+          ? integrationMappings.value
+          : this.integrationMappings),
+      executionMode: (executionMode != null
+          ? executionMode.value
+          : this.executionMode),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class AgentExecutionResponse {
   const AgentExecutionResponse({
     this.result,
@@ -1677,25 +2470,6 @@ extension $GeneratePresentationRequestExtension on GeneratePresentationRequest {
 }
 
 @JsonSerializable(explicitToJson: true)
-class JsonNode {
-  const JsonNode();
-
-  factory JsonNode.fromJson(Map<String, dynamic> json) =>
-      _$JsonNodeFromJson(json);
-
-  static const toJsonFactory = _$JsonNodeToJson;
-  Map<String, dynamic> toJson() => _$JsonNodeToJson(this);
-
-  static const fromJsonFactory = _$JsonNodeFromJson;
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-}
-
-@JsonSerializable(explicitToJson: true)
 class OAuthInitiateRequest {
   const OAuthInitiateRequest({
     this.provider,
@@ -2116,6 +2890,370 @@ extension $TestIntegrationRequestExtension on TestIntegrationRequest {
   }) {
     return TestIntegrationRequest(
       type: (type != null ? type.value : this.type),
+      configParams: (configParams != null
+          ? configParams.value
+          : this.configParams),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ConfigParamDefinition {
+  const ConfigParamDefinition({
+    this.key,
+    this.displayName,
+    this.description,
+    this.instructions,
+    this.required,
+    this.sensitive,
+    this.type,
+    this.defaultValue,
+    this.options,
+    this.examples,
+  });
+
+  factory ConfigParamDefinition.fromJson(Map<String, dynamic> json) =>
+      _$ConfigParamDefinitionFromJson(json);
+
+  static const toJsonFactory = _$ConfigParamDefinitionToJson;
+  Map<String, dynamic> toJson() => _$ConfigParamDefinitionToJson(this);
+
+  @JsonKey(name: 'key', includeIfNull: false)
+  final String? key;
+  @JsonKey(name: 'displayName', includeIfNull: false)
+  final String? displayName;
+  @JsonKey(name: 'description', includeIfNull: false)
+  final String? description;
+  @JsonKey(name: 'instructions', includeIfNull: false)
+  final String? instructions;
+  @JsonKey(name: 'required', includeIfNull: false)
+  final bool? required;
+  @JsonKey(name: 'sensitive', includeIfNull: false)
+  final bool? sensitive;
+  @JsonKey(name: 'type', includeIfNull: false)
+  final String? type;
+  @JsonKey(name: 'defaultValue', includeIfNull: false)
+  final String? defaultValue;
+  @JsonKey(name: 'options', includeIfNull: false, defaultValue: <String>[])
+  final List<String>? options;
+  @JsonKey(name: 'examples', includeIfNull: false, defaultValue: <String>[])
+  final List<String>? examples;
+  static const fromJsonFactory = _$ConfigParamDefinitionFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ConfigParamDefinition &&
+            (identical(other.key, key) ||
+                const DeepCollectionEquality().equals(other.key, key)) &&
+            (identical(other.displayName, displayName) ||
+                const DeepCollectionEquality().equals(
+                  other.displayName,
+                  displayName,
+                )) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.instructions, instructions) ||
+                const DeepCollectionEquality().equals(
+                  other.instructions,
+                  instructions,
+                )) &&
+            (identical(other.required, required) ||
+                const DeepCollectionEquality().equals(
+                  other.required,
+                  required,
+                )) &&
+            (identical(other.sensitive, sensitive) ||
+                const DeepCollectionEquality().equals(
+                  other.sensitive,
+                  sensitive,
+                )) &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.defaultValue, defaultValue) ||
+                const DeepCollectionEquality().equals(
+                  other.defaultValue,
+                  defaultValue,
+                )) &&
+            (identical(other.options, options) ||
+                const DeepCollectionEquality().equals(
+                  other.options,
+                  options,
+                )) &&
+            (identical(other.examples, examples) ||
+                const DeepCollectionEquality().equals(
+                  other.examples,
+                  examples,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(key) ^
+      const DeepCollectionEquality().hash(displayName) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(instructions) ^
+      const DeepCollectionEquality().hash(required) ^
+      const DeepCollectionEquality().hash(sensitive) ^
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(defaultValue) ^
+      const DeepCollectionEquality().hash(options) ^
+      const DeepCollectionEquality().hash(examples) ^
+      runtimeType.hashCode;
+}
+
+extension $ConfigParamDefinitionExtension on ConfigParamDefinition {
+  ConfigParamDefinition copyWith({
+    String? key,
+    String? displayName,
+    String? description,
+    String? instructions,
+    bool? required,
+    bool? sensitive,
+    String? type,
+    String? defaultValue,
+    List<String>? options,
+    List<String>? examples,
+  }) {
+    return ConfigParamDefinition(
+      key: key ?? this.key,
+      displayName: displayName ?? this.displayName,
+      description: description ?? this.description,
+      instructions: instructions ?? this.instructions,
+      required: required ?? this.required,
+      sensitive: sensitive ?? this.sensitive,
+      type: type ?? this.type,
+      defaultValue: defaultValue ?? this.defaultValue,
+      options: options ?? this.options,
+      examples: examples ?? this.examples,
+    );
+  }
+
+  ConfigParamDefinition copyWithWrapped({
+    Wrapped<String?>? key,
+    Wrapped<String?>? displayName,
+    Wrapped<String?>? description,
+    Wrapped<String?>? instructions,
+    Wrapped<bool?>? required,
+    Wrapped<bool?>? sensitive,
+    Wrapped<String?>? type,
+    Wrapped<String?>? defaultValue,
+    Wrapped<List<String>?>? options,
+    Wrapped<List<String>?>? examples,
+  }) {
+    return ConfigParamDefinition(
+      key: (key != null ? key.value : this.key),
+      displayName: (displayName != null ? displayName.value : this.displayName),
+      description: (description != null ? description.value : this.description),
+      instructions: (instructions != null
+          ? instructions.value
+          : this.instructions),
+      required: (required != null ? required.value : this.required),
+      sensitive: (sensitive != null ? sensitive.value : this.sensitive),
+      type: (type != null ? type.value : this.type),
+      defaultValue: (defaultValue != null
+          ? defaultValue.value
+          : this.defaultValue),
+      options: (options != null ? options.value : this.options),
+      examples: (examples != null ? examples.value : this.examples),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class JobTypeDto {
+  const JobTypeDto({
+    this.type,
+    this.displayName,
+    this.description,
+    this.iconUrl,
+    this.categories,
+    this.setupDocumentationUrl,
+    this.executionModes,
+    this.requiredIntegrations,
+    this.optionalIntegrations,
+    this.configParams,
+  });
+
+  factory JobTypeDto.fromJson(Map<String, dynamic> json) =>
+      _$JobTypeDtoFromJson(json);
+
+  static const toJsonFactory = _$JobTypeDtoToJson;
+  Map<String, dynamic> toJson() => _$JobTypeDtoToJson(this);
+
+  @JsonKey(name: 'type', includeIfNull: false)
+  final String? type;
+  @JsonKey(name: 'displayName', includeIfNull: false)
+  final String? displayName;
+  @JsonKey(name: 'description', includeIfNull: false)
+  final String? description;
+  @JsonKey(name: 'iconUrl', includeIfNull: false)
+  final String? iconUrl;
+  @JsonKey(name: 'categories', includeIfNull: false, defaultValue: <String>[])
+  final List<String>? categories;
+  @JsonKey(name: 'setupDocumentationUrl', includeIfNull: false)
+  final String? setupDocumentationUrl;
+  @JsonKey(
+    name: 'executionModes',
+    includeIfNull: false,
+    defaultValue: <String>[],
+  )
+  final List<String>? executionModes;
+  @JsonKey(
+    name: 'requiredIntegrations',
+    includeIfNull: false,
+    defaultValue: <String>[],
+  )
+  final List<String>? requiredIntegrations;
+  @JsonKey(
+    name: 'optionalIntegrations',
+    includeIfNull: false,
+    defaultValue: <String>[],
+  )
+  final List<String>? optionalIntegrations;
+  @JsonKey(
+    name: 'configParams',
+    includeIfNull: false,
+    defaultValue: <ConfigParamDefinition>[],
+  )
+  final List<ConfigParamDefinition>? configParams;
+  static const fromJsonFactory = _$JobTypeDtoFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is JobTypeDto &&
+            (identical(other.type, type) ||
+                const DeepCollectionEquality().equals(other.type, type)) &&
+            (identical(other.displayName, displayName) ||
+                const DeepCollectionEquality().equals(
+                  other.displayName,
+                  displayName,
+                )) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.iconUrl, iconUrl) ||
+                const DeepCollectionEquality().equals(
+                  other.iconUrl,
+                  iconUrl,
+                )) &&
+            (identical(other.categories, categories) ||
+                const DeepCollectionEquality().equals(
+                  other.categories,
+                  categories,
+                )) &&
+            (identical(other.setupDocumentationUrl, setupDocumentationUrl) ||
+                const DeepCollectionEquality().equals(
+                  other.setupDocumentationUrl,
+                  setupDocumentationUrl,
+                )) &&
+            (identical(other.executionModes, executionModes) ||
+                const DeepCollectionEquality().equals(
+                  other.executionModes,
+                  executionModes,
+                )) &&
+            (identical(other.requiredIntegrations, requiredIntegrations) ||
+                const DeepCollectionEquality().equals(
+                  other.requiredIntegrations,
+                  requiredIntegrations,
+                )) &&
+            (identical(other.optionalIntegrations, optionalIntegrations) ||
+                const DeepCollectionEquality().equals(
+                  other.optionalIntegrations,
+                  optionalIntegrations,
+                )) &&
+            (identical(other.configParams, configParams) ||
+                const DeepCollectionEquality().equals(
+                  other.configParams,
+                  configParams,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(type) ^
+      const DeepCollectionEquality().hash(displayName) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(iconUrl) ^
+      const DeepCollectionEquality().hash(categories) ^
+      const DeepCollectionEquality().hash(setupDocumentationUrl) ^
+      const DeepCollectionEquality().hash(executionModes) ^
+      const DeepCollectionEquality().hash(requiredIntegrations) ^
+      const DeepCollectionEquality().hash(optionalIntegrations) ^
+      const DeepCollectionEquality().hash(configParams) ^
+      runtimeType.hashCode;
+}
+
+extension $JobTypeDtoExtension on JobTypeDto {
+  JobTypeDto copyWith({
+    String? type,
+    String? displayName,
+    String? description,
+    String? iconUrl,
+    List<String>? categories,
+    String? setupDocumentationUrl,
+    List<String>? executionModes,
+    List<String>? requiredIntegrations,
+    List<String>? optionalIntegrations,
+    List<ConfigParamDefinition>? configParams,
+  }) {
+    return JobTypeDto(
+      type: type ?? this.type,
+      displayName: displayName ?? this.displayName,
+      description: description ?? this.description,
+      iconUrl: iconUrl ?? this.iconUrl,
+      categories: categories ?? this.categories,
+      setupDocumentationUrl:
+          setupDocumentationUrl ?? this.setupDocumentationUrl,
+      executionModes: executionModes ?? this.executionModes,
+      requiredIntegrations: requiredIntegrations ?? this.requiredIntegrations,
+      optionalIntegrations: optionalIntegrations ?? this.optionalIntegrations,
+      configParams: configParams ?? this.configParams,
+    );
+  }
+
+  JobTypeDto copyWithWrapped({
+    Wrapped<String?>? type,
+    Wrapped<String?>? displayName,
+    Wrapped<String?>? description,
+    Wrapped<String?>? iconUrl,
+    Wrapped<List<String>?>? categories,
+    Wrapped<String?>? setupDocumentationUrl,
+    Wrapped<List<String>?>? executionModes,
+    Wrapped<List<String>?>? requiredIntegrations,
+    Wrapped<List<String>?>? optionalIntegrations,
+    Wrapped<List<ConfigParamDefinition>?>? configParams,
+  }) {
+    return JobTypeDto(
+      type: (type != null ? type.value : this.type),
+      displayName: (displayName != null ? displayName.value : this.displayName),
+      description: (description != null ? description.value : this.description),
+      iconUrl: (iconUrl != null ? iconUrl.value : this.iconUrl),
+      categories: (categories != null ? categories.value : this.categories),
+      setupDocumentationUrl: (setupDocumentationUrl != null
+          ? setupDocumentationUrl.value
+          : this.setupDocumentationUrl),
+      executionModes: (executionModes != null
+          ? executionModes.value
+          : this.executionModes),
+      requiredIntegrations: (requiredIntegrations != null
+          ? requiredIntegrations.value
+          : this.requiredIntegrations),
+      optionalIntegrations: (optionalIntegrations != null
+          ? optionalIntegrations.value
+          : this.optionalIntegrations),
       configParams: (configParams != null
           ? configParams.value
           : this.configParams),
@@ -2578,150 +3716,14 @@ extension $AgentListResponseExtension on AgentListResponse {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ConfigParamDefinition {
-  const ConfigParamDefinition({
-    this.key,
-    this.displayName,
-    this.description,
-    this.required,
-    this.sensitive,
-    this.defaultValue,
-    this.type,
-    this.options,
-  });
-
-  factory ConfigParamDefinition.fromJson(Map<String, dynamic> json) =>
-      _$ConfigParamDefinitionFromJson(json);
-
-  static const toJsonFactory = _$ConfigParamDefinitionToJson;
-  Map<String, dynamic> toJson() => _$ConfigParamDefinitionToJson(this);
-
-  @JsonKey(name: 'key', includeIfNull: false)
-  final String? key;
-  @JsonKey(name: 'displayName', includeIfNull: false)
-  final String? displayName;
-  @JsonKey(name: 'description', includeIfNull: false)
-  final String? description;
-  @JsonKey(name: 'required', includeIfNull: false)
-  final bool? required;
-  @JsonKey(name: 'sensitive', includeIfNull: false)
-  final bool? sensitive;
-  @JsonKey(name: 'defaultValue', includeIfNull: false)
-  final String? defaultValue;
-  @JsonKey(name: 'type', includeIfNull: false)
-  final String? type;
-  @JsonKey(name: 'options', includeIfNull: false, defaultValue: <String>[])
-  final List<String>? options;
-  static const fromJsonFactory = _$ConfigParamDefinitionFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is ConfigParamDefinition &&
-            (identical(other.key, key) ||
-                const DeepCollectionEquality().equals(other.key, key)) &&
-            (identical(other.displayName, displayName) ||
-                const DeepCollectionEquality().equals(
-                  other.displayName,
-                  displayName,
-                )) &&
-            (identical(other.description, description) ||
-                const DeepCollectionEquality().equals(
-                  other.description,
-                  description,
-                )) &&
-            (identical(other.required, required) ||
-                const DeepCollectionEquality().equals(
-                  other.required,
-                  required,
-                )) &&
-            (identical(other.sensitive, sensitive) ||
-                const DeepCollectionEquality().equals(
-                  other.sensitive,
-                  sensitive,
-                )) &&
-            (identical(other.defaultValue, defaultValue) ||
-                const DeepCollectionEquality().equals(
-                  other.defaultValue,
-                  defaultValue,
-                )) &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.options, options) ||
-                const DeepCollectionEquality().equals(other.options, options)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(key) ^
-      const DeepCollectionEquality().hash(displayName) ^
-      const DeepCollectionEquality().hash(description) ^
-      const DeepCollectionEquality().hash(required) ^
-      const DeepCollectionEquality().hash(sensitive) ^
-      const DeepCollectionEquality().hash(defaultValue) ^
-      const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(options) ^
-      runtimeType.hashCode;
-}
-
-extension $ConfigParamDefinitionExtension on ConfigParamDefinition {
-  ConfigParamDefinition copyWith({
-    String? key,
-    String? displayName,
-    String? description,
-    bool? required,
-    bool? sensitive,
-    String? defaultValue,
-    String? type,
-    List<String>? options,
-  }) {
-    return ConfigParamDefinition(
-      key: key ?? this.key,
-      displayName: displayName ?? this.displayName,
-      description: description ?? this.description,
-      required: required ?? this.required,
-      sensitive: sensitive ?? this.sensitive,
-      defaultValue: defaultValue ?? this.defaultValue,
-      type: type ?? this.type,
-      options: options ?? this.options,
-    );
-  }
-
-  ConfigParamDefinition copyWithWrapped({
-    Wrapped<String?>? key,
-    Wrapped<String?>? displayName,
-    Wrapped<String?>? description,
-    Wrapped<bool?>? required,
-    Wrapped<bool?>? sensitive,
-    Wrapped<String?>? defaultValue,
-    Wrapped<String?>? type,
-    Wrapped<List<String>?>? options,
-  }) {
-    return ConfigParamDefinition(
-      key: (key != null ? key.value : this.key),
-      displayName: (displayName != null ? displayName.value : this.displayName),
-      description: (description != null ? description.value : this.description),
-      required: (required != null ? required.value : this.required),
-      sensitive: (sensitive != null ? sensitive.value : this.sensitive),
-      defaultValue: (defaultValue != null
-          ? defaultValue.value
-          : this.defaultValue),
-      type: (type != null ? type.value : this.type),
-      options: (options != null ? options.value : this.options),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
 class IntegrationTypeDto {
   const IntegrationTypeDto({
     this.type,
     this.displayName,
     this.description,
     this.iconUrl,
+    this.categories,
+    this.setupDocumentationUrl,
     this.configParams,
   });
 
@@ -2739,6 +3741,10 @@ class IntegrationTypeDto {
   final String? description;
   @JsonKey(name: 'iconUrl', includeIfNull: false)
   final String? iconUrl;
+  @JsonKey(name: 'categories', includeIfNull: false, defaultValue: <String>[])
+  final List<String>? categories;
+  @JsonKey(name: 'setupDocumentationUrl', includeIfNull: false)
+  final String? setupDocumentationUrl;
   @JsonKey(
     name: 'configParams',
     includeIfNull: false,
@@ -2768,6 +3774,16 @@ class IntegrationTypeDto {
                   other.iconUrl,
                   iconUrl,
                 )) &&
+            (identical(other.categories, categories) ||
+                const DeepCollectionEquality().equals(
+                  other.categories,
+                  categories,
+                )) &&
+            (identical(other.setupDocumentationUrl, setupDocumentationUrl) ||
+                const DeepCollectionEquality().equals(
+                  other.setupDocumentationUrl,
+                  setupDocumentationUrl,
+                )) &&
             (identical(other.configParams, configParams) ||
                 const DeepCollectionEquality().equals(
                   other.configParams,
@@ -2784,6 +3800,8 @@ class IntegrationTypeDto {
       const DeepCollectionEquality().hash(displayName) ^
       const DeepCollectionEquality().hash(description) ^
       const DeepCollectionEquality().hash(iconUrl) ^
+      const DeepCollectionEquality().hash(categories) ^
+      const DeepCollectionEquality().hash(setupDocumentationUrl) ^
       const DeepCollectionEquality().hash(configParams) ^
       runtimeType.hashCode;
 }
@@ -2794,6 +3812,8 @@ extension $IntegrationTypeDtoExtension on IntegrationTypeDto {
     String? displayName,
     String? description,
     String? iconUrl,
+    List<String>? categories,
+    String? setupDocumentationUrl,
     List<ConfigParamDefinition>? configParams,
   }) {
     return IntegrationTypeDto(
@@ -2801,6 +3821,9 @@ extension $IntegrationTypeDtoExtension on IntegrationTypeDto {
       displayName: displayName ?? this.displayName,
       description: description ?? this.description,
       iconUrl: iconUrl ?? this.iconUrl,
+      categories: categories ?? this.categories,
+      setupDocumentationUrl:
+          setupDocumentationUrl ?? this.setupDocumentationUrl,
       configParams: configParams ?? this.configParams,
     );
   }
@@ -2810,6 +3833,8 @@ extension $IntegrationTypeDtoExtension on IntegrationTypeDto {
     Wrapped<String?>? displayName,
     Wrapped<String?>? description,
     Wrapped<String?>? iconUrl,
+    Wrapped<List<String>?>? categories,
+    Wrapped<String?>? setupDocumentationUrl,
     Wrapped<List<ConfigParamDefinition>?>? configParams,
   }) {
     return IntegrationTypeDto(
@@ -2817,6 +3842,10 @@ extension $IntegrationTypeDtoExtension on IntegrationTypeDto {
       displayName: (displayName != null ? displayName.value : this.displayName),
       description: (description != null ? description.value : this.description),
       iconUrl: (iconUrl != null ? iconUrl.value : this.iconUrl),
+      categories: (categories != null ? categories.value : this.categories),
+      setupDocumentationUrl: (setupDocumentationUrl != null
+          ? setupDocumentationUrl.value
+          : this.setupDocumentationUrl),
       configParams: (configParams != null
           ? configParams.value
           : this.configParams),
