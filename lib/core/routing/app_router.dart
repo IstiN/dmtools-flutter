@@ -7,7 +7,7 @@ import '../../screens/loading_screen.dart';
 import '../../screens/unauthenticated_home_screen.dart';
 import '../../screens/oauth_callback_screen.dart';
 import '../../screens/pages/dashboard_page.dart';
-import '../../screens/pages/agents_page.dart';
+import '../../screens/pages/ai_jobs_page.dart';
 import '../../screens/pages/workspaces_page.dart';
 import '../../screens/pages/applications_page.dart';
 import '../../screens/pages/integrations_page.dart';
@@ -172,12 +172,12 @@ class AppRouter {
           ),
         ),
 
-        // Agents route
+        // AI Jobs route
         GoRoute(
-          path: '/agents',
+          path: '/ai-jobs',
           pageBuilder: (context, state) => _buildFadePage(
             state,
-            const HomeScreen(child: AgentsPage()),
+            const HomeScreen(child: AiJobsPage()),
           ),
         ),
 
@@ -259,7 +259,7 @@ class AppRouter {
   static bool _isProtectedRoute(String path) {
     const protectedRoutes = [
       '/dashboard',
-      '/agents',
+      '/ai-jobs',
       '/workspaces',
       '/applications',
       '/integrations',
@@ -301,7 +301,7 @@ class NavigationItem {
 
 const List<NavigationItem> navigationItems = [
   NavigationItem(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
-  NavigationItem(icon: Icons.smart_toy_outlined, label: 'Agents', route: '/agents'),
+  NavigationItem(icon: Icons.smart_toy_outlined, label: 'AI Jobs', route: '/ai-jobs'),
   NavigationItem(icon: Icons.folder_outlined, label: 'Workspaces', route: '/workspaces'),
   NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
   NavigationItem(icon: Icons.extension_outlined, label: 'Integrations', route: '/integrations'),

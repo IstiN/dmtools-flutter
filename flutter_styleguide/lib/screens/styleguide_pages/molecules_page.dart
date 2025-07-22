@@ -19,6 +19,7 @@ import '../../widgets/atoms/status_dot.dart';
 import '../../widgets/molecules/integration_card.dart';
 import '../../widgets/molecules/integration_type_selector.dart';
 import '../../widgets/molecules/integration_config_form.dart';
+import '../../widgets/molecules/job_showcase.dart';
 
 class MoleculesPage extends StatelessWidget {
   const MoleculesPage({super.key});
@@ -491,8 +492,12 @@ class MoleculesPage extends StatelessWidget {
             children: [
               const Text('Dynamic configuration form that adapts to different integration type requirements.'),
               const SizedBox(height: AppDimensions.spacingM),
-              SizedBox(
-                height: 400,
+              Container(
+                height: 450, // Increased from 400px to prevent overflow
+                decoration: BoxDecoration(
+                  border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.3)),
+                  borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                ),
                 child: IntegrationConfigForm(
                   integrationType: const IntegrationType(
                     type: 'github',
@@ -527,6 +532,8 @@ class MoleculesPage extends StatelessWidget {
             ],
           ),
         ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        const JobConfigurationShowcase(),
       ],
     );
   }

@@ -1,0 +1,672 @@
+---
+description: When user is asking to updte jira tickets or structure
+alwaysApply: false
+---
+Jira Project Structure & Process Documentation
+
+Table of Contents
+
+Overview
+Issue Type Structure
+Custom Fields Configuration
+Components Strategy
+Naming Conventions
+Linking & Relationships
+Workflows
+Process Flow
+JQL Queries & Filters
+Dashboards & Reporting
+Best Practices
+Admin Setup Guide
+1. Overview
+
+Purpose
+
+This document defines the Jira structure designed to serve as living documentation for our product development. The structure enables:
+Self-documenting product features
+Clear traceability from requirements to implementation
+Efficient collaboration between BA, SA, Dev, and QA teams
+Comprehensive test coverage tracking
+Key Principles
+
+Flat Hierarchy: All issue types are children of Epics
+Clear Ownership: Each issue type has a designated owner
+Traceability: Every story links to requirements
+Visual Organization: Prefixes and components for quick identification
+2. Issue Type Structure
+
+Hierarchy
+
+
+
+
+Epic (Feature Level)
+├── Requirement
+├── Architecture Design  
+├── Visual Design  
+├── Question
+├── Core Story
+├── API Story
+├── UI Story
+├── Task
+├── Bug
+├── Test Case
+└── Automated Test
+Issue Type Definitions
+
+Issue Type
+Purpose
+Owner
+Prefix
+Epic 
+Represents a complete feature or major functionality 
+Product Owner 
+None 
+Requirement 
+Business requirements and acceptance criteria 
+Business Analyst 
+None 
+Visual Design
+Visual Design for Requirement
+Visual Designer
+None
+Architecture Design 
+High-level technical design and integration approach 
+Solution Architect 
+None 
+Question 
+Open questions and decisions needed 
+BA/SA 
+[Q] 
+Core Story 
+Backend business logic and services 
+Development Team 
+[CORE] 
+API Story 
+REST endpoints, integrations, webhooks 
+Development Team 
+[API] 
+UI Story 
+Frontend implementation and user interface 
+Development Team 
+[UI] 
+Task
+Any kind of task which is not leading to code creation.
+All Team Members
+ 
+Bug 
+Defects found during development or testing 
+Reporter 
+[BUG-ENV] 
+Test Case 
+Manual test scenarios and cases 
+QA Team 
+None 
+Automated Test 
+Automated test implementation 
+Test Automation 
+None 
+3. Custom Fields Configuration
+
+Required Custom Fields
+
+Field Name
+Field Type
+Used In
+Values
+Required
+Feature Area 
+Select List (Single) 
+All Types 
+User Authentication
+Dashboard 
+Reporting
+Payment Processing
+User Management
+Integration
+Analytics 
+Yes 
+Requirement Reference 
+Text Field 
+Requirement, Story 
+Free text (e.g., "AUTH-001") 
+No 
+Question Category 
+Select List (Single) 
+Question 
+Business
+Technical
+Integration
+Security
+UX
+Performance 
+Yes 
+Priority 
+Select List (Single) 
+Question 
+Blocker
+High
+Medium
+Low 
+Yes 
+Environment Found 
+Select List (Single) 
+Bug 
+Development
+QA
+UAT
+Production 
+Yes 
+4. Components Strategy
+
+Component Structure
+
+Components combine Feature Area with Technical Layer:
+
+
+
+Feature Components:
+├── Auth-Backend
+├── Auth-Frontend
+├── Auth-Integration
+├── Dashboard-Backend
+├── Dashboard-Frontend
+├── Dashboard-Integration
+├── Reporting-Backend
+├── Reporting-Frontend
+├── Payment-Backend
+├── Payment-Frontend
+└── Common-Infrastructure
+Component Assignment Rules
+
+Requirements: No component needed
+Architecture: Use feature component (e.g., Auth-Backend)
+Stories: Assign based on technical implementation
+Bugs: Inherit from related story or assign based on area
+5. Naming Conventions
+
+General Format
+
+
+
+
+[PREFIX] Clear, descriptive title in present tense
+Naming by Issue Type
+
+Requirements
+
+Format: [Feature Area]: [Specific Functionality]
+
+
+
+Examples:
+✅ User Authentication: Login and Registration Flow
+✅ Dashboard: Real-time Data Visualization
+✅ Payment Processing: Credit Card Validation
+Architecture Design
+
+Format: [Feature Area] Architecture: [Specific Design]
+
+
+
+Examples:
+✅ User Authentication Architecture: OAuth2 Integration Design
+✅ Dashboard Architecture: WebSocket Implementation
+Questions
+
+Format: [Q] [Context]: [Specific Question]?
+
+
+
+Examples:
+✅ [Q] Login Security: Should we implement 2FA for all users?
+✅ [Q] Performance: What is the expected concurrent user load?
+Stories
+
+Format: [PREFIX] [Action] [specific functionality]
+
+
+
+Core Story Examples:
+✅ [CORE] Implement JWT token generation service
+✅ [CORE] Create user session management logic
+API Story Examples:
+✅ [API] Create POST /auth/login endpoint
+✅ [API] Implement user search REST endpoint
+UI Story Examples:
+✅ [UI] Build responsive login form with validation
+✅ [UI] Create dashboard widget components
+Bugs
+
+Format: [BUG-ENVIRONMENT] [Brief description of issue]
+
+
+
+Examples:
+✅ [BUG-PROD] Login fails for emails with special characters
+✅ [BUG-QA] Dashboard widgets not loading on mobile
+✅ [BUG-DEV] API returns 500 for null password
+Test Cases
+
+Format: [Feature]: [Test Scenario]
+
+
+
+Examples:
+✅ Login: Successful authentication with valid credentials
+✅ Login: Error handling for invalid password
+6. Linking & Relationships
+
+Link Types and Usage
+
+Link Type
+From
+To
+Purpose
+Blocks 
+Question 
+Requirement, Story 
+Question must be answered first 
+Relates to 
+Story 
+Requirement 
+Story implements requirement 
+Relates to 
+Bug 
+Story 
+Bug found in story 
+Tests 
+Test Case 
+Requirement, Story 
+Test case validates functionality 
+Implements 
+Story 
+Architecture Design 
+Story implements design 
+Linking Examples
+
+
+
+
+Epic: Customer Portal
+│
+├── Requirement: "User Authentication: Login Flow"
+│   ├── blocks ← Question: "[Q] Should we support SSO?"
+│   ├── relates to ← [CORE] Implement authentication service
+│   ├── relates to ← [API] Create login endpoint
+│   ├── relates to ← [UI] Build login form
+│   └── tests ← Test Case: "Login: Valid credentials test"
+│
+├── Architecture Design: "Authentication Architecture"
+│   └── implements ← [CORE] Setup OAuth2 framework
+│
+└── Bug: "[BUG-QA] Login button disabled on Chrome"
+    └── relates to → [UI] Build login form
+7. Workflows
+
+Requirement Workflow
+
+
+
+
+Draft → In Analysis → Open Questions → Review → Approved
+         ↓                                        ↓
+    Rejected                               Ready for Dev
+Story Workflow
+
+
+
+
+Backlog → Ready for Dev → In Progress → Code Review → Ready for QA → Testing → Done
+                              ↓                            ↓
+                          Blocked                     Failed QA
+Bug Workflow
+
+
+
+
+Open → Triaged → In Progress → Code Review → Ready for QA → Testing → Verified → Closed
+         ↓                                                      ↓
+    Won't Fix                                              Reopened
+Question Workflow
+
+
+
+
+Open → In Discussion → Awaiting Decision → Answered → Closed
+                              ↓
+                         Deferred
+8. Process Flow
+
+Feature Development Process
+
+Phase 1: Requirements & Analysis
+
+BA Creates Epic
+Define feature scope
+Set Feature Area
+BA Creates Requirements
+
+
+
+Title: User Authentication: Email/Password Login
+Feature Area: User Authentication
+Description: [Detailed requirements with acceptance criteria]
+BA/SA Create Questions
+
+
+
+Title: [Q] Security: Password complexity requirements?
+Links: Blocks → Requirement
+Target Audience: Business, Security
+Get Answers & Update Requirements
+Document decisions in Question
+Update Requirement based on answers
+Close Question
+Phase 2: Architecture & Design
+
+SA Creates Architecture Design
+
+
+
+Title: User Authentication Architecture: Microservice Design
+Feature Area: User Authentication
+Component: Auth-Backend
+SA Reviews Requirements
+Ensure technical feasibility
+Raise technical questions if needed
+Phase 3: Story Creation
+
+BA/SA Create Stories
+
+
+
+[CORE] Implement password hashing service
+Feature Area: User Authentication
+Component: Auth-Backend
+Links: Relates to → Requirement
+[API] Create POST /auth/login endpoint
+Feature Area: User Authentication
+Component: Auth-Backend
+Links: Relates to → Requirement
+[UI] Build login form with validation
+Feature Area: User Authentication
+Component: Auth-Frontend
+Links: Relates to → Requirement
+Phase 4: Testing
+
+QA Creates Test Cases
+
+
+
+Title: Login: Successful authentication test
+Feature Area: User Authentication
+Links: Tests → Requirement
+Test Automation Creates Automated Tests
+Link to Test Cases
+Update automation coverage
+9. JQL Queries & Filters
+
+Essential Saved Filters
+
+Requirements Management
+
+
+
+
+-- All approved requirements without stories
+project = DMT AND issuetype = Requirement AND status = Approved 
+AND issueFunction not in hasLinks("is related to")
+-- Requirements with open questions
+project = DMT AND issuetype = Requirement 
+AND issueFunction in hasLinks("is blocked by") 
+AND issueFunction in linkedIssuesOf("issuetype = Question AND status not in (Answered, Closed)")
+Development Tracking
+
+
+
+
+-- All stories by type for current sprint
+project = DMT AND issuetype in ("Core Story", "API Story", "UI Story") 
+AND sprint in openSprints() ORDER BY summary
+-- Unlinked stories (missing requirements)
+project = DMT AND issuetype in ("Core Story", "API Story", "UI Story") 
+AND issueFunction not in hasLinks("relates to")
+Quality Assurance
+
+
+
+
+-- Stories without test cases
+project = DMT AND issuetype in ("Core Story", "API Story", "UI Story") 
+AND status = Done AND issueFunction not in hasLinks("is tested by")
+-- Production bugs last 30 days
+project = DMT AND issuetype = Bug AND "Environment Found" = Production 
+AND created >= -30d ORDER BY priority DESC
+Feature Area Views
+
+
+
+
+-- Complete feature view
+project = DMT AND "Epic Link" = EPIC-123 
+ORDER BY "Feature Area", issuetype, status
+-- Feature area progress
+project = DMT AND "Feature Area" = "User Authentication" 
+AND issuetype in (Requirement, "Core Story", "API Story", "UI Story")
+10. Dashboards & Reporting
+
+Feature Documentation Dashboard
+
+Widget 1: Feature Area Overview
+
+Type: Two Dimensional Filter Statistics
+X-axis: Feature Area
+Y-axis: Issue Type
+Shows distribution of work
+Widget 2: Requirements Coverage
+
+Type: Pie Chart
+Shows: Requirements with/without stories
+Filter: Requirements by status
+Widget 3: Open Questions
+
+Type: Filter Results
+Columns: Key, Summary, Question Category, Priority, Assignee
+Filter: Open questions sorted by priority
+Widget 4: Story Distribution
+
+Type: Pie Chart
+Shows: [CORE] vs [API] vs [UI] distribution
+Quality Dashboard
+
+Widget 1: Bug Trends
+
+Type: Created vs Resolved Chart
+Time period: Last 30 days
+Group by: Environment Found
+Widget 2: Test Coverage
+
+Type: Two Dimensional Filter Statistics
+X-axis: Feature Area
+Y-axis: Test Coverage status
+Widget 3: Automation Progress
+
+Type: Pie Chart
+Shows: Manual vs Automated test cases
+11. Best Practices
+
+General Guidelines
+
+Always link stories to requirements
+Use prefixes consistently
+Keep descriptions clear and concise
+Update Feature Area for all issues
+Close questions when answered
+Do's and Don'ts
+
+DO:
+
+✅ Create requirements before stories
+✅ Document decisions in questions
+✅ Use components for technical classification
+✅ Link bugs to original stories and test cases
+✅ Keep epic size manageable (< 30 requirements)
+DON'T:
+
+❌ Create stories without requirements
+❌ Leave questions unanswered
+❌ Mix business and technical details in requirements
+❌ Forget prefixes on stories and bugs
+❌ Create duplicate test cases
+Quality Checklist
+
+Before Starting Development:
+
+[ ] All requirements approved
+[ ] No blocking questions
+[ ] Architecture design reviewed
+[ ] Stories created and linked
+Before Closing Sprint:
+
+[ ] All stories linked to requirements
+[ ] Test cases created
+[ ] Bugs properly categorized
+[ ] Questions answered and closed
+12. Admin Setup Guide
+
+Step 1: Create Issue Types
+
+Go to Settings → Issues → Issue types
+Create new issue types:
+Core Story (clone from Story)
+API Story (clone from Story)
+UI Story (clone from Story)
+Question (clone from Task)
+Architecture Design (clone from Task)
+Step 2: Configure Custom Fields
+
+Go to Settings → Issues → Custom fields
+Create fields as specified in Section 3
+Configure field contexts for your project
+Add fields to appropriate screens
+Step 3: Setup Components
+
+Go to Project settings → Components
+Add components as listed in Section 4
+Assign component leads if applicable
+Step 4: Configure Workflows
+
+Go to Settings → Issues → Workflows
+Create workflows as specified in Section 7
+Associate workflows with issue types
+Step 5: Create Automation Rules
+
+Go to Project settings → Automation
+Create prefix automation rules:
+
+
+
+Rule: Auto-add story prefixes
+When: Issue created
+If: Issue Type = "Core Story" AND Summary !~ "^\\[CORE\\]"
+Then: Edit summary = "[CORE] " + {{issue.summary}}
+Step 6: Setup Filters and Dashboards
+
+Create shared filters using JQL from Section 9
+Create dashboards as specified in Section 10
+Share with appropriate user groups
+Step 7: Create Quick Filters for Board
+
+Go to Board settings → Quick Filters
+Add filters:
+Core Stories: summary ~ "^\\\\[CORE\\\\]"
+API Stories: summary ~ "^\\\\[API\\\\]"
+UI Stories: summary ~ "^\\\\[UI\\\\]"
+Open Questions: issuetype = Question AND status != Closed
+Appendix A: Templates
+
+Requirement Template
+
+
+
+
+**Feature Area:** [Select from dropdown]
+**Priority:** [High/Medium/Low]
+**Business Context:**
+[Why is this needed? What problem does it solve?]
+**User Story:**
+As a [user type]
+I want to [action]
+So that [benefit]
+**Acceptance Criteria:**
+- [ ] Criteria 1
+- [ ] Criteria 2
+- [ ] Criteria 3
+**Out of Scope:**
+- Item 1
+- Item 2
+**Assumptions:**
+- Assumption 1
+- Assumption 2
+**Open Questions:**
+- Link to question issues
+Question Template
+
+
+
+
+**Question Category:** [Business/Technical/Integration/Security/UX]
+**Priority:** [Blocker/High/Medium/Low]
+**Target Audience:** [Business/Architecture/Development/QA]
+**Decision Required:** [Yes/No]
+**Background:**
+[Provide context for the question]
+**Specific Question:**
+[State the question clearly]
+**Options Considered:**
+1. Option A: [Description]
+   - Pros: 
+   - Cons:
+2. Option B: [Description]
+   - Pros:
+   - Cons:
+**Recommendation:**
+[If applicable]
+---
+**DECISION:** [To be filled when answered]
+**Rationale:** [Explanation]
+Bug Template
+
+
+
+
+**Environment Found:** [Development/QA/UAT/Production]
+**Severity:** [Critical/High/Medium/Low]
+**Build/Version:** [Version number]
+**Steps to Reproduce:**
+1. Step 1
+2. Step 2
+3. Step 3
+**Expected Result:**
+[What should happen]
+**Actual Result:**
+[What actually happens]
+**Additional Information:**
+- Browser/Device: 
+- User Role:
+- Frequency: [Always/Sometimes/Once]
+- Workaround: [If any]
+**Attachments:**
+[Screenshots, logs, videos]
+Version History
+
+Version
+Date
+Author
+Changes
+1.0 
+13.07.2025
+Uladzimir Klyshevich
+Initial version 
+This document is maintained by the Project Management team. For questions or suggestions, please create a Question issue in Jira.

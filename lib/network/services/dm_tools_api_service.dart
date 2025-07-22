@@ -83,6 +83,45 @@ abstract interface class DmToolsApiService {
   /// Test an integration
   Future<Object> testIntegration(TestIntegrationRequest request);
 
+  // Job Configuration methods
+
+  /// Get all job configurations for the current user
+  Future<List<JobConfigurationDto>> getJobConfigurations({bool? enabled});
+
+  /// Get job configuration with properly extracted parameters
+  Future<JobConfigurationDto> getJobConfiguration(String id);
+
+  /// Get raw job configuration data to bypass JsonNode parsing issues
+  Future<Map<String, dynamic>> getJobConfigurationRaw(String id);
+
+  /// Create a new job configuration
+  Future<JobConfigurationDto> createJobConfiguration(CreateJobConfigurationRequest request);
+
+  /// Create job configuration with raw JSON data to bypass JsonNode issues
+  Future<JobConfigurationDto> createJobConfigurationRaw(
+      String name, String jobType, Map<String, dynamic> jobParameters, Map<String, dynamic> integrationMappings,
+      {String? description, bool? enabled});
+
+  /// Update an existing job configuration
+  Future<JobConfigurationDto> updateJobConfiguration(String id, UpdateJobConfigurationRequest request);
+
+  /// Update job configuration with raw JSON data to bypass JsonNode issues
+  Future<JobConfigurationDto> updateJobConfigurationRaw(
+      String id, String name, Map<String, dynamic> jobParameters, Map<String, dynamic> integrationMappings,
+      {String? description, bool? enabled});
+
+  /// Delete a job configuration
+  Future<void> deleteJobConfiguration(String id);
+
+  /// Execute a job configuration
+  Future<Object> executeJobConfiguration(String id, ExecuteJobConfigurationRequest request);
+
+  /// Get job type definition and configuration
+  Future<JobTypeDto> getJobType(String jobName);
+
+  /// Get all available job types with full details
+  Future<List<JobTypeDto>> getAvailableJobTypes();
+
   /// Dispose the service and clean up resources
   void dispose();
 }

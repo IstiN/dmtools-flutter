@@ -7,6 +7,7 @@ import 'organisms/chat_module_page.dart';
 import 'organisms/workspace_management_page.dart';
 import 'organisms/integration_management_page.dart';
 import 'organisms/navigation_sidebar_page.dart';
+import 'job_configuration_page.dart';
 
 class OrganismCard {
   final String title;
@@ -79,6 +80,14 @@ class OrganismsPage extends StatelessWidget {
             'Complete integration management system with discovery, cards, forms, configuration, and CRUD operations.',
         pageBuilder: (context) => const IntegrationManagementPage(),
         icon: Icons.integration_instructions,
+      ),
+      OrganismCard(
+        title: 'AI Job Configuration',
+        code: '.job-config-*',
+        description:
+            'Complete AI job configuration management system with job type selection, dynamic forms, and execution controls.',
+        pageBuilder: (context) => const JobConfigurationPage(),
+        icon: Icons.smart_toy,
       ),
     ];
 

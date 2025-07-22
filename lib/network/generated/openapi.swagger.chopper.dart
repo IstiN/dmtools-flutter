@@ -19,14 +19,43 @@ final class _$Openapi extends Openapi {
   final Type definitionType = Openapi;
 
   @override
-  Future<Response<Object>> _mcpHealthGet() {
-    final Uri $url = Uri.parse('/mcp/health');
+  Future<Response<JobConfigurationDto>> _apiV1JobConfigurationsIdGet(
+      {required String? id}) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations/${id}');
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
     );
-    return client.send<Object, Object>($request);
+    return client.send<JobConfigurationDto, JobConfigurationDto>($request);
+  }
+
+  @override
+  Future<Response<JobConfigurationDto>> _apiV1JobConfigurationsIdPut({
+    required String? id,
+    required UpdateJobConfigurationRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations/${id}');
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<JobConfigurationDto, JobConfigurationDto>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiV1JobConfigurationsIdDelete(
+      {required String? id}) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations/${id}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override
@@ -195,6 +224,105 @@ final class _$Openapi extends Openapi {
       client.baseUrl,
     );
     return client.send<WorkspaceDto, WorkspaceDto>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiV1JobsExecutePost(
+      {required JobExecutionRequest? body}) {
+    final Uri $url = Uri.parse('/api/v1/jobs/execute');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiV1JobsConfigurationsConfigIdExecutePost({
+    required String? configId,
+    required ExecuteJobConfigurationRequest? body,
+  }) {
+    final Uri $url =
+        Uri.parse('/api/v1/jobs/configurations/${configId}/execute');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<List<JobConfigurationDto>>> _apiV1JobConfigurationsGet(
+      {bool? enabled}) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations');
+    final Map<String, dynamic> $params = <String, dynamic>{'enabled': enabled};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client
+        .send<List<JobConfigurationDto>, JobConfigurationDto>($request);
+  }
+
+  @override
+  Future<Response<JobConfigurationDto>> _apiV1JobConfigurationsPost(
+      {required CreateJobConfigurationRequest? body}) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<JobConfigurationDto, JobConfigurationDto>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiV1JobConfigurationsIdWebhookPost({
+    required String? id,
+    String? xAPIKey,
+    required ExecuteJobConfigurationRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations/${id}/webhook');
+    final Map<String, String> $headers = {
+      if (xAPIKey != null) 'X-API-Key': xAPIKey,
+    };
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+      headers: $headers,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<ExecutionParametersDto>>
+      _apiV1JobConfigurationsIdExecutePost({
+    required String? id,
+    required ExecuteJobConfigurationRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations/${id}/execute');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client
+        .send<ExecutionParametersDto, ExecutionParametersDto>($request);
   }
 
   @override
@@ -578,6 +706,52 @@ final class _$Openapi extends Openapi {
   }
 
   @override
+  Future<Response<dynamic>> _apiV1JobsJobNameIntegrationsGet(
+      {required String? jobName}) {
+    final Uri $url = Uri.parse('/api/v1/jobs/${jobName}/integrations');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiV1JobsTypesGet() {
+    final Uri $url = Uri.parse('/api/v1/jobs/types');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<JobTypeDto>> _apiV1JobsTypesJobNameGet(
+      {required String? jobName}) {
+    final Uri $url = Uri.parse('/api/v1/jobs/types/${jobName}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<JobTypeDto, JobTypeDto>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiV1JobsAvailableGet() {
+    final Uri $url = Uri.parse('/api/v1/jobs/available');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
   Future<Response<String>> _apiV1ChatHealthGet() {
     final Uri $url = Uri.parse('/api/v1/chat/health');
     final Request $request = Request(
@@ -725,6 +899,22 @@ final class _$Openapi extends Openapi {
       client.baseUrl,
     );
     return client.send<IntegrationTypeDto, IntegrationTypeDto>($request);
+  }
+
+  @override
+  Future<Response<String>> _apiIntegrationsTypesTypeDocumentationGet({
+    required String? type,
+    String? locale,
+  }) {
+    final Uri $url = Uri.parse('/api/integrations/types/${type}/documentation');
+    final Map<String, dynamic> $params = <String, dynamic>{'locale': locale};
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<String, String>($request);
   }
 
   @override

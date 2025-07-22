@@ -39,6 +39,10 @@ export 'widgets/molecules/section_header.dart';
 export 'widgets/molecules/integration_card.dart';
 export 'widgets/molecules/integration_type_selector.dart';
 export 'widgets/molecules/integration_config_form.dart';
+export 'widgets/molecules/job_configuration_card.dart';
+export 'widgets/molecules/job_type_selector.dart';
+export 'widgets/molecules/job_config_form.dart';
+export 'widgets/molecules/job_showcase.dart';
 
 // Widgets - Organisms
 export 'widgets/organisms/chat_module.dart';
@@ -48,6 +52,8 @@ export 'widgets/organisms/welcome_banner.dart';
 export 'widgets/organisms/navigation_sidebar.dart';
 export 'widgets/organisms/integration_management.dart';
 export 'widgets/organisms/integration_detail.dart';
+export 'widgets/organisms/job_configuration_management.dart';
+export 'widgets/organisms/dynamic_config_form.dart';
 
 // Widgets - Responsive
 export 'widgets/responsive/responsive_breakpoints.dart';

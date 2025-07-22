@@ -228,6 +228,132 @@ class MockApiService implements DmToolsApiService {
   @override
   Future<Object> testIntegration(TestIntegrationRequest request) async => {'success': true, 'message': 'Test passed'};
 
+  // Job Configuration methods implementation
+  @override
+  Future<List<JobConfigurationDto>> getJobConfigurations({bool? enabled}) async {
+    return [];
+  }
+
+  @override
+  Future<JobConfigurationDto> getJobConfiguration(String id) async {
+    return JobConfigurationDto(
+      id: id,
+      name: 'Test Configuration',
+      description: 'Test Description',
+      jobType: 'expert_analysis',
+      enabled: true,
+      executionCount: 0,
+      createdAt: DateTime.now(),
+      createdByName: 'Test User',
+    );
+  }
+
+  @override
+  Future<Map<String, dynamic>> getJobConfigurationRaw(String id) async {
+    return {
+      'id': id,
+      'name': 'Test Configuration',
+      'description': 'Test Description',
+      'jobType': 'expert_analysis',
+      'enabled': true,
+      'executionCount': 0,
+      'createdAt': DateTime.now().toIso8601String(),
+      'createdByName': 'Test User',
+      'jobParameters': {
+        'testParam': 'testValue',
+      },
+      'integrationMappings': {
+        'testIntegration': 'test-id-123',
+      },
+    };
+  }
+
+  @override
+  Future<JobConfigurationDto> createJobConfiguration(CreateJobConfigurationRequest request) async {
+    return JobConfigurationDto(
+      id: 'test_config_${DateTime.now().millisecondsSinceEpoch}',
+      name: request.name,
+      description: request.description,
+      jobType: request.jobType,
+      enabled: request.enabled ?? true,
+      executionCount: 0,
+      createdAt: DateTime.now(),
+      createdByName: 'Test User',
+    );
+  }
+
+  @override
+  Future<JobConfigurationDto> createJobConfigurationRaw(
+      String name, String jobType, Map<String, dynamic> jobParameters, Map<String, dynamic> integrationMappings,
+      {String? description, bool? enabled}) async {
+    return JobConfigurationDto(
+      id: 'test_config_${DateTime.now().millisecondsSinceEpoch}',
+      name: name,
+      description: description ?? 'Test Description',
+      jobType: jobType,
+      enabled: enabled ?? true,
+      executionCount: 0,
+      createdAt: DateTime.now(),
+      createdByName: 'Test User',
+    );
+  }
+
+  @override
+  Future<JobConfigurationDto> updateJobConfiguration(String id, UpdateJobConfigurationRequest request) async {
+    return JobConfigurationDto(
+      id: id,
+      name: request.name ?? 'Updated Configuration',
+      description: request.description ?? 'Updated Description',
+      jobType: 'expert_analysis',
+      enabled: request.enabled ?? true,
+      executionCount: 0,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      createdByName: 'Test User',
+    );
+  }
+
+  @override
+  Future<JobConfigurationDto> updateJobConfigurationRaw(
+      String id, String name, Map<String, dynamic> jobParameters, Map<String, dynamic> integrationMappings,
+      {String? description, bool? enabled}) async {
+    return JobConfigurationDto(
+      id: id,
+      name: name,
+      description: description ?? 'Test Description',
+      jobType: 'expert_analysis',
+      enabled: enabled ?? true,
+      executionCount: 0,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      createdByName: 'Test User',
+    );
+  }
+
+  @override
+  Future<void> deleteJobConfiguration(String id) async {
+    // Mock implementation
+  }
+
+  @override
+  Future<Object> executeJobConfiguration(String id, ExecuteJobConfigurationRequest request) async {
+    return {};
+  }
+
+  @override
+  Future<JobTypeDto> getJobType(String jobName) async {
+    return const JobTypeDto();
+  }
+
+  @override
+  Future<List<JobTypeDto>> getAvailableJobTypes() async {
+    return [
+      const JobTypeDto(type: 'expert_analysis'),
+      const JobTypeDto(type: 'code_review'),
+      const JobTypeDto(type: 'issue_summary'),
+    ];
+  }
+
   @override
   void dispose() {}
 }
