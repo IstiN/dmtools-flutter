@@ -12,15 +12,13 @@ import '../../screens/styleguide_pages/headers_page.dart';
 import '../../screens/styleguide_pages/profile_page.dart';
 import '../../screens/styleguide_pages/auth_page.dart';
 import '../../screens/styleguide_pages/loading_indicators_page.dart';
+import '../../screens/styleguide_pages/mcp_page.dart';
 
 class StyleguideRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/welcome',
     routes: [
-      GoRoute(
-        path: '/',
-        redirect: (context, state) => '/welcome',
-      ),
+      GoRoute(path: '/', redirect: (context, state) => '/welcome'),
       ShellRoute(
         builder: (context, state, child) {
           return StyleguideShell(child: child);
@@ -28,69 +26,51 @@ class StyleguideRouter {
         routes: [
           GoRoute(
             path: '/welcome',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: welcome.WelcomePage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: welcome.WelcomePage()),
           ),
           GoRoute(
             path: '/colors-typography',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ColorsTypographyPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: ColorsTypographyPage()),
           ),
           GoRoute(
             path: '/atoms',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AtomsPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: AtomsPage()),
           ),
           GoRoute(
             path: '/molecules',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: MoleculesPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: MoleculesPage()),
           ),
           GoRoute(
             path: '/organisms',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: OrganismsPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: OrganismsPage()),
           ),
           GoRoute(
             path: '/icons-logos',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: IconsLogosPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: IconsLogosPage()),
           ),
           GoRoute(
             path: '/logos-components',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: LogosPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: LogosPage()),
           ),
           GoRoute(
             path: '/headers',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: HeadersPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: HeadersPage()),
           ),
           GoRoute(
             path: '/user-profile',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: ProfilePage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: ProfilePage()),
           ),
           GoRoute(
             path: '/authentication',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: AuthPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: AuthPage()),
           ),
           GoRoute(
             path: '/loading-indicators',
-            pageBuilder: (context, state) => const NoTransitionPage(
-              child: LoadingIndicatorsPage(),
-            ),
+            pageBuilder: (context, state) => const NoTransitionPage(child: LoadingIndicatorsPage()),
+          ),
+          GoRoute(
+            path: '/mcp',
+            pageBuilder: (context, state) => const NoTransitionPage(child: McpPage()),
           ),
         ],
       ),
@@ -104,11 +84,7 @@ class StyleguideNavigationItem {
   final String label;
   final String route;
 
-  const StyleguideNavigationItem({
-    required this.icon,
-    required this.label,
-    required this.route,
-  });
+  const StyleguideNavigationItem({required this.icon, required this.label, required this.route});
 }
 
 const List<StyleguideNavigationItem> styleguideNavigationItems = [
@@ -119,12 +95,19 @@ const List<StyleguideNavigationItem> styleguideNavigationItems = [
   StyleguideNavigationItem(icon: Icons.view_quilt_outlined, label: 'Organisms', route: '/organisms'),
   StyleguideNavigationItem(icon: Icons.image_outlined, label: 'Icons & Logos', route: '/icons-logos'),
   StyleguideNavigationItem(
-      icon: Icons.branding_watermark_outlined, label: 'Logos Components', route: '/logos-components'),
+    icon: Icons.branding_watermark_outlined,
+    label: 'Logos Components',
+    route: '/logos-components',
+  ),
   StyleguideNavigationItem(icon: Icons.view_headline_outlined, label: 'Headers', route: '/headers'),
   StyleguideNavigationItem(icon: Icons.person_outlined, label: 'User Profile', route: '/user-profile'),
   StyleguideNavigationItem(icon: Icons.login_outlined, label: 'Authentication', route: '/authentication'),
   StyleguideNavigationItem(
-      icon: Icons.hourglass_empty_outlined, label: 'Loading Indicators', route: '/loading-indicators'),
+    icon: Icons.hourglass_empty_outlined,
+    label: 'Loading Indicators',
+    route: '/loading-indicators',
+  ),
+  StyleguideNavigationItem(icon: Icons.settings_input_component_outlined, label: 'MCP Components', route: '/mcp'),
 ];
 
 // Shell that wraps all styleguide pages
