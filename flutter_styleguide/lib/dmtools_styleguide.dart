@@ -2,6 +2,7 @@ library;
 
 // Models
 export 'models/agent.dart';
+export 'models/mcp_configuration.dart';
 export 'core/models/agent.dart';
 
 // Services
@@ -24,6 +25,10 @@ export 'widgets/atoms/logos/logos.dart';
 export 'widgets/atoms/integration_type_icon.dart';
 export 'widgets/atoms/integration_status_badge.dart';
 export 'widgets/atoms/sensitive_field_input.dart';
+// MCP Atoms
+export 'widgets/atoms/mcp_status_chip.dart';
+export 'widgets/atoms/integration_checkbox.dart';
+export 'widgets/atoms/copy_button.dart';
 
 // Widgets - Molecules (existing files only)
 export 'widgets/molecules/agent_card.dart';
@@ -43,6 +48,18 @@ export 'widgets/molecules/job_configuration_card.dart';
 export 'widgets/molecules/job_type_selector.dart';
 export 'widgets/molecules/job_config_form.dart';
 export 'widgets/molecules/job_showcase.dart';
+
+// MCP Molecules
+export 'widgets/molecules/mcp_card.dart';
+export 'widgets/molecules/integration_selection_group.dart';
+export 'widgets/molecules/required_integration_selection.dart';
+export 'widgets/molecules/code_display_block.dart';
+
+// Organisms
+export 'widgets/organisms/mcp_list_view.dart';
+export 'widgets/organisms/mcp_creation_form.dart';
+export 'widgets/organisms/mcp_configuration_display.dart';
+export 'widgets/organisms/mcp_management.dart';
 
 // Widgets - Organisms
 export 'widgets/organisms/chat_module.dart';

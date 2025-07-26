@@ -7,6 +7,7 @@ import 'organisms/chat_module_page.dart';
 import 'organisms/workspace_management_page.dart';
 import 'organisms/integration_management_page.dart';
 import 'organisms/navigation_sidebar_page.dart';
+import 'organisms/mcp_management_page.dart';
 import 'job_configuration_page.dart';
 
 class OrganismCard {
@@ -89,15 +90,20 @@ class OrganismsPage extends StatelessWidget {
         pageBuilder: (context) => const JobConfigurationPage(),
         icon: Icons.smart_toy,
       ),
+      OrganismCard(
+        title: 'MCP Management',
+        code: '.mcp-*',
+        description:
+            'Complete MCP configuration management system with creation forms, list views, and code generation.',
+        pageBuilder: (context) => const McpManagementPage(),
+        icon: Icons.api,
+      ),
     ];
 
     return ListView(
       padding: const EdgeInsets.all(AppDimensions.spacingM),
       children: [
-        Text(
-          'Organisms',
-          style: Theme.of(context).textTheme.headlineMedium,
-        ),
+        Text('Organisms', style: Theme.of(context).textTheme.headlineMedium),
         const SizedBox(height: 8),
         Text(
           'More complex UI components composed of groups of molecules and/or atoms.',
@@ -133,11 +139,7 @@ class _OrganismCard extends StatelessWidget {
       elevation: 2,
       color: colors.cardBg,
       child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: organism.pageBuilder,
-          ),
-        ),
+        onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: organism.pageBuilder)),
         borderRadius: BorderRadius.circular(AppDimensions.radiusS),
         child: Padding(
           padding: const EdgeInsets.all(AppDimensions.spacingM),
@@ -158,11 +160,7 @@ class _OrganismCard extends StatelessWidget {
                       children: [
                         Text(
                           organism.title,
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: colors.textColor,
-                          ),
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colors.textColor),
                         ),
                         const SizedBox(height: AppDimensions.spacingXxs),
                         Container(
@@ -173,11 +171,7 @@ class _OrganismCard extends StatelessWidget {
                           ),
                           child: Text(
                             organism.code,
-                            style: TextStyle(
-                              fontFamily: 'monospace',
-                              fontSize: 12,
-                              color: colors.accentColor,
-                            ),
+                            style: TextStyle(fontFamily: 'monospace', fontSize: 12, color: colors.accentColor),
                           ),
                         ),
                       ],
@@ -189,10 +183,7 @@ class _OrganismCard extends StatelessWidget {
               Flexible(
                 child: Text(
                   organism.description,
-                  style: TextStyle(
-                    color: colors.textSecondary,
-                    height: 1.4,
-                  ),
+                  style: TextStyle(color: colors.textSecondary, height: 1.4),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -201,18 +192,16 @@ class _OrganismCard extends StatelessWidget {
               Align(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton.icon(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: organism.pageBuilder,
-                    ),
-                  ),
+                  onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: organism.pageBuilder)),
                   icon: const Icon(Icons.visibility),
                   label: const Text('View Component'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.accentColor,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.spacingS, vertical: AppDimensions.spacingXs),
+                      horizontal: AppDimensions.spacingS,
+                      vertical: AppDimensions.spacingXs,
+                    ),
                     textStyle: const TextStyle(fontSize: 14),
                   ),
                 ),
