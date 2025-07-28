@@ -274,7 +274,24 @@ class _McpManagementState extends State<McpManagement> {
                   final success = await widget.onCreateConfiguration(name, integrations);
                   print('🔧 McpManagement: onCreateConfiguration returned: $success');
                   if (success) {
-                    _switchToView(McpManagementView.list);
+                    // Wait a bit for the configurations list to update, then find the new config
+                    await Future.delayed(const Duration(milliseconds: 200));
+
+                    // Find the newly created configuration to navigate to its details
+                    final matchingConfigs = widget.configurations.where((config) => config.name == name).toList();
+                    print('🔧 McpManagement: Found ${matchingConfigs.length} configurations with name "$name"');
+
+                    if (matchingConfigs.isNotEmpty) {
+                      // Find the most recently created one
+                      final newConfig = matchingConfigs.reduce(
+                        (a, b) => (a.createdAt?.isAfter(b.createdAt ?? DateTime(1900)) == true) ? a : b,
+                      );
+                      print('🔧 McpManagement: Navigating to details for newly created config: ${newConfig.id}');
+                      _switchToView(McpManagementView.details, configuration: newConfig);
+                    } else {
+                      print('🔧 McpManagement: Could not find newly created configuration, staying on list view');
+                      _switchToView(McpManagementView.list);
+                    }
                   } else {
                     print('🔧 McpManagement: Creation failed, staying on create view');
                   }
@@ -386,7 +403,7 @@ class _McpManagementState extends State<McpManagement> {
           _editingConfiguration = null;
           _generatedCode = null; // Reset generated code when switching
           _isLoadingCode = false;
-          _selectedFormat = 'json'; // Reset format
+          _selectedFormat = 'cursor'; // Set Cursor as default format
           if (configuration?.id != null) {
             _fetchGeneratedCode(configuration!.id);
           }
