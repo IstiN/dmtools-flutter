@@ -14,6 +14,7 @@ import '../../screens/pages/integrations_page.dart';
 import '../../screens/pages/users_page.dart';
 import '../../screens/pages/settings_page.dart';
 import '../../screens/pages/api_demo_page.dart';
+import '../../screens/pages/mcp_page.dart';
 
 // Conditional import for web-specific OAuth handling
 import '../../screens/oauth_callback_web.dart' if (dart.library.io) '../../screens/oauth_callback_stub.dart';
@@ -234,6 +235,15 @@ class AppRouter {
             const HomeScreen(child: ApiDemoPage()),
           ),
         ),
+
+        // MCP route
+        GoRoute(
+          path: '/mcp',
+          pageBuilder: (context, state) => _buildFadePage(
+            state,
+            const HomeScreen(child: McpPage()),
+          ),
+        ),
       ],
       errorBuilder: (context, state) => Scaffold(
         body: Center(
@@ -266,6 +276,7 @@ class AppRouter {
       '/users',
       '/settings',
       '/api-demo',
+      '/mcp',
     ];
     return protectedRoutes.contains(path);
   }
@@ -305,6 +316,7 @@ const List<NavigationItem> navigationItems = [
   NavigationItem(icon: Icons.folder_outlined, label: 'Workspaces', route: '/workspaces'),
   NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
   NavigationItem(icon: Icons.extension_outlined, label: 'Integrations', route: '/integrations'),
+  NavigationItem(icon: Icons.cable_outlined, label: 'MCP', route: '/mcp'),
   NavigationItem(icon: Icons.people_outlined, label: 'Users', route: '/users'),
   NavigationItem(icon: Icons.settings_outlined, label: 'Settings', route: '/settings'),
   NavigationItem(icon: Icons.api_outlined, label: 'API Demo', route: '/api-demo'),

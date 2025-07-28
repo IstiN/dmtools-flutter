@@ -27,6 +27,8 @@ dev_dependencies:
   json_serializable: ^6.7.1
   alchemist: ^0.12.1
   flutter_launcher_icons: ^0.14.4
+  flutter_web_plugins:
+    sdk: flutter
 
 # We need to manually copy the icon file to web/favicon.png
 # flutter_launcher_icons:
@@ -35,6 +37,7 @@ dev_dependencies:
 #     image_path: "assets/img/dmtools-icon.svg"
 #     background_color: "#FFFFFF"
 #     theme_color: "#FFFFFF"
+
 flutter:
   uses-material-design: true
   assets:
@@ -51,8 +54,3 @@ flutter:
           weight: 700
         - asset: assets/fonts/Inter-SemiBold.ttf
           weight: 600
-
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-    # - assets/images/
-    # - assets/icons/

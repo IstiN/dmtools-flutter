@@ -258,11 +258,18 @@ class _McpPageState extends State<McpPage> {
             name: 'Development Environment',
             description: 'MCP configuration for development workflow with Jira and Confluence integration.',
             status: McpStatus.active,
-            integrations: const [McpIntegrationType.jira, McpIntegrationType.confluence],
+            integrationIds: const ['jira_1', 'confluence_1'],
+            availableIntegrations: const [
+              IntegrationOption(id: 'jira_1', displayName: 'Jira', description: 'Jira integration'),
+              IntegrationOption(id: 'confluence_1', displayName: 'Confluence', description: 'Confluence integration'),
+            ],
             createdAt: DateTime.now().subtract(const Duration(days: 3)),
             onTap: () => _showSnackBar('Card tapped'),
             onEdit: () => _showSnackBar('Edit clicked'),
-            onDelete: () => _showSnackBar('Delete clicked'),
+            onDelete: () async {
+              _showSnackBar('Delete clicked');
+              return true;
+            },
             onViewCode: () => _showSnackBar('View code clicked'),
             onCopyCode: () => _showSnackBar('Copy code clicked'),
             isTestMode: true,
@@ -272,11 +279,21 @@ class _McpPageState extends State<McpPage> {
           McpCard(
             name: 'Production Monitoring',
             status: McpStatus.error,
-            integrations: const [McpIntegrationType.jira],
+            integrationIds: const ['jira_2'],
+            availableIntegrations: const [
+              IntegrationOption(
+                id: 'jira_2',
+                displayName: 'Production Jira',
+                description: 'Production Jira integration',
+              ),
+            ],
             createdAt: DateTime.now().subtract(const Duration(hours: 2)),
             onTap: () => _showSnackBar('Card tapped'),
             onEdit: () => _showSnackBar('Edit clicked'),
-            onDelete: () => _showSnackBar('Delete clicked'),
+            onDelete: () async {
+              _showSnackBar('Delete clicked');
+              return true;
+            },
             size: McpCardSize.small,
             isTestMode: true,
             testDarkMode: context.isDarkMode,
@@ -286,7 +303,14 @@ class _McpPageState extends State<McpPage> {
             name: 'Documentation Hub',
             description: 'Comprehensive documentation setup with multiple integrations for team collaboration.',
             status: McpStatus.pending,
-            integrations: const [McpIntegrationType.confluence],
+            integrationIds: const ['confluence_2'],
+            availableIntegrations: const [
+              IntegrationOption(
+                id: 'confluence_2',
+                displayName: 'Documentation Confluence',
+                description: 'Documentation Confluence integration',
+              ),
+            ],
             createdAt: DateTime.now().subtract(const Duration(minutes: 30)),
             onTap: () => _showSnackBar('Card tapped'),
             size: McpCardSize.large,
@@ -434,9 +458,13 @@ await mcpClient.connect();
     return McpListView(
       configurations: _sampleConfigurations,
       state: McpListState.populated,
+      availableIntegrations: _sampleIntegrations,
       onConfigurationTap: (config) => _showSnackBar('Tapped: ${config.name}'),
       onCreateNew: () => _showSnackBar('Create new MCP'),
-      onDelete: (config) => _showSnackBar('Delete: ${config.name}'),
+      onDelete: (config) async {
+        _showSnackBar('Delete: ${config.name}');
+        return true;
+      },
       onEdit: (config) => _showSnackBar('Edit: ${config.name}'),
       onViewCode: (config) => _showSnackBar('View code: ${config.name}'),
       onCopyCode: (context, config) => _showSnackBar('Copy code: ${config.name}'),
@@ -451,7 +479,10 @@ await mcpClient.connect();
   Widget _buildMcpCreationFormDemo() {
     return McpCreationForm(
       availableIntegrations: _sampleIntegrations,
-      onSubmit: (name, integrations) => _showSnackBar('Create: $name with ${integrations.length} integrations'),
+      onSubmit: (name, integrations) async {
+        _showSnackBar('Create: $name with ${integrations.length} integrations');
+        return true;
+      },
       onCancel: () => _showSnackBar('Form cancelled'),
     );
   }
@@ -462,7 +493,10 @@ await mcpClient.connect();
       initialName: 'Development Environment',
       initialSelectedIntegrations: const ['tracker', 'ai'],
       submitButtonText: 'Update Configuration',
-      onSubmit: (name, integrations) => _showSnackBar('Update: $name with ${integrations.length} integrations'),
+      onSubmit: (name, integrations) async {
+        _showSnackBar('Update: $name with ${integrations.length} integrations');
+        return true;
+      },
       onCancel: () => _showSnackBar('Edit cancelled'),
     );
   }
@@ -472,11 +506,11 @@ await mcpClient.connect();
       configuration: _sampleConfigurations.first,
       generatedCode: _sampleCodeDisplay,
       onEdit: () => _showSnackBar('Edit configuration'),
-      onDelete: () => _showSnackBar('Delete configuration'),
-      onDuplicate: () => _showSnackBar('Duplicate configuration'),
+      onDelete: () async {
+        _showSnackBar('Delete configuration');
+        return true;
+      },
       onRefreshCode: () => _showSnackBar('Refresh code'),
-      onCopyCode: () => _showSnackBar('Copy code'),
-      onDownloadCode: () => _showSnackBar('Download code'),
     );
   }
 
@@ -519,14 +553,14 @@ await mcpClient.connect();
     McpConfiguration(
       id: 'mcp-1',
       name: 'Development Environment',
-      integrations: [McpIntegrationType.jira, McpIntegrationType.confluence],
+      integrationIds: ['tracker', 'ai', 'confluence'],
       createdAt: DateTime.now().subtract(const Duration(days: 5)),
       token: 'mcp_dev_abc123',
     ),
     McpConfiguration(
       id: 'mcp-2',
       name: 'Production Setup',
-      integrations: [McpIntegrationType.jira],
+      integrationIds: ['tracker'],
       createdAt: DateTime.now().subtract(const Duration(days: 2)),
       token: 'mcp_prod_xyz789',
     ),

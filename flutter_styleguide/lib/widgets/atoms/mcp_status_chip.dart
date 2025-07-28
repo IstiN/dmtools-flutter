@@ -38,9 +38,9 @@ class McpStatusChip extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: dimensions.horizontalPadding, vertical: dimensions.verticalPadding),
       decoration: BoxDecoration(
-        color: statusColor.withOpacity(0.1),
+        color: statusColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(dimensions.borderRadius),
-        border: Border.all(color: statusColor.withOpacity(0.3)),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -61,7 +61,7 @@ class McpStatusChip extends StatelessWidget {
       case McpStatus.active:
         return colors.successColor;
       case McpStatus.inactive:
-        return colors.textColor.withOpacity(0.6);
+        return colors.textColor.withValues(alpha: 0.6);
       case McpStatus.error:
         return colors.dangerColor;
       case McpStatus.pending:

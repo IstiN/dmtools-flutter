@@ -273,7 +273,7 @@ class _OutlinedButton extends StatelessWidget {
           height: dimensions.height,
           padding: EdgeInsets.symmetric(horizontal: dimensions.horizontalPadding),
           decoration: BoxDecoration(
-            border: Border.all(color: borderColor, width: 1.5),
+            border: Border.all(color: contentColor.withValues(alpha: 0.3)),
             borderRadius: BorderRadius.circular(dimensions.borderRadius),
           ),
           child: Row(
@@ -369,7 +369,7 @@ class _IconOnlyButton extends StatelessWidget {
           width: dimensions.height,
           height: dimensions.height,
           decoration: BoxDecoration(
-            border: Border.all(color: contentColor.withOpacity(0.3)),
+            border: Border.all(color: contentColor.withValues(alpha: 0.3)),
             borderRadius: BorderRadius.circular(dimensions.borderRadius),
           ),
           child: Icon(icon, size: dimensions.iconSize, color: contentColor),

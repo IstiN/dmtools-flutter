@@ -4,9 +4,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:collection/collection.dart';
 import 'dart:convert';
 
-import 'openapi.enums.swagger.dart' as enums;
+import 'openapi_production.enums.swagger.dart' as enums;
 
-part 'openapi.models.swagger.g.dart';
+part 'openapi_production.models.swagger.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class JsonNode {

@@ -10,12 +10,7 @@ import '../molecules/headers/page_action_bar.dart';
 import '../atoms/integration_type_icon.dart';
 import '../responsive/responsive_builder.dart';
 
-enum IntegrationManagementView {
-  list,
-  discovery,
-  create,
-  edit,
-}
+enum IntegrationManagementView { list, discovery, create, edit }
 
 /// Complete integration management interface organism
 class IntegrationManagement extends StatefulWidget {
@@ -71,10 +66,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: colors.bgColor,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
+      decoration: BoxDecoration(color: colors.bgColor, borderRadius: BorderRadius.circular(AppDimensions.radiusL)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -88,27 +80,14 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
           if (_currentView != IntegrationManagementView.list)
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.spacingL,
-                vertical: AppDimensions.spacingM,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingL, vertical: AppDimensions.spacingM),
               decoration: BoxDecoration(
                 color: colors.cardBg,
-                border: Border(
-                  bottom: BorderSide(color: colors.borderColor.withValues(alpha: 0.1)),
-                ),
+                border: Border(bottom: BorderSide(color: colors.borderColor.withValues(alpha: 0.1))),
               ),
-              child: Text(
-                _getHeaderSubtitle(),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textSecondary,
-                ),
-              ),
+              child: Text(_getHeaderSubtitle(), style: TextStyle(fontSize: 14, color: colors.textSecondary)),
             ),
-          Expanded(
-            child: _buildContent(colors),
-          ),
+          Expanded(child: _buildContent(colors)),
         ],
       ),
     );
@@ -178,8 +157,8 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
         crossAxisCount: ResponsiveUtils.isWideScreen(context)
             ? 3
             : ResponsiveUtils.isTablet(context)
-                ? 2
-                : 1,
+            ? 2
+            : 1,
         crossAxisSpacing: AppDimensions.spacingL,
         mainAxisSpacing: AppDimensions.spacingL,
         mainAxisExtent: 300, // Set fixed height for cards to prevent overflow
@@ -219,27 +198,16 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.integration_instructions,
-              size: 64,
-              color: colors.textMuted,
-            ),
+            Icon(Icons.integration_instructions, size: 64, color: colors.textMuted),
             const SizedBox(height: AppDimensions.spacingL),
             Text(
               'No Integrations Yet',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: colors.textColor,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colors.textColor),
             ),
             const SizedBox(height: AppDimensions.spacingS),
             Text(
               'Connect external services to unlock powerful automation capabilities',
-              style: TextStyle(
-                fontSize: 14,
-                color: colors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 14, color: colors.textSecondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppDimensions.spacingL),
@@ -274,27 +242,17 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
             children: [
               Text(
                 'Available Integrations',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: colors.textColor,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textColor),
               ),
               const SizedBox(height: AppDimensions.spacingS),
               Text(
                 'Connect DMTools with external services and development tools',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: colors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 16, color: colors.textSecondary),
               ),
               const SizedBox(height: AppDimensions.spacingL),
               Text(
                 '${availableIntegrations.length} integration${availableIntegrations.length != 1 ? 's' : ''} available',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textMuted,
-                ),
+                style: TextStyle(fontSize: 14, color: colors.textMuted),
               ),
             ],
           ),
@@ -308,8 +266,8 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
               crossAxisCount: ResponsiveUtils.isWideScreen(context)
                   ? 3
                   : ResponsiveUtils.isTablet(context)
-                      ? 2
-                      : 1,
+                  ? 2
+                  : 1,
               crossAxisSpacing: AppDimensions.spacingM,
               mainAxisSpacing: AppDimensions.spacingM,
               childAspectRatio: ResponsiveUtils.isMobile(context) ? 1.5 : 1.3,
@@ -333,27 +291,16 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: colors.textMuted,
-              ),
+              Icon(Icons.error_outline, size: 64, color: colors.textMuted),
               const SizedBox(height: AppDimensions.spacingL),
               Text(
                 'No Integration Type Selected',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colors.textColor,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colors.textColor),
               ),
               const SizedBox(height: AppDimensions.spacingS),
               Text(
                 'Please go back and select an integration type',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: colors.textSecondary),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -384,11 +331,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                     color: colors.accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(AppDimensions.radiusS),
                   ),
-                  child: Icon(
-                    Icons.integration_instructions,
-                    color: colors.accentColor,
-                    size: 24,
-                  ),
+                  child: Icon(Icons.integration_instructions, color: colors.accentColor, size: 24),
                 ),
                 const SizedBox(width: AppDimensions.spacingM),
                 Expanded(
@@ -397,20 +340,10 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                     children: [
                       Text(
                         _selectedType!.displayName,
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: colors.textColor,
-                        ),
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colors.textColor),
                       ),
                       const SizedBox(height: AppDimensions.spacingXs),
-                      Text(
-                        _selectedType!.description,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: colors.textSecondary,
-                        ),
-                      ),
+                      Text(_selectedType!.description, style: TextStyle(fontSize: 14, color: colors.textSecondary)),
                     ],
                   ),
                 ),
@@ -495,9 +428,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
   Widget _buildEditIntegration(ThemeColorSet colors) {
     if (_editingIntegration == null) return const SizedBox();
 
-    final integrationType = widget.availableTypes.firstWhere(
-      (type) => type.type == _editingIntegration!.type,
-    );
+    final integrationType = widget.availableTypes.firstWhere((type) => type.type == _editingIntegration!.type);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppDimensions.spacingL),
@@ -680,10 +611,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
         title: const Text('Delete Integration'),
         content: Text('Are you sure you want to delete "${integration.name}"? This action cannot be undone.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
@@ -778,20 +706,13 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
                       children: [
                         Text(
                           integration.displayName,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: colors.textColor,
-                          ),
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.textColor),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
                           _getIntegrationCategory(integration.type),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: colors.textMuted,
-                          ),
+                          style: TextStyle(fontSize: 12, color: colors.textMuted),
                         ),
                       ],
                     ),
@@ -803,10 +724,7 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
               // Description
               Text(
                 integration.description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: colors.textSecondary),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -815,35 +733,18 @@ class _IntegrationManagementState extends State<IntegrationManagement> {
               // Configuration info
               Text(
                 'Configuration parameters: ${integration.configParams.length}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: colors.textMuted,
-                ),
+                style: TextStyle(fontSize: 12, color: colors.textMuted),
               ),
               const SizedBox(height: AppDimensions.spacingS),
 
               // Action button
               Row(
                 children: [
-                  Icon(
-                    Icons.settings,
-                    size: 14,
-                    color: colors.textMuted,
-                  ),
+                  Icon(Icons.settings, size: 14, color: colors.textMuted),
                   const SizedBox(width: 4),
-                  Text(
-                    'Setup available',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: colors.textMuted,
-                    ),
-                  ),
+                  Text('Setup available', style: TextStyle(fontSize: 11, color: colors.textMuted)),
                   const Spacer(),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 12,
-                    color: colors.textMuted,
-                  ),
+                  Icon(Icons.arrow_forward_ios, size: 12, color: colors.textMuted),
                 ],
               ),
             ],

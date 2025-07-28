@@ -6,7 +6,8 @@ import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import 'core/routing/app_router.dart';
 import 'providers/auth_provider.dart';
 import 'providers/integration_provider.dart';
-import 'network/services/dm_tools_api_service.dart';
+import 'providers/mcp_provider.dart';
+import 'network/services/api_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,8 +18,9 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ServiceLocator.get<AuthProvider>()),
-        Provider<DmToolsApiService>(create: (_) => ServiceLocator.get()),
+        Provider<ApiService>(create: (_) => ServiceLocator.get()),
         ChangeNotifierProvider(create: (_) => ServiceLocator.get<IntegrationProvider>()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<McpProvider>()),
       ],
       child: const DMToolsApp(),
     ),

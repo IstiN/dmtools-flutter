@@ -11,13 +11,13 @@ class McpManagementPage extends StatelessWidget {
       McpConfiguration(
         id: '1',
         name: 'Development Setup',
-        integrations: [McpIntegrationType.jira],
+        integrationIds: ['jira'],
         createdAt: DateTime.now().subtract(const Duration(days: 5)),
       ),
       McpConfiguration(
         id: '2',
         name: 'Documentation Workflow',
-        integrations: [McpIntegrationType.confluence, McpIntegrationType.jira],
+        integrationIds: ['confluence', 'jira'],
         createdAt: DateTime.now().subtract(const Duration(days: 2)),
       ),
     ];
@@ -47,14 +47,17 @@ class McpManagementPage extends StatelessWidget {
         child: McpManagement(
           configurations: sampleConfigurations,
           availableIntegrations: availableIntegrations,
-          onCreateConfiguration: (name, integrations) {
+          onCreateConfiguration: (name, integrations) async {
             _showActionDialog(context, 'Create configuration: $name with ${integrations.length} integrations');
+            return true;
           },
-          onUpdateConfiguration: (id, name, integrations) {
+          onUpdateConfiguration: (id, name, integrations) async {
             _showActionDialog(context, 'Update configuration $id: $name with ${integrations.length} integrations');
+            return true;
           },
-          onDeleteConfiguration: (id) {
+          onDeleteConfiguration: (id) async {
             _showActionDialog(context, 'Delete configuration $id');
+            return true;
           },
           isTestMode: true,
           testDarkMode: context.isDarkMode,

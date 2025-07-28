@@ -1,12 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:dmtools/service_locator.dart';
 import 'package:dmtools/providers/auth_provider.dart';
-import 'package:dmtools/network/services/dm_tools_api_service.dart';
+import 'package:dmtools/network/services/api_service.dart';
 import 'package:dmtools/core/models/user.dart';
 import 'package:dmtools/core/services/oauth_service.dart';
-import 'package:dmtools/network/generated/openapi.models.swagger.dart';
 import 'package:dmtools/network/generated/openapi.enums.swagger.dart' as enums;
 import 'package:get_it/get_it.dart';
+import 'package:chopper/chopper.dart';
+import 'package:dmtools/network/generated/openapi.swagger.dart';
 
 void main() {
   group('ServiceLocator', () {
@@ -22,7 +23,7 @@ void main() {
 
       // Register test services
       GetIt.I.registerSingleton<AuthProvider>(mockAuthProvider);
-      GetIt.I.registerSingleton<DmToolsApiService>(mockApiService);
+      GetIt.I.registerSingleton<ApiService>(mockApiService);
     });
 
     tearDown(() {
@@ -120,7 +121,7 @@ void main() {
         // Services are already registered in setUp() above
         // Act
         final authProvider = ServiceLocator.get<AuthProvider>();
-        final apiService = ServiceLocator.get<DmToolsApiService>();
+        final apiService = ServiceLocator.get<ApiService>();
 
         // Assert
         expect(authProvider, isNotNull);
@@ -156,7 +157,7 @@ class MockAuthProvider extends AuthProvider {
   }
 }
 
-class MockApiService implements DmToolsApiService {
+class MockApiService implements ApiService {
   bool getCurrentUserCalled = false;
   bool shouldThrowError = false;
   UserDto? userToReturn;
@@ -220,32 +221,72 @@ class MockApiService implements DmToolsApiService {
   Future<void> deleteIntegration(String id) async {}
 
   @override
-  Future<IntegrationDto> enableIntegration(String id) async => const IntegrationDto();
+  Future<void> enableIntegration(String id) async {}
 
   @override
-  Future<IntegrationDto> disableIntegration(String id) async => const IntegrationDto();
+  Future<void> disableIntegration(String id) async {}
 
   @override
   Future<Object> testIntegration(TestIntegrationRequest request) async => {'success': true, 'message': 'Test passed'};
 
   // Job Configuration methods implementation
   @override
-  Future<List<JobConfigurationDto>> getJobConfigurations({bool? enabled}) async {
+  Future<List<JobConfigurationDto>> getJobConfigurations() async {
     return [];
   }
 
   @override
-  Future<JobConfigurationDto> getJobConfiguration(String id) async {
+  Future<JobConfigurationDto> createJobConfigurationRaw({
+    required String name,
+    required String jobType,
+    required Map<String, dynamic> config,
+    required Map<String, dynamic> integrationMappings,
+    String? description,
+    bool? enabled,
+  }) async {
     return JobConfigurationDto(
-      id: id,
-      name: 'Test Configuration',
-      description: 'Test Description',
-      jobType: 'expert_analysis',
-      enabled: true,
+      id: 'test_config_${DateTime.now().millisecondsSinceEpoch}',
+      name: name,
+      description: description ?? 'Test Description',
+      jobType: jobType,
+      enabled: enabled,
       executionCount: 0,
       createdAt: DateTime.now(),
       createdByName: 'Test User',
     );
+  }
+
+  @override
+  Future<JobConfigurationDto> updateJobConfigurationRaw({
+    required String id,
+    String? name,
+    String? description,
+    String? jobType,
+    Map<String, dynamic>? config,
+    Map<String, dynamic>? integrationMappings,
+    bool? enabled,
+  }) async {
+    return JobConfigurationDto(
+      id: id,
+      name: name ?? 'Test Job',
+      description: description ?? 'Test Description',
+      jobType: jobType ?? 'expert_analysis',
+      enabled: enabled ?? true,
+      executionCount: 0,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+      createdByName: 'Test User',
+    );
+  }
+
+  @override
+  Future<void> deleteJobConfiguration(String id) async {
+    // Mock implementation
+  }
+
+  @override
+  Future<void> executeJobConfiguration(String id, ExecuteJobConfigurationRequest request) async {
+    // Mock implementation
   }
 
   @override
@@ -269,83 +310,6 @@ class MockApiService implements DmToolsApiService {
   }
 
   @override
-  Future<JobConfigurationDto> createJobConfiguration(CreateJobConfigurationRequest request) async {
-    return JobConfigurationDto(
-      id: 'test_config_${DateTime.now().millisecondsSinceEpoch}',
-      name: request.name,
-      description: request.description,
-      jobType: request.jobType,
-      enabled: request.enabled ?? true,
-      executionCount: 0,
-      createdAt: DateTime.now(),
-      createdByName: 'Test User',
-    );
-  }
-
-  @override
-  Future<JobConfigurationDto> createJobConfigurationRaw(
-      String name, String jobType, Map<String, dynamic> jobParameters, Map<String, dynamic> integrationMappings,
-      {String? description, bool? enabled}) async {
-    return JobConfigurationDto(
-      id: 'test_config_${DateTime.now().millisecondsSinceEpoch}',
-      name: name,
-      description: description ?? 'Test Description',
-      jobType: jobType,
-      enabled: enabled ?? true,
-      executionCount: 0,
-      createdAt: DateTime.now(),
-      createdByName: 'Test User',
-    );
-  }
-
-  @override
-  Future<JobConfigurationDto> updateJobConfiguration(String id, UpdateJobConfigurationRequest request) async {
-    return JobConfigurationDto(
-      id: id,
-      name: request.name ?? 'Updated Configuration',
-      description: request.description ?? 'Updated Description',
-      jobType: 'expert_analysis',
-      enabled: request.enabled ?? true,
-      executionCount: 0,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-      createdByName: 'Test User',
-    );
-  }
-
-  @override
-  Future<JobConfigurationDto> updateJobConfigurationRaw(
-      String id, String name, Map<String, dynamic> jobParameters, Map<String, dynamic> integrationMappings,
-      {String? description, bool? enabled}) async {
-    return JobConfigurationDto(
-      id: id,
-      name: name,
-      description: description ?? 'Test Description',
-      jobType: 'expert_analysis',
-      enabled: enabled ?? true,
-      executionCount: 0,
-      createdAt: DateTime.now(),
-      updatedAt: DateTime.now(),
-      createdByName: 'Test User',
-    );
-  }
-
-  @override
-  Future<void> deleteJobConfiguration(String id) async {
-    // Mock implementation
-  }
-
-  @override
-  Future<Object> executeJobConfiguration(String id, ExecuteJobConfigurationRequest request) async {
-    return {};
-  }
-
-  @override
-  Future<JobTypeDto> getJobType(String jobName) async {
-    return const JobTypeDto();
-  }
-
-  @override
   Future<List<JobTypeDto>> getAvailableJobTypes() async {
     return [
       const JobTypeDto(type: 'expert_analysis'),
@@ -356,6 +320,18 @@ class MockApiService implements DmToolsApiService {
 
   @override
   void dispose() {}
+
+  @override
+  // TODO: implement _authProvider
+  AuthProvider? get _authProvider => throw UnimplementedError();
+
+  @override
+  // TODO: implement _client
+  ChopperClient get _client => throw UnimplementedError();
+
+  @override
+  // TODO: implement _api
+  Openapi get _api => throw UnimplementedError();
 }
 
 class MockOAuthService extends OAuthService {

@@ -30,7 +30,12 @@ class IntegrationCheckbox extends StatelessWidget {
     final isInteractive = enabled && onChanged != null;
 
     return GestureDetector(
-      onTap: isInteractive ? () => onChanged!(!value) : null,
+      onTap: isInteractive
+          ? () {
+              print('🔧 IntegrationCheckbox: Tapped on "$label", changing from $value to ${!value}');
+              onChanged!(!value);
+            }
+          : null,
       child: Container(
         padding: EdgeInsets.all(dimensions.containerPadding),
         decoration: BoxDecoration(
@@ -71,25 +76,25 @@ class IntegrationCheckbox extends StatelessWidget {
   }
 
   Color _getBackgroundColor(ThemeColorSet colors) {
-    if (!enabled) return colors.cardBg.withOpacity( 0.5);
-    if (value) return colors.accentColor.withOpacity( 0.1);
+    if (!enabled) return colors.cardBg.withValues(alpha: 0.5);
+    if (value) return colors.accentColor.withValues(alpha: 0.1);
     return colors.cardBg;
   }
 
   Color _getBorderColor(ThemeColorSet colors) {
-    if (!enabled) return colors.borderColor.withOpacity( 0.5);
+    if (!enabled) return colors.borderColor.withValues(alpha: 0.5);
     if (value) return colors.accentColor;
     return colors.borderColor;
   }
 
   Color _getTextColor(ThemeColorSet colors) {
-    if (!enabled) return colors.textColor.withOpacity( 0.5);
+    if (!enabled) return colors.textColor.withValues(alpha: 0.5);
     return colors.textColor;
   }
 
   Color _getDescriptionColor(ThemeColorSet colors) {
-    if (!enabled) return colors.textColor.withOpacity( 0.3);
-    return colors.textColor.withOpacity( 0.7);
+    if (!enabled) return colors.textColor.withValues(alpha: 0.3);
+    return colors.textColor.withValues(alpha: 0.7);
   }
 
   _CheckboxDimensions _getDimensions() {
@@ -146,17 +151,17 @@ class _CustomCheckbox extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: value ? (enabled ? colors.accentColor : colors.accentColor.withOpacity( 0.5)) : Colors.transparent,
+        color: value ? (enabled ? colors.accentColor : colors.accentColor.withValues(alpha: 0.5)) : Colors.transparent,
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: value
-              ? (enabled ? colors.accentColor : colors.accentColor.withOpacity( 0.5))
-              : (enabled ? colors.borderColor : colors.borderColor.withOpacity( 0.5)),
+              ? (enabled ? colors.accentColor : colors.accentColor.withValues(alpha: 0.5))
+              : (enabled ? colors.borderColor : colors.borderColor.withValues(alpha: 0.5)),
           width: 2,
         ),
       ),
       child: value
-          ? Icon(Icons.check, size: size * 0.7, color: enabled ? Colors.white : Colors.white.withOpacity( 0.5))
+          ? Icon(Icons.check, size: size * 0.7, color: enabled ? Colors.white : Colors.white.withValues(alpha: 0.5))
           : null,
     );
   }
