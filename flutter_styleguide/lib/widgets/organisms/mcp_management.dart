@@ -26,9 +26,10 @@ enum McpManagementView { list, create, edit, details }
 class McpManagement extends StatefulWidget {
   final List<McpConfiguration> configurations;
   final List<IntegrationOption> availableIntegrations;
-  final Function(String, List<String>) onCreateConfiguration;
-  final Function(String, String, List<String>) onUpdateConfiguration;
-  final Function(String) onDeleteConfiguration;
+  final Future<bool> Function(String, List<String>) onCreateConfiguration;
+  final Future<bool> Function(String, String, List<String>) onUpdateConfiguration;
+  final Future<bool> Function(String) onDeleteConfiguration;
+  final Future<String?> Function(String, String)? onGenerateCode;
 
   final bool? isTestMode;
   final bool? testDarkMode;
@@ -39,6 +40,7 @@ class McpManagement extends StatefulWidget {
     required this.onCreateConfiguration,
     required this.onUpdateConfiguration,
     required this.onDeleteConfiguration,
+    this.onGenerateCode,
     this.isTestMode = false,
     this.testDarkMode = false,
     super.key,
@@ -52,6 +54,20 @@ class _McpManagementState extends State<McpManagement> {
   McpManagementView _currentView = McpManagementView.list;
   McpConfiguration? _editingConfiguration;
   McpConfiguration? _viewingConfiguration;
+  String? _generatedCode;
+  bool _isLoadingCode = false;
+  String _selectedFormat = 'json'; // Default format
+
+  @override
+  void didUpdateWidget(McpManagement oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.configurations != oldWidget.configurations) {
+      // If configurations change, reset the view
+      if (_currentView != McpManagementView.list) {
+        _switchToView(McpManagementView.list);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +114,7 @@ class _McpManagementState extends State<McpManagement> {
   String _getHeaderTitle() {
     switch (_currentView) {
       case McpManagementView.list:
-        return 'MCP Powered Jobs';
+        return 'MCP Configurations';
       case McpManagementView.create:
         return 'Add MCP Configuration';
       case McpManagementView.edit:
@@ -128,7 +144,10 @@ class _McpManagementState extends State<McpManagement> {
           PrimaryButton(
             text: 'Add MCP Configuration',
             icon: Icons.add,
-            onPressed: () => _switchToView(McpManagementView.create),
+            onPressed: () {
+              print('🔧 McpManagement: Add MCP Configuration button pressed');
+              _switchToView(McpManagementView.create);
+            },
             size: ButtonSize.small,
             isTestMode: widget.isTestMode ?? false,
           ),
@@ -149,6 +168,8 @@ class _McpManagementState extends State<McpManagement> {
   }
 
   Widget _buildCurrentView(ThemeColorSet colors) {
+    print('🔧 McpManagement: Building current view: $_currentView');
+
     switch (_currentView) {
       case McpManagementView.list:
         return _buildListView(colors);
@@ -157,7 +178,34 @@ class _McpManagementState extends State<McpManagement> {
       case McpManagementView.edit:
         return _buildEditView(colors);
       case McpManagementView.details:
-        return _buildDetailsView(colors);
+        return _buildDetailsView(
+          configuration: _viewingConfiguration!,
+          generatedCode: _generatedCode,
+          isLoadingCode: _isLoadingCode,
+          selectedFormat: _selectedFormat,
+          onFormatChanged: (newFormat) {
+            if (newFormat != null) {
+              setState(() {
+                _selectedFormat = newFormat;
+              });
+            }
+          },
+          onRefreshCode: () => _fetchGeneratedCode(_viewingConfiguration!.id),
+          onEdit: () => _switchToView(McpManagementView.edit, configuration: _viewingConfiguration!),
+          onDelete: () async {
+            try {
+              final success = await widget.onDeleteConfiguration(_viewingConfiguration!.id ?? '');
+              print('🔧 McpManagement: Delete from details result: $success');
+              if (success) {
+                _switchToView(McpManagementView.list);
+              }
+              return success;
+            } catch (e) {
+              print('🔧 McpManagement: Exception in onDeleteConfiguration from details: $e');
+              return false;
+            }
+          },
+        );
     }
   }
 
@@ -165,21 +213,26 @@ class _McpManagementState extends State<McpManagement> {
     return McpListView(
       configurations: widget.configurations,
       state: widget.configurations.isEmpty ? McpListState.empty : McpListState.populated,
+      availableIntegrations: widget.availableIntegrations,
       onCreateNew: () => _switchToView(McpManagementView.create),
       onConfigurationTap: (config) {
-        _viewingConfiguration = config;
-        _switchToView(McpManagementView.details);
+        _switchToView(McpManagementView.details, configuration: config);
       },
       onEdit: (config) {
-        _editingConfiguration = config;
-        _switchToView(McpManagementView.edit);
+        _switchToView(McpManagementView.edit, configuration: config);
       },
-      onDelete: (config) {
-        widget.onDeleteConfiguration(config.id ?? '');
+      onDelete: (config) async {
+        try {
+          final success = await widget.onDeleteConfiguration(config.id ?? '');
+          print('🔧 McpManagement: Delete result: $success');
+          return success;
+        } catch (e) {
+          print('🔧 McpManagement: Exception in onDeleteConfiguration: $e');
+          return false;
+        }
       },
       onViewCode: (config) {
-        _viewingConfiguration = config;
-        _switchToView(McpManagementView.details);
+        _switchToView(McpManagementView.details, configuration: config);
       },
       onCopyCode: (context, config) {
         // Handle copy functionality - this could trigger a snackbar
@@ -197,15 +250,46 @@ class _McpManagementState extends State<McpManagement> {
   }
 
   Widget _buildCreateView(ThemeColorSet colors) {
+    print('🔧 McpManagement: Building create view');
+    print('🔧 McpManagement: Available integrations: ${widget.availableIntegrations.length}');
+    print('🔧 McpManagement: onCreateConfiguration != null: ${widget.onCreateConfiguration != null}');
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppDimensions.spacingL),
       child: McpCreationForm(
         availableIntegrations: widget.availableIntegrations,
-        onSubmit: (name, integrations) {
-          widget.onCreateConfiguration(name, integrations);
+        onSubmit: widget.onCreateConfiguration != null
+            ? (name, integrations) async {
+                print('🔧 McpManagement: onSubmit called from McpCreationForm');
+                print('🔧 McpManagement: name = "$name", integrations = $integrations');
+                try {
+                  print('🔧 McpManagement: About to call widget.onCreateConfiguration');
+                  print('🔧 McpManagement: onCreateConfiguration type: ${widget.onCreateConfiguration.runtimeType}');
+                  print('🔧 McpManagement: onCreateConfiguration function: ${widget.onCreateConfiguration}');
+
+                  // Force a small delay to ensure UI updates properly
+                  await Future.delayed(const Duration(milliseconds: 100));
+
+                  print('🔧 McpManagement: Calling widget.onCreateConfiguration directly');
+                  final success = await widget.onCreateConfiguration(name, integrations);
+                  print('🔧 McpManagement: onCreateConfiguration returned: $success');
+                  if (success) {
+                    _switchToView(McpManagementView.list);
+                  } else {
+                    print('🔧 McpManagement: Creation failed, staying on create view');
+                  }
+                  return success;
+                } catch (e, stackTrace) {
+                  print('🔧 McpManagement: Exception in onCreateConfiguration: $e');
+                  print('🔧 McpManagement: Stack trace: $stackTrace');
+                  return false;
+                }
+              }
+            : null,
+        onCancel: () {
+          print('🔧 McpManagement: onCancel called from McpCreationForm');
           _switchToView(McpManagementView.list);
         },
-        onCancel: () => _switchToView(McpManagementView.list),
       ),
     );
   }
@@ -215,39 +299,33 @@ class _McpManagementState extends State<McpManagement> {
       return _buildErrorView('No configuration selected for editing');
     }
 
+    // Use the integration IDs directly since the model now stores them
+    final selectedIntegrationIds = _editingConfiguration!.integrationIds;
+
+    print('🔧 McpManagement: Edit view - configuration: ${_editingConfiguration!.name}');
+    print('🔧 McpManagement: Edit view - integration IDs: $selectedIntegrationIds');
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppDimensions.spacingL),
       child: McpCreationForm(
         availableIntegrations: widget.availableIntegrations,
         initialName: _editingConfiguration!.name,
-        initialSelectedIntegrations: _editingConfiguration!.integrations.map((e) => e.name).toList(),
+        initialSelectedIntegrations: selectedIntegrationIds,
         submitButtonText: 'Update Configuration',
-        onSubmit: (name, integrations) {
-          widget.onUpdateConfiguration(_editingConfiguration!.id ?? '', name, integrations);
-          _switchToView(McpManagementView.list);
+        onSubmit: (name, integrations) async {
+          try {
+            final configId = _editingConfiguration!.id ?? '';
+            final success = await widget.onUpdateConfiguration(configId, name, integrations);
+            if (success) {
+              _switchToView(McpManagementView.list);
+            }
+            return success;
+          } catch (e) {
+            print('🔧 McpManagement: Exception in onUpdateConfiguration: $e');
+            return false;
+          }
         },
         onCancel: () => _switchToView(McpManagementView.list),
-      ),
-    );
-  }
-
-  Widget _buildDetailsView(ThemeColorSet colors) {
-    if (_viewingConfiguration == null) {
-      return _buildErrorView('No configuration selected for viewing');
-    }
-
-    return Padding(
-      padding: const EdgeInsets.all(AppDimensions.spacingL),
-      child: McpConfigurationDisplay(
-        configuration: _viewingConfiguration!,
-        onEdit: () {
-          _editingConfiguration = _viewingConfiguration;
-          _switchToView(McpManagementView.edit);
-        },
-        onDelete: () {
-          widget.onDeleteConfiguration(_viewingConfiguration!.id ?? '');
-          _switchToView(McpManagementView.list);
-        },
       ),
     );
   }
@@ -267,15 +345,85 @@ class _McpManagementState extends State<McpManagement> {
     );
   }
 
-  void _switchToView(McpManagementView view) {
-    setState(() {
-      _currentView = view;
+  void _fetchGeneratedCode(String? configId) async {
+    if (configId == null || widget.onGenerateCode == null) return;
 
-      // Clear editing state when switching away from edit/create
-      if (view == McpManagementView.list) {
-        _editingConfiguration = null;
-        _viewingConfiguration = null;
+    setState(() {
+      _isLoadingCode = true;
+      _generatedCode = null;
+    });
+
+    try {
+      final code = await widget.onGenerateCode!(configId, _selectedFormat);
+      if (mounted) {
+        setState(() {
+          _generatedCode = code;
+          _isLoadingCode = false;
+        });
+      }
+    } catch (e) {
+      print('🔧 McpManagement: Error fetching generated code: $e');
+      if (mounted) {
+        setState(() {
+          _generatedCode = 'Error: Failed to load code.';
+          _isLoadingCode = false;
+        });
+      }
+    }
+  }
+
+  void _switchToView(McpManagementView newView, {McpConfiguration? configuration}) {
+    setState(() {
+      _currentView = newView;
+      switch (newView) {
+        case McpManagementView.list:
+          _viewingConfiguration = null;
+          _editingConfiguration = null;
+          break;
+        case McpManagementView.details:
+          assert(configuration != null);
+          _viewingConfiguration = configuration;
+          _editingConfiguration = null;
+          _generatedCode = null; // Reset generated code when switching
+          _isLoadingCode = false;
+          _selectedFormat = 'json'; // Reset format
+          if (configuration?.id != null) {
+            _fetchGeneratedCode(configuration!.id);
+          }
+          break;
+        case McpManagementView.edit:
+          assert(configuration != null);
+          _editingConfiguration = configuration;
+          _viewingConfiguration = null;
+          break;
+        case McpManagementView.create:
+          _editingConfiguration = null;
+          _viewingConfiguration = null;
+          break;
       }
     });
+    print('🔧 McpManagement: View switched to: $_currentView');
+  }
+
+  Widget _buildDetailsView({
+    required McpConfiguration configuration,
+    required String? generatedCode,
+    required bool isLoadingCode,
+    required String selectedFormat,
+    required ValueChanged<String?> onFormatChanged,
+    required VoidCallback onRefreshCode,
+    required VoidCallback onEdit,
+    required Future<bool> Function() onDelete,
+  }) {
+    return McpConfigurationDisplay(
+      configuration: configuration,
+      generatedCode: generatedCode,
+      isLoading: isLoadingCode,
+      selectedFormat: selectedFormat,
+      onFormatChanged: onFormatChanged,
+      onRefreshCode: onRefreshCode,
+      onEdit: onEdit,
+      onDelete: onDelete,
+    );
   }
 }

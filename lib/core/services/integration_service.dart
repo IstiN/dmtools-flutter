@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../config/app_config.dart';
 import '../../network/generated/openapi.models.swagger.dart' as api;
-import '../../network/services/dm_tools_api_service.dart';
+import '../../network/services/api_service.dart';
 import '../../providers/auth_provider.dart';
 
 /// Local model for integration data in the main app
@@ -95,6 +95,7 @@ class IntegrationTypeModel {
   final String description;
   final String? iconUrl;
   final List<ConfigParamModel> configParams;
+  final bool supportsMcp;
 
   const IntegrationTypeModel({
     required this.type,
@@ -102,6 +103,7 @@ class IntegrationTypeModel {
     required this.description,
     required this.configParams,
     this.iconUrl,
+    this.supportsMcp = false,
   });
 }
 
@@ -175,15 +177,27 @@ class IntegrationService with ChangeNotifier {
   String? _error;
   List<IntegrationModel> _integrations = [];
   List<IntegrationTypeModel> _availableTypes = [];
-  final DmToolsApiService? _apiService;
+  final ApiService _apiService;
   final AuthProvider? _authProvider;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<IntegrationModel> get integrations => List.unmodifiable(_integrations);
   List<IntegrationTypeModel> get availableTypes => List.unmodifiable(_availableTypes);
+  AuthProvider? get authProvider => _authProvider;
 
-  IntegrationService({DmToolsApiService? apiService, AuthProvider? authProvider})
+  /// Get all integration types that support MCP
+  List<IntegrationTypeModel> get mcpSupportedTypes =>
+      List.unmodifiable(_availableTypes.where((type) => type.supportsMcp).toList());
+
+  /// Get user integrations that support MCP (enabled and have MCP-supported types)
+  List<IntegrationModel> get mcpReadyIntegrations => List.unmodifiable(_integrations.where((integration) {
+        if (!integration.enabled) return false;
+        final integrationTypeModel = getIntegrationType(integration.type);
+        return integrationTypeModel?.supportsMcp ?? false;
+      }).toList());
+
+  IntegrationService({required ApiService apiService, AuthProvider? authProvider})
       : _apiService = apiService,
         _authProvider = authProvider {
     _initializeMockData();
@@ -195,7 +209,7 @@ class IntegrationService with ChangeNotifier {
     if (kDebugMode) {
       debugPrint('🔍 IntegrationService _shouldUseMockData: $shouldUseMock');
       debugPrint('   - AuthProvider exists: ${_authProvider != null}');
-      debugPrint('   - ApiService exists: ${_apiService != null}');
+      debugPrint('   - ApiService exists: ${_apiService.toString()}');
       debugPrint('   - Demo mode: ${_authProvider?.isDemoMode ?? 'null'}');
     }
     return shouldUseMock;
@@ -237,17 +251,13 @@ class IntegrationService with ChangeNotifier {
         }
 
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to get integrations');
-          }
-          final apiIntegrations = await _apiService!.getIntegrations();
-          _integrations = apiIntegrations.map(_convertApiIntegrationToLocal).toList();
-          if (kDebugMode) {
-            print('✅ Loaded ${_integrations.length} integrations from API');
-          }
-        } else {
-          throw Exception('ApiService not available for real data');
+        if (kDebugMode) {
+          print('🌐 Making real API call to get integrations');
+        }
+        final apiIntegrations = await _apiService.getIntegrations();
+        _integrations = apiIntegrations.map(_convertApiIntegrationToLocal).toList();
+        if (kDebugMode) {
+          print('✅ Loaded ${_integrations.length} integrations from API');
         }
       }
 
@@ -286,17 +296,13 @@ class IntegrationService with ChangeNotifier {
         }
 
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to get integration types');
-          }
-          final apiTypes = await _apiService!.getIntegrationTypes();
-          _availableTypes = apiTypes.map(_convertApiIntegrationTypeToLocal).toList();
-          if (kDebugMode) {
-            print('✅ Loaded ${_availableTypes.length} integration types from API');
-          }
-        } else {
-          throw Exception('ApiService not available for real data');
+        if (kDebugMode) {
+          print('🌐 Making real API call to get integration types');
+        }
+        final apiTypes = await _apiService.getIntegrationTypes();
+        _availableTypes = apiTypes.map(_convertApiIntegrationTypeToLocal).toList();
+        if (kDebugMode) {
+          print('✅ Loaded ${_availableTypes.length} integration types from API');
         }
       }
 
@@ -397,33 +403,29 @@ class IntegrationService with ChangeNotifier {
         return newIntegration;
       } else {
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to create integration');
-          }
-
-          // Convert raw config params to ConfigParam objects
-          final formattedConfigParams = _convertConfigToApiFormat(request.configParams, request.type);
-
-          final createRequest = api.CreateIntegrationRequest(
-            name: request.name,
-            description: request.description,
-            type: request.type,
-            configParams: formattedConfigParams,
-          );
-          final apiIntegration = await _apiService!.createIntegration(createRequest);
-          final newIntegration = _convertApiIntegrationToLocal(apiIntegration);
-          _integrations.add(newIntegration);
-          notifyListeners();
-          if (kDebugMode) {
-            print('✅ Created integration via API: ${newIntegration.id}');
-          }
-
-          _setLoading(false);
-          return newIntegration;
-        } else {
-          throw Exception('ApiService not available for real data');
+        if (kDebugMode) {
+          print('🌐 Making real API call to create integration');
         }
+
+        // Convert raw config params to ConfigParam objects
+        final formattedConfigParams = _convertConfigToApiFormat(request.configParams, request.type);
+
+        final createRequest = api.CreateIntegrationRequest(
+          name: request.name,
+          description: request.description,
+          type: request.type,
+          configParams: formattedConfigParams,
+        );
+        final apiIntegration = await _apiService.createIntegration(createRequest);
+        final newIntegration = _convertApiIntegrationToLocal(apiIntegration);
+        _integrations.add(newIntegration);
+        notifyListeners();
+        if (kDebugMode) {
+          print('✅ Created integration via API: ${newIntegration.id}');
+        }
+
+        _setLoading(false);
+        return newIntegration;
       }
     } catch (e) {
       _setError('Failed to create integration: ${e.toString()}');
@@ -485,37 +487,33 @@ class IntegrationService with ChangeNotifier {
         return true;
       } else {
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to update integration');
-          }
-
-          // Get the integration type to determine sensitive parameters
-          final integration = getIntegration(integrationId);
-          final integrationType = integration?.type ?? 'unknown';
-
-          // Convert raw config params to ConfigParam objects
-          final formattedConfigParams = _convertConfigToApiFormat(request.configParams, integrationType);
-
-          final updateRequest = api.UpdateIntegrationRequest(
-            name: request.name,
-            description: request.description,
-            enabled: request.enabled,
-            configParams: formattedConfigParams,
-          );
-          await _apiService!.updateIntegration(integrationId, updateRequest);
-
-          // Reload integrations to get updated data
-          await loadIntegrations();
-          if (kDebugMode) {
-            print('✅ Updated integration via API: $integrationId');
-          }
-
-          _setLoading(false);
-          return true;
-        } else {
-          throw Exception('ApiService not available for real data');
+        if (kDebugMode) {
+          print('🌐 Making real API call to update integration');
         }
+
+        // Get the integration type to determine sensitive parameters
+        final integration = getIntegration(integrationId);
+        final integrationType = integration?.type ?? 'unknown';
+
+        // Convert raw config params to ConfigParam objects
+        final formattedConfigParams = _convertConfigToApiFormat(request.configParams, integrationType);
+
+        final updateRequest = api.UpdateIntegrationRequest(
+          name: request.name,
+          description: request.description,
+          enabled: request.enabled,
+          configParams: formattedConfigParams,
+        );
+        await _apiService.updateIntegration(integrationId, updateRequest);
+
+        // Reload integrations to get updated data
+        await loadIntegrations();
+        if (kDebugMode) {
+          print('✅ Updated integration via API: $integrationId');
+        }
+
+        _setLoading(false);
+        return true;
       }
     } catch (e) {
       _setError('Failed to update integration: ${e.toString()}');
@@ -551,23 +549,19 @@ class IntegrationService with ChangeNotifier {
         }
       } else {
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to delete integration');
-          }
-          await _apiService!.deleteIntegration(integrationId);
+        if (kDebugMode) {
+          print('🌐 Making real API call to delete integration');
+        }
+        await _apiService.deleteIntegration(integrationId);
 
-          // Remove from local list after successful API call
-          final index = _integrations.indexWhere((integration) => integration.id == integrationId);
-          if (index != -1) {
-            _integrations.removeAt(index);
-            notifyListeners();
-          }
-          if (kDebugMode) {
-            print('✅ Deleted integration via API: $integrationId');
-          }
-        } else {
-          throw Exception('ApiService not available for real data');
+        // Remove from local list after successful API call
+        final index = _integrations.indexWhere((integration) => integration.id == integrationId);
+        if (index != -1) {
+          _integrations.removeAt(index);
+          notifyListeners();
+        }
+        if (kDebugMode) {
+          print('✅ Deleted integration via API: $integrationId');
         }
       }
 
@@ -620,17 +614,13 @@ class IntegrationService with ChangeNotifier {
         }
       } else {
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to enable integration');
-          }
-          await _apiService!.enableIntegration(integrationId);
-          await loadIntegrations();
-          if (kDebugMode) {
-            print('✅ Enabled integration via API: $integrationId');
-          }
-        } else {
-          throw Exception('ApiService not available for real data');
+        if (kDebugMode) {
+          print('🌐 Making real API call to enable integration');
+        }
+        await _apiService.enableIntegration(integrationId);
+        await loadIntegrations();
+        if (kDebugMode) {
+          print('✅ Enabled integration via API: $integrationId');
         }
       }
 
@@ -683,17 +673,13 @@ class IntegrationService with ChangeNotifier {
         }
       } else {
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to disable integration');
-          }
-          await _apiService!.disableIntegration(integrationId);
-          await loadIntegrations();
-          if (kDebugMode) {
-            print('✅ Disabled integration via API: $integrationId');
-          }
-        } else {
-          throw Exception('ApiService not available for real data');
+        if (kDebugMode) {
+          print('🌐 Making real API call to disable integration');
+        }
+        await _apiService.disableIntegration(integrationId);
+        await loadIntegrations();
+        if (kDebugMode) {
+          print('✅ Disabled integration via API: $integrationId');
         }
       }
 
@@ -737,36 +723,32 @@ class IntegrationService with ChangeNotifier {
         return testResult;
       } else {
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to test integration');
-          }
+        if (kDebugMode) {
+          print('🌐 Making real API call to test integration');
+        }
 
-          // For test integration, the API expects raw string values according to the swagger schema
-          // TestIntegrationRequest configParams is Map<String, dynamic> where values are strings
-          final testRequest = api.TestIntegrationRequest(
-            type: request.type,
-            configParams: request.configParams,
-          );
-          final testResult = await _apiService!.testIntegration(testRequest);
-          if (kDebugMode) {
-            print('✅ Integration test completed via API');
-          }
+        // For test integration, the API expects raw string values according to the swagger schema
+        // TestIntegrationRequest configParams is Map<String, dynamic> where values are strings
+        final testRequest = api.TestIntegrationRequest(
+          type: request.type,
+          configParams: request.configParams,
+        );
+        final testResult = await _apiService.testIntegration(testRequest);
+        if (kDebugMode) {
+          print('✅ Integration test completed via API');
+        }
 
-          _setLoading(false);
-          // Convert the Object result to Map<String, dynamic>
-          if (testResult is Map<String, dynamic>) {
-            return testResult;
-          } else {
-            return {
-              'success': true,
-              'message': 'Integration test completed',
-              'data': testResult.toString(),
-              'timestamp': DateTime.now().toIso8601String(),
-            };
-          }
+        _setLoading(false);
+        // Convert the Object result to Map<String, dynamic>
+        if (testResult is Map<String, dynamic>) {
+          return testResult;
         } else {
-          throw Exception('ApiService not available for real data');
+          return {
+            'success': true,
+            'message': 'Integration test completed',
+            'data': testResult.toString(),
+            'timestamp': DateTime.now().toIso8601String(),
+          };
         }
       }
     } catch (e) {
@@ -818,29 +800,25 @@ class IntegrationService with ChangeNotifier {
         return integration;
       } else {
         // Use real API service
-        if (_apiService != null) {
-          if (kDebugMode) {
-            print('🌐 Making real API call to get integration details');
-          }
-          final apiIntegration = await _apiService!.getIntegration(integrationId, includeSensitive: includeSensitive);
-          final integration = _convertApiIntegrationToLocal(apiIntegration);
-
-          // Update local cache
-          final index = _integrations.indexWhere((i) => i.id == integrationId);
-          if (index != -1) {
-            _integrations[index] = integration;
-            notifyListeners();
-          }
-
-          if (kDebugMode) {
-            print('✅ Fetched integration details via API: ${integration.name}');
-          }
-
-          _setLoading(false);
-          return integration;
-        } else {
-          throw Exception('ApiService not available for real data');
+        if (kDebugMode) {
+          print('🌐 Making real API call to get integration details');
         }
+        final apiIntegration = await _apiService.getIntegration(integrationId, includeSensitive: includeSensitive);
+        final integration = _convertApiIntegrationToLocal(apiIntegration);
+
+        // Update local cache
+        final index = _integrations.indexWhere((i) => i.id == integrationId);
+        if (index != -1) {
+          _integrations[index] = integration;
+          notifyListeners();
+        }
+
+        if (kDebugMode) {
+          print('✅ Fetched integration details via API: ${integration.name}');
+        }
+
+        _setLoading(false);
+        return integration;
       }
     } catch (e) {
       _setError('Failed to fetch integration details: ${e.toString()}');
@@ -949,6 +927,7 @@ class IntegrationService with ChangeNotifier {
       description: apiType.description ?? '',
       iconUrl: apiType.iconUrl,
       configParams: apiType.configParams?.map(_convertApiConfigParamToLocal).toList() ?? [],
+      supportsMcp: apiType.supportsMcp ?? false,
     );
   }
 
@@ -973,6 +952,7 @@ class IntegrationService with ChangeNotifier {
         type: 'jira',
         displayName: 'Jira',
         description: 'Connect to Atlassian Jira for issue tracking and project management',
+        supportsMcp: true, // Enable MCP support for Jira
         configParams: [
           ConfigParamModel(
             key: 'base_url',
@@ -1007,6 +987,7 @@ class IntegrationService with ChangeNotifier {
         type: 'confluence',
         displayName: 'Confluence',
         description: 'Connect to Atlassian Confluence for documentation and knowledge management',
+        supportsMcp: true, // Enable MCP support for Confluence
         configParams: [
           ConfigParamModel(
             key: 'base_url',

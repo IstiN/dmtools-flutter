@@ -1,7 +1,7 @@
 // dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'openapi.swagger.dart';
+part of 'openapi_production.swagger.dart';
 
 // **************************************************************************
 // ChopperGenerator
@@ -9,14 +9,14 @@ part of 'openapi.swagger.dart';
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
-final class _$Openapi extends Openapi {
-  _$Openapi([ChopperClient? client]) {
+final class _$OpenapiProduction extends OpenapiProduction {
+  _$OpenapiProduction([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
   }
 
   @override
-  final Type definitionType = Openapi;
+  final Type definitionType = OpenapiProduction;
 
   @override
   Future<Response<JobConfigurationDto>> _apiV1JobConfigurationsIdGet(

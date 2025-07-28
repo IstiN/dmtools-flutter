@@ -26,6 +26,14 @@ class IntegrationSelectionGroup extends StatelessWidget {
   final List<IntegrationOption> integrations;
   final Set<String> selectedIntegrations;
   final ValueChanged<String> onIntegrationChanged;
+
+  // Debug the integration selection change
+  void _debugOnIntegrationChanged(String integrationId) {
+    print('🔧 IntegrationSelectionGroup: Integration selection changed: $integrationId');
+    print('🔧 IntegrationSelectionGroup: Current selections: $selectedIntegrations');
+    onIntegrationChanged(integrationId);
+  }
+
   final int? maxSelections;
   final int? minSelections;
   final String? error;
@@ -48,7 +56,7 @@ class IntegrationSelectionGroup extends StatelessWidget {
         _IntegrationList(
           integrations: integrations,
           selectedIntegrations: selectedIntegrations,
-          onIntegrationChanged: onIntegrationChanged,
+          onIntegrationChanged: _debugOnIntegrationChanged,
           layout: layout,
           checkboxSize: checkboxSize,
         ),
@@ -160,6 +168,14 @@ class _IntegrationList extends StatelessWidget {
   final IntegrationSelectionLayout layout;
   final IntegrationCheckboxSize checkboxSize;
 
+  void _debugOnIntegrationChanged(String integrationId) {
+    print('🔧 _IntegrationList: Integration selection changed: $integrationId');
+    print('🔧 _IntegrationList: Current selections before: $selectedIntegrations');
+    onIntegrationChanged(integrationId);
+    // We can't see the updated selections here since they're updated in the parent
+    print('🔧 _IntegrationList: Called onIntegrationChanged');
+  }
+
   @override
   Widget build(BuildContext context) {
     switch (layout) {
@@ -167,21 +183,21 @@ class _IntegrationList extends StatelessWidget {
         return _VerticalLayout(
           integrations: integrations,
           selectedIntegrations: selectedIntegrations,
-          onIntegrationChanged: onIntegrationChanged,
+          onIntegrationChanged: _debugOnIntegrationChanged,
           checkboxSize: checkboxSize,
         );
       case IntegrationSelectionLayout.grid:
         return _GridLayout(
           integrations: integrations,
           selectedIntegrations: selectedIntegrations,
-          onIntegrationChanged: onIntegrationChanged,
+          onIntegrationChanged: _debugOnIntegrationChanged,
           checkboxSize: checkboxSize,
         );
       case IntegrationSelectionLayout.horizontal:
         return _HorizontalLayout(
           integrations: integrations,
           selectedIntegrations: selectedIntegrations,
-          onIntegrationChanged: onIntegrationChanged,
+          onIntegrationChanged: _debugOnIntegrationChanged,
           checkboxSize: checkboxSize,
         );
     }
@@ -213,7 +229,14 @@ class _VerticalLayout extends StatelessWidget {
             value: selectedIntegrations.contains(integration.id),
             enabled: integration.enabled,
             size: checkboxSize,
-            onChanged: integration.enabled ? (value) => onIntegrationChanged(integration.id) : null,
+            onChanged: integration.enabled
+                ? (value) {
+                    print(
+                      '🔧 _VerticalLayout: Checkbox changed for ${integration.displayName} (${integration.id}) to $value',
+                    );
+                    onIntegrationChanged(integration.id);
+                  }
+                : null,
           ),
         );
       }).toList(),
@@ -254,7 +277,14 @@ class _GridLayout extends StatelessWidget {
           value: selectedIntegrations.contains(integration.id),
           enabled: integration.enabled,
           size: checkboxSize,
-          onChanged: integration.enabled ? (value) => onIntegrationChanged(integration.id) : null,
+          onChanged: integration.enabled
+              ? (value) {
+                  print(
+                    '🔧 _GridLayout: Checkbox changed for ${integration.displayName} (${integration.id}) to $value',
+                  );
+                  onIntegrationChanged(integration.id);
+                }
+              : null,
         );
       },
     );
@@ -291,7 +321,14 @@ class _HorizontalLayout extends StatelessWidget {
                 value: selectedIntegrations.contains(integration.id),
                 enabled: integration.enabled,
                 size: checkboxSize,
-                onChanged: integration.enabled ? (value) => onIntegrationChanged(integration.id) : null,
+                onChanged: integration.enabled
+                    ? (value) {
+                        print(
+                          '🔧 _HorizontalLayout: Checkbox changed for ${integration.displayName} (${integration.id}) to $value',
+                        );
+                        onIntegrationChanged(integration.id);
+                      }
+                    : null,
               ),
             ),
           );

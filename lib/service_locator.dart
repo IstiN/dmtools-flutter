@@ -1,10 +1,10 @@
-import 'package:dmtools/core/config/app_config.dart';
-import 'package:dmtools/network/services/dm_tools_api_service.dart';
-import 'package:dmtools/network/services/dm_tools_api_service_impl.dart';
-import 'package:dmtools/network/services/dm_tools_api_service_mock.dart';
-import 'package:dmtools/providers/auth_provider.dart';
-import 'package:dmtools/providers/integration_provider.dart';
-import 'package:dmtools/core/services/integration_service.dart';
+import './core/config/app_config.dart';
+import './network/services/api_service.dart';
+import './providers/auth_provider.dart';
+import './providers/integration_provider.dart';
+import './providers/mcp_provider.dart';
+import './core/services/integration_service.dart';
+import './core/services/mcp_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 
@@ -22,38 +22,39 @@ abstract final class ServiceLocator {
     GetIt.I.registerLazySingleton(() => AuthProvider());
 
     // Create API service with AuthProvider
-    if (AppConfig.enableMockData) {
-      if (kDebugMode) {
-        print('🔧 ServiceLocator: Using MOCK API service');
-      }
-      GetIt.I.registerLazySingleton<DmToolsApiService>(() => DmToolsApiServiceMock());
-    } else {
-      if (kDebugMode) {
-        print('🔧 ServiceLocator: Using REAL API service');
-      }
-      GetIt.I.registerLazySingleton<DmToolsApiService>(
-        () => DmToolsApiServiceImpl(
-          baseUrl: AppConfig.baseUrl,
-          authProvider: get<AuthProvider>(),
-          enableLogging: AppConfig.enableLogging,
-        ),
-      );
-    }
+    GetIt.I.registerLazySingleton<ApiService>(
+      () => ApiService(
+        baseUrl: AppConfig.baseUrl,
+        authProvider: get<AuthProvider>(),
+        enableLogging: AppConfig.enableLogging,
+      ),
+    );
 
     // Create IntegrationService with dependencies
     GetIt.I.registerLazySingleton<IntegrationService>(
       () => IntegrationService(
-        apiService: get<DmToolsApiService>(),
+        apiService: get<ApiService>(),
         authProvider: get<AuthProvider>(),
       ),
     );
 
     // Create IntegrationProvider with dependencies
     GetIt.I.registerLazySingleton<IntegrationProvider>(
-      () => IntegrationProvider(
-        apiService: get<DmToolsApiService>(),
+      () => IntegrationProvider(get<IntegrationService>()),
+    );
+
+    // Create MCP service with dependencies
+    GetIt.I.registerLazySingleton<McpService>(
+      () => McpService(
+        baseUrl: AppConfig.baseUrl,
         authProvider: get<AuthProvider>(),
+        enableLogging: AppConfig.enableLogging,
       ),
+    );
+
+    // Create MCP provider with dependencies
+    GetIt.I.registerLazySingleton<McpProvider>(
+      () => McpProvider(get<McpService>()),
     );
   }
 
@@ -64,7 +65,7 @@ abstract final class ServiceLocator {
   static Future<void> initializeUserInfo() async {
     try {
       final authProvider = get<AuthProvider>();
-      final apiService = get<DmToolsApiService>();
+      final apiService = get<ApiService>();
 
       if (authProvider.isAuthenticated) {
         final currentUser = authProvider.currentUser;

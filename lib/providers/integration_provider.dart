@@ -1,7 +1,5 @@
 import 'package:flutter/foundation.dart';
 import '../core/services/integration_service.dart';
-import '../network/services/dm_tools_api_service.dart';
-import 'auth_provider.dart';
 
 /// Provider for managing integration state across the application
 class IntegrationProvider extends ChangeNotifier {
@@ -10,23 +8,18 @@ class IntegrationProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
 
-  IntegrationProvider({
-    required DmToolsApiService apiService,
-    required AuthProvider authProvider,
-  }) : _integrationService = IntegrationService(
-          apiService: apiService,
-          authProvider: authProvider,
-        ) {
+  IntegrationProvider(this._integrationService) {
     // Listen to the integration service for changes
     _integrationService.addListener(_onIntegrationServiceChanged);
 
     // Initialize if auth provider is already authenticated
-    if (authProvider.isAuthenticated) {
+    final authProvider = _integrationService.authProvider;
+    if (authProvider != null && authProvider.isAuthenticated) {
       _initialize();
     }
 
     // Listen to auth changes to initialize when user becomes authenticated
-    authProvider.addListener(_onAuthChanged);
+    authProvider?.addListener(_onAuthChanged);
   }
 
   /// Getters
@@ -113,7 +106,7 @@ class IntegrationProvider extends ChangeNotifier {
     required Map<String, dynamic> configParams,
   }) async {
     if (kDebugMode) {
-      print('🔄 IntegrationProvider: Creating integration - $name');
+      // Creating integration
     }
 
     final request = CreateIntegrationRequest(
@@ -126,7 +119,7 @@ class IntegrationProvider extends ChangeNotifier {
     final result = await _integrationService.createIntegration(request);
 
     if (result != null && kDebugMode) {
-      print('✅ IntegrationProvider: Integration created successfully');
+      // Integration created successfully
     }
 
     return result;
@@ -154,7 +147,7 @@ class IntegrationProvider extends ChangeNotifier {
     final result = await _integrationService.updateIntegration(integrationId, request);
 
     if (result && kDebugMode) {
-      print('✅ IntegrationProvider: Integration updated successfully');
+      // Integration updated successfully
     }
 
     return result;
@@ -169,7 +162,7 @@ class IntegrationProvider extends ChangeNotifier {
     final result = await _integrationService.deleteIntegration(integrationId);
 
     if (result && kDebugMode) {
-      print('✅ IntegrationProvider: Integration deleted successfully');
+      // Integration deleted successfully
     }
 
     return result;
@@ -184,7 +177,7 @@ class IntegrationProvider extends ChangeNotifier {
     final result = await _integrationService.enableIntegration(integrationId);
 
     if (result && kDebugMode) {
-      print('✅ IntegrationProvider: Integration enabled successfully');
+      // Integration enabled successfully
     }
 
     return result;

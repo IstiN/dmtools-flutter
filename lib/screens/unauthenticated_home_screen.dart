@@ -125,10 +125,10 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                                 'Organize your projects and teams in dedicated workspaces with customizable permissions and tools',
                           ),
                           FeatureCard(
-                            icon: Icons.apps,
-                            title: 'Integrated Applications',
+                            icon: Icons.api,
+                            title: 'MCP Proxy to all your project tools',
                             description:
-                                'Access a suite of tools designed for delivery managers to streamline your workflow and boost productivity',
+                                'Connect and manage all your project tools through a unified MCP interface with intelligent automation',
                           ),
                         ],
                       ),

@@ -272,6 +272,263 @@ class ApiService {
     }
   }
 
+  // --- Integration Methods ---
+
+  Future<List<IntegrationDto>> getIntegrations() async {
+    try {
+      final response = await _api.apiIntegrationsGet();
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to get integrations', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<IntegrationDto> createIntegration(
+    CreateIntegrationRequest request,
+  ) async {
+    try {
+      final response = await _api.apiIntegrationsPost(body: request);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to create integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<IntegrationDto> getIntegration(
+    String integrationId, {
+    bool includeSensitive = false,
+  }) async {
+    try {
+      final response = await _api.apiIntegrationsIdGet(
+        id: integrationId,
+        includeSensitive: includeSensitive,
+      );
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to get integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> deleteIntegration(String integrationId) async {
+    try {
+      final response = await _api.apiIntegrationsIdDelete(
+        id: integrationId,
+      );
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to delete integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<IntegrationDto> updateIntegration(
+    String integrationId,
+    UpdateIntegrationRequest request,
+  ) async {
+    try {
+      final response = await _api.apiIntegrationsIdPut(
+        id: integrationId,
+        body: request,
+      );
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to update integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> enableIntegration(String integrationId) async {
+    try {
+      final response = await _api.apiIntegrationsIdEnablePut(
+        id: integrationId,
+      );
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to enable integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<void> disableIntegration(String integrationId) async {
+    try {
+      final response = await _api.apiIntegrationsIdDisablePut(
+        id: integrationId,
+      );
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to disable integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<List<IntegrationTypeDto>> getIntegrationTypes() async {
+    try {
+      final response = await _api.apiIntegrationsTypesGet();
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to get integration types', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  Future<Object> testIntegration(TestIntegrationRequest request) async {
+    try {
+      final response = await _api.apiIntegrationsTestPost(body: request);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to test integration', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // --- Job Methods ---
+
+  /// Get all job configurations for the authenticated user
+  /// Note: There is no endpoint that returns a list of job configurations in the actual API
+  /// This method should be removed or the backend should implement this endpoint
+  Future<List<JobConfigurationDto>> getJobConfigurations() async {
+    throw UnimplementedError('GET /api/v1/job-configurations endpoint does not exist in the actual API');
+  }
+
+  /// Create a new job configuration
+  Future<JobConfigurationDto> createJobConfigurationRaw({
+    required String name,
+    required String jobType,
+    required Map<String, dynamic> config,
+    required Map<String, dynamic> integrationMappings,
+    String? description,
+    bool? enabled,
+  }) async {
+    try {
+      final request = CreateJobConfigurationRequest(
+        name: name,
+        description: description,
+        jobType: jobType,
+        jobParameters: const JsonNode(), // API expects JsonNode, not Map<String, dynamic>
+        integrationMappings: const JsonNode(), // API expects JsonNode, not Map<String, dynamic>
+        enabled: enabled,
+      );
+      final response = await _api.apiV1JobConfigurationsPost(body: request);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to create job configuration', response.statusCode);
+      }
+    } catch (e) {
+      throw ApiException('Error creating job configuration: $e');
+    }
+  }
+
+  /// Update an existing job configuration
+  Future<JobConfigurationDto> updateJobConfigurationRaw({
+    required String id,
+    String? name,
+    String? description,
+    String? jobType,
+    Map<String, dynamic>? config,
+    Map<String, dynamic>? integrationMappings,
+    bool? enabled,
+  }) async {
+    try {
+      final request = UpdateJobConfigurationRequest(
+        name: name,
+        description: description,
+        jobType: jobType,
+        jobParameters: config != null ? const JsonNode() : null, // API expects JsonNode, not Map<String, dynamic>
+        integrationMappings:
+            integrationMappings != null ? const JsonNode() : null, // API expects JsonNode, not Map<String, dynamic>
+        enabled: enabled,
+      );
+      final response = await _api.apiV1JobConfigurationsIdPut(id: id, body: request);
+      if (response.isSuccessful && response.body != null) {
+        return response.body!;
+      } else {
+        throw ApiException('Failed to update job configuration', response.statusCode);
+      }
+    } catch (e) {
+      throw ApiException('Error updating job configuration: $e');
+    }
+  }
+
+  /// Delete a job configuration
+  Future<void> deleteJobConfiguration(String id) async {
+    try {
+      final response = await _api.apiV1JobConfigurationsIdDelete(id: id);
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to delete job configuration', response.statusCode);
+      }
+    } catch (e) {
+      throw ApiException('Error deleting job configuration: $e');
+    }
+  }
+
+  /// Execute a job configuration
+  Future<void> executeJobConfiguration(String id, ExecuteJobConfigurationRequest request) async {
+    try {
+      final response = await _api.apiV1JobsConfigurationsConfigIdExecutePost(
+        configId: id, // API uses configId parameter name
+        body: request,
+      );
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to execute job configuration', response.statusCode);
+      }
+    } catch (e) {
+      throw ApiException('Error executing job configuration: $e');
+    }
+  }
+
+  /// Get raw job configuration data
+  Future<Map<String, dynamic>> getJobConfigurationRaw(String id) async {
+    try {
+      final response = await _api.apiV1JobConfigurationsIdGet(id: id);
+      if (response.isSuccessful && response.body != null) {
+        return response.body! as Map<String, dynamic>;
+      } else {
+        throw ApiException('Failed to get job configuration', response.statusCode);
+      }
+    } catch (e) {
+      throw ApiException('Error getting job configuration: $e');
+    }
+  }
+
+  /// Get available job types
+  Future<List<JobTypeDto>> getAvailableJobTypes() async {
+    try {
+      final response = await _api.apiV1JobsTypesGet();
+      if (response.isSuccessful && response.body != null) {
+        return response.body! as List<JobTypeDto>;
+      } else {
+        throw ApiException('Failed to get job types', response.statusCode);
+      }
+    } catch (e) {
+      throw ApiException('Error getting job types: $e');
+    }
+  }
+
   /// Handle and transform errors to more specific types
   Exception _handleError(dynamic error) {
     if (error is ApiException) {

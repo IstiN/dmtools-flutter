@@ -4,7 +4,7 @@ import '../config/app_config.dart';
 import '../models/workspace.dart';
 import '../../network/generated/openapi.models.swagger.dart' as api;
 import '../../network/generated/openapi.enums.swagger.dart' as enums;
-import '../../network/services/dm_tools_api_service.dart';
+import '../../network/services/api_service.dart';
 import '../../providers/auth_provider.dart';
 
 class WorkspaceService with ChangeNotifier {
@@ -15,14 +15,14 @@ class WorkspaceService with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   List<Workspace> _workspaces = [];
-  final DmToolsApiService? _apiService;
+  final ApiService? _apiService;
   final AuthProvider? _authProvider;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<Workspace> get workspaces => List.unmodifiable(_workspaces);
 
-  WorkspaceService({DmToolsApiService? apiService, AuthProvider? authProvider})
+  WorkspaceService({ApiService? apiService, AuthProvider? authProvider})
       : _apiService = apiService,
         _authProvider = authProvider {
     _initializeMockData();

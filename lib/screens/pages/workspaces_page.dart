@@ -6,7 +6,7 @@ import '../../core/models/workspace.dart';
 import '../../network/generated/openapi.models.swagger.dart' as api;
 import '../../network/generated/openapi.enums.swagger.dart' as enums;
 import '../../providers/auth_provider.dart' as app_auth;
-import '../../network/services/dm_tools_api_service.dart';
+import '../../network/services/api_service.dart';
 import 'package:flutter/foundation.dart';
 
 class WorkspacesPage extends StatefulWidget {
@@ -36,7 +36,7 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
     super.initState();
     // Initialize WorkspaceService with dependencies for real data access
     final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
-    final apiService = Provider.of<DmToolsApiService>(context, listen: false);
+    final apiService = Provider.of<ApiService>(context, listen: false);
     _workspaceService = WorkspaceService(
       apiService: apiService,
       authProvider: authProvider,

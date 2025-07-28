@@ -170,9 +170,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
     }
 
     // Initialize name controller
-    _nameController = TextEditingController(
-      text: widget.initialName ?? '',
-    );
+    _nameController = TextEditingController(text: widget.initialName ?? '');
     _nameController.addListener(() {
       widget.onNameChanged?.call(_nameController.text);
     });
@@ -216,9 +214,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
 
         debugPrint('🔧     - Final text value: "$textValue"');
 
-        _controllers[param.key] = TextEditingController(
-          text: textValue,
-        );
+        _controllers[param.key] = TextEditingController(text: textValue);
 
         // Set the value in _currentValues immediately
         if (textValue.isNotEmpty) {
@@ -309,21 +305,11 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
             children: [
               Text(
                 widget.title,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colors.textColor,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colors.textColor),
               ),
               if (widget.subtitle != null) ...[
                 const SizedBox(height: AppDimensions.spacingS),
-                Text(
-                  widget.subtitle!,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: colors.textSecondary,
-                  ),
-                ),
+                Text(widget.subtitle!, style: TextStyle(fontSize: 14, color: colors.textSecondary)),
               ],
             ],
           ),
@@ -380,11 +366,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
   Widget _buildSectionHeader(String title, ThemeColorSet colors) {
     return Text(
       title,
-      style: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: colors.textColor,
-      ),
+      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.textColor),
     );
   }
 
@@ -422,11 +404,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
           Text.rich(
             TextSpan(
               text: param.displayName,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: colors.textColor,
-              ),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textColor),
               children: param.required
                   ? [
                       TextSpan(
@@ -477,10 +455,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
     final value = _safeBool(_currentValues[param.key]);
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.spacingM,
-        vertical: AppDimensions.spacingM,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingM, vertical: AppDimensions.spacingM),
       decoration: BoxDecoration(
         color: colors.bgColor,
         borderRadius: BorderRadius.circular(AppDimensions.radiusS),
@@ -494,21 +469,11 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
               children: [
                 Text(
                   param.displayName,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: colors.textColor,
-                  ),
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textColor),
                 ),
                 if (param.description.isNotEmpty) ...[
                   const SizedBox(height: 4),
-                  Text(
-                    param.description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colors.textSecondary,
-                    ),
-                  ),
+                  Text(param.description, style: TextStyle(fontSize: 12, color: colors.textSecondary)),
                 ],
               ],
             ),
@@ -531,21 +496,11 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
       children: [
         Text(
           param.displayName,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: colors.textColor,
-          ),
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textColor),
         ),
         if (param.description.isNotEmpty) ...[
           const SizedBox(height: 4),
-          Text(
-            param.description,
-            style: TextStyle(
-              fontSize: 12,
-              color: colors.textSecondary,
-            ),
-          ),
+          Text(param.description, style: TextStyle(fontSize: 12, color: colors.textSecondary)),
         ],
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
@@ -573,10 +528,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
           items: param.options.map((option) {
             return DropdownMenuItem<String>(
               value: option,
-              child: Text(
-                option,
-                style: TextStyle(color: colors.textColor),
-              ),
+              child: Text(option, style: TextStyle(color: colors.textColor)),
             );
           }).toList(),
           onChanged: (newValue) {
@@ -615,11 +567,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
         Text.rich(
           TextSpan(
             text: label,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: colors.textColor,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: colors.textColor),
             children: required
                 ? [
                     TextSpan(
@@ -671,8 +619,10 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
             .toList();
 
         final selected = _currentIntegrations
-            .where((id) =>
-                widget.availableIntegrations.any((integration) => integration.id == id && integration.type == type))
+            .where(
+              (id) =>
+                  widget.availableIntegrations.any((integration) => integration.id == id && integration.type == type),
+            )
             .toList();
 
         return _buildIntegrationTypeSelection(type, available, selected, colors);
@@ -701,29 +651,18 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
             children: [
               Text(
                 type,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: colors.textColor,
-                ),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textColor),
               ),
               const SizedBox(width: 8),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
-                  vertical: 2,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
                   color: colors.warningColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
                   'Required',
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: colors.warningColor,
-                  ),
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: colors.warningColor),
                 ),
               ),
             ],
@@ -732,31 +671,18 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
           if (available.isEmpty) ...[
             Row(
               children: [
-                Icon(
-                  Icons.warning,
-                  size: 16,
-                  color: colors.warningColor,
-                ),
+                Icon(Icons.warning, size: 16, color: colors.warningColor),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'No $type integrations configured',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colors.textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 12, color: colors.textSecondary),
                   ),
                 ),
                 TextButton.icon(
                   onPressed: widget.onCreateIntegration,
                   icon: Icon(Icons.add, size: 16, color: colors.accentColor),
-                  label: Text(
-                    'Create Integration',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colors.accentColor,
-                    ),
-                  ),
+                  label: Text('Create Integration', style: TextStyle(fontSize: 12, color: colors.accentColor)),
                 ),
               ],
             ),
@@ -769,7 +695,8 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
                   setState(() {
                     // Remove any existing selections for this category type
                     _currentIntegrations.removeWhere(
-                        (id) => widget.availableIntegrations.any((avail) => avail.id == id && avail.type == type));
+                      (id) => widget.availableIntegrations.any((avail) => avail.id == id && avail.type == type),
+                    );
 
                     // Add the new selection
                     if (value != null) {
@@ -778,21 +705,9 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
                   });
                   widget.onIntegrationsChanged?.call(_currentIntegrations);
                 },
-                title: Text(
-                  integration.name,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: colors.textColor,
-                  ),
-                ),
+                title: Text(integration.name, style: TextStyle(fontSize: 14, color: colors.textColor)),
                 subtitle: integration.description != null
-                    ? Text(
-                        integration.description!,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colors.textSecondary,
-                        ),
-                      )
+                    ? Text(integration.description!, style: TextStyle(fontSize: 12, color: colors.textSecondary))
                     : null,
                 controlAffinity: ListTileControlAffinity.leading,
                 contentPadding: EdgeInsets.zero,
@@ -818,19 +733,12 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
         children: [
           Text(
             'Test Configuration',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: colors.textColor,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.textColor),
           ),
           const SizedBox(height: AppDimensions.spacingS),
           Text(
             'Verify that your configuration is working correctly',
-            style: TextStyle(
-              fontSize: 12,
-              color: colors.textSecondary,
-            ),
+            style: TextStyle(fontSize: 12, color: colors.textSecondary),
           ),
           const SizedBox(height: AppDimensions.spacingM),
           Row(
@@ -853,20 +761,10 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.check_circle,
-                    size: 16,
-                    color: colors.successColor,
-                  ),
+                  Icon(Icons.check_circle, size: 16, color: colors.successColor),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text(
-                      widget.testResult!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: colors.successColor,
-                      ),
-                    ),
+                    child: Text(widget.testResult!, style: TextStyle(fontSize: 12, color: colors.successColor)),
                   ),
                 ],
               ),

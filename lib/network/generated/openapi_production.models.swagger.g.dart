@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'openapi.models.swagger.dart';
+part of 'openapi_production.models.swagger.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

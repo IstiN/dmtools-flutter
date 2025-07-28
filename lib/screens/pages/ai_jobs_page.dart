@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import '../../service_locator.dart';
-import '../../network/services/dm_tools_api_service.dart';
-import '../../network/services/dm_tools_api_service_mock.dart';
+import '../../network/services/api_service.dart';
 import '../../network/generated/openapi.models.swagger.dart';
 import '../../providers/auth_provider.dart';
 import '../loading_screen.dart'; // Fixed import path for LoadingScreen
@@ -72,12 +71,8 @@ class _AiJobsPageState extends State<AiJobsPage> {
   }
 
   // Use demo-aware API service
-  DmToolsApiService get _apiService {
-    final authProvider = ServiceLocator.get<AuthProvider>();
-    if (authProvider.isDemoMode) {
-      return DmToolsApiServiceMock();
-    }
-    return ServiceLocator.get<DmToolsApiService>();
+  ApiService get _apiService {
+    return ServiceLocator.get<ApiService>();
   }
 
   @override
@@ -436,10 +431,10 @@ class _AiJobsPageState extends State<AiJobsPage> {
 
       // Call the API service with the correct signature
       final newConfig = await _apiService.createJobConfigurationRaw(
-        name,
-        jobType.type,
-        config,
-        integrationMappings,
+        name: name,
+        jobType: jobType.type,
+        config: config,
+        integrationMappings: integrationMappings,
         enabled: true,
       );
 
@@ -494,10 +489,10 @@ class _AiJobsPageState extends State<AiJobsPage> {
 
       // Call the API service with the correct signature
       final updatedConfig = await _apiService.updateJobConfigurationRaw(
-        id,
-        name,
-        config,
-        integrationMappings,
+        id: id,
+        name: name,
+        config: config,
+        integrationMappings: integrationMappings,
         enabled: true,
       );
 

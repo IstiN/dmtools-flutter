@@ -13,7 +13,7 @@ dependencies:
   provider: ^6.0.0
   flutter_svg: ^2.2.0
   google_fonts: ^6.2.1
-  go_router: ^14.6.1
+  go_router: ^16.0.0
   # HTTP client dependencies for swagger generated code
   chopper: ^8.0.0
   json_annotation: ^4.8.0
@@ -29,6 +29,8 @@ dependencies:
   # Local package dependency
   dmtools_styleguide:
     path: ./flutter_styleguide
+  # Cupertino Icons
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:

@@ -32,7 +32,15 @@ class RequiredIntegrationSelection extends StatelessWidget {
           (integration) => _IntegrationItem(
             integration: integration,
             isSelected: selectedIntegrations.contains(integration.id),
-            onChanged: () => onIntegrationChanged(integration.id),
+            onChanged: () {
+              print(
+                '🔧 RequiredIntegrationSelection: Integration ${integration.id} (${integration.displayName}) changed',
+              );
+              print(
+                '🔧 RequiredIntegrationSelection: Current selection state: ${selectedIntegrations.contains(integration.id)}',
+              );
+              onIntegrationChanged(integration.id);
+            },
             colors: colors,
           ),
         ),
@@ -79,6 +87,12 @@ class _IntegrationItem extends StatelessWidget {
   final VoidCallback onChanged;
   final ThemeColorSet colors;
 
+  void _handleTap() {
+    print('🔧 _IntegrationItem: Tapped on ${integration.displayName} (${integration.id})');
+    print('🔧 _IntegrationItem: Current selection state: $isSelected');
+    onChanged();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -116,7 +130,7 @@ class _IntegrationItem extends StatelessWidget {
           const SizedBox(height: 8),
           CheckboxListTile(
             value: isSelected,
-            onChanged: (_) => onChanged(),
+            onChanged: (_) => _handleTap(),
             title: Text(integration.displayName, style: TextStyle(fontSize: 14, color: colors.textColor)),
             subtitle: integration.description != null
                 ? Text(

@@ -9,8 +9,8 @@ part of 'mcp_configuration.dart';
 McpConfiguration _$McpConfigurationFromJson(Map<String, dynamic> json) =>
     McpConfiguration(
       name: json['name'] as String,
-      integrations: (json['integrations'] as List<dynamic>)
-          .map((e) => $enumDecode(_$McpIntegrationTypeEnumMap, e))
+      integrationIds: (json['integrationIds'] as List<dynamic>)
+          .map((e) => e as String)
           .toList(),
       id: json['id'] as String?,
       createdAt: json['created_at'] == null
@@ -27,16 +27,9 @@ Map<String, dynamic> _$McpConfigurationToJson(McpConfiguration instance) =>
     <String, dynamic>{
       'id': ?instance.id,
       'name': instance.name,
-      'integrations': instance.integrations
-          .map((e) => _$McpIntegrationTypeEnumMap[e]!)
-          .toList(),
+      'integrationIds': instance.integrationIds,
       'created_at': ?instance.createdAt?.toIso8601String(),
       'updated_at': ?instance.updatedAt?.toIso8601String(),
       'token': ?instance.token,
       'endpoint': ?instance.endpoint,
     };
-
-const _$McpIntegrationTypeEnumMap = {
-  McpIntegrationType.jira: 'jira',
-  McpIntegrationType.confluence: 'confluence',
-};

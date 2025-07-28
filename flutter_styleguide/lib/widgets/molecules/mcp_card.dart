@@ -9,7 +9,8 @@ class McpCard extends StatelessWidget {
   const McpCard({
     required this.name,
     required this.status,
-    required this.integrations,
+    required this.integrationIds,
+    required this.availableIntegrations,
     this.description,
     this.createdAt,
     this.onTap,
@@ -26,11 +27,12 @@ class McpCard extends StatelessWidget {
   final String name;
   final String? description;
   final McpStatus status;
-  final List<McpIntegrationType> integrations;
+  final List<String> integrationIds;
+  final List<IntegrationOption> availableIntegrations;
   final DateTime? createdAt;
   final VoidCallback? onTap;
   final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
+  final Future<bool> Function()? onDelete;
   final VoidCallback? onViewCode;
   final VoidCallback? onCopyCode;
   final McpCardSize size;
@@ -41,6 +43,15 @@ class McpCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     final dimensions = _getDimensions();
+
+    // Convert integration IDs to display names
+    final integrationDisplayNames = integrationIds.map((id) {
+      final integration = availableIntegrations.firstWhere(
+        (integration) => integration.id == id,
+        orElse: () => IntegrationOption(id: id, displayName: 'Unknown Integration', description: ''),
+      );
+      return integration.displayName;
+    }).toList();
 
     return Material(
       color: colors.cardBg,
@@ -64,7 +75,7 @@ class McpCard extends StatelessWidget {
                 _DescriptionText(description: description!, dimensions: dimensions),
               ],
               SizedBox(height: dimensions.spacing),
-              _IntegrationsPreview(integrations: integrations, dimensions: dimensions),
+              _IntegrationsPreview(integrationNames: integrationDisplayNames, dimensions: dimensions),
               if (createdAt != null) ...[
                 SizedBox(height: dimensions.spacing),
                 _CreatedAtText(createdAt: createdAt!, dimensions: dimensions),
@@ -179,16 +190,16 @@ class _DescriptionText extends StatelessWidget {
 }
 
 class _IntegrationsPreview extends StatelessWidget {
-  const _IntegrationsPreview({required this.integrations, required this.dimensions});
+  const _IntegrationsPreview({required this.integrationNames, required this.dimensions});
 
-  final List<McpIntegrationType> integrations;
+  final List<String> integrationNames;
   final _CardDimensions dimensions;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    if (integrations.isEmpty) {
+    if (integrationNames.isEmpty) {
       return Text(
         'No integrations configured',
         style: TextStyle(
@@ -203,7 +214,7 @@ class _IntegrationsPreview extends StatelessWidget {
       spacing: 8,
       runSpacing: 6,
       children:
-          integrations.take(3).map((integration) {
+          integrationNames.take(3).map((name) {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
@@ -214,10 +225,10 @@ class _IntegrationsPreview extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  IntegrationTypeIcon(integrationType: integration.name.toLowerCase(), size: dimensions.metaFontSize),
+                  IntegrationTypeIcon(integrationType: name.toLowerCase(), size: dimensions.metaFontSize),
                   const SizedBox(width: 4),
                   Text(
-                    integration.displayName,
+                    name,
                     style: TextStyle(
                       fontSize: dimensions.metaFontSize,
                       color: colors.accentColor,
@@ -228,7 +239,7 @@ class _IntegrationsPreview extends StatelessWidget {
               ),
             );
           }).toList()..addAll([
-            if (integrations.length > 3)
+            if (integrationNames.length > 3)
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
@@ -236,7 +247,7 @@ class _IntegrationsPreview extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '+${integrations.length - 3} more',
+                  '+${integrationNames.length - 3} more',
                   style: TextStyle(
                     fontSize: dimensions.metaFontSize,
                     color: colors.textColor.withOpacity(0.7),
@@ -283,7 +294,7 @@ class _ActionButtons extends StatelessWidget {
   const _ActionButtons({this.onEdit, this.onDelete, this.isTestMode = false, this.testDarkMode = false});
 
   final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
+  final Future<bool> Function()? onDelete;
   final bool isTestMode;
   final bool testDarkMode;
 
@@ -326,7 +337,7 @@ class _ActionMenu extends StatefulWidget {
   const _ActionMenu({this.onEdit, this.onDelete, this.onViewCode, this.onCopyCode});
 
   final VoidCallback? onEdit;
-  final VoidCallback? onDelete;
+  final Future<bool> Function()? onDelete;
   final VoidCallback? onViewCode;
   final VoidCallback? onCopyCode;
 
@@ -353,7 +364,9 @@ class _ActionMenuState extends State<_ActionMenu> {
             widget.onCopyCode?.call();
             break;
           case 'delete':
-            widget.onDelete?.call();
+            if (widget.onDelete != null) {
+              widget.onDelete!.call();
+            }
             break;
         }
       },

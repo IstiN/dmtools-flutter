@@ -18,6 +18,7 @@ class McpListView extends StatefulWidget {
   const McpListView({
     required this.configurations,
     required this.state,
+    required this.availableIntegrations,
     this.onConfigurationTap,
     this.onCreateNew,
     this.onDelete,
@@ -43,9 +44,10 @@ class McpListView extends StatefulWidget {
 
   final List<McpConfiguration> configurations;
   final McpListState state;
+  final List<IntegrationOption> availableIntegrations;
   final ValueChanged<McpConfiguration>? onConfigurationTap;
   final VoidCallback? onCreateNew;
-  final ValueChanged<McpConfiguration>? onDelete;
+  final Future<bool> Function(McpConfiguration)? onDelete;
   final ValueChanged<McpConfiguration>? onEdit;
   final ValueChanged<McpConfiguration>? onViewCode;
   final Function(BuildContext, McpConfiguration)? onCopyCode;
@@ -114,9 +116,9 @@ class _McpListViewState extends State<McpListView> {
         case McpListFilter.all:
           return true;
         case McpListFilter.active:
-          return config.integrations.isNotEmpty;
+          return config.integrationIds.isNotEmpty;
         case McpListFilter.inactive:
-          return config.integrations.isEmpty;
+          return config.integrationIds.isEmpty;
         case McpListFilter.error:
           // For demo purposes, consider configs with odd IDs as having errors
           return config.id.hashCode % 2 == 1;
@@ -138,7 +140,7 @@ class _McpListViewState extends State<McpListView> {
         filtered.sort((a, b) => (b.createdAt ?? DateTime.now()).compareTo(a.createdAt ?? DateTime.now()));
         break;
       case McpListSort.integrationsDesc:
-        filtered.sort((a, b) => b.integrations.length.compareTo(a.integrations.length));
+        filtered.sort((a, b) => b.integrationIds.length.compareTo(a.integrationIds.length));
         break;
     }
 
@@ -202,6 +204,7 @@ class _McpListViewState extends State<McpListView> {
           colors: colors,
           isTestMode: widget.isTestMode,
           testDarkMode: widget.testDarkMode,
+          availableIntegrations: widget.availableIntegrations,
         );
     }
   }
@@ -450,7 +453,13 @@ class _EmptyState extends StatelessWidget {
             ),
             if (onCreateNew != null) ...[
               const SizedBox(height: 24),
-              AppButton(text: 'Create Your First MCP', onPressed: onCreateNew!),
+              AppButton(
+                text: 'Create Your First MCP',
+                onPressed: () {
+                  print('🔧 McpListView: Create Your First MCP button pressed');
+                  onCreateNew!();
+                },
+              ),
             ],
           ],
         ),
@@ -504,19 +513,21 @@ class _ConfigurationList extends StatelessWidget {
     required this.onViewCode,
     required this.onCopyCode,
     required this.colors,
+    required this.availableIntegrations,
     this.isTestMode = false,
     this.testDarkMode = false,
   });
 
   final List<McpConfiguration> configurations;
   final ValueChanged<McpConfiguration>? onConfigurationTap;
-  final ValueChanged<McpConfiguration>? onDelete;
+  final Future<bool> Function(McpConfiguration)? onDelete;
   final ValueChanged<McpConfiguration>? onEdit;
   final ValueChanged<McpConfiguration>? onViewCode;
   final Function(BuildContext, McpConfiguration)? onCopyCode;
   final ThemeColorSet colors;
   final bool isTestMode;
   final bool testDarkMode;
+  final List<IntegrationOption> availableIntegrations;
 
   @override
   Widget build(BuildContext context) {
@@ -538,11 +549,12 @@ class _ConfigurationList extends StatelessWidget {
         return McpCard(
           name: config.name,
           status: McpStatus.active, // Using a default status
-          integrations: config.integrations,
+          integrationIds: config.integrationIds,
+          availableIntegrations: availableIntegrations,
           createdAt: config.createdAt,
           onTap: () => onConfigurationTap?.call(config),
           onEdit: () => onEdit?.call(config),
-          onDelete: () => onDelete?.call(config),
+          onDelete: onDelete == null ? null : () async => await onDelete!.call(config),
           onViewCode: () => onViewCode?.call(config),
           onCopyCode: () => onCopyCode?.call(context, config),
           isTestMode: isTestMode,

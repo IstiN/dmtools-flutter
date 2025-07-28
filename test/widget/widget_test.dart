@@ -5,7 +5,6 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:dmtools/network/services/dm_tools_api_service_mock.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +12,8 @@ import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 
 import 'package:dmtools/main.dart';
 import 'package:dmtools/providers/auth_provider.dart';
+import 'package:dmtools/network/services/api_service.dart';
+import '../unit/service_locator_test.dart';
 
 void main() {
   testWidgets('DMTools app smoke test', (WidgetTester tester) async {
@@ -22,7 +23,7 @@ void main() {
         providers: [
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
           ChangeNotifierProvider(create: (_) => AuthProvider()),
-          Provider<DmToolsApiServiceMock>(create: (_) => DmToolsApiServiceMock()),
+          Provider<ApiService>(create: (_) => MockApiService()),
         ],
         child: const DMToolsApp(),
       ),
