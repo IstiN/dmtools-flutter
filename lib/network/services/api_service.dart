@@ -518,13 +518,47 @@ class ApiService {
   /// Get available job types
   Future<List<JobTypeDto>> getAvailableJobTypes() async {
     try {
+      debugPrint('🔍 ApiService: Making API call to /api/v1/jobs/types');
       final response = await _api.apiV1JobsTypesGet();
+      debugPrint(
+          '🔍 ApiService: Response received - success: ${response.isSuccessful}, statusCode: ${response.statusCode}');
+      debugPrint('🔍 ApiService: Response body is null: ${response.body == null}');
+      debugPrint('🔍 ApiService: Response body type: ${response.body.runtimeType}');
+
       if (response.isSuccessful && response.body != null) {
-        return response.body! as List<JobTypeDto>;
+        debugPrint('🔍 ApiService: About to deserialize response body...');
+
+        // Handle the response body which comes as List<dynamic> containing Map objects
+        final rawList = response.body! as List<dynamic>;
+        debugPrint('🔍 ApiService: Raw list length: ${rawList.length}');
+
+        final jobTypes = <JobTypeDto>[];
+        for (int i = 0; i < rawList.length; i++) {
+          try {
+            final rawMap = rawList[i] as Map<String, dynamic>;
+            debugPrint('🔍 ApiService: [$i] Deserializing JobTypeDto from map keys: ${rawMap.keys.toList()}');
+
+            final jobType = JobTypeDto.fromJson(rawMap);
+            jobTypes.add(jobType);
+            debugPrint(
+                '🔍 ApiService: [$i] Successfully deserialized JobTypeDto - type: "${jobType.type}", displayName: "${jobType.displayName}"');
+          } catch (e, stackTrace) {
+            debugPrint('❌ ApiService: Failed to deserialize JobTypeDto [$i]: $e');
+            debugPrint('❌ ApiService: Raw item [$i]: ${rawList[i]}');
+            debugPrint('❌ ApiService: Stack trace: $stackTrace');
+          }
+        }
+
+        debugPrint(
+            '🔍 ApiService: Successfully deserialized ${jobTypes.length} JobTypeDto objects from ${rawList.length} raw items');
+        return jobTypes;
       } else {
+        debugPrint('❌ ApiService: API call failed - statusCode: ${response.statusCode}');
         throw ApiException('Failed to get job types', response.statusCode);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ ApiService: Exception in getAvailableJobTypes: $e');
+      debugPrint('❌ ApiService: Stack trace: $stackTrace');
       throw ApiException('Error getting job types: $e');
     }
   }
