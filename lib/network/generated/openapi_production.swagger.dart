@@ -1,9 +1,5 @@
 // ignore_for_file: type=lint
 
-import 'package:json_annotation/json_annotation.dart';
-import 'package:json_annotation/json_annotation.dart' as json;
-import 'package:collection/collection.dart';
-import 'dart:convert';
 
 import 'openapi_production.models.swagger.dart';
 import 'package:chopper/chopper.dart';
@@ -11,9 +7,7 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
-import 'openapi_production.enums.swagger.dart' as enums;
 export 'openapi_production.enums.swagger.dart';
 export 'openapi_production.models.swagger.dart';
 
