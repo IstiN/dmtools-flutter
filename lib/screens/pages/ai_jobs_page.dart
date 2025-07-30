@@ -179,33 +179,74 @@ class _AiJobsPageState extends State<AiJobsPage> {
       try {
         final jobTypeDtos = await _apiService.getAvailableJobTypes();
         debugPrint('✅ Successfully loaded job types from API');
+        debugPrint('📋 Raw response count: ${jobTypeDtos.length}');
+        debugPrint('📋 Raw response type: ${jobTypeDtos.runtimeType}');
+
+        if (jobTypeDtos.isEmpty) {
+          debugPrint('⚠️ WARNING: API returned empty job types list!');
+        }
+
+        for (int i = 0; i < jobTypeDtos.length; i++) {
+          final dto = jobTypeDtos[i];
+          debugPrint(
+              '📋 [$i] Raw DTO: type="${dto.type}", displayName="${dto.displayName}", configParams=${dto.configParams?.length}');
+        }
+
         debugPrint('📋 Available job types: ${jobTypeDtos.map((dto) => dto.displayName).toList()}');
 
         final convertedTypes = <JobType>[];
-        for (final jobTypeDto in jobTypeDtos) {
-          debugPrint('✅ Converting job type: ${jobTypeDto.displayName}');
-          debugPrint('📋 Config params count: ${jobTypeDto.configParams?.length ?? 0}');
+        for (int i = 0; i < jobTypeDtos.length; i++) {
+          final jobTypeDto = jobTypeDtos[i];
+          try {
+            debugPrint('✅ Converting job type [$i]: ${jobTypeDto.displayName} (${jobTypeDto.type})');
+            debugPrint('📋 Config params count: ${jobTypeDto.configParams?.length ?? 0}');
 
-          final convertedJobType = _convertJobTypeFromApi(jobTypeDto);
-          convertedTypes.add(convertedJobType);
+            final convertedJobType = _convertJobTypeFromApi(jobTypeDto);
+            convertedTypes.add(convertedJobType);
 
-          debugPrint(
-              '✅ Converted job type ${jobTypeDto.displayName} with ${convertedJobType.parameters.length} parameters');
+            debugPrint(
+                '✅ Successfully converted job type ${jobTypeDto.displayName} with ${convertedJobType.parameters.length} parameters');
+          } catch (conversionError, stackTrace) {
+            debugPrint('❌ Failed to convert job type ${jobTypeDto.displayName}: $conversionError');
+            debugPrint('❌ Stack trace: $stackTrace');
+
+            // Create a fallback job type to ensure we don't lose the entire list
+            final fallbackJobType = JobType(
+              type: jobTypeDto.type ?? 'unknown_$i',
+              displayName: jobTypeDto.displayName ?? 'Unknown Job Type',
+              description: jobTypeDto.description ?? 'AI job configuration',
+              parameters: [], // Empty parameters as fallback
+              requiredIntegrations: jobTypeDto.requiredIntegrations ?? [],
+            );
+            convertedTypes.add(fallbackJobType);
+            debugPrint('✅ Added fallback job type for ${jobTypeDto.displayName}');
+          }
         }
 
-        debugPrint('✅ Loaded ${convertedTypes.length} job types from API');
+        debugPrint('✅ Loaded ${convertedTypes.length} job types from API (${jobTypeDtos.length} from API)');
+        debugPrint('🔍 About to set state with converted types:');
+        for (int i = 0; i < convertedTypes.length; i++) {
+          final jobType = convertedTypes[i];
+          debugPrint(
+              '🔍   [$i] JobType: type="${jobType.type}", displayName="${jobType.displayName}", params=${jobType.parameters.length}');
+        }
+
         setState(() {
           _availableJobTypes = convertedTypes;
+          debugPrint('🔍 State updated - _availableJobTypes.length: ${_availableJobTypes.length}');
         });
-      } catch (e) {
-        debugPrint('❌ Job types API call failed due to type conversion: $e');
-        // If there's a type conversion error, use empty list
+      } catch (e, stackTrace) {
+        debugPrint('❌ Job types API call failed: $e');
+        debugPrint('❌ Stack trace: $stackTrace');
+
+        // Check if we have any partial data
         setState(() {
           _availableJobTypes = [];
         });
       }
-    } catch (e) {
-      debugPrint('❌ Failed to load job types: $e');
+    } catch (e, stackTrace) {
+      debugPrint('❌ Failed to load job types (outer catch): $e');
+      debugPrint('❌ Stack trace: $stackTrace');
       setState(() {
         _availableJobTypes = [];
       });
@@ -213,22 +254,32 @@ class _AiJobsPageState extends State<AiJobsPage> {
   }
 
   JobType _convertJobTypeFromApi(JobTypeDto dto) {
-    debugPrint('🔄 Converting JobTypeDto: ${dto.type}');
-    debugPrint('📋 Input configParams: ${dto.configParams?.length ?? 0} parameters');
+    try {
+      debugPrint('🔄 Converting JobTypeDto: ${dto.type}');
+      debugPrint('📋 Input configParams: ${dto.configParams?.length ?? 0} parameters');
+      debugPrint('📋 Input requiredIntegrations: ${dto.requiredIntegrations}');
 
-    final parameters = _convertConfigParams(dto.configParams ?? []);
-    final requiredIntegrations = dto.requiredIntegrations ?? [];
+      final parameters = _convertConfigParams(dto.configParams ?? []);
+      final requiredIntegrations = dto.requiredIntegrations ?? [];
 
-    debugPrint('📋 Converted parameters: ${parameters.length}');
-    debugPrint('📋 Required integrations: $requiredIntegrations');
+      debugPrint('📋 Converted parameters: ${parameters.length}');
+      debugPrint('📋 Required integrations: $requiredIntegrations');
 
-    return JobType(
-      type: dto.type ?? 'unknown',
-      displayName: dto.displayName ?? dto.type ?? 'Unknown',
-      description: dto.description ?? 'AI job configuration',
-      parameters: parameters, // Use the converted parameters
-      requiredIntegrations: requiredIntegrations, // Keep generic category names
-    );
+      final jobType = JobType(
+        type: dto.type ?? 'unknown',
+        displayName: dto.displayName ?? dto.type ?? 'Unknown',
+        description: dto.description ?? 'AI job configuration',
+        parameters: parameters, // Use the converted parameters
+        requiredIntegrations: requiredIntegrations, // Keep generic category names
+      );
+
+      debugPrint('✅ Successfully created JobType: ${jobType.type} - ${jobType.displayName}');
+      return jobType;
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error in _convertJobTypeFromApi for ${dto.type}: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
+      rethrow; // Re-throw to be handled by the calling method
+    }
   }
 
   Future<void> _loadIntegrations() async {
@@ -372,24 +423,51 @@ class _AiJobsPageState extends State<AiJobsPage> {
   }
 
   List<JobParameter> _convertConfigParams(List<ConfigParamDefinition> apiParams) {
-    debugPrint('🔄 Converting ${apiParams.length} config parameters');
+    try {
+      debugPrint('🔄 Converting ${apiParams.length} config parameters');
 
-    final convertedParams = apiParams.map((param) {
-      debugPrint('📋 Converting param: ${param.key} (${param.type})');
+      final convertedParams = <JobParameter>[];
 
-      return JobParameter(
-        key: param.key ?? '',
-        displayName: param.displayName ?? param.key ?? '',
-        description: param.description ?? '',
-        required: param.required ?? false,
-        type: param.type ?? 'string',
-        defaultValue: param.defaultValue,
-        options: param.options,
-      );
-    }).toList();
+      for (int i = 0; i < apiParams.length; i++) {
+        final param = apiParams[i];
+        try {
+          debugPrint('📋 Converting param [$i]: ${param.key} (${param.type})');
 
-    debugPrint('✅ Converted ${convertedParams.length} parameters');
-    return convertedParams;
+          final jobParam = JobParameter(
+            key: param.key ?? 'param_$i',
+            displayName: param.displayName ?? param.key ?? 'Parameter $i',
+            description: param.description ?? '',
+            required: param.required ?? false,
+            type: param.type ?? 'string',
+            defaultValue: param.defaultValue,
+            options: param.options,
+          );
+
+          convertedParams.add(jobParam);
+          debugPrint('✅ Successfully converted param: ${jobParam.key}');
+        } catch (paramError) {
+          debugPrint('❌ Failed to convert param [$i]: $paramError');
+          // Create a fallback parameter to avoid losing the entire parameter list
+          final fallbackParam = JobParameter(
+            key: 'fallback_param_$i',
+            displayName: 'Parameter $i',
+            description: 'Configuration parameter',
+            required: false,
+            type: 'string',
+          );
+          convertedParams.add(fallbackParam);
+          debugPrint('✅ Added fallback param: ${fallbackParam.key}');
+        }
+      }
+
+      debugPrint('✅ Converted ${convertedParams.length} parameters (${apiParams.length} from API)');
+      return convertedParams;
+    } catch (e, stackTrace) {
+      debugPrint('❌ Error in _convertConfigParams: $e');
+      debugPrint('❌ Stack trace: $stackTrace');
+      // Return empty list as fallback
+      return [];
+    }
   }
 
   Future<void> _createJobConfiguration(
@@ -687,6 +765,8 @@ class _AiJobsPageState extends State<AiJobsPage> {
         debugPrint('🔄 User authenticated, checking if data needs to be loaded... (build #$_buildCounter)');
         debugPrint(
             '📊 Current state (build #$_buildCounter): _isLoading=$_isLoading, _dataLoaded=$_dataLoaded, _errorMessage=$_errorMessage');
+        debugPrint(
+            '📊 Job types state (build #$_buildCounter): _availableJobTypes.length=${_availableJobTypes.length}');
 
         // Load data only once when authenticated
         if (!_dataLoaded && !_isLoading && _errorMessage == null) {
@@ -840,11 +920,18 @@ class _AiJobsPageState extends State<AiJobsPage> {
       debugPrint('  [$i] "${cat.displayName}" (type: "${cat.type}", available: ${cat.available})');
     }
 
-    debugPrint('🔍 Job types being passed:');
-    for (int i = 0; i < _availableJobTypes.length; i++) {
-      final jobType = _availableJobTypes[i];
-      debugPrint('  [$i] "${jobType.displayName}" (type: "${jobType.type}")');
-      debugPrint('    - required integrations: ${jobType.requiredIntegrations.join(", ")}');
+    debugPrint('🔍 Job types being passed to JobConfigurationManagement:');
+    debugPrint('🔍 _availableJobTypes.length: ${_availableJobTypes.length}');
+
+    if (_availableJobTypes.isEmpty) {
+      debugPrint('⚠️ WARNING: No job types available! _availableJobTypes is empty!');
+    } else {
+      for (int i = 0; i < _availableJobTypes.length; i++) {
+        final jobType = _availableJobTypes[i];
+        debugPrint('  [$i] "${jobType.displayName}" (type: "${jobType.type}")');
+        debugPrint('    - required integrations: ${jobType.requiredIntegrations.join(", ")}');
+        debugPrint('    - parameters count: ${jobType.parameters.length}');
+      }
     }
 
     return jobConfigurationWidget;
