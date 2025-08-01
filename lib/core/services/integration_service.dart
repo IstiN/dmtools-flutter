@@ -240,6 +240,10 @@ class IntegrationService with ChangeNotifier {
         // Mock data is already initialized
         if (kDebugMode) {
           print('✅ Using mock integrations (${_integrations.length})');
+          print('✅ MCP-ready integrations: ${mcpReadyIntegrations.length}');
+          for (final integration in mcpReadyIntegrations) {
+            print('   - ${integration.name} (${integration.type}) [${integration.id}]');
+          }
         }
       } else {
         // Check if user is authenticated before making API calls
@@ -258,12 +262,19 @@ class IntegrationService with ChangeNotifier {
         _integrations = apiIntegrations.map(_convertApiIntegrationToLocal).toList();
         if (kDebugMode) {
           print('✅ Loaded ${_integrations.length} integrations from API');
+          print('✅ MCP-ready integrations: ${mcpReadyIntegrations.length}');
+          for (final integration in mcpReadyIntegrations) {
+            print('   - ${integration.name} (${integration.type}) [${integration.id}]');
+          }
         }
       }
 
       _setLoading(false);
     } catch (e) {
       _setError('Failed to load integrations: ${e.toString()}');
+      if (kDebugMode) {
+        print('❌ Error loading integrations: $e');
+      }
       _setLoading(false);
     }
   }
@@ -285,6 +296,10 @@ class IntegrationService with ChangeNotifier {
         // Mock data is already initialized
         if (kDebugMode) {
           print('✅ Using mock integration types (${_availableTypes.length})');
+          print('✅ MCP-supported types: ${_availableTypes.where((type) => type.supportsMcp).length}');
+          for (final type in _availableTypes.where((type) => type.supportsMcp)) {
+            print('   - ${type.displayName} (${type.type})');
+          }
         }
       } else {
         // Check if user is authenticated before making API calls
@@ -303,12 +318,19 @@ class IntegrationService with ChangeNotifier {
         _availableTypes = apiTypes.map(_convertApiIntegrationTypeToLocal).toList();
         if (kDebugMode) {
           print('✅ Loaded ${_availableTypes.length} integration types from API');
+          print('✅ MCP-supported types: ${_availableTypes.where((type) => type.supportsMcp).length}');
+          for (final type in _availableTypes.where((type) => type.supportsMcp)) {
+            print('   - ${type.displayName} (${type.type})');
+          }
         }
       }
 
       _setLoading(false);
     } catch (e) {
       _setError('Failed to load integration types: ${e.toString()}');
+      if (kDebugMode) {
+        print('❌ Error loading integration types: $e');
+      }
       _setLoading(false);
     }
   }
