@@ -54,12 +54,15 @@ class IntegrationProvider extends ChangeNotifier {
         print('✅ IntegrationProvider: Initialized successfully');
         print('   - Available types: ${availableTypes.length}');
         print('   - Current integrations: ${integrations.length}');
+        print('   - MCP-ready integrations: ${service.mcpReadyIntegrations.length}');
       }
     } catch (e) {
       _setError('Failed to initialize integrations: ${e.toString()}');
       if (kDebugMode) {
         print('❌ IntegrationProvider: Initialization failed - $e');
       }
+      // Reset initialization flag on error so we can retry
+      _isInitialized = false;
     } finally {
       _setLoading(false);
     }
@@ -87,6 +90,9 @@ class IntegrationProvider extends ChangeNotifier {
 
       if (kDebugMode) {
         print('✅ IntegrationProvider: Refreshed successfully');
+        print('   - Available types: ${availableTypes.length}');
+        print('   - Current integrations: ${integrations.length}');
+        print('   - MCP-ready integrations: ${service.mcpReadyIntegrations.length}');
       }
     } catch (e) {
       _setError('Failed to refresh integrations: ${e.toString()}');
