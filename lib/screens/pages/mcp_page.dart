@@ -89,11 +89,39 @@ class _McpPageState extends State<McpPage> {
 
   List<IntegrationOption> _getAvailableIntegrations() {
     final integrationProvider = Provider.of<IntegrationProvider>(context, listen: false);
+    final mcpProvider = Provider.of<McpProvider>(context, listen: false);
 
     // Check if integrations are properly loaded
     if (!integrationProvider.isInitialized || integrationProvider.isLoading) {
       print(
           '🔧 McpPage: Integration provider not ready - initialized: ${integrationProvider.isInitialized}, loading: ${integrationProvider.isLoading}');
+
+      // If we have MCP configurations with integration IDs but integrations aren't loaded yet,
+      // create placeholder integrations based on the MCP configuration data
+      if (mcpProvider.configurations.isNotEmpty) {
+        print('🔧 McpPage: Creating placeholder integrations from MCP configuration IDs');
+        final placeholderIntegrations = <IntegrationOption>[];
+        final usedIds = <String>{};
+
+        for (final config in mcpProvider.configurations) {
+          for (final integrationId in config.integrationIds) {
+            if (!usedIds.contains(integrationId)) {
+              usedIds.add(integrationId);
+              placeholderIntegrations.add(IntegrationOption(
+                id: integrationId,
+                displayName: _getIntegrationDisplayName(integrationId),
+                description: 'Integration used in MCP configuration',
+              ));
+            }
+          }
+        }
+
+        if (placeholderIntegrations.isNotEmpty) {
+          print('🔧 McpPage: Created ${placeholderIntegrations.length} placeholder integrations');
+          return placeholderIntegrations;
+        }
+      }
+
       return [];
     }
 
@@ -104,9 +132,37 @@ class _McpPageState extends State<McpPage> {
       print('🔧 McpPage: - ${integration.name} (${integration.type}) [${integration.id}]');
     }
 
-    // Create test integrations if none are available (for development)
-    if (mcpReadyIntegrations.isEmpty) {
-      print('🔧 McpPage: No MCP-ready integrations found, creating test ones');
+    // If we have real MCP configurations, we should make sure we have integrations for their IDs
+    final allRequiredIds = <String>{};
+    for (final config in mcpProvider.configurations) {
+      allRequiredIds.addAll(config.integrationIds);
+    }
+
+    final result = <IntegrationOption>[];
+
+    // Add all loaded integrations
+    result.addAll(mcpReadyIntegrations.map((integration) => IntegrationOption(
+          id: integration.id,
+          displayName: integration.name,
+          description: integration.description,
+        )));
+
+    // Add any missing integrations based on MCP configuration IDs
+    final existingIds = result.map((i) => i.id).toSet();
+    for (final requiredId in allRequiredIds) {
+      if (!existingIds.contains(requiredId)) {
+        print('🔧 McpPage: Adding missing integration for ID: $requiredId');
+        result.add(IntegrationOption(
+          id: requiredId,
+          displayName: _getIntegrationDisplayName(requiredId),
+          description: 'Integration from MCP configuration',
+        ));
+      }
+    }
+
+    // Create test integrations if we still have none (for pure development)
+    if (result.isEmpty && allRequiredIds.isEmpty) {
+      print('🔧 McpPage: No integrations found, creating test ones');
       return [
         const IntegrationOption(
           id: 'test-jira-id',
@@ -121,13 +177,30 @@ class _McpPageState extends State<McpPage> {
       ];
     }
 
-    return mcpReadyIntegrations
-        .map((integration) => IntegrationOption(
-              id: integration.id,
-              displayName: integration.name,
-              description: integration.description,
-            ))
-        .toList();
+    print('🔧 McpPage: Returning ${result.length} available integrations');
+    return result;
+  }
+
+  /// Get a display name for an integration ID
+  String _getIntegrationDisplayName(String integrationId) {
+    // Try to infer type from common patterns
+    if (integrationId.contains('jira') || integrationId.toLowerCase().contains('jira')) {
+      return 'Jira Integration';
+    } else if (integrationId.contains('confluence') || integrationId.toLowerCase().contains('confluence')) {
+      return 'Confluence Integration';
+    } else if (integrationId.contains('figma') || integrationId.toLowerCase().contains('figma')) {
+      return 'Figma Integration';
+    } else if (integrationId.startsWith('demo_')) {
+      // Handle demo IDs
+      final parts = integrationId.split('_');
+      if (parts.length > 1) {
+        return '${parts[1].substring(0, 1).toUpperCase()}${parts[1].substring(1)} Integration';
+      }
+    }
+
+    // Fallback to generic name with shortened ID
+    final shortId = integrationId.length > 8 ? integrationId.substring(0, 8) : integrationId;
+    return 'Integration ($shortId)';
   }
 
   @override
@@ -197,8 +270,7 @@ class _McpPageState extends State<McpPage> {
           onCreateConfiguration: (name, integrations) async {
             print('🔧 McpPage: onCreateConfiguration called with name: $name, integrations: $integrations');
             try {
-              print('🔧 McpPage: mcpProvider is null? ${mcpProvider == null}');
-              print('🔧 McpPage: mcpProvider.createConfiguration exists? ${mcpProvider.createConfiguration != null}');
+              print('🔧 McpPage: mcpProvider type: ${mcpProvider.runtimeType}');
               print('🔧 McpPage: mcpProvider.createConfiguration type: ${mcpProvider.createConfiguration.runtimeType}');
 
               // Force a small delay to ensure UI updates properly
@@ -220,8 +292,7 @@ class _McpPageState extends State<McpPage> {
           onUpdateConfiguration: (id, name, integrations) async {
             print('🔧 McpPage: onUpdateConfiguration called with id: $id, name: $name, integrations: $integrations');
             try {
-              print('🔧 McpPage: mcpProvider is null? ${mcpProvider == null}');
-              print('🔧 McpPage: mcpProvider.updateConfiguration exists? ${mcpProvider.updateConfiguration != null}');
+              print('🔧 McpPage: mcpProvider type: ${mcpProvider.runtimeType}');
 
               // Force a small delay to ensure UI updates properly
               await Future.delayed(const Duration(milliseconds: 100));
