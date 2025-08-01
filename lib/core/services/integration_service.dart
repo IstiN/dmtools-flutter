@@ -860,6 +860,9 @@ class IntegrationService with ChangeNotifier {
 
   /// Helper methods
   void _setLoading(bool loading) {
+    if (kDebugMode) {
+      print('🔍 IntegrationService._setLoading: $_isLoading -> $loading');
+    }
     _isLoading = loading;
     notifyListeners();
   }

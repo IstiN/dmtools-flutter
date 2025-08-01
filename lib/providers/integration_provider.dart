@@ -24,7 +24,17 @@ class IntegrationProvider extends ChangeNotifier {
 
   /// Getters
   bool get isInitialized => _isInitialized;
-  bool get isLoading => _isLoading || _integrationService.isLoading;
+  bool get isLoading {
+    final providerLoading = _isLoading;
+    final serviceLoading = _integrationService.isLoading;
+    final result = providerLoading || serviceLoading;
+    
+    if (kDebugMode && result) {
+      print('🔍 IntegrationProvider.isLoading: provider=$providerLoading, service=$serviceLoading, result=$result');
+    }
+    
+    return result;
+  }
   String? get error => _error ?? _integrationService.error;
   List<IntegrationModel> get integrations => _integrationService.integrations;
   List<IntegrationTypeModel> get availableTypes => _integrationService.availableTypes;
@@ -70,19 +80,26 @@ class IntegrationProvider extends ChangeNotifier {
 
   /// Refresh all integration data
   Future<void> refresh() async {
+    if (kDebugMode) {
+      print('🔄 IntegrationProvider: Refresh called - initialized: $_isInitialized, loading: $_isLoading');
+    }
+
     if (!_isInitialized) {
+      if (kDebugMode) {
+        print('🔄 IntegrationProvider: Not initialized, calling _initialize()');
+      }
       await _initialize();
       return;
+    }
+
+    if (kDebugMode) {
+      print('🔄 IntegrationProvider: Already initialized, refreshing data...');
     }
 
     _setLoading(true);
     _clearError();
 
     try {
-      if (kDebugMode) {
-        print('🔄 IntegrationProvider: Refreshing data...');
-      }
-
       await Future.wait([
         _integrationService.loadIntegrationTypes(),
         _integrationService.loadIntegrations(),
@@ -334,8 +351,14 @@ class IntegrationProvider extends ChangeNotifier {
 
   /// Force reinitialize (useful for testing or after auth changes)
   Future<void> forceReinitialize() async {
+    if (kDebugMode) {
+      print('🔄 IntegrationProvider: Force reinitialize called - current state: initialized: $_isInitialized, loading: $_isLoading');
+    }
     _isInitialized = false;
     await _initialize();
+    if (kDebugMode) {
+      print('🔄 IntegrationProvider: Force reinitialize completed - new state: initialized: $_isInitialized, loading: $_isLoading');
+    }
   }
 
   @override
