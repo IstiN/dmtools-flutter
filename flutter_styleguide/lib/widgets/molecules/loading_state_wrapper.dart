@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../core/models/page_loading_state.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/app_dimensions.dart';
 import '../molecules/empty_state.dart';
+import '../atoms/texts/app_text.dart';
 
 /// A wrapper widget that handles different page loading states using existing styleguide components
 class LoadingStateWrapper extends StatelessWidget {
@@ -57,6 +59,8 @@ class LoadingStateWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (state) {
+      case PageLoadingState.initial:
+        return _InitialState();
       case PageLoadingState.loading:
         return _LoadingIndicator(message: loadingMessage);
       case PageLoadingState.error:
@@ -82,19 +86,15 @@ class _LoadingIndicator extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            width: 24,
-            height: 24,
+            width: AppDimensions.iconSizeL,
+            height: AppDimensions.iconSizeL,
             child: CircularProgressIndicator(
-              strokeWidth: 2.0,
+              strokeWidth: AppDimensions.loadingIndicatorStrokeWidth,
               valueColor: AlwaysStoppedAnimation<Color>(context.colors.accentColor),
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            style: TextStyle(fontSize: 16, color: context.colors.textSecondary),
-            textAlign: TextAlign.center,
-          ),
+          const SizedBox(height: AppDimensions.spacingM),
+          MediumBodyText(message, textAlign: TextAlign.center, color: context.colors.textSecondary),
         ],
       ),
     );
@@ -113,35 +113,68 @@ class _ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(AppDimensions.spacingXs),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline, size: 64, color: context.colors.dangerColor),
-            const SizedBox(height: 16),
-            Text(
-              title,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: context.colors.textColor),
+            Icon(Icons.error_outline, size: AppDimensions.iconSizeXl, color: context.colors.dangerColor),
+            const SizedBox(height: AppDimensions.spacingXs),
+            Flexible(
+              child: MediumTitleText(
+                title,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                color: context.colors.textColor,
+              ),
             ),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: context.colors.textColor.withValues(alpha: 0.7)),
+            const SizedBox(height: AppDimensions.spacingXxs),
+            Flexible(
+              child: SmallBodyText(
+                message,
+                textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                color: context.colors.textSecondary,
+              ),
             ),
             if (onRetry != null) ...[
-              const SizedBox(height: 24),
+              const SizedBox(height: AppDimensions.spacingXs),
               ElevatedButton(
                 onPressed: onRetry,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: context.colors.accentColor,
                   foregroundColor: context.colors.bgColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  minimumSize: const Size(60, 28),
                 ),
-                child: const Text('Retry'),
+                child: const SmallLabelText('Retry'),
               ),
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Initial state widget - shows nothing until an action is triggered
+class _InitialState extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.touch_app_outlined,
+            size: AppDimensions.iconSizeXl + AppDimensions.spacingM,
+            color: context.colors.textSecondary,
+          ),
+          const SizedBox(height: AppDimensions.spacingM),
+          MediumBodyText('Click "Start Simulation" to begin', color: context.colors.textSecondary),
+        ],
       ),
     );
   }

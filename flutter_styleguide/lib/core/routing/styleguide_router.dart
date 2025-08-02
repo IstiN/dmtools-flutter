@@ -112,11 +112,7 @@ const List<StyleguideNavigationItem> styleguideNavigationItems = [
     label: 'Loading Indicators',
     route: '/loading-indicators',
   ),
-  StyleguideNavigationItem(
-    icon: Icons.refresh_outlined,
-    label: 'Loading States',
-    route: '/loading-states',
-  ),
+  StyleguideNavigationItem(icon: Icons.refresh_outlined, label: 'Loading States', route: '/loading-states'),
   StyleguideNavigationItem(icon: Icons.settings_input_component_outlined, label: 'MCP Components', route: '/mcp'),
 ];
 

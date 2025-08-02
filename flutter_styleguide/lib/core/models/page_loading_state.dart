@@ -1,5 +1,8 @@
 /// Enum representing different page loading states
 enum PageLoadingState {
+  /// Initial state - no loading has been triggered yet
+  initial,
+
   /// Page is currently loading data
   loading,
 
@@ -15,6 +18,9 @@ enum PageLoadingState {
 
 /// Extension methods for PageLoadingState
 extension PageLoadingStateExtension on PageLoadingState {
+  /// Returns true if the page is in initial state
+  bool get isInitial => this == PageLoadingState.initial;
+
   /// Returns true if the page is currently loading
   bool get isLoading => this == PageLoadingState.loading;
 
