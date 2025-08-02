@@ -32,59 +32,60 @@ class _McpPageState extends State<McpPage> {
   }
 
   Future<void> _loadData() async {
-    if (_hasLoadedData || _isLoadingIntegrations) return;
+    if (_hasLoadedData || _isLoadingIntegrations) {
+      print('🔧 McpPage: _loadData skipped - hasLoadedData: $_hasLoadedData, isLoadingIntegrations: $_isLoadingIntegrations');
+      return;
+    }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (!mounted) return;
+
+    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) {
+      print('🔧 McpPage: User not authenticated, skipping data load');
+      return;
+    }
+
+    print('🔧 McpPage: Starting data load...');
+    
+    // Set loading state immediately to prevent multiple concurrent calls
+    setState(() {
+      _isLoadingIntegrations = true;
+    });
+
+    try {
+      // Load integrations first and wait for completion
+      final integrationProvider = context.read<IntegrationProvider>();
+      if (!integrationProvider.isInitialized) {
+        print('🔧 McpPage: Integration provider not initialized, forcing reinitialize...');
+        await integrationProvider.forceReinitialize();
+      } else {
+        print('🔧 McpPage: Integration provider already initialized, refreshing...');
+        await integrationProvider.refresh();
+      }
+
+      // Check if widget is still mounted before proceeding
       if (!mounted) return;
 
-      final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
-      if (authProvider.isAuthenticated) {
-        print('🔧 McpPage: Loading MCP configurations and integrations...');
+      // Then load MCP configurations
+      await context.read<McpProvider>().loadConfigurations();
 
+      // Check if widget is still mounted before updating state
+      if (!mounted) return;
+
+      setState(() {
+        _hasLoadedData = true;
+        _isLoadingIntegrations = false;
+      });
+
+      print('🔧 McpPage: Data loading completed successfully');
+    } catch (e) {
+      print('🔧 McpPage: Error loading data: $e');
+      if (mounted) {
         setState(() {
-          _isLoadingIntegrations = true;
+          _isLoadingIntegrations = false;
         });
-
-        try {
-          // Load integrations first and wait for completion
-          final integrationProvider = context.read<IntegrationProvider>();
-          if (!integrationProvider.isInitialized) {
-            print('🔧 McpPage: Integration provider not initialized, forcing reinitialize...');
-            await integrationProvider.forceReinitialize();
-          } else {
-            print('🔧 McpPage: Integration provider already initialized, refreshing...');
-            await integrationProvider.refresh();
-          }
-
-          // Check if widget is still mounted before proceeding
-          if (!mounted) return;
-
-          // Then load MCP configurations
-          await context.read<McpProvider>().loadConfigurations();
-
-          // Check if widget is still mounted before updating state
-          if (!mounted) return;
-
-          setState(() {
-            _hasLoadedData = true;
-            _isLoadingIntegrations = false;
-          });
-
-          print('🔧 McpPage: Data loading completed successfully');
-        } catch (e) {
-          print('🔧 McpPage: Error loading data: $e');
-          if (mounted) {
-            setState(() {
-              _isLoadingIntegrations = false;
-            });
-          }
-        }
-      } else {
-        print('🔧 McpPage: User not authenticated, skipping data load');
-        // Reset the flag so we can retry when user becomes authenticated
-        _hasLoadedData = false;
       }
-    });
+    }
   }
 
   List<IntegrationOption> _getAvailableIntegrations() {
@@ -237,14 +238,9 @@ class _McpPageState extends State<McpPage> {
           );
         }
 
-        // Ensure data is loaded if it hasn't been loaded yet
+        // Debug: Show current loading state but don't trigger loading from build method
         if (!_hasLoadedData && authProvider.isAuthenticated) {
-          print('🔧 McpPage: Data not loaded yet, triggering load from build method');
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && !_hasLoadedData && !_isLoadingIntegrations) {
-              _loadData();
-            }
-          });
+          print('🔧 McpPage: Data not loaded yet - hasLoadedData: $_hasLoadedData, isLoadingIntegrations: $_isLoadingIntegrations');
         }
 
         print(
