@@ -90,16 +90,16 @@ class AppRouter {
           return '/unauthenticated';
         }
 
-        // If authenticated and on unauthenticated page, redirect to dashboard
+        // If authenticated and on unauthenticated page, redirect to ai-jobs (first available page)
         if (isAuthenticated && currentPath == '/unauthenticated') {
-          if (kDebugMode) print('🏠 Redirecting to dashboard: authenticated on unauthenticated page');
-          return '/dashboard';
+          if (kDebugMode) print('🏠 Redirecting to ai-jobs: authenticated on unauthenticated page');
+          return '/ai-jobs';
         }
 
-        // If authenticated and on root path, redirect to dashboard
+        // If authenticated and on root path, redirect to ai-jobs (first available page)
         if (isAuthenticated && (currentPath == '/' || currentPath == '')) {
-          if (kDebugMode) print('🏠 Redirecting to dashboard: authenticated on root path ($currentPath)');
-          return '/dashboard';
+          if (kDebugMode) print('🏠 Redirecting to ai-jobs: authenticated on root path ($currentPath)');
+          return '/ai-jobs';
         }
 
         if (kDebugMode) {
@@ -255,7 +255,7 @@ class AppRouter {
               Text('Page not found: ${state.uri}'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => context.go('/dashboard'),
+                onPressed: () => context.go('/ai-jobs'),
                 child: const Text('Go Home'),
               ),
             ],
@@ -311,15 +311,20 @@ class NavigationItem {
 }
 
 const List<NavigationItem> navigationItems = [
-  NavigationItem(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
+  // Temporarily hidden - Dashboard
+  // NavigationItem(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
   NavigationItem(icon: Icons.smart_toy_outlined, label: 'AI Jobs', route: '/ai-jobs'),
   NavigationItem(icon: Icons.folder_outlined, label: 'Workspaces', route: '/workspaces'),
-  NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
+  // Temporarily hidden - Applications
+  // NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
   NavigationItem(icon: Icons.extension_outlined, label: 'Integrations', route: '/integrations'),
   NavigationItem(icon: Icons.cable_outlined, label: 'MCP', route: '/mcp'),
-  NavigationItem(icon: Icons.people_outlined, label: 'Users', route: '/users'),
-  NavigationItem(icon: Icons.settings_outlined, label: 'Settings', route: '/settings'),
-  NavigationItem(icon: Icons.api_outlined, label: 'API Demo', route: '/api-demo'),
+  // Temporarily hidden - Users
+  // NavigationItem(icon: Icons.people_outlined, label: 'Users', route: '/users'),
+  // Temporarily hidden - Settings
+  // NavigationItem(icon: Icons.settings_outlined, label: 'Settings', route: '/settings'),
+  // Temporarily hidden - API Demo
+  // NavigationItem(icon: Icons.api_outlined, label: 'API Demo', route: '/api-demo'),
 ];
 
 // Home Screen Shell that wraps all main app pages
