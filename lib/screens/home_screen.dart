@@ -59,13 +59,14 @@ class _HomeScreenState extends State<HomeScreen> {
                           debugPrint('Profile clicked');
                         },
                       ),
-                      UserProfileDropdownItem(
-                        icon: Icons.settings,
-                        label: 'Settings',
-                        onTap: () {
-                          context.go('/settings');
-                        },
-                      ),
+                      // Temporarily hidden - Settings
+                      // UserProfileDropdownItem(
+                      //   icon: Icons.settings,
+                      //   label: 'Settings',
+                      //   onTap: () {
+                      //     context.go('/settings');
+                      //   },
+                      // ),
                       UserProfileDropdownItem(
                         icon: Icons.exit_to_app,
                         label: 'Logout',
