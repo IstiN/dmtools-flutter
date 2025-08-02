@@ -172,6 +172,45 @@
     });
   </script>
   
-  <script src="flutter_bootstrap.js?v=1.1" async></script>
+  <script>
+    // Service Worker Registration with Update Management
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js')
+          .then(function(registration) {
+            console.log('Service Worker registered successfully');
+            
+            // Check for updates
+            registration.addEventListener('updatefound', function() {
+              const newWorker = registration.installing;
+              
+              if (newWorker) {
+                newWorker.addEventListener('statechange', function() {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // Show update notification to user
+                    console.log('New version available! Please refresh the page.');
+                    
+                    // Auto-refresh for Safari cache busting
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    setTimeout(() => window.location.reload(), 1000);
+                  }
+                });
+              }
+            });
+          })
+          .catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+          });
+        
+        // Listen for service worker updates
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+          console.log('Service Worker updated, reloading page...');
+          window.location.reload();
+        });
+      });
+    }
+  </script>
+  
+  <script src="flutter_bootstrap.js?v=__BUILD_VERSION__" async></script>
 </body>
 </html>

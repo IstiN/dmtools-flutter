@@ -41,7 +41,45 @@
 
 
   <!-- Theme detection now handled by shared-theme.js -->
-  <script src="flutter_bootstrap.js" async></script>
+  <script>
+    // Service Worker Registration for Styleguide
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js')
+          .then(function(registration) {
+            console.log('Styleguide Service Worker registered successfully');
+            
+            // Check for updates
+            registration.addEventListener('updatefound', function() {
+              const newWorker = registration.installing;
+              
+              if (newWorker) {
+                newWorker.addEventListener('statechange', function() {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('New styleguide version available! Please refresh the page.');
+                    
+                    // For development, auto-refresh
+                    newWorker.postMessage({ type: 'SKIP_WAITING' });
+                    setTimeout(() => window.location.reload(), 1000);
+                  }
+                });
+              }
+            });
+          })
+          .catch(function(error) {
+            console.log('Styleguide Service Worker registration failed:', error);
+          });
+        
+        // Listen for service worker updates
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+          console.log('Styleguide Service Worker updated, reloading page...');
+          window.location.reload();
+        });
+      });
+    }
+  </script>
+  
+  <script src="flutter_bootstrap.js?v=__BUILD_VERSION__" async></script>
 </head>
 <body>
   <div id="loading-indicator">
