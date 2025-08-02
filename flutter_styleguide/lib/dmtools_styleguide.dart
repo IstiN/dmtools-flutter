@@ -22,6 +22,7 @@ export 'core/config/app_config.dart';
 
 // Widgets - Atoms (existing files only)
 export 'widgets/atoms/buttons/app_buttons.dart';
+export 'widgets/atoms/texts/app_text.dart';
 export 'widgets/atoms/status_dot.dart';
 export 'widgets/atoms/tag_chip.dart';
 export 'widgets/atoms/form_elements.dart';
