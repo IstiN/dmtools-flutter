@@ -12,6 +12,7 @@ import '../../screens/styleguide_pages/headers_page.dart';
 import '../../screens/styleguide_pages/profile_page.dart';
 import '../../screens/styleguide_pages/auth_page.dart';
 import '../../screens/styleguide_pages/loading_indicators_page.dart';
+import '../../screens/styleguide_pages/loading_states_page.dart';
 import '../../screens/styleguide_pages/mcp_page.dart';
 
 class StyleguideRouter {
@@ -69,6 +70,10 @@ class StyleguideRouter {
             pageBuilder: (context, state) => const NoTransitionPage(child: LoadingIndicatorsPage()),
           ),
           GoRoute(
+            path: '/loading-states',
+            pageBuilder: (context, state) => const NoTransitionPage(child: LoadingStatesPage()),
+          ),
+          GoRoute(
             path: '/mcp',
             pageBuilder: (context, state) => const NoTransitionPage(child: McpPage()),
           ),
@@ -106,6 +111,11 @@ const List<StyleguideNavigationItem> styleguideNavigationItems = [
     icon: Icons.hourglass_empty_outlined,
     label: 'Loading Indicators',
     route: '/loading-indicators',
+  ),
+  StyleguideNavigationItem(
+    icon: Icons.refresh_outlined,
+    label: 'Loading States',
+    route: '/loading-states',
   ),
   StyleguideNavigationItem(icon: Icons.settings_input_component_outlined, label: 'MCP Components', route: '/mcp'),
 ];
