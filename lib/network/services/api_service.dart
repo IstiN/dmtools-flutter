@@ -576,9 +576,18 @@ class ApiService {
   /// Get raw job configuration data
   Future<Map<String, dynamic>> getJobConfigurationRaw(String id) async {
     try {
-      final response = await _api.apiV1JobConfigurationsIdGet(id: id);
+      debugPrint('🔄 Getting raw job config $id with manual API call');
+      
+      // Make direct API call to get raw JSON response
+      final response = await _api.client.get(
+        Uri.parse('/api/v1/job-configurations/$id'),
+      );
+      
       if (response.isSuccessful && response.body != null) {
-        return response.body! as Map<String, dynamic>;
+        // Return raw JSON data without auto-generated model conversion
+        final rawData = response.body as Map<String, dynamic>;
+        debugPrint('✅ Raw job config data received: $rawData');
+        return rawData;
       } else {
         throw ApiException('Failed to get job configuration', response.statusCode);
       }
