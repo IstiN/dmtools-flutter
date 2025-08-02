@@ -577,12 +577,12 @@ class ApiService {
   Future<Map<String, dynamic>> getJobConfigurationRaw(String id) async {
     try {
       debugPrint('🔄 Getting raw job config $id with manual API call');
-      
+
       // Make direct API call to get raw JSON response
       final response = await _api.client.get(
         Uri.parse('/api/v1/job-configurations/$id'),
       );
-      
+
       if (response.isSuccessful && response.body != null) {
         // Return raw JSON data without auto-generated model conversion
         final rawData = response.body as Map<String, dynamic>;
