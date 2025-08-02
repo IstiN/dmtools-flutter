@@ -8,6 +8,8 @@
     "description": "A new Flutter project.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
+    "version": "__BUILD_VERSION__",
+    "scope": "/",
     "icons": [
         {
             "src": "icons/Icon-192.png",
