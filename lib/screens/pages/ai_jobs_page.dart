@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import '../../service_locator.dart';
 import '../../network/services/api_service.dart';
 import '../../network/generated/openapi.models.swagger.dart';
-import '../../providers/auth_provider.dart';
-import '../loading_screen.dart'; // Fixed import path for LoadingScreen
+import '../../core/pages/authenticated_page.dart';
 
 class AiJobsPage extends StatefulWidget {
   const AiJobsPage({super.key});
@@ -15,11 +13,8 @@ class AiJobsPage extends StatefulWidget {
   State<AiJobsPage> createState() => _AiJobsPageState();
 }
 
-class _AiJobsPageState extends State<AiJobsPage> {
-  // State variables
-  bool _isLoading = false;
-  bool _dataLoaded = false;
-  String? _errorMessage;
+class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
+  // Data state variables
   List<JobConfigurationDto> _jobConfigurations = [];
   List<JobType> _availableJobTypes = [];
   List<AvailableIntegration> _availableIntegrations = [];
@@ -29,6 +24,21 @@ class _AiJobsPageState extends State<AiJobsPage> {
   final Map<String, Map<String, String>> _jobIntegrationSelections = {};
 
   int _buildCounter = 0; // Track how many times build is called
+
+  @override
+  String get loadingMessage => 'Loading AI Jobs...';
+
+  @override
+  String get errorTitle => 'Error loading AI Jobs';
+
+  @override
+  String get emptyTitle => 'No AI Job configurations found';
+
+  @override
+  String get emptyMessage => 'Create your first AI Job configuration to get started';
+
+  @override
+  bool get requiresIntegrations => false; // AI Jobs don't require integrations initially
 
   /// Helper method to safely convert API boolean values that might come as strings
   bool _safeBool(dynamic value, {bool defaultValue = false}) {
@@ -81,19 +91,13 @@ class _AiJobsPageState extends State<AiJobsPage> {
     debugPrint('🔧 AI Jobs Page - initState() called');
   }
 
-  Future<void> _loadData() async {
-    debugPrint('🚀 _loadData() called - Starting data loading process');
-    debugPrint('📊 Initial state: _isLoading=$_isLoading, _dataLoaded=$_dataLoaded');
+  @override
+  Future<void> loadAuthenticatedData() async {
+    debugPrint('🚀 AI Jobs Page: Loading AI jobs data...');
 
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+    await authService.execute(() async {
+      debugPrint('🔄 Loading AI jobs data in parallel...');
 
-    debugPrint('✅ Set _isLoading=true, starting API calls');
-
-    try {
-      debugPrint('🔄 About to start Future.wait() with API calls');
       // Load critical data in parallel - integrations are now stable
       await Future.wait([
         _loadJobConfigurations().then((value) {
@@ -120,23 +124,16 @@ class _AiJobsPageState extends State<AiJobsPage> {
         }),
       ]);
 
-      debugPrint('🎉 All API calls completed successfully');
-      setState(() {
-        _isLoading = false;
-        _dataLoaded = true;
-      });
-      debugPrint('✅ Set _isLoading=false, _dataLoaded=true');
-    } catch (e) {
-      debugPrint('💥 Exception in _loadData: $e');
-      setState(() {
-        _isLoading = false;
-        _errorMessage = 'Failed to load data: $e';
-      });
-      debugPrint('❌ Set _isLoading=false, _errorMessage=$_errorMessage');
-    }
+      debugPrint('🎉 All AI jobs API calls completed successfully');
+    });
 
-    debugPrint(
-        '🏁 _loadData() completed - Final state: _isLoading=$_isLoading, _dataLoaded=$_dataLoaded, _errorMessage=$_errorMessage');
+    debugPrint('🔧 AI Jobs Page: Loaded ${_jobConfigurations.length} job configurations');
+
+    if (_jobConfigurations.isEmpty && _availableJobTypes.isEmpty) {
+      setEmpty();
+    } else {
+      setLoaded();
+    }
   }
 
   Future<void> _loadJobConfigurations() async {
@@ -519,7 +516,7 @@ class _AiJobsPageState extends State<AiJobsPage> {
       debugPrint('✅ Job configuration created successfully: ${newConfig.name}');
 
       // Reload configurations to update the list
-      await _loadJobConfigurations();
+      retry();
     } catch (e) {
       debugPrint('❌ Error creating job configuration: $e');
       rethrow;
@@ -577,7 +574,7 @@ class _AiJobsPageState extends State<AiJobsPage> {
       debugPrint('✅ Job configuration updated successfully: ${updatedConfig.name}');
 
       // Reload configurations to update the list
-      await _loadJobConfigurations();
+      retry();
     } catch (e) {
       debugPrint('❌ Failed to update job configuration: $e');
       if (mounted) {
@@ -738,124 +735,16 @@ class _AiJobsPageState extends State<AiJobsPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildAuthenticatedContent(BuildContext context) {
     _buildCounter++;
-    debugPrint('🔧 AI Jobs Page - build() called #$_buildCounter - rebuilding widget');
+    debugPrint('🔧 AI Jobs Page - buildAuthenticatedContent() called #$_buildCounter');
 
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        debugPrint(
-            '🔐 AI Jobs Page - Auth State (build #$_buildCounter): ${authProvider.authState}, isAuthenticated: ${authProvider.isAuthenticated}, isLoading: ${authProvider.isLoading}');
-
-        // Show loading screen while authentication is in progress
-        if (authProvider.isLoading) {
-          debugPrint('🔄 AI Jobs Page - Showing loading screen for authentication (build #$_buildCounter)');
-          return const LoadingScreen();
-        }
-
-        // Check if user is authenticated
-        if (!authProvider.isAuthenticated) {
-          debugPrint(
-              '❌ AI Jobs Page - User not authenticated, this should not happen on protected route (build #$_buildCounter)');
-          return const Center(
-            child: Text('Authentication required'),
-          );
-        }
-
-        debugPrint('🔄 User authenticated, checking if data needs to be loaded... (build #$_buildCounter)');
-        debugPrint(
-            '📊 Current state (build #$_buildCounter): _isLoading=$_isLoading, _dataLoaded=$_dataLoaded, _errorMessage=$_errorMessage');
-        debugPrint(
-            '📊 Job types state (build #$_buildCounter): _availableJobTypes.length=${_availableJobTypes.length}');
-
-        // Load data only once when authenticated
-        if (!_dataLoaded && !_isLoading && _errorMessage == null) {
-          debugPrint('🚀 Triggering data load... (build #$_buildCounter)');
-          debugPrint('📊 Detailed check (build #$_buildCounter):');
-          debugPrint('   - !_dataLoaded: ${!_dataLoaded}');
-          debugPrint('   - !_isLoading: ${!_isLoading}');
-          debugPrint('   - _errorMessage == null: ${_errorMessage == null}');
-
-          // Use Future.microtask to avoid calling setState during build
-          Future.microtask(() {
-            debugPrint('🔄 Inside Future.microtask (build #$_buildCounter) - About to call _loadData()');
-            debugPrint(
-                '📊 State check before _loadData (build #$_buildCounter): _isLoading=$_isLoading, _dataLoaded=$_dataLoaded');
-            _loadData();
-          });
-        } else {
-          debugPrint('📋 Data loading skipped (build #$_buildCounter):');
-          debugPrint('   - _dataLoaded: $_dataLoaded');
-          debugPrint('   - _isLoading: $_isLoading');
-          debugPrint('   - _errorMessage: $_errorMessage');
-        }
-
-        // Show main content
-        return _buildMainContent();
-      },
-    );
+    // Show the main job management content
+    return _buildMainContent();
   }
 
   Widget _buildMainContent() {
-    debugPrint('🔧 _buildMainContent called - _isLoading=$_isLoading, _errorMessage=$_errorMessage');
-
-    // Show loading while data is being fetched
-    if (_isLoading) {
-      debugPrint('🔄 Showing loading screen for data loading');
-      return const Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Loading AI Jobs...'),
-          ],
-        ),
-      );
-    }
-
-    // Show error state
-    if (_errorMessage != null) {
-      debugPrint('❌ Showing error screen: $_errorMessage');
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Error Loading AI Jobs',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              _errorMessage!,
-              style: Theme.of(context).textTheme.bodyMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                debugPrint('🔄 Retry button pressed, resetting state and reloading data');
-                setState(() {
-                  _dataLoaded = false;
-                  _errorMessage = null;
-                });
-                _loadData();
-              },
-              child: const Text('Retry'),
-            ),
-          ],
-        ),
-      );
-    }
-
-    // Show the main job management content
-    debugPrint('✅ Showing main job management content');
+    debugPrint('🔧 _buildMainContent called - building job management content');
     final jobConfigurationWidget = JobConfigurationManagement(
       configurations: _jobConfigurations.map((config) {
         debugPrint('🔄 Converting config: ${config.id} - ${config.name}');

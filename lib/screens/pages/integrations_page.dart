@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../../providers/integration_provider.dart';
-import '../../providers/auth_provider.dart' as app_auth;
 import '../../core/services/integration_service.dart';
+import '../../core/pages/authenticated_page.dart';
 
 class IntegrationsPage extends StatefulWidget {
   const IntegrationsPage({super.key});
@@ -12,53 +12,47 @@ class IntegrationsPage extends StatefulWidget {
   State<IntegrationsPage> createState() => _IntegrationsPageState();
 }
 
-class _IntegrationsPageState extends State<IntegrationsPage> {
-  bool _hasInitialized = false;
+class _IntegrationsPageState extends AuthenticatedPage<IntegrationsPage> {
+  @override
+  String get loadingMessage => 'Loading integrations...';
 
   @override
-  void initState() {
-    super.initState();
+  String get errorTitle => 'Error loading integrations';
 
-    // Initialize integrations when the page loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeIntegrations();
+  @override
+  String get emptyTitle => 'No integrations found';
+
+  @override
+  String get emptyMessage => 'Create your first integration to get started';
+
+  @override
+  bool get requiresIntegrations => true;
+
+  @override
+  Future<void> loadAuthenticatedData() async {
+    print('🔧 IntegrationsPage: Loading integrations...');
+
+    final integrations = await authService.executeWithIntegrations(() async {
+      final integrationProvider = context.read<IntegrationProvider>();
+      // Don't call refresh() - executeWithIntegrations already loaded them
+      return integrationProvider.integrations;
     });
-  }
 
-  void _initializeIntegrations() {
-    final integrationProvider = Provider.of<IntegrationProvider>(context, listen: false);
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    print('🔧 IntegrationsPage: Loaded ${integrations.length} integrations');
 
-    // Only initialize if user is authenticated and we haven't initialized yet
-    if (authProvider.isAuthenticated && !_hasInitialized && !integrationProvider.isInitialized) {
-      integrationProvider.refresh();
-      _hasInitialized = true;
+    if (integrations.isEmpty) {
+      setEmpty();
+    } else {
+      setLoaded();
     }
   }
 
   @override
-  Widget build(BuildContext context) {
-    final colors = context.colorsListening;
-    final authProvider = Provider.of<app_auth.AuthProvider>(context);
-
-    // Check if we need to initialize after authentication
-    if (authProvider.isAuthenticated && !_hasInitialized) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _initializeIntegrations();
-      });
-    }
-
+  Widget buildAuthenticatedContent(BuildContext context) {
     return Consumer<IntegrationProvider>(
       builder: (context, integrationProvider, child) {
-        // Show loading state if not initialized yet
-        if (!integrationProvider.isInitialized && integrationProvider.isLoading) {
-          return _buildLoadingState(colors);
-        }
-
-        // Show error state if there's an error
-        if (integrationProvider.error != null) {
-          return _buildErrorState(colors, integrationProvider.error!, integrationProvider);
-        }
+        print(
+            '🔧 IntegrationsPage: Building authenticated content with ${integrationProvider.integrations.length} integrations');
 
         // Convert models for styleguide compatibility
         final integrationDataList = _convertIntegrationsToStyleguideFormat(integrationProvider.integrations);
@@ -102,72 +96,6 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildLoadingState(ThemeColorSet colors) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const CircularProgressIndicator(),
-            const SizedBox(height: 16),
-            Text(
-              'Loading integrations...',
-              style: TextStyle(
-                fontSize: 16,
-                color: colors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildErrorState(ThemeColorSet colors, String error, IntegrationProvider integrationProvider) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: colors.dangerColor,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Failed to load integrations',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: colors.textColor,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              error,
-              style: TextStyle(
-                fontSize: 14,
-                color: colors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            PrimaryButton(
-              text: 'Retry',
-              icon: Icons.refresh,
-              onPressed: () {
-                integrationProvider.refresh();
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -274,6 +202,8 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
             backgroundColor: Colors.green,
           ),
         );
+        // Reload integrations list to show the new integration
+        retry();
       }
     } catch (e) {
       if (mounted) {
@@ -313,6 +243,8 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
             backgroundColor: Colors.green,
           ),
         );
+        // Reload integrations list to show the updates
+        retry();
       }
     } catch (e) {
       if (mounted) {
@@ -343,6 +275,8 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
             backgroundColor: Colors.green,
           ),
         );
+        // Reload integrations list to remove the deleted integration
+        retry();
       }
     } catch (e) {
       if (mounted) {
@@ -373,6 +307,8 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
             backgroundColor: Colors.green,
           ),
         );
+        // Reload integrations list to show status change
+        retry();
       }
     } catch (e) {
       if (mounted) {
@@ -403,6 +339,8 @@ class _IntegrationsPageState extends State<IntegrationsPage> {
             backgroundColor: Colors.orange,
           ),
         );
+        // Reload integrations list to show status change
+        retry();
       }
     } catch (e) {
       if (mounted) {

@@ -4,13 +4,7 @@ import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../../providers/mcp_provider.dart';
 import '../../providers/auth_provider.dart' as app_auth;
 import '../../providers/integration_provider.dart';
-
-enum PageLoadingState {
-  loading,
-  loaded,
-  error,
-  empty,
-}
+import '../../core/pages/authenticated_page.dart';
 
 class McpPage extends StatefulWidget {
   const McpPage({super.key});
@@ -19,99 +13,38 @@ class McpPage extends StatefulWidget {
   State<McpPage> createState() => _McpPageState();
 }
 
-class _McpPageState extends State<McpPage> {
-  PageLoadingState _loadingState = PageLoadingState.loading;
-  String? _errorMessage;
+class _McpPageState extends AuthenticatedPage<McpPage> {
+  @override
+  String get loadingMessage => 'Loading MCP configurations...';
 
   @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
+  String get errorTitle => 'Error loading MCP configurations';
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // Also try to load data when dependencies change (e.g., when navigating to this page)
-    if (_loadingState == PageLoadingState.loading) {
-      _loadData();
-    }
-  }
+  String get emptyTitle => 'No MCP configurations found';
 
-  Future<void> _loadData() async {
-    if (_loadingState == PageLoadingState.loading) {
-      print('🔧 McpPage: Already loading, skipping duplicate load request');
-      return;
-    }
+  @override
+  String get emptyMessage => 'Create your first MCP configuration to get started';
 
-    if (!mounted) return;
+  @override
+  bool get requiresIntegrations => true;
 
-    print('🔧 McpPage: Starting data load...');
-    
-    // Set loading state immediately
-    setState(() {
-      _loadingState = PageLoadingState.loading;
-      _errorMessage = null;
+  @override
+  Future<void> loadAuthenticatedData() async {
+    print('🔧 McpPage: Loading MCP configurations...');
+
+    final configurations = await authService.executeWithIntegrations(() async {
+      final mcpProvider = context.read<McpProvider>();
+      await mcpProvider.loadConfigurations();
+      return mcpProvider.configurations;
     });
 
-    try {
-      final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
-      
-      if (authProvider.isAuthenticated) {
-        // Production data loading for authenticated users
-        print('🔧 McpPage: Loading production data for authenticated user...');
-        
-        // Load integrations first and wait for completion
-        final integrationProvider = context.read<IntegrationProvider>();
-        if (!integrationProvider.isInitialized) {
-          print('🔧 McpPage: Integration provider not initialized, forcing reinitialize...');
-          await integrationProvider.forceReinitialize();
-        } else {
-          print('🔧 McpPage: Integration provider already initialized, refreshing...');
-          await integrationProvider.refresh();
-        }
+    print('🔧 McpPage: Loaded ${configurations.length} configurations');
 
-        // Check if widget is still mounted before proceeding
-        if (!mounted) return;
-
-        // Then load MCP configurations
-        await context.read<McpProvider>().loadConfigurations();
-        
-        // Check if widget is still mounted before updating state
-        if (!mounted) return;
-
-        // Determine final state based on data
-        final mcpProvider = context.read<McpProvider>();
-        final hasConfigurations = mcpProvider.configurations.isNotEmpty;
-        
-        setState(() {
-          _loadingState = hasConfigurations ? PageLoadingState.loaded : PageLoadingState.empty;
-        });
-
-        print('🔧 McpPage: Production data loading completed - state: $_loadingState');
-      } else {
-        // Demo mode - no actual loading needed, just show demo state
-        print('🔧 McpPage: Demo mode - setting loaded state with demo data...');
-        
-        // Small delay to simulate loading for demo purposes
-        await Future.delayed(const Duration(milliseconds: 500));
-        
-        if (!mounted) return;
-        
-        setState(() {
-          _loadingState = PageLoadingState.loaded; // Demo always shows loaded state
-        });
-
-        print('🔧 McpPage: Demo mode setup completed');
-      }
-    } catch (e) {
-      print('🔧 McpPage: Error loading data: $e');
-      if (mounted) {
-        setState(() {
-          _loadingState = PageLoadingState.error;
-          _errorMessage = e.toString();
-        });
-      }
+    if (configurations.isEmpty) {
+      setEmpty();
+    } else {
+      setLoaded();
     }
   }
 
@@ -235,123 +168,13 @@ class _McpPageState extends State<McpPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildAuthenticatedContent(BuildContext context) {
     return Consumer2<McpProvider, app_auth.AuthProvider>(
       builder: (context, mcpProvider, authProvider, child) {
-        // Check if user just became authenticated and we need to start loading
-        if (authProvider.isAuthenticated && _loadingState == PageLoadingState.loading) {
-          print('🔧 McpPage: User is authenticated and in loading state');
-        }
+        print('🔧 McpPage: Building authenticated content with ${mcpProvider.configurations.length} configurations');
 
-        print('🔧 McpPage: Building with state: $_loadingState, configurations: ${mcpProvider.configurations.length}, auth: ${authProvider.isAuthenticated}');
-
-        // Handle different loading states
-        switch (_loadingState) {
-          case PageLoadingState.loading:
-            return _buildLoadingState();
-          case PageLoadingState.error:
-            return _buildErrorState();
-          case PageLoadingState.empty:
-            return _buildEmptyState(authProvider.isAuthenticated);
-          case PageLoadingState.loaded:
-            return _buildLoadedState(mcpProvider, authProvider);
-        }
+        return _buildLoadedState(mcpProvider, authProvider);
       },
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: 16),
-          Text(
-            'Loading MCP configurations...',
-            style: TextStyle(
-              fontSize: 16,
-              color: context.colors.textSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.error_outline,
-            size: 64,
-            color: context.colors.dangerColor,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Error loading MCP configurations',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: context.colors.textColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            _errorMessage ?? 'Unknown error occurred',
-            style: TextStyle(
-              fontSize: 14,
-              color: context.colors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              _loadingState = PageLoadingState.loading;
-              _loadData();
-            },
-            child: const Text('Retry'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyState(bool isAuthenticated) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.inbox_outlined,
-            size: 64,
-            color: context.colors.textSecondary,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No MCP configurations found',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: context.colors.textColor,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            isAuthenticated
-                ? 'Create your first MCP configuration to get started'
-                : 'Sign in to create and manage MCP configurations',
-            style: TextStyle(
-              fontSize: 14,
-              color: context.colors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
     );
   }
 
@@ -373,8 +196,6 @@ class _McpPageState extends State<McpPage> {
         id: 'demo-config-1',
         name: 'Demo MCP Configuration',
         integrationIds: ['demo_jira_1', 'demo_confluence_1'],
-        createdAt: null,
-        updatedAt: null,
       ));
     }
 
@@ -394,7 +215,7 @@ class _McpPageState extends State<McpPage> {
           print('🔧 McpPage: Demo mode - simulating configuration creation');
           return true;
         }
-        
+
         print('🔧 McpPage: onCreateConfiguration called with name: $name, integrations: $integrations');
         try {
           final success = await mcpProvider.createConfiguration(
@@ -415,7 +236,7 @@ class _McpPageState extends State<McpPage> {
           print('🔧 McpPage: Demo mode - simulating configuration update');
           return true;
         }
-        
+
         print('🔧 McpPage: onUpdateConfiguration called with id: $id, name: $name, integrations: $integrations');
         try {
           final success = await mcpProvider.updateConfiguration(

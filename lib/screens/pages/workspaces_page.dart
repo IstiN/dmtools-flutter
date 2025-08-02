@@ -5,8 +5,9 @@ import '../../core/services/workspace_service.dart';
 import '../../core/models/workspace.dart';
 import '../../network/generated/openapi.models.swagger.dart' as api;
 import '../../network/generated/openapi.enums.swagger.dart' as enums;
-import '../../providers/auth_provider.dart' as app_auth;
+import '../../core/pages/authenticated_page.dart';
 import '../../network/services/api_service.dart';
+import '../../providers/auth_provider.dart' as app_auth;
 import 'package:flutter/foundation.dart';
 
 class WorkspacesPage extends StatefulWidget {
@@ -16,13 +17,12 @@ class WorkspacesPage extends StatefulWidget {
   State<WorkspacesPage> createState() => _WorkspacesPageState();
 }
 
-class _WorkspacesPageState extends State<WorkspacesPage> {
+class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
   late WorkspaceService _workspaceService;
   bool _showCreateForm = false;
   bool _showEditForm = false;
   bool _showShareForm = false;
   Workspace? _selectedWorkspace;
-  bool _hasLoadedWorkspaces = false;
 
   final _createNameController = TextEditingController();
   final _createDescriptionController = TextEditingController();
@@ -32,20 +32,53 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
   WorkspaceRole _shareRole = WorkspaceRole.user;
 
   @override
+  String get loadingMessage => 'Loading workspaces...';
+
+  @override
+  String get errorTitle => 'Error loading workspaces';
+
+  @override
+  String get emptyTitle => 'No workspaces found';
+
+  @override
+  String get emptyMessage => 'Create your first workspace to start collaborating with your team';
+
+  @override
+  bool get requiresIntegrations => false; // Workspaces don't require integrations
+
+  @override
   void initState() {
     super.initState();
-    // Initialize WorkspaceService with dependencies for real data access
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    // Initialize WorkspaceService with dependencies
     final apiService = Provider.of<ApiService>(context, listen: false);
+    // We'll pass authProvider when we have access to it through authService
     _workspaceService = WorkspaceService(
       apiService: apiService,
-      authProvider: authProvider,
     );
+  }
 
-    // Load workspaces only if already authenticated, otherwise wait for auth
-    if (authProvider.isAuthenticated) {
-      _loadWorkspaces();
-      _hasLoadedWorkspaces = true;
+  @override
+  Future<void> loadAuthenticatedData() async {
+    print('🔧 WorkspacesPage: Loading workspaces...');
+
+    final workspaces = await authService.execute(() async {
+      // Set authProvider now that we're authenticated
+      final authProvider = context.read<app_auth.AuthProvider>();
+      _workspaceService = WorkspaceService(
+        apiService: context.read<ApiService>(),
+        authProvider: authProvider,
+      );
+
+      await _workspaceService.loadWorkspaces();
+      return _workspaceService.workspaces;
+    });
+
+    print('🔧 WorkspacesPage: Loaded ${workspaces.length} workspaces');
+
+    if (workspaces.isEmpty) {
+      setEmpty();
+    } else {
+      setLoaded();
     }
   }
 
@@ -57,10 +90,6 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
     _editDescriptionController.dispose();
     _shareEmailController.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadWorkspaces() async {
-    await _workspaceService.loadWorkspaces();
   }
 
   // Helper function to convert local role to API role
@@ -93,6 +122,8 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Workspace created successfully!')),
       );
+      // Reload workspaces to show the new workspace
+      retry();
     }
   }
 
@@ -115,6 +146,8 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Workspace updated successfully!')),
       );
+      // Reload workspaces to show the updates
+      retry();
     }
   }
 
@@ -126,6 +159,8 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Workspace deleted successfully!')),
       );
+      // Reload workspaces to remove the deleted workspace
+      retry();
     }
   }
 
@@ -149,6 +184,8 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Workspace shared successfully!')),
     );
+    // Reload workspaces to show updated members
+    retry();
   }
 
   Future<void> _removeUser(Workspace workspace, WorkspaceUser user) async {
@@ -159,6 +196,8 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${user.userName} removed from workspace')),
       );
+      // Reload workspaces to show updated members
+      retry();
     }
   }
 
@@ -207,18 +246,8 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildAuthenticatedContent(BuildContext context) {
     final colors = context.colorsListening;
-
-    // Check if we need to load workspaces after authentication
-    final authProvider = Provider.of<app_auth.AuthProvider>(context);
-    if (authProvider.isAuthenticated && !_hasLoadedWorkspaces && !_workspaceService.isLoading) {
-      // Use post-frame callback to avoid calling setState during build
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _loadWorkspaces();
-        _hasLoadedWorkspaces = true;
-      });
-    }
 
     return ChangeNotifierProvider.value(
       value: _workspaceService,
@@ -308,7 +337,7 @@ class _WorkspacesPageState extends State<WorkspacesPage> {
             onPressed: () {
               authProvider.forceResetDemoMode();
               Navigator.of(context).pop();
-              _loadWorkspaces(); // Reload to see changes
+              retry(); // Reload to see changes
             },
             child: const Text('Force Reset Demo Mode'),
           ),
