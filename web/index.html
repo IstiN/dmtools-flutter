@@ -173,9 +173,10 @@
   </script>
   
   <script>
-    // Service Worker Registration with Update Management
+    // Fast Service Worker Registration (non-blocking)
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
+      // Register immediately without waiting for load event
+      setTimeout(function() {
         navigator.serviceWorker.register('sw.js')
           .then(function(registration) {
             console.log('Service Worker registered successfully');
@@ -187,19 +188,18 @@
               if (newWorker) {
                 newWorker.addEventListener('statechange', function() {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // Show update notification to user
-                    console.log('New version available! Please refresh the page.');
+                    console.log('New version available! Auto-refreshing...');
                     
                     // Auto-refresh for Safari cache busting
                     newWorker.postMessage({ type: 'SKIP_WAITING' });
-                    setTimeout(() => window.location.reload(), 1000);
+                    setTimeout(() => window.location.reload(), 500);
                   }
                 });
               }
             });
           })
           .catch(function(error) {
-            console.log('Service Worker registration failed:', error);
+            console.log('Service Worker registration failed (non-critical):', error);
           });
         
         // Listen for service worker updates
@@ -207,7 +207,7 @@
           console.log('Service Worker updated, reloading page...');
           window.location.reload();
         });
-      });
+      }, 100); // Small delay to not block initial page load
     }
   </script>
   
