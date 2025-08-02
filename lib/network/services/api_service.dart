@@ -64,6 +64,35 @@ class _MockData {
           ],
         ),
       ];
+
+  static List<JobConfigurationDto> get mockJobConfigurations => [
+        JobConfigurationDto(
+          id: 'demo_job_config_1',
+          name: 'Demo Expert Analysis',
+          createdById: 'demo_user_123',
+          createdByName: 'Demo User',
+          createdByEmail: 'demo@dmtools.com',
+          jobType: 'Expert',
+          description: 'Demo AI Expert Analysis configuration for testing',
+          enabled: true,
+          executionCount: 0,
+          createdAt: DateTime.now().subtract(const Duration(days: 7)),
+          updatedAt: DateTime.now().subtract(const Duration(hours: 5)),
+        ),
+        JobConfigurationDto(
+          id: 'demo_job_config_2',
+          name: 'Demo Test Cases Generator',
+          createdById: 'demo_user_123',
+          createdByName: 'Demo User',
+          createdByEmail: 'demo@dmtools.com',
+          jobType: 'TestCasesGenerator',
+          description: 'Demo test case generation configuration',
+          enabled: false,
+          executionCount: 2,
+          createdAt: DateTime.now().subtract(const Duration(days: 3)),
+          updatedAt: DateTime.now().subtract(const Duration(hours: 1)),
+        ),
+      ];
 }
 
 /// High-level service for API operations using the generated client
@@ -408,10 +437,30 @@ class ApiService {
   // --- Job Methods ---
 
   /// Get all job configurations for the authenticated user
-  /// Note: There is no endpoint that returns a list of job configurations in the actual API
-  /// This method should be removed or the backend should implement this endpoint
   Future<List<JobConfigurationDto>> getJobConfigurations() async {
-    throw UnimplementedError('GET /api/v1/job-configurations endpoint does not exist in the actual API');
+    debugPrint('🔍 API Service Mock Data Check:');
+    debugPrint('  - AuthProvider exists: ${_authProvider != null}');
+    debugPrint('  - isDemoMode: ${_authProvider?.isDemoMode}');
+    debugPrint('  - shouldUseMockData: $_shouldUseMockData');
+    debugPrint('  - isAuthenticated: ${_authProvider?.isAuthenticated}');
+    debugPrint('  - currentUser: ${_authProvider?.currentUser?.name} (${_authProvider?.currentUser?.email})');
+    debugPrint('  - Will use mock data: $_shouldUseMockData');
+
+    if (_shouldUseMockData) {
+      debugPrint('📋 Using mock job configurations data');
+      return _MockData.mockJobConfigurations;
+    }
+
+    debugPrint('🌐 Making real API call to get job configurations');
+    final response = await _api.apiV1JobConfigurationsGet();
+
+    if (response.isSuccessful && response.body != null) {
+      debugPrint('✅ Loaded ${response.body!.length} job configurations from API');
+      return response.body!;
+    } else {
+      debugPrint('❌ Failed to load job configurations: ${response.error}');
+      throw Exception('Failed to load job configurations: ${response.error}');
+    }
   }
 
   /// Create a new job configuration
