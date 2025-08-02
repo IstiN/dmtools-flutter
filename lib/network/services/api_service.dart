@@ -473,17 +473,30 @@ class ApiService {
     bool? enabled,
   }) async {
     try {
-      final request = CreateJobConfigurationRequest(
-        name: name,
-        description: description,
-        jobType: jobType,
-        jobParameters: const JsonNode(), // API expects JsonNode, not Map<String, dynamic>
-        integrationMappings: const JsonNode(), // API expects JsonNode, not Map<String, dynamic>
-        enabled: enabled,
+      // Build request manually to bypass broken JsonNode serialization
+      final requestBody = <String, dynamic>{
+        'name': name,
+        'jobType': jobType,
+        'jobParameters': config,
+        'integrationMappings': integrationMappings,
+        'enabled': enabled ?? true,
+      };
+      if (description != null) {
+        requestBody['description'] = description;
+      }
+
+      debugPrint('🔄 Creating job config with manual request body: $requestBody');
+
+      // Make direct API call with manual JSON body
+      final response = await _api.client.post(
+        Uri.parse('/api/v1/job-configurations'),
+        body: requestBody,
       );
-      final response = await _api.apiV1JobConfigurationsPost(body: request);
+
       if (response.isSuccessful && response.body != null) {
-        return response.body!;
+        // Parse response manually
+        final responseData = response.body as Map<String, dynamic>;
+        return JobConfigurationDto.fromJson(responseData);
       } else {
         throw ApiException('Failed to create job configuration', response.statusCode);
       }
@@ -503,18 +516,28 @@ class ApiService {
     bool? enabled,
   }) async {
     try {
-      final request = UpdateJobConfigurationRequest(
-        name: name,
-        description: description,
-        jobType: jobType,
-        jobParameters: config != null ? const JsonNode() : null, // API expects JsonNode, not Map<String, dynamic>
-        integrationMappings:
-            integrationMappings != null ? const JsonNode() : null, // API expects JsonNode, not Map<String, dynamic>
-        enabled: enabled,
+      // Build request manually to bypass broken JsonNode serialization
+      final requestBody = <String, dynamic>{};
+
+      if (name != null) requestBody['name'] = name;
+      if (description != null) requestBody['description'] = description;
+      if (jobType != null) requestBody['jobType'] = jobType;
+      if (config != null) requestBody['jobParameters'] = config;
+      if (integrationMappings != null) requestBody['integrationMappings'] = integrationMappings;
+      if (enabled != null) requestBody['enabled'] = enabled;
+
+      debugPrint('🔄 Updating job config $id with manual request body: $requestBody');
+
+      // Make direct API call with manual JSON body
+      final response = await _api.client.put(
+        Uri.parse('/api/v1/job-configurations/$id'),
+        body: requestBody,
       );
-      final response = await _api.apiV1JobConfigurationsIdPut(id: id, body: request);
+
       if (response.isSuccessful && response.body != null) {
-        return response.body!;
+        // Parse response manually
+        final responseData = response.body as Map<String, dynamic>;
+        return JobConfigurationDto.fromJson(responseData);
       } else {
         throw ApiException('Failed to update job configuration', response.statusCode);
       }
