@@ -48,6 +48,12 @@ jobs:
           chmod +x scripts/sync-shared-assets.sh
           ./scripts/sync-shared-assets.sh
 
+      - name: Apply cache busting for production
+        run: |
+          echo "🚀 Applying cache busting for production deployment..."
+          chmod +x scripts/update-cache-version.sh
+          ./scripts/update-cache-version.sh
+
       - name: Run tests - Main App (if tests exist)
         run: |
           if [ -d "test" ]; then
@@ -90,6 +96,13 @@ jobs:
           # Create styleguide subdirectory and copy styleguide build
           mkdir -p _site/styleguide
           cp -r flutter_styleguide/build/web/* _site/styleguide/
+
+          # Add cache busting information to deployment
+          echo "🏷️ Adding cache version info to deployment..."
+          BUILD_VERSION=$(grep -o '[0-9]\{14\}-[a-f0-9]\{7\}' _site/index.html | head -1)
+          echo "Cache version: $BUILD_VERSION" > _site/VERSION.txt
+          echo "Deployment time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> _site/VERSION.txt
+          echo "✅ Cache busting applied with version: $BUILD_VERSION"
 
           # Create a simple navigation index that links to both apps
           cat > _site/navigation.html << 'EOF'
@@ -176,6 +189,21 @@ jobs:
           # List the deployment structure for debugging
           echo "Deployment structure:"
           find _site -type f -name "*.html" | head -10
+
+          # Show cache version info
+          echo ""
+          echo "🏷️ Cache Version Information:"
+          cat _site/VERSION.txt
+
+      - name: Reset files to development state
+        run: |
+          echo "🔄 Resetting files to development state for future local development..."
+          # Reset the files to placeholder state so development workflow isn't affected
+          git checkout -- web/index.html web/manifest.json flutter_styleguide/web/index.html flutter_styleguide/web/manifest.json || true
+          # Reset service workers to placeholder state
+          sed -i 's/dmtools-v[0-9]\{14\}-[a-f0-9]\{7\}/dmtools-v__BUILD_VERSION__/g' web/sw.js || true
+          sed -i 's/dmtools-styleguide-v[0-9]\{14\}-[a-f0-9]\{7\}/dmtools-styleguide-v__BUILD_VERSION__/g' flutter_styleguide/web/sw.js || true
+          echo "✅ Files reset to development state"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

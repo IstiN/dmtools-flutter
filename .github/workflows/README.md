@@ -1,194 +1,107 @@
-# GitHub Workflows
+# GitHub Actions Workflows
 
-This directory contains GitHub Actions workflows for Continuous Integration and Deployment.
+This directory contains the automated CI/CD workflows for the DMTools Flutter project.
 
-## 🔄 Workflows Overview
+## Workflows
 
-### 1. **Continuous Integration** (`ci.yml`)
-**Triggers**: Pull Requests and pushes to `main`/`develop` branches
+### 🚀 `deploy-pages.yml` - Production Deployment
+**Automatic deployment to https://ai-native.agency with cache busting**
 
-**Purpose**: Ensures code quality and functionality before merging changes.
+**Triggers:**
+- Push to `main` branch
+- Manual workflow dispatch
+- Pull requests to `main` (build only, no deploy)
 
-#### **Jobs:**
+**Process:**
+1. **Setup**: Flutter installation and dependencies
+2. **Asset Sync**: Synchronize shared assets between main app and styleguide
+3. **🎯 Cache Busting**: Automatically applies versioning to resolve Safari caching issues
+4. **Testing**: Runs tests for both main app and styleguide
+5. **Build**: Production builds with optimization and PWA support
+6. **Deploy**: Deploys to GitHub Pages with custom domain
+7. **Cleanup**: Resets files to development state
 
-**📋 Test Job**
-- **Duration**: ~5-10 minutes
-- **Actions**:
-  - Code analysis (`flutter analyze`)
-  - Unit tests for main app (including authentication tests)
-  - Unit tests for styleguide
-  - Coverage report generation
-- **Caching**: Flutter dependencies and pub cache for faster runs
+**Cache Busting Features:**
+- ✅ Automatic version generation (`YYYYMMDDHHMMSS-{git-hash}`)
+- ✅ Service worker cache management
+- ✅ Resource versioning for all JS/CSS files
+- ✅ Safari aggressive caching resolved
+- ✅ Creates `VERSION.txt` for deployment tracking
 
-**🔐 Authentication Tests Job**
-- **Duration**: ~3-5 minutes  
-- **Actions**:
-  - Focused authentication provider tests
-  - Service locator dependency injection tests
-  - JWT token parsing and validation tests
-- **Critical for**: Preventing authentication regressions
+### 🧪 `ci.yml` - Continuous Integration
+**Comprehensive testing and validation**
 
-**🏗️ Build Verification Job**
-- **Duration**: ~5-8 minutes
-- **Actions**:
-  - Verify main app builds for production
-  - Verify styleguide builds for production
-  - Ensures deployment readiness
-- **Dependencies**: Runs only after tests pass
+**Triggers:**
+- Pull requests to `main` or `develop`
+- Push to `main` or `develop`
 
-### 2. **Deploy to GitHub Pages** (`deploy-pages.yml`)
-**Triggers**: Pushes to `main` branch, PRs (for testing), manual dispatch
+**Jobs:**
+1. **test**: Code analysis and unit tests
+2. **authentication-tests**: OAuth and token handling validation
+3. **build-check**: Build verification for production readiness
 
-**Purpose**: Builds and deploys both the main app and styleguide to GitHub Pages.
+**Features:**
+- Flutter analyze for code quality
+- Unit test execution with coverage
+- Authentication flow validation
+- Build verification
+- Detailed test summaries in PR comments
 
-#### **Jobs:**
+## Environment Variables
 
-**🏗️ Build Job**
-- Runs tests (same as CI)
-- Builds optimized production bundles
-- Creates deployment structure with navigation
-- Uploads artifacts for deployment
-
-**🚀 Deploy Job**  
-- Deploys to GitHub Pages (main branch only)
-- Sets up custom domain and routing
-
-## 🛡️ Quality Gates
-
-### **Required Checks for PR Merge:**
-1. ✅ All unit tests pass
-2. ✅ Code analysis passes (no warnings/errors)
-3. ✅ Authentication tests pass (critical)
-4. ✅ Build verification succeeds
-5. ✅ No regressions in authentication token logic
-
-### **Authentication Test Coverage:**
-- **AuthProvider**: Token handling, user management, demo mode
-- **JWT Parsing**: Token validation, claim extraction, error handling  
-- **Service Locator**: Dependency injection, user info loading
-- **API Integration**: Token inclusion in requests, user profile loading
-
-## 🚀 Optimization Features
-
-### **Performance:**
-- **Parallel Jobs**: Tests and builds run in parallel when possible
-- **Dependency Caching**: Flutter dependencies cached between runs
-- **Concurrency Control**: Cancels old runs when new commits are pushed
-- **Timeouts**: Prevents stuck workflows (15min max per job)
-
-### **Smart Failure Handling:**
-- **Golden Tests**: Styleguide golden tests allowed to fail in CI (environment differences)
-- **Coverage Reports**: Generated even if some non-critical tests fail
-- **Clear Error Messages**: Detailed summaries in GitHub UI
-
-## 📊 Workflow Outputs
-
-### **GitHub PR Interface:**
-- ✅ **Status Checks**: Clear pass/fail indicators
-- 📋 **Detailed Summaries**: What was tested and verified
-- ⚠️ **Failure Explanations**: Specific guidance on fixing issues
-- 📈 **Coverage Reports**: Test coverage artifacts
-
-### **Summary Examples:**
-
-**✅ Success:**
-```
-🔒 Authentication logic is secure and working correctly!
-
-✅ Verified Components:
-- AuthProvider token handling
-- JWT token parsing and validation  
-- User info management and API integration
-- Demo mode functionality
-```
-
-**❌ Failure:**
-```
-⚠️ CRITICAL: Authentication token logic has issues that could affect user login and API access.
-
-Please review the authentication test failures and fix them before merging to prevent:
-- Users being unable to log in
-- API requests failing due to missing tokens  
-- User profile data not loading correctly
-```
-
-## 🔧 Configuration
-
-### **Flutter Version:** 3.32.x (stable channel)
-### **Environment Variables:**
+### Production Build Configuration
 - `FLUTTER_ENV=production`
 - `baseUrl=https://dmtools-431977789017.us-central1.run.app`
+- `BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app`
 
-### **Caching Strategy:**
-```yaml
-path: |
-  ~/.pub-cache
-  .dart_tool
-  flutter_styleguide/.dart_tool
-key: flutter-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+### Build Optimizations
+- Content Security Policy (CSP) enabled
+- Source maps disabled for production
+- Tree shaking for icons
+- Optimization level 4
+- PWA offline-first strategy
+
+## Deployment Structure
+
+```
+_site/
+├── index.html              # Main app (root)
+├── VERSION.txt             # Cache version info
+├── navigation.html         # App navigation page
+└── styleguide/            # Styleguide subdirectory
+    └── index.html         # Styleguide app
 ```
 
-## 🎯 Usage Guidelines
+## Cache Busting Implementation
 
-### **For Developers:**
+The deployment workflow automatically applies cache busting using:
 
-1. **Creating PRs**: All checks must pass before merge
-2. **Test Failures**: Fix issues rather than bypassing checks
-3. **Authentication Changes**: Pay special attention to auth test results
-4. **Build Errors**: Ensure production builds work before merging
+1. **`scripts/update-cache-version.sh`** - Replaces `__BUILD_VERSION__` placeholders
+2. **Service Workers** - Handle cache invalidation and updates
+3. **Versioned Resources** - All JS/CSS files get version query parameters
+4. **Cache Headers** - Proper HTTP headers prevent aggressive caching
 
-### **For Reviewers:**
+### Example Version Output:
+```
+Cache version: 20241220143022-a1b2c3d
+Deployment time: 2024-12-20 14:30:45 UTC
+```
 
-1. **Check Status**: Ensure all CI checks are green
-2. **Review Summaries**: Look at detailed test summaries
-3. **Authentication**: Extra scrutiny for auth-related changes
-4. **Coverage**: Review coverage reports for new code
+## Monitoring
 
-## 🔄 Maintenance
+- **Deployment Status**: Check GitHub Actions tab
+- **Live Version**: Visit `https://ai-native.agency/VERSION.txt`
+- **Service Worker**: Check browser DevTools > Application > Service Workers
 
-### **Adding New Tests:**
-1. Add test files to appropriate directories
-2. Tests are automatically discovered and run
-3. Critical tests can be added to dedicated jobs
+## Local Development
 
-### **Updating Dependencies:**
-1. Update Flutter version in both workflows
-2. Clear cache if major dependency changes
-3. Test workflow changes in feature branches
+For local development, use:
+```bash
+# Hot reload development
+flutter run -d chrome --web-experimental-hot-reload
 
-### **Monitoring:**
-- Workflow run times should stay under 15 minutes total
-- Authentication tests should complete in under 5 minutes
-- Build verification should complete in under 10 minutes
+# Development build (no cache busting)
+./scripts/dev-build.sh
+```
 
-## 🚨 Troubleshooting
-
-### **Common Issues:**
-
-**🔍 "flutter analyze" failures:**
-- Fix linting errors and warnings
-- Update analysis_options.yaml if needed
-
-**🧪 Test failures:**
-- Check test output for specific failures
-- Authentication test failures are critical and must be fixed
-
-**🏗️ Build failures:**
-- Check dart-define values match production config
-- Ensure all dependencies are properly installed
-
-**📦 Cache issues:**
-- Clear cache by updating workflow file
-- Check if dependencies changed significantly
-
-### **Emergency Procedures:**
-
-**🚨 Bypass checks (last resort):**
-- Only for hotfixes in critical situations
-- Requires admin approval
-- Must create follow-up PR to fix issues
-
-**🔧 Workflow debugging:**
-- Add debug steps with `flutter doctor -v`
-- Check specific test output with `--verbose`
-- Review workflow logs in GitHub Actions tab 
+The workflows automatically preserve your local development environment by resetting placeholder files after deployment.
