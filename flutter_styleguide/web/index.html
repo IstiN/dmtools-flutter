@@ -42,9 +42,10 @@
 
   <!-- Theme detection now handled by shared-theme.js -->
   <script>
-    // Service Worker Registration for Styleguide
+    // Fast Service Worker Registration for Styleguide (non-blocking)
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
+      // Register after a short delay to avoid blocking Flutter startup
+      setTimeout(function() {
         navigator.serviceWorker.register('sw.js')
           .then(function(registration) {
             console.log('Styleguide Service Worker registered successfully');
@@ -56,18 +57,18 @@
               if (newWorker) {
                 newWorker.addEventListener('statechange', function() {
                   if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    console.log('New styleguide version available! Please refresh the page.');
+                    console.log('New styleguide version available! Auto-refreshing...');
                     
-                    // For development, auto-refresh
+                    // Auto-refresh for development
                     newWorker.postMessage({ type: 'SKIP_WAITING' });
-                    setTimeout(() => window.location.reload(), 1000);
+                    setTimeout(() => window.location.reload(), 500);
                   }
                 });
               }
             });
           })
           .catch(function(error) {
-            console.log('Styleguide Service Worker registration failed:', error);
+            console.log('Styleguide Service Worker registration failed (non-critical):', error);
           });
         
         // Listen for service worker updates
@@ -75,7 +76,7 @@
           console.log('Styleguide Service Worker updated, reloading page...');
           window.location.reload();
         });
-      });
+      }, 200); // Slightly longer delay for styleguide development
     }
   </script>
   

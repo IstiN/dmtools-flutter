@@ -3,31 +3,25 @@
 const CACHE_NAME = 'dmtools-styleguide-v__BUILD_VERSION__';
 const RUNTIME_CACHE = 'dmtools-styleguide-runtime-v__BUILD_VERSION__';
 
-// Resources to cache immediately
-const CORE_RESOURCES = [
-  '/',
-  '/index.html',
+// Minimal resources for faster startup
+const CRITICAL_RESOURCES = [
   '/manifest.json',
-  '/favicon.png',
-  '/icons/Icon-192.png',
-  '/icons/Icon-512.png',
-  '/css/shared-theme.css',
-  '/js/shared-theme.js',
-  '/animation_worker.js'
+  '/favicon.png'
 ];
 
-// Install event - cache core resources
+// Install event - minimal caching for fast startup
 self.addEventListener('install', (event) => {
   console.log('Styleguide Service Worker installing with cache:', CACHE_NAME);
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Caching core resources');
-        return cache.addAll(CORE_RESOURCES);
+        console.log('Caching critical resources');
+        return cache.addAll(CRITICAL_RESOURCES).catch(() => {
+          console.log('Some critical resources failed to cache, continuing...');
+        });
       })
       .then(() => {
-        // Force activation of new service worker
         return self.skipWaiting();
       })
   );
@@ -70,32 +64,44 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // For styleguide development, always use network-first strategy
-  event.respondWith(networkFirstStrategy(event.request));
+  // For styleguide development, use lighter network-first strategy
+  event.respondWith(lightNetworkFirstStrategy(event.request));
 });
 
-// Network-first strategy (always try network, fallback to cache)
-async function networkFirstStrategy(request) {
+// Lighter network-first strategy for styleguide
+async function lightNetworkFirstStrategy(request) {
   try {
     const networkResponse = await fetch(request);
     
-    // Cache successful responses
-    if (networkResponse.ok) {
-      const cache = await caches.open(RUNTIME_CACHE);
-      cache.put(request, networkResponse.clone());
+    // Only cache specific resources in styleguide for faster development
+    if (networkResponse.ok && shouldCache(request.url)) {
+      caches.open(RUNTIME_CACHE).then(cache => {
+        cache.put(request, networkResponse.clone()).catch(() => {
+          // Ignore cache errors
+        });
+      });
     }
     
     return networkResponse;
   } catch (error) {
-    console.log('Network failed, trying cache:', request.url);
-    const cachedResponse = await caches.match(request);
-    
-    if (cachedResponse) {
-      return cachedResponse;
+    if (shouldCache(request.url)) {
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
     }
     
     throw error;
   }
+}
+
+// Helper function for styleguide caching
+function shouldCache(url) {
+  return url.includes('.css') || 
+         url.includes('.js') || 
+         url.includes('.png') || 
+         url.includes('.svg') ||
+         url.includes('manifest.json');
 }
 
 // Handle messages from the main thread

@@ -3,28 +3,25 @@
 const CACHE_NAME = 'dmtools-v__BUILD_VERSION__';
 const RUNTIME_CACHE = 'dmtools-runtime-v__BUILD_VERSION__';
 
-// Resources to cache immediately
-const CORE_RESOURCES = [
-  '/',
-  '/index.html',
+// Minimal resources to cache immediately (for faster startup)
+const CRITICAL_RESOURCES = [
   '/manifest.json',
-  '/favicon.png',
-  '/icons/Icon-192.png',
-  '/icons/Icon-512.png',
-  '/css/shared-theme.css',
-  '/js/shared-theme.js',
-  '/animation_worker.js'
+  '/favicon.png'
 ];
 
-// Install event - cache core resources
+// Install event - minimal caching for fast startup
 self.addEventListener('install', (event) => {
   console.log('Service Worker installing with cache:', CACHE_NAME);
   
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Caching core resources');
-        return cache.addAll(CORE_RESOURCES);
+        // Only cache critical resources immediately for faster startup
+        console.log('Caching critical resources');
+        return cache.addAll(CRITICAL_RESOURCES).catch(() => {
+          // Continue even if some resources fail to cache
+          console.log('Some critical resources failed to cache, continuing...');
+        });
       })
       .then(() => {
         // Force activation of new service worker
@@ -70,50 +67,55 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   
-  // Handle Flutter resources with network-first strategy
+  // Use lighter caching strategy for better performance
   if (isFlutterResource(url.pathname)) {
-    event.respondWith(networkFirstStrategy(event.request));
+    event.respondWith(lightNetworkFirstStrategy(event.request));
   }
   // Handle static assets with cache-first strategy
   else if (isStaticAsset(url.pathname)) {
-    event.respondWith(cacheFirstStrategy(event.request));
+    event.respondWith(lightCacheFirstStrategy(event.request));
   }
   // Handle API calls with network-only strategy
   else if (isApiCall(url.pathname)) {
-    event.respondWith(networkOnlyStrategy(event.request));
+    event.respondWith(fetch(event.request));
   }
   // Default to network-first for everything else
   else {
-    event.respondWith(networkFirstStrategy(event.request));
+    event.respondWith(lightNetworkFirstStrategy(event.request));
   }
 });
 
-// Network-first strategy (always try network, fallback to cache)
-async function networkFirstStrategy(request) {
+// Lighter network-first strategy (faster, less aggressive caching)
+async function lightNetworkFirstStrategy(request) {
   try {
     const networkResponse = await fetch(request);
     
-    // Cache successful responses
-    if (networkResponse.ok) {
-      const cache = await caches.open(RUNTIME_CACHE);
-      cache.put(request, networkResponse.clone());
+    // Only cache successful responses for specific file types to reduce overhead
+    if (networkResponse.ok && shouldCache(request.url)) {
+      // Use non-blocking cache update
+      caches.open(RUNTIME_CACHE).then(cache => {
+        cache.put(request, networkResponse.clone()).catch(() => {
+          // Ignore cache errors to avoid blocking
+        });
+      });
     }
     
     return networkResponse;
   } catch (error) {
-    console.log('Network failed, trying cache:', request.url);
-    const cachedResponse = await caches.match(request);
-    
-    if (cachedResponse) {
-      return cachedResponse;
+    // Only try cache for specific resources
+    if (shouldCache(request.url)) {
+      const cachedResponse = await caches.match(request);
+      if (cachedResponse) {
+        return cachedResponse;
+      }
     }
     
     throw error;
   }
 }
 
-// Cache-first strategy (try cache first, fallback to network)
-async function cacheFirstStrategy(request) {
+// Lighter cache-first strategy
+async function lightCacheFirstStrategy(request) {
   const cachedResponse = await caches.match(request);
   
   if (cachedResponse) {
@@ -123,21 +125,29 @@ async function cacheFirstStrategy(request) {
   try {
     const networkResponse = await fetch(request);
     
+    // Non-blocking cache update
     if (networkResponse.ok) {
-      const cache = await caches.open(RUNTIME_CACHE);
-      cache.put(request, networkResponse.clone());
+      caches.open(RUNTIME_CACHE).then(cache => {
+        cache.put(request, networkResponse.clone()).catch(() => {
+          // Ignore cache errors
+        });
+      });
     }
     
     return networkResponse;
   } catch (error) {
-    console.error('Failed to fetch resource:', request.url, error);
     throw error;
   }
 }
 
-// Network-only strategy (always use network)
-async function networkOnlyStrategy(request) {
-  return fetch(request);
+// Helper function to determine if a resource should be cached
+function shouldCache(url) {
+  // Only cache specific file types to reduce overhead
+  return url.includes('.css') || 
+         url.includes('.js') || 
+         url.includes('.png') || 
+         url.includes('.svg') ||
+         url.includes('manifest.json');
 }
 
 // Check if URL is a Flutter resource
