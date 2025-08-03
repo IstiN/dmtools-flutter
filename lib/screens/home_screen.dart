@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             onThemeToggle: () async => await themeProvider.toggleTheme(),
             onLogoPressed: () {
-              context.go('/dashboard');
+              context.go('/ai-jobs');
             },
             profileButton: UserProfileButton(
               userName: authProvider.currentUser?.name ?? 'User',
@@ -124,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onHamburgerPressed: () => _scaffoldKey.currentState?.openDrawer(),
             onThemeToggle: () async => await themeProvider.toggleTheme(),
             onLogoPressed: () {
-              context.go('/dashboard');
+              context.go('/ai-jobs');
             },
             profileButton: UserProfileButton(
               userName: authProvider.currentUser?.name ?? 'User',
