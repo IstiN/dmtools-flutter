@@ -144,8 +144,8 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
             // Load user info from API
             await ServiceLocator.initializeUserInfo();
 
-            // Navigate to dashboard on successful authentication
-            router.go('/dashboard');
+            // Navigate to AI Jobs on successful authentication
+            router.go('/ai-jobs');
           }
         } else {
           if (kDebugMode) {
