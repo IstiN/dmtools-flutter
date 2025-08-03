@@ -28,13 +28,11 @@ update_version() {
 echo "📱 Updating main app cache versions..."
 update_version "web/index.html"
 update_version "web/manifest.json"
-update_version "web/sw.js"
 
 # Update styleguide files
 echo "🎨 Updating styleguide cache versions..."
 update_version "flutter_styleguide/web/index.html"
 update_version "flutter_styleguide/web/manifest.json"
-update_version "flutter_styleguide/web/sw.js"
 
 echo "✅ Cache version update completed: ${BUILD_VERSION}"
 

@@ -19,6 +19,34 @@
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
+  
+  <!-- Enhanced cache control for Safari -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  
+  <!-- Version tracking for styleguide cache busting -->
+  <meta name="app-version" content="__BUILD_VERSION__">
+  <script>
+    // Simple Safari cache detection for styleguide
+    (function() {
+      const currentVersion = '__BUILD_VERSION__';
+      const storedVersion = localStorage.getItem('dmtools-styleguide-version');
+      
+      if (storedVersion && storedVersion !== currentVersion) {
+        console.log('New styleguide version detected:', currentVersion);
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        // Force reload for Safari
+        if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
+          window.location.reload(true);
+        }
+      }
+      
+      localStorage.setItem('dmtools-styleguide-version', currentVersion);
+    })();
+  </script>
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -41,45 +69,6 @@
 
 
   <!-- Theme detection now handled by shared-theme.js -->
-  <script>
-    // Fast Service Worker Registration for Styleguide (non-blocking)
-    if ('serviceWorker' in navigator) {
-      // Register after a short delay to avoid blocking Flutter startup
-      setTimeout(function() {
-        navigator.serviceWorker.register('sw.js')
-          .then(function(registration) {
-            console.log('Styleguide Service Worker registered successfully');
-            
-            // Check for updates
-            registration.addEventListener('updatefound', function() {
-              const newWorker = registration.installing;
-              
-              if (newWorker) {
-                newWorker.addEventListener('statechange', function() {
-                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    console.log('New styleguide version available! Auto-refreshing...');
-                    
-                    // Auto-refresh for development
-                    newWorker.postMessage({ type: 'SKIP_WAITING' });
-                    setTimeout(() => window.location.reload(), 500);
-                  }
-                });
-              }
-            });
-          })
-          .catch(function(error) {
-            console.log('Styleguide Service Worker registration failed (non-critical):', error);
-          });
-        
-        // Listen for service worker updates
-        navigator.serviceWorker.addEventListener('controllerchange', function() {
-          console.log('Styleguide Service Worker updated, reloading page...');
-          window.location.reload();
-        });
-      }, 200); // Slightly longer delay for styleguide development
-    }
-  </script>
-  
   <script src="flutter_bootstrap.js?v=__BUILD_VERSION__" async></script>
 </head>
 <body>
