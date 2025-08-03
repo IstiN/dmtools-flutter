@@ -200,9 +200,6 @@ jobs:
           echo "🔄 Resetting files to development state for future local development..."
           # Reset the files to placeholder state so development workflow isn't affected
           git checkout -- web/index.html web/manifest.json flutter_styleguide/web/index.html flutter_styleguide/web/manifest.json || true
-          # Reset service workers to placeholder state
-          sed -i 's/dmtools-v[0-9]\{14\}-[a-f0-9]\{7\}/dmtools-v__BUILD_VERSION__/g' web/sw.js || true
-          sed -i 's/dmtools-styleguide-v[0-9]\{14\}-[a-f0-9]\{7\}/dmtools-styleguide-v__BUILD_VERSION__/g' flutter_styleguide/web/sw.js || true
           echo "✅ Files reset to development state"
 
       - name: Upload artifact
