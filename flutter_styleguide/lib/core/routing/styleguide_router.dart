@@ -14,6 +14,8 @@ import '../../screens/styleguide_pages/auth_page.dart';
 import '../../screens/styleguide_pages/loading_indicators_page.dart';
 import '../../screens/styleguide_pages/loading_states_page.dart';
 import '../../screens/styleguide_pages/mcp_page.dart';
+import '../../screens/styleguide_pages/organisms/webhook_page.dart';
+import '../../screens/styleguide_pages/markdown_renderer_page.dart';
 
 class StyleguideRouter {
   static final GoRouter router = GoRouter(
@@ -77,6 +79,14 @@ class StyleguideRouter {
             path: '/mcp',
             pageBuilder: (context, state) => const NoTransitionPage(child: McpPage()),
           ),
+          GoRoute(
+            path: '/webhook',
+            pageBuilder: (context, state) => const NoTransitionPage(child: WebhookPage()),
+          ),
+          GoRoute(
+            path: '/markdown-renderer',
+            pageBuilder: (context, state) => const NoTransitionPage(child: MarkdownRendererPage()),
+          ),
         ],
       ),
     ],
@@ -114,6 +124,8 @@ const List<StyleguideNavigationItem> styleguideNavigationItems = [
   ),
   StyleguideNavigationItem(icon: Icons.refresh_outlined, label: 'Loading States', route: '/loading-states'),
   StyleguideNavigationItem(icon: Icons.settings_input_component_outlined, label: 'MCP Components', route: '/mcp'),
+  StyleguideNavigationItem(icon: Icons.webhook_outlined, label: 'Webhook Components', route: '/webhook'),
+  StyleguideNavigationItem(icon: Icons.description_outlined, label: 'Markdown Renderer', route: '/markdown-renderer'),
 ];
 
 // Shell that wraps all styleguide pages
