@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import '../../service_locator.dart';
 import '../../network/services/api_service.dart';
-import '../../network/generated/openapi.models.swagger.dart';
+import '../../network/generated/api.models.swagger.dart';
 import '../../core/pages/authenticated_page.dart';
+import '../../providers/webhook_state_provider.dart';
+import '../../core/services/webhook_api_service.dart';
 
 class AiJobsPage extends StatefulWidget {
   const AiJobsPage({super.key});
@@ -24,6 +27,10 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
   final Map<String, Map<String, String>> _jobIntegrationSelections = {};
 
   int _buildCounter = 0; // Track how many times build is called
+
+  // View state variables
+  String? _viewingJobConfigurationId;
+  String? _viewingJobConfigurationName;
 
   @override
   String get loadingMessage => 'Loading AI Jobs...';
@@ -739,8 +746,12 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
     _buildCounter++;
     debugPrint('🔧 AI Jobs Page - buildAuthenticatedContent() called #$_buildCounter');
 
-    // Show the main job management content
-    return _buildMainContent();
+    // Show either the main job management content or job configuration details
+    if (_viewingJobConfigurationId != null) {
+      return _buildJobConfigurationDetails();
+    } else {
+      return _buildMainContent();
+    }
   }
 
   Widget _buildMainContent() {
@@ -793,6 +804,7 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
       onExecuteConfiguration: _onExecuteConfiguration,
       onTestConfiguration: _onTestConfiguration,
       onGetConfigurationDetails: _onGetConfigurationDetails,
+      onViewDetails: _onViewJobConfigurationDetails,
       onCreateIntegration: _onCreateIntegration,
     );
 
@@ -824,6 +836,384 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
     }
 
     return jobConfigurationWidget;
+  }
+
+  Widget _buildJobConfigurationDetails() {
+    debugPrint('🔧 _buildJobConfigurationDetails called for ID: $_viewingJobConfigurationId');
+
+    if (_viewingJobConfigurationId == null) {
+      return _buildMainContent();
+    }
+
+    return ChangeNotifierProvider(
+      create: (_) => WebhookStateProvider(WebhookApiService(), _viewingJobConfigurationId!),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Back button and header
+          Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: Row(
+              children: [
+                AppIconButton(
+                  text: 'Back to Jobs',
+                  icon: Icons.arrow_back,
+                  onPressed: () {
+                    setState(() {
+                      _viewingJobConfigurationId = null;
+                      _viewingJobConfigurationName = null;
+                    });
+                  },
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _viewingJobConfigurationName ?? 'Job Configuration Details',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: context.colors.textColor,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'ID: $_viewingJobConfigurationId',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: context.colors.textColor.withValues(alpha: 0.6),
+                            ),
+                      ),
+                    ],
+                  ),
+                ),
+                _buildActionButtons(),
+              ],
+            ),
+          ),
+          // Content sections
+          Expanded(
+            child: ListView(
+              children: [
+                _buildOverviewSection(),
+                const SizedBox(height: 32),
+                _buildWebhookSection(),
+                const SizedBox(height: 32),
+                _buildExecutionHistorySection(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        AppIconButton(
+          text: 'Edit',
+          icon: Icons.edit_outlined,
+          onPressed: () {
+            // TODO: Navigate to edit screen
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Edit functionality coming soon')),
+            );
+          },
+        ),
+        const SizedBox(width: 8),
+        AppIconButton(
+          text: 'Delete',
+          icon: Icons.delete_outline,
+          onPressed: () async {
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Delete Configuration?'),
+                content: Text(
+                  'Are you sure you want to delete "$_viewingJobConfigurationName"? This action cannot be undone.',
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(true),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).colorScheme.error,
+                    ),
+                    child: const Text('Delete'),
+                  ),
+                ],
+              ),
+            );
+            if (confirmed == true && _viewingJobConfigurationId != null) {
+              // TODO: Implement delete functionality
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Delete functionality coming soon')),
+                );
+              }
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildOverviewSection() {
+    final colors = context.colors;
+
+    // Find the configuration data
+    final config = _jobConfigurations.firstWhere(
+      (config) => config.id == _viewingJobConfigurationId,
+      orElse: () => JobConfigurationDto(
+        id: _viewingJobConfigurationId,
+        name: _viewingJobConfigurationName ?? 'Unknown Configuration',
+      ),
+    );
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colors.borderColor.withValues(alpha: 0.2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Configuration Overview',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: colors.textColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 16),
+            _buildInfoRow('Status', _safeBool(config.enabled) ? 'Active' : 'Inactive', colors, Icons.check_circle,
+                _safeBool(config.enabled) ? colors.successColor : colors.textMuted),
+            const SizedBox(height: 12),
+            _buildInfoRow('Type', config.jobType ?? 'Unknown', colors, Icons.psychology, colors.accentColor),
+            const SizedBox(height: 12),
+            _buildInfoRow('Created', _formatDate(config.createdAt), colors, Icons.calendar_today, colors.textMuted),
+            const SizedBox(height: 12),
+            _buildInfoRow('Execution Count', '${_safeInt(config.executionCount)} times', colors, Icons.play_arrow,
+                colors.textMuted),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value, ThemeColorSet colors, IconData icon, Color iconColor) {
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: iconColor),
+        const SizedBox(width: 12),
+        Text(
+          '$label:',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: colors.textMuted,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: colors.textColor,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildWebhookSection() {
+    return Consumer<WebhookStateProvider>(
+      builder: (context, webhookProvider, _) {
+        final colors = context.colors;
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            color: colors.cardBg,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colors.borderColor.withValues(alpha: 0.2)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Webhook Configuration',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: colors.textColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Manage API keys and view integration examples for webhook execution',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: colors.textSecondary,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                WebhookManagementSection(
+                  jobConfigurationId: _viewingJobConfigurationId!,
+                  webhookUrl: _generateWebhookUrl(_viewingJobConfigurationId!),
+                  apiKeys: webhookProvider.apiKeys
+                      .map((key) => WebhookKeyItemData(
+                            id: key.id,
+                            name: key.name,
+                            description: key.description ?? '',
+                            maskedValue: key.maskedValue,
+                            createdAt: key.createdAt,
+                            lastUsedAt: key.lastUsedAt,
+                          ))
+                      .toList(),
+                  onGenerateKey: (name, description) async {
+                    await webhookProvider.generateApiKey(name: name, description: description);
+                  },
+                  onCopyKey: (keyId) async {
+                    await webhookProvider.copyApiKey(keyId);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('API key copied to clipboard')),
+                      );
+                    }
+                  },
+                  onDeleteKey: (keyId) async {
+                    await webhookProvider.deleteApiKey(keyId);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('API key deleted')),
+                      );
+                    }
+                  },
+                  onLoadExamples: () async {
+                    try {
+                      final webhookService = WebhookApiService();
+                      final examplesDto = await webhookService.getWebhookExamples(_viewingJobConfigurationId!);
+
+                      if (examplesDto?.examples != null && examplesDto!.examples!.isNotEmpty) {
+                        final examples = examplesDto.examples!
+                            .map((template) => WebhookExampleData.fromApiResponse(
+                                  name: template.name ?? 'Example',
+                                  renderedTemplate: template.renderedTemplate ?? '',
+                                ))
+                            .toList();
+                        debugPrint('🔗 AI Jobs Page: Loaded ${examples.length} webhook examples from API');
+                        for (final example in examples) {
+                          debugPrint('🔗 Example: ${example.name} (${example.type})');
+                        }
+                        return examples;
+                      } else {
+                        debugPrint('🔗 AI Jobs Page: No webhook examples found in API response');
+                        return null;
+                      }
+                    } catch (e) {
+                      debugPrint('🔗 AI Jobs Page: Error loading webhook examples: $e');
+                      return null;
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildExecutionHistorySection() {
+    final colors = context.colors;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colors.cardBg,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colors.borderColor.withValues(alpha: 0.2)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Execution History',
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    color: colors.textColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Recent job executions and webhook calls',
+              style: TextStyle(
+                fontSize: 14,
+                color: colors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: colors.bgColor,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: colors.borderColor.withValues(alpha: 0.1)),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.history,
+                    size: 48,
+                    color: colors.textMuted,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No execution history yet',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: colors.textMuted,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Execution logs and webhook calls will appear here',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colors.textSecondary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _generateWebhookUrl(String jobConfigurationId) {
+    // TODO: Get this from configuration or environment
+    const baseUrl = 'https://api.dmtools.example.com';
+    return '$baseUrl/api/v1/job-configurations/$jobConfigurationId/webhook';
+  }
+
+  String _formatDate(DateTime? date) {
+    if (date == null) return 'Unknown';
+    return '${date.day}/${date.month}/${date.year}';
   }
 
   // Callback methods for JobConfigurationManagement widget
@@ -936,6 +1326,23 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
           backgroundColor: Colors.blue,
         ),
       );
+    }
+  }
+
+  void _onViewJobConfigurationDetails(String id) {
+    debugPrint('🔄 onViewJobConfigurationDetails called with: $id');
+
+    // Find the configuration to get its name
+    final config = _jobConfigurations.firstWhere(
+      (config) => config.id == id,
+      orElse: () => JobConfigurationDto(id: id, name: 'Unknown Configuration'),
+    );
+
+    if (mounted) {
+      setState(() {
+        _viewingJobConfigurationId = id;
+        _viewingJobConfigurationName = config.name ?? 'Job Configuration';
+      });
     }
   }
 

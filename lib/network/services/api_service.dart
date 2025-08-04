@@ -1,11 +1,11 @@
 import 'package:chopper/chopper.dart';
-import '../generated/openapi.swagger.dart';
+import '../generated/api.swagger.dart';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import '../clients/api_client.dart';
 import '../../providers/auth_provider.dart';
-import '../generated/openapi.enums.swagger.dart' as enums;
+import '../generated/api.enums.swagger.dart' as enums;
 import '../../core/models/user.dart'; // Import our custom UserDto
 
 /// Exception for API errors
@@ -98,7 +98,7 @@ class _MockData {
 /// High-level service for API operations using the generated client
 class ApiService {
   final ChopperClient _client;
-  late final Openapi _api;
+  late final Api _api;
   final AuthProvider? _authProvider;
 
   ApiService({
@@ -111,8 +111,11 @@ class ApiService {
           authProvider: authProvider,
           enableLogging: enableLogging,
         ) {
-    _api = _client.getService<Openapi>();
+    _api = _client.getService<Api>();
   }
+
+  /// Get the underlying Api client for direct API access
+  Api get apiClient => _api;
 
   /// Check if the service should use mock data
   bool get _shouldUseMockData {

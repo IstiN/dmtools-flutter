@@ -4,10 +4,10 @@ import 'package:dmtools/providers/auth_provider.dart';
 import 'package:dmtools/network/services/api_service.dart';
 import 'package:dmtools/core/models/user.dart';
 import 'package:dmtools/core/services/oauth_service.dart';
-import 'package:dmtools/network/generated/openapi.enums.swagger.dart' as enums;
+import 'package:dmtools/network/generated/api.enums.swagger.dart' as enums;
 import 'package:get_it/get_it.dart';
 import 'package:chopper/chopper.dart';
-import 'package:dmtools/network/generated/openapi.swagger.dart';
+import 'package:dmtools/network/generated/api.swagger.dart';
 
 void main() {
   group('ServiceLocator', () {
@@ -161,6 +161,9 @@ class MockApiService implements ApiService {
   bool getCurrentUserCalled = false;
   bool shouldThrowError = false;
   UserDto? userToReturn;
+
+  @override
+  Api get apiClient => throw UnimplementedError('Mock API client not implemented');
 
   @override
   Future<UserDto> getCurrentUser() async {
@@ -331,7 +334,7 @@ class MockApiService implements ApiService {
 
   @override
   // TODO: implement _api
-  Openapi get _api => throw UnimplementedError();
+  Api get _api => throw UnimplementedError();
 }
 
 class MockOAuthService extends OAuthService {

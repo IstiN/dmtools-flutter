@@ -1,7 +1,7 @@
 import 'package:chopper/chopper.dart';
 import 'package:flutter/foundation.dart';
 
-import '../generated/openapi.swagger.dart';
+import '../generated/api.swagger.dart';
 import '../interceptors/auth_interceptor.dart';
 import '../interceptors/logging_interceptor.dart';
 import '../../providers/auth_provider.dart';
@@ -30,7 +30,7 @@ class ApiClientConfig {
     return ChopperClient(
       baseUrl: Uri.parse(baseUrl ?? AppConfig.baseUrl),
       services: [
-        Openapi.create(),
+        Api.create(),
       ],
       converter: $JsonSerializableConverter(),
       interceptors: interceptors,
@@ -41,7 +41,7 @@ class ApiClientConfig {
 /// Extension to get typed services from ChopperClient
 extension ChopperClientExtensions on ChopperClient {
   /// Get the OpenAPI service
-  T getService<T extends ChopperService>() {
+  T getTypedService<T extends ChopperService>() {
     return getService<T>();
   }
 }

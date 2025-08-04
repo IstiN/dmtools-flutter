@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'openapi_production.models.swagger.dart';
+part of 'api.models.swagger.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
@@ -308,6 +308,15 @@ Map<String, dynamic> _$WorkspaceUserDtoToJson(WorkspaceUserDto instance) =>
         'role': value,
     };
 
+SseEmitter _$SseEmitterFromJson(Map<String, dynamic> json) => SseEmitter(
+      timeout: (json['timeout'] as num?)?.toInt(),
+    );
+
+Map<String, dynamic> _$SseEmitterToJson(SseEmitter instance) =>
+    <String, dynamic>{
+      if (instance.timeout case final value?) 'timeout': value,
+    };
+
 CreateWorkspaceRequest _$CreateWorkspaceRequestFromJson(
         Map<String, dynamic> json) =>
     CreateWorkspaceRequest(
@@ -446,6 +455,86 @@ Map<String, dynamic> _$CreateJobConfigurationRequestToJson(
       'jobParameters': instance.jobParameters.toJson(),
       'integrationMappings': instance.integrationMappings.toJson(),
       if (instance.enabled case final value?) 'enabled': value,
+    };
+
+WebhookExecuteRequest _$WebhookExecuteRequestFromJson(
+        Map<String, dynamic> json) =>
+    WebhookExecuteRequest(
+      jobParameters: json['jobParameters'] == null
+          ? null
+          : JsonNode.fromJson(json['jobParameters'] as Map<String, dynamic>),
+      integrationMappings: json['integrationMappings'] == null
+          ? null
+          : JsonNode.fromJson(
+              json['integrationMappings'] as Map<String, dynamic>),
+    );
+
+Map<String, dynamic> _$WebhookExecuteRequestToJson(
+        WebhookExecuteRequest instance) =>
+    <String, dynamic>{
+      if (instance.jobParameters?.toJson() case final value?)
+        'jobParameters': value,
+      if (instance.integrationMappings?.toJson() case final value?)
+        'integrationMappings': value,
+    };
+
+WebhookExecutionResponse _$WebhookExecutionResponseFromJson(
+        Map<String, dynamic> json) =>
+    WebhookExecutionResponse(
+      executionId: json['executionId'] as String?,
+      status: json['status'] as String?,
+      message: json['message'] as String?,
+      jobConfigurationId: json['jobConfigurationId'] as String?,
+    );
+
+Map<String, dynamic> _$WebhookExecutionResponseToJson(
+        WebhookExecutionResponse instance) =>
+    <String, dynamic>{
+      if (instance.executionId case final value?) 'executionId': value,
+      if (instance.status case final value?) 'status': value,
+      if (instance.message case final value?) 'message': value,
+      if (instance.jobConfigurationId case final value?)
+        'jobConfigurationId': value,
+    };
+
+CreateWebhookKeyRequest _$CreateWebhookKeyRequestFromJson(
+        Map<String, dynamic> json) =>
+    CreateWebhookKeyRequest(
+      name: json['name'] as String,
+      description: json['description'] as String?,
+    );
+
+Map<String, dynamic> _$CreateWebhookKeyRequestToJson(
+        CreateWebhookKeyRequest instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      if (instance.description case final value?) 'description': value,
+    };
+
+CreateWebhookKeyResponse _$CreateWebhookKeyResponseFromJson(
+        Map<String, dynamic> json) =>
+    CreateWebhookKeyResponse(
+      keyId: json['keyId'] as String?,
+      apiKey: json['apiKey'] as String?,
+      name: json['name'] as String?,
+      description: json['description'] as String?,
+      jobConfigurationId: json['jobConfigurationId'] as String?,
+      createdAt: json['createdAt'] == null
+          ? null
+          : DateTime.parse(json['createdAt'] as String),
+    );
+
+Map<String, dynamic> _$CreateWebhookKeyResponseToJson(
+        CreateWebhookKeyResponse instance) =>
+    <String, dynamic>{
+      if (instance.keyId case final value?) 'keyId': value,
+      if (instance.apiKey case final value?) 'apiKey': value,
+      if (instance.name case final value?) 'name': value,
+      if (instance.description case final value?) 'description': value,
+      if (instance.jobConfigurationId case final value?)
+        'jobConfigurationId': value,
+      if (instance.createdAt?.toIso8601String() case final value?)
+        'createdAt': value,
     };
 
 ExecutionParametersDto _$ExecutionParametersDtoFromJson(
@@ -857,6 +946,49 @@ Map<String, dynamic> _$JobExecutionStatusResponseToJson(
         'executionParameters': value,
       if (instance.active case final value?) 'active': value,
       if (instance.completed case final value?) 'completed': value,
+    };
+
+WebhookExampleTemplate _$WebhookExampleTemplateFromJson(
+        Map<String, dynamic> json) =>
+    WebhookExampleTemplate(
+      name: json['name'] as String?,
+      renderedTemplate: json['renderedTemplate'] as String?,
+    );
+
+Map<String, dynamic> _$WebhookExampleTemplateToJson(
+        WebhookExampleTemplate instance) =>
+    <String, dynamic>{
+      if (instance.name case final value?) 'name': value,
+      if (instance.renderedTemplate case final value?)
+        'renderedTemplate': value,
+    };
+
+WebhookExamplesDto _$WebhookExamplesDtoFromJson(Map<String, dynamic> json) =>
+    WebhookExamplesDto(
+      jobConfigurationId: json['jobConfigurationId'] as String?,
+      jobType: json['jobType'] as String?,
+      webhookUrl: json['webhookUrl'] as String?,
+      examples: (json['examples'] as List<dynamic>?)
+              ?.map((e) =>
+                  WebhookExampleTemplate.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      availableVariables: (json['availableVariables'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$WebhookExamplesDtoToJson(WebhookExamplesDto instance) =>
+    <String, dynamic>{
+      if (instance.jobConfigurationId case final value?)
+        'jobConfigurationId': value,
+      if (instance.jobType case final value?) 'jobType': value,
+      if (instance.webhookUrl case final value?) 'webhookUrl': value,
+      if (instance.examples?.map((e) => e.toJson()).toList() case final value?)
+        'examples': value,
+      if (instance.availableVariables case final value?)
+        'availableVariables': value,
     };
 
 AgentInfo _$AgentInfoFromJson(Map<String, dynamic> json) => AgentInfo(

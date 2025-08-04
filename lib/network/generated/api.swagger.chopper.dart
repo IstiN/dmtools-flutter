@@ -1,7 +1,7 @@
 // dart format width=80
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'openapi_production.swagger.dart';
+part of 'api.swagger.dart';
 
 // **************************************************************************
 // ChopperGenerator
@@ -9,14 +9,14 @@ part of 'openapi_production.swagger.dart';
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
-final class _$OpenapiProduction extends OpenapiProduction {
-  _$OpenapiProduction([ChopperClient? client]) {
+final class _$Api extends Api {
+  _$Api([ChopperClient? client]) {
     if (client == null) return;
     this.client = client;
   }
 
   @override
-  final Type definitionType = OpenapiProduction;
+  final Type definitionType = Api;
 
   @override
   Future<Response<JobConfigurationDto>> _apiV1JobConfigurationsIdGet(
@@ -215,21 +215,19 @@ final class _$OpenapiProduction extends OpenapiProduction {
   }
 
   @override
-  Future<Response<Object>> _mcpPost({
-    String? userId,
-    required Object? body,
+  Future<Response<SseEmitter>> _mcpStreamConfigIdPost({
+    required String? configId,
+    required String? body,
   }) {
-    final Uri $url = Uri.parse('/mcp');
-    final Map<String, dynamic> $params = <String, dynamic>{'userId': userId};
+    final Uri $url = Uri.parse('/mcp/stream/${configId}');
     final $body = body;
     final Request $request = Request(
       'POST',
       $url,
       client.baseUrl,
       body: $body,
-      parameters: $params,
     );
-    return client.send<Object, Object>($request);
+    return client.send<SseEmitter, SseEmitter>($request);
   }
 
   @override
@@ -346,10 +344,11 @@ final class _$OpenapiProduction extends OpenapiProduction {
   }
 
   @override
-  Future<Response<Object>> _apiV1JobConfigurationsIdWebhookPost({
+  Future<Response<WebhookExecutionResponse>>
+      _apiV1JobConfigurationsIdWebhookPost({
     required String? id,
     String? xAPIKey,
-    required ExecuteJobConfigurationRequest? body,
+    required WebhookExecuteRequest? body,
   }) {
     final Uri $url = Uri.parse('/api/v1/job-configurations/${id}/webhook');
     final Map<String, String> $headers = {
@@ -363,7 +362,38 @@ final class _$OpenapiProduction extends OpenapiProduction {
       body: $body,
       headers: $headers,
     );
-    return client.send<Object, Object>($request);
+    return client
+        .send<WebhookExecutionResponse, WebhookExecutionResponse>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiV1JobConfigurationsIdWebhookKeysGet(
+      {required String? id}) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations/${id}/webhook-keys');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<CreateWebhookKeyResponse>>
+      _apiV1JobConfigurationsIdWebhookKeysPost({
+    required String? id,
+    required CreateWebhookKeyRequest? body,
+  }) {
+    final Uri $url = Uri.parse('/api/v1/job-configurations/${id}/webhook-keys');
+    final $body = body;
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client
+        .send<CreateWebhookKeyResponse, CreateWebhookKeyResponse>($request);
   }
 
   @override
@@ -745,28 +775,6 @@ final class _$OpenapiProduction extends OpenapiProduction {
   }
 
   @override
-  Future<Response<Object>> _mcpToolsUserIdGet({required String? userId}) {
-    final Uri $url = Uri.parse('/mcp/tools/${userId}');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<Object, Object>($request);
-  }
-
-  @override
-  Future<Response<Object>> _mcpHealthGet() {
-    final Uri $url = Uri.parse('/mcp/health');
-    final Request $request = Request(
-      'GET',
-      $url,
-      client.baseUrl,
-    );
-    return client.send<Object, Object>($request);
-  }
-
-  @override
   Future<Response<bool>> _isLocalGet() {
     final Uri $url = Uri.parse('/is-local');
     final Request $request = Request(
@@ -858,6 +866,19 @@ final class _$OpenapiProduction extends OpenapiProduction {
       client.baseUrl,
     );
     return client.send<dynamic, dynamic>($request);
+  }
+
+  @override
+  Future<Response<WebhookExamplesDto>>
+      _apiV1JobConfigurationsIdWebhookExamplesGet({required String? id}) {
+    final Uri $url =
+        Uri.parse('/api/v1/job-configurations/${id}/webhook-examples');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<WebhookExamplesDto, WebhookExamplesDto>($request);
   }
 
   @override
@@ -1121,6 +1142,17 @@ final class _$OpenapiProduction extends OpenapiProduction {
   }
 
   @override
+  Future<Response<String>> _apiFilesDownloadTokenGet({required String? token}) {
+    final Uri $url = Uri.parse('/api/files/download/${token}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<String, String>($request);
+  }
+
+  @override
   Future<Response<Object>> _apiConfigGet() {
     final Uri $url = Uri.parse('/api/config');
     final Request $request = Request(
@@ -1238,6 +1270,21 @@ final class _$OpenapiProduction extends OpenapiProduction {
       client.baseUrl,
     );
     return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<dynamic>> _apiV1JobConfigurationsIdWebhookKeysKeyIdDelete({
+    required String? id,
+    required String? keyId,
+  }) {
+    final Uri $url =
+        Uri.parse('/api/v1/job-configurations/${id}/webhook-keys/${keyId}');
+    final Request $request = Request(
+      'DELETE',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override

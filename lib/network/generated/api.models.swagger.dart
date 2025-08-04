@@ -4,9 +4,9 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:collection/collection.dart';
 import 'dart:convert';
 
-import 'openapi_production.enums.swagger.dart' as enums;
+import 'api.enums.swagger.dart' as enums;
 
-part 'openapi_production.models.swagger.g.dart';
+part 'api.models.swagger.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class JsonNode {
@@ -1318,6 +1318,48 @@ extension $WorkspaceUserDtoExtension on WorkspaceUserDto {
 }
 
 @JsonSerializable(explicitToJson: true)
+class SseEmitter {
+  const SseEmitter({this.timeout});
+
+  factory SseEmitter.fromJson(Map<String, dynamic> json) =>
+      _$SseEmitterFromJson(json);
+
+  static const toJsonFactory = _$SseEmitterToJson;
+  Map<String, dynamic> toJson() => _$SseEmitterToJson(this);
+
+  @JsonKey(name: 'timeout', includeIfNull: false)
+  final int? timeout;
+  static const fromJsonFactory = _$SseEmitterFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is SseEmitter &&
+            (identical(other.timeout, timeout) ||
+                const DeepCollectionEquality().equals(other.timeout, timeout)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(timeout) ^ runtimeType.hashCode;
+}
+
+extension $SseEmitterExtension on SseEmitter {
+  SseEmitter copyWith({int? timeout}) {
+    return SseEmitter(timeout: timeout ?? this.timeout);
+  }
+
+  SseEmitter copyWithWrapped({Wrapped<int?>? timeout}) {
+    return SseEmitter(
+      timeout: (timeout != null ? timeout.value : this.timeout),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class CreateWorkspaceRequest {
   const CreateWorkspaceRequest({required this.name, this.description});
 
@@ -1898,6 +1940,336 @@ extension $CreateJobConfigurationRequestExtension
           ? integrationMappings.value
           : this.integrationMappings),
       enabled: (enabled != null ? enabled.value : this.enabled),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class WebhookExecuteRequest {
+  const WebhookExecuteRequest({this.jobParameters, this.integrationMappings});
+
+  factory WebhookExecuteRequest.fromJson(Map<String, dynamic> json) =>
+      _$WebhookExecuteRequestFromJson(json);
+
+  static const toJsonFactory = _$WebhookExecuteRequestToJson;
+  Map<String, dynamic> toJson() => _$WebhookExecuteRequestToJson(this);
+
+  @JsonKey(name: 'jobParameters', includeIfNull: false)
+  final JsonNode? jobParameters;
+  @JsonKey(name: 'integrationMappings', includeIfNull: false)
+  final JsonNode? integrationMappings;
+  static const fromJsonFactory = _$WebhookExecuteRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is WebhookExecuteRequest &&
+            (identical(other.jobParameters, jobParameters) ||
+                const DeepCollectionEquality().equals(
+                  other.jobParameters,
+                  jobParameters,
+                )) &&
+            (identical(other.integrationMappings, integrationMappings) ||
+                const DeepCollectionEquality().equals(
+                  other.integrationMappings,
+                  integrationMappings,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(jobParameters) ^
+      const DeepCollectionEquality().hash(integrationMappings) ^
+      runtimeType.hashCode;
+}
+
+extension $WebhookExecuteRequestExtension on WebhookExecuteRequest {
+  WebhookExecuteRequest copyWith({
+    JsonNode? jobParameters,
+    JsonNode? integrationMappings,
+  }) {
+    return WebhookExecuteRequest(
+      jobParameters: jobParameters ?? this.jobParameters,
+      integrationMappings: integrationMappings ?? this.integrationMappings,
+    );
+  }
+
+  WebhookExecuteRequest copyWithWrapped({
+    Wrapped<JsonNode?>? jobParameters,
+    Wrapped<JsonNode?>? integrationMappings,
+  }) {
+    return WebhookExecuteRequest(
+      jobParameters: (jobParameters != null
+          ? jobParameters.value
+          : this.jobParameters),
+      integrationMappings: (integrationMappings != null
+          ? integrationMappings.value
+          : this.integrationMappings),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class WebhookExecutionResponse {
+  const WebhookExecutionResponse({
+    this.executionId,
+    this.status,
+    this.message,
+    this.jobConfigurationId,
+  });
+
+  factory WebhookExecutionResponse.fromJson(Map<String, dynamic> json) =>
+      _$WebhookExecutionResponseFromJson(json);
+
+  static const toJsonFactory = _$WebhookExecutionResponseToJson;
+  Map<String, dynamic> toJson() => _$WebhookExecutionResponseToJson(this);
+
+  @JsonKey(name: 'executionId', includeIfNull: false)
+  final String? executionId;
+  @JsonKey(name: 'status', includeIfNull: false)
+  final String? status;
+  @JsonKey(name: 'message', includeIfNull: false)
+  final String? message;
+  @JsonKey(name: 'jobConfigurationId', includeIfNull: false)
+  final String? jobConfigurationId;
+  static const fromJsonFactory = _$WebhookExecutionResponseFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is WebhookExecutionResponse &&
+            (identical(other.executionId, executionId) ||
+                const DeepCollectionEquality().equals(
+                  other.executionId,
+                  executionId,
+                )) &&
+            (identical(other.status, status) ||
+                const DeepCollectionEquality().equals(other.status, status)) &&
+            (identical(other.message, message) ||
+                const DeepCollectionEquality().equals(
+                  other.message,
+                  message,
+                )) &&
+            (identical(other.jobConfigurationId, jobConfigurationId) ||
+                const DeepCollectionEquality().equals(
+                  other.jobConfigurationId,
+                  jobConfigurationId,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(executionId) ^
+      const DeepCollectionEquality().hash(status) ^
+      const DeepCollectionEquality().hash(message) ^
+      const DeepCollectionEquality().hash(jobConfigurationId) ^
+      runtimeType.hashCode;
+}
+
+extension $WebhookExecutionResponseExtension on WebhookExecutionResponse {
+  WebhookExecutionResponse copyWith({
+    String? executionId,
+    String? status,
+    String? message,
+    String? jobConfigurationId,
+  }) {
+    return WebhookExecutionResponse(
+      executionId: executionId ?? this.executionId,
+      status: status ?? this.status,
+      message: message ?? this.message,
+      jobConfigurationId: jobConfigurationId ?? this.jobConfigurationId,
+    );
+  }
+
+  WebhookExecutionResponse copyWithWrapped({
+    Wrapped<String?>? executionId,
+    Wrapped<String?>? status,
+    Wrapped<String?>? message,
+    Wrapped<String?>? jobConfigurationId,
+  }) {
+    return WebhookExecutionResponse(
+      executionId: (executionId != null ? executionId.value : this.executionId),
+      status: (status != null ? status.value : this.status),
+      message: (message != null ? message.value : this.message),
+      jobConfigurationId: (jobConfigurationId != null
+          ? jobConfigurationId.value
+          : this.jobConfigurationId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateWebhookKeyRequest {
+  const CreateWebhookKeyRequest({required this.name, this.description});
+
+  factory CreateWebhookKeyRequest.fromJson(Map<String, dynamic> json) =>
+      _$CreateWebhookKeyRequestFromJson(json);
+
+  static const toJsonFactory = _$CreateWebhookKeyRequestToJson;
+  Map<String, dynamic> toJson() => _$CreateWebhookKeyRequestToJson(this);
+
+  @JsonKey(name: 'name', includeIfNull: false)
+  final String name;
+  @JsonKey(name: 'description', includeIfNull: false)
+  final String? description;
+  static const fromJsonFactory = _$CreateWebhookKeyRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CreateWebhookKeyRequest &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateWebhookKeyRequestExtension on CreateWebhookKeyRequest {
+  CreateWebhookKeyRequest copyWith({String? name, String? description}) {
+    return CreateWebhookKeyRequest(
+      name: name ?? this.name,
+      description: description ?? this.description,
+    );
+  }
+
+  CreateWebhookKeyRequest copyWithWrapped({
+    Wrapped<String>? name,
+    Wrapped<String?>? description,
+  }) {
+    return CreateWebhookKeyRequest(
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class CreateWebhookKeyResponse {
+  const CreateWebhookKeyResponse({
+    this.keyId,
+    this.apiKey,
+    this.name,
+    this.description,
+    this.jobConfigurationId,
+    this.createdAt,
+  });
+
+  factory CreateWebhookKeyResponse.fromJson(Map<String, dynamic> json) =>
+      _$CreateWebhookKeyResponseFromJson(json);
+
+  static const toJsonFactory = _$CreateWebhookKeyResponseToJson;
+  Map<String, dynamic> toJson() => _$CreateWebhookKeyResponseToJson(this);
+
+  @JsonKey(name: 'keyId', includeIfNull: false)
+  final String? keyId;
+  @JsonKey(name: 'apiKey', includeIfNull: false)
+  final String? apiKey;
+  @JsonKey(name: 'name', includeIfNull: false)
+  final String? name;
+  @JsonKey(name: 'description', includeIfNull: false)
+  final String? description;
+  @JsonKey(name: 'jobConfigurationId', includeIfNull: false)
+  final String? jobConfigurationId;
+  @JsonKey(name: 'createdAt', includeIfNull: false)
+  final DateTime? createdAt;
+  static const fromJsonFactory = _$CreateWebhookKeyResponseFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is CreateWebhookKeyResponse &&
+            (identical(other.keyId, keyId) ||
+                const DeepCollectionEquality().equals(other.keyId, keyId)) &&
+            (identical(other.apiKey, apiKey) ||
+                const DeepCollectionEquality().equals(other.apiKey, apiKey)) &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.description, description) ||
+                const DeepCollectionEquality().equals(
+                  other.description,
+                  description,
+                )) &&
+            (identical(other.jobConfigurationId, jobConfigurationId) ||
+                const DeepCollectionEquality().equals(
+                  other.jobConfigurationId,
+                  jobConfigurationId,
+                )) &&
+            (identical(other.createdAt, createdAt) ||
+                const DeepCollectionEquality().equals(
+                  other.createdAt,
+                  createdAt,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(keyId) ^
+      const DeepCollectionEquality().hash(apiKey) ^
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(description) ^
+      const DeepCollectionEquality().hash(jobConfigurationId) ^
+      const DeepCollectionEquality().hash(createdAt) ^
+      runtimeType.hashCode;
+}
+
+extension $CreateWebhookKeyResponseExtension on CreateWebhookKeyResponse {
+  CreateWebhookKeyResponse copyWith({
+    String? keyId,
+    String? apiKey,
+    String? name,
+    String? description,
+    String? jobConfigurationId,
+    DateTime? createdAt,
+  }) {
+    return CreateWebhookKeyResponse(
+      keyId: keyId ?? this.keyId,
+      apiKey: apiKey ?? this.apiKey,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      jobConfigurationId: jobConfigurationId ?? this.jobConfigurationId,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  CreateWebhookKeyResponse copyWithWrapped({
+    Wrapped<String?>? keyId,
+    Wrapped<String?>? apiKey,
+    Wrapped<String?>? name,
+    Wrapped<String?>? description,
+    Wrapped<String?>? jobConfigurationId,
+    Wrapped<DateTime?>? createdAt,
+  }) {
+    return CreateWebhookKeyResponse(
+      keyId: (keyId != null ? keyId.value : this.keyId),
+      apiKey: (apiKey != null ? apiKey.value : this.apiKey),
+      name: (name != null ? name.value : this.name),
+      description: (description != null ? description.value : this.description),
+      jobConfigurationId: (jobConfigurationId != null
+          ? jobConfigurationId.value
+          : this.jobConfigurationId),
+      createdAt: (createdAt != null ? createdAt.value : this.createdAt),
     );
   }
 }
@@ -3711,6 +4083,184 @@ extension $JobExecutionStatusResponseExtension on JobExecutionStatusResponse {
           : this.executionParameters),
       active: (active != null ? active.value : this.active),
       completed: (completed != null ? completed.value : this.completed),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class WebhookExampleTemplate {
+  const WebhookExampleTemplate({this.name, this.renderedTemplate});
+
+  factory WebhookExampleTemplate.fromJson(Map<String, dynamic> json) =>
+      _$WebhookExampleTemplateFromJson(json);
+
+  static const toJsonFactory = _$WebhookExampleTemplateToJson;
+  Map<String, dynamic> toJson() => _$WebhookExampleTemplateToJson(this);
+
+  @JsonKey(name: 'name', includeIfNull: false)
+  final String? name;
+  @JsonKey(name: 'renderedTemplate', includeIfNull: false)
+  final String? renderedTemplate;
+  static const fromJsonFactory = _$WebhookExampleTemplateFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is WebhookExampleTemplate &&
+            (identical(other.name, name) ||
+                const DeepCollectionEquality().equals(other.name, name)) &&
+            (identical(other.renderedTemplate, renderedTemplate) ||
+                const DeepCollectionEquality().equals(
+                  other.renderedTemplate,
+                  renderedTemplate,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(name) ^
+      const DeepCollectionEquality().hash(renderedTemplate) ^
+      runtimeType.hashCode;
+}
+
+extension $WebhookExampleTemplateExtension on WebhookExampleTemplate {
+  WebhookExampleTemplate copyWith({String? name, String? renderedTemplate}) {
+    return WebhookExampleTemplate(
+      name: name ?? this.name,
+      renderedTemplate: renderedTemplate ?? this.renderedTemplate,
+    );
+  }
+
+  WebhookExampleTemplate copyWithWrapped({
+    Wrapped<String?>? name,
+    Wrapped<String?>? renderedTemplate,
+  }) {
+    return WebhookExampleTemplate(
+      name: (name != null ? name.value : this.name),
+      renderedTemplate: (renderedTemplate != null
+          ? renderedTemplate.value
+          : this.renderedTemplate),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class WebhookExamplesDto {
+  const WebhookExamplesDto({
+    this.jobConfigurationId,
+    this.jobType,
+    this.webhookUrl,
+    this.examples,
+    this.availableVariables,
+  });
+
+  factory WebhookExamplesDto.fromJson(Map<String, dynamic> json) =>
+      _$WebhookExamplesDtoFromJson(json);
+
+  static const toJsonFactory = _$WebhookExamplesDtoToJson;
+  Map<String, dynamic> toJson() => _$WebhookExamplesDtoToJson(this);
+
+  @JsonKey(name: 'jobConfigurationId', includeIfNull: false)
+  final String? jobConfigurationId;
+  @JsonKey(name: 'jobType', includeIfNull: false)
+  final String? jobType;
+  @JsonKey(name: 'webhookUrl', includeIfNull: false)
+  final String? webhookUrl;
+  @JsonKey(
+    name: 'examples',
+    includeIfNull: false,
+    defaultValue: <WebhookExampleTemplate>[],
+  )
+  final List<WebhookExampleTemplate>? examples;
+  @JsonKey(
+    name: 'availableVariables',
+    includeIfNull: false,
+    defaultValue: <String>[],
+  )
+  final List<String>? availableVariables;
+  static const fromJsonFactory = _$WebhookExamplesDtoFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is WebhookExamplesDto &&
+            (identical(other.jobConfigurationId, jobConfigurationId) ||
+                const DeepCollectionEquality().equals(
+                  other.jobConfigurationId,
+                  jobConfigurationId,
+                )) &&
+            (identical(other.jobType, jobType) ||
+                const DeepCollectionEquality().equals(
+                  other.jobType,
+                  jobType,
+                )) &&
+            (identical(other.webhookUrl, webhookUrl) ||
+                const DeepCollectionEquality().equals(
+                  other.webhookUrl,
+                  webhookUrl,
+                )) &&
+            (identical(other.examples, examples) ||
+                const DeepCollectionEquality().equals(
+                  other.examples,
+                  examples,
+                )) &&
+            (identical(other.availableVariables, availableVariables) ||
+                const DeepCollectionEquality().equals(
+                  other.availableVariables,
+                  availableVariables,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(jobConfigurationId) ^
+      const DeepCollectionEquality().hash(jobType) ^
+      const DeepCollectionEquality().hash(webhookUrl) ^
+      const DeepCollectionEquality().hash(examples) ^
+      const DeepCollectionEquality().hash(availableVariables) ^
+      runtimeType.hashCode;
+}
+
+extension $WebhookExamplesDtoExtension on WebhookExamplesDto {
+  WebhookExamplesDto copyWith({
+    String? jobConfigurationId,
+    String? jobType,
+    String? webhookUrl,
+    List<WebhookExampleTemplate>? examples,
+    List<String>? availableVariables,
+  }) {
+    return WebhookExamplesDto(
+      jobConfigurationId: jobConfigurationId ?? this.jobConfigurationId,
+      jobType: jobType ?? this.jobType,
+      webhookUrl: webhookUrl ?? this.webhookUrl,
+      examples: examples ?? this.examples,
+      availableVariables: availableVariables ?? this.availableVariables,
+    );
+  }
+
+  WebhookExamplesDto copyWithWrapped({
+    Wrapped<String?>? jobConfigurationId,
+    Wrapped<String?>? jobType,
+    Wrapped<String?>? webhookUrl,
+    Wrapped<List<WebhookExampleTemplate>?>? examples,
+    Wrapped<List<String>?>? availableVariables,
+  }) {
+    return WebhookExamplesDto(
+      jobConfigurationId: (jobConfigurationId != null
+          ? jobConfigurationId.value
+          : this.jobConfigurationId),
+      jobType: (jobType != null ? jobType.value : this.jobType),
+      webhookUrl: (webhookUrl != null ? webhookUrl.value : this.webhookUrl),
+      examples: (examples != null ? examples.value : this.examples),
+      availableVariables: (availableVariables != null
+          ? availableVariables.value
+          : this.availableVariables),
     );
   }
 }

@@ -757,17 +757,17 @@
         }
       }
     },
-    "/mcp": {
+    "/mcp/stream/{configId}": {
       "post": {
         "tags": [
           "dynamic-mcp-controller"
         ],
-        "operationId": "handleMcpRequest",
+        "operationId": "mcpStream",
         "parameters": [
           {
-            "name": "userId",
-            "in": "query",
-            "required": false,
+            "name": "configId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -777,10 +777,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "additionalProperties": {
-                  "type": "object"
-                }
+                "type": "string"
               }
             }
           },
@@ -790,12 +787,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "text/event-stream": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object"
-                  }
+                  "$ref": "#/components/schemas/SseEmitter"
                 }
               }
             }
@@ -933,22 +927,22 @@
           "required": true
         },
         "responses": {
-          "400": {
-            "description": "Invalid request parameters",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
           "202": {
             "description": "Job execution started successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/JobExecutionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -995,6 +989,16 @@
           }
         },
         "responses": {
+          "202": {
+            "description": "Job execution started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobExecutionResponse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Invalid request parameters",
             "content": {
@@ -1011,16 +1015,6 @@
               "text/plain": {
                 "schema": {
                   "type": "string"
-                }
-              }
-            }
-          },
-          "202": {
-            "description": "Job execution started successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/JobExecutionResponse"
                 }
               }
             }
@@ -1111,7 +1105,7 @@
           "Job Configurations"
         ],
         "summary": "Webhook endpoint for job execution",
-        "description": "Execute a saved job configuration via webhook with optional parameter overrides",
+        "description": "Execute a saved job configuration via webhook with API key authentication",
         "operationId": "executeJobConfigurationWebhook",
         "parameters": [
           {
@@ -1126,8 +1120,8 @@
           {
             "name": "X-API-Key",
             "in": "header",
-            "description": "API key for authentication (future enhancement)",
-            "required": false,
+            "description": "API key for authentication",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -1137,14 +1131,14 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ExecuteJobConfigurationRequest"
+                "$ref": "#/components/schemas/WebhookExecuteRequest"
               }
             }
           }
         },
         "responses": {
-          "202": {
-            "description": "Job execution started successfully",
+          "404": {
+            "description": "Job configuration not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -1153,22 +1147,12 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid request parameters",
+          "202": {
+            "description": "Job execution started successfully",
             "content": {
-              "text/plain": {
+              "application/json": {
                 "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Job configuration not found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/WebhookExecutionResponse"
                 }
               }
             }
@@ -1176,9 +1160,143 @@
           "500": {
             "description": "Job execution failed to start",
             "content": {
-              "text/plain": {
+              "application/json": {
                 "schema": {
-                  "type": "string"
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/job-configurations/{id}/webhook-keys": {
+      "get": {
+        "tags": [
+          "Job Configurations"
+        ],
+        "summary": "List webhook API keys",
+        "description": "Get all webhook API keys for this job configuration",
+        "operationId": "getWebhookKeys",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Job configuration ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Failed to retrieve webhook keys",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job configuration not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Webhook keys retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Job Configurations"
+        ],
+        "summary": "Create webhook API key",
+        "description": "Create a new API key for webhook authentication on this job configuration",
+        "operationId": "createWebhookKey",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Job configuration ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWebhookKeyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "500": {
+            "description": "Failed to create webhook key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Webhook key created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateWebhookKeyResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job configuration not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }
@@ -2157,8 +2275,8 @@
           "required": true
         },
         "responses": {
-          "500": {
-            "description": "Internal server error",
+          "200": {
+            "description": "Job executed successfully",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2167,8 +2285,8 @@
               }
             }
           },
-          "200": {
-            "description": "Job executed successfully",
+          "500": {
+            "description": "Internal server error",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2226,62 +2344,6 @@
               "*/*": {
                 "schema": {
                   "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/mcp/tools/{userId}": {
-      "get": {
-        "tags": [
-          "dynamic-mcp-controller"
-        ],
-        "operationId": "getUserTools",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/mcp/health": {
-      "get": {
-        "tags": [
-          "dynamic-mcp-controller"
-        ],
-        "operationId": "health",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object"
-                  }
                 }
               }
             }
@@ -2488,6 +2550,16 @@
           }
         ],
         "responses": {
+          "403": {
+            "description": "Access denied to job execution",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "200": {
             "description": "Job execution status retrieved successfully",
             "content": {
@@ -2500,16 +2572,6 @@
           },
           "404": {
             "description": "Job execution not found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Access denied to job execution",
             "content": {
               "text/plain": {
                 "schema": {
@@ -2543,12 +2605,65 @@
         }
       }
     },
+    "/api/v1/job-configurations/{id}/webhook-examples": {
+      "get": {
+        "tags": [
+          "Job Configurations"
+        ],
+        "summary": "Get webhook integration examples",
+        "description": "Get webhook integration examples and templates for this job configuration",
+        "operationId": "getWebhookExamples",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Job configuration ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "Job configuration not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Failed to retrieve webhook examples",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Webhook examples retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WebhookExamplesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/chat/health": {
       "get": {
         "tags": [
           "chat-controller"
         ],
-        "operationId": "health_1",
+        "operationId": "health",
         "responses": {
           "200": {
             "description": "OK",
@@ -2629,7 +2744,7 @@
         "tags": [
           "agent-controller"
         ],
-        "operationId": "health_2",
+        "operationId": "health_1",
         "responses": {
           "200": {
             "description": "OK",
@@ -2741,7 +2856,7 @@
         "tags": [
           "presentation-app-controller"
         ],
-        "operationId": "health_3",
+        "operationId": "health_2",
         "responses": {
           "200": {
             "description": "OK",
@@ -3066,7 +3181,7 @@
         "tags": [
           "health-controller"
         ],
-        "operationId": "health_4",
+        "operationId": "health_3",
         "responses": {
           "200": {
             "description": "OK",
@@ -3213,6 +3328,37 @@
         }
       }
     },
+    "/api/files/download/{token}": {
+      "get": {
+        "tags": [
+          "file-download-controller"
+        ],
+        "operationId": "downloadFile",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/config": {
       "get": {
         "tags": [
@@ -3222,16 +3368,6 @@
         "description": "Retrieves non-sensitive application properties and configuration",
         "operationId": "getConfiguration_1",
         "responses": {
-          "200": {
-            "description": "Configuration retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          },
           "500": {
             "description": "Internal server error",
             "content": {
@@ -3241,6 +3377,16 @@
                   "additionalProperties": {
                     "type": "string"
                   }
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Configuration retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 }
               }
             }
@@ -3473,6 +3619,47 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/v1/job-configurations/{id}/webhook-keys/{keyId}": {
+      "delete": {
+        "tags": [
+          "Job Configurations"
+        ],
+        "summary": "Delete webhook API key",
+        "description": "Delete a webhook API key by its ID",
+        "operationId": "deleteWebhookKey",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Job configuration ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyId",
+            "in": "path",
+            "description": "Webhook key ID",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Webhook key deleted successfully"
+          },
+          "404": {
+            "description": "Job configuration or webhook key not found"
+          },
+          "500": {
+            "description": "Failed to delete webhook key"
           }
         }
       }
@@ -3891,6 +4078,15 @@
           }
         }
       },
+      "SseEmitter": {
+        "type": "object",
+        "properties": {
+          "timeout": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
       "CreateWorkspaceRequest": {
         "required": [
           "name"
@@ -4033,6 +4229,78 @@
           }
         },
         "description": "Job configuration creation request"
+      },
+      "WebhookExecuteRequest": {
+        "type": "object",
+        "properties": {
+          "jobParameters": {
+            "$ref": "#/components/schemas/JsonNode"
+          },
+          "integrationMappings": {
+            "$ref": "#/components/schemas/JsonNode"
+          }
+        },
+        "description": "Webhook execution request with optional overrides"
+      },
+      "WebhookExecutionResponse": {
+        "type": "object",
+        "properties": {
+          "executionId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "jobConfigurationId": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateWebhookKeyRequest": {
+        "required": [
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "description": {
+            "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "description": "Create webhook key request"
+      },
+      "CreateWebhookKeyResponse": {
+        "type": "object",
+        "properties": {
+          "keyId": {
+            "type": "string"
+          },
+          "apiKey": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "jobConfigurationId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
       },
       "ExecutionParametersDto": {
         "type": "object",
@@ -4441,6 +4709,43 @@
           },
           "completed": {
             "type": "boolean"
+          }
+        }
+      },
+      "WebhookExampleTemplate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "renderedTemplate": {
+            "type": "string"
+          }
+        }
+      },
+      "WebhookExamplesDto": {
+        "type": "object",
+        "properties": {
+          "jobConfigurationId": {
+            "type": "string"
+          },
+          "jobType": {
+            "type": "string"
+          },
+          "webhookUrl": {
+            "type": "string"
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookExampleTemplate"
+            }
+          },
+          "availableVariables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
