@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../config/app_config.dart';
-import '../../network/generated/openapi.models.swagger.dart' as api;
+import '../../network/generated/api.models.swagger.dart' as api;
 import '../../network/services/api_service.dart';
 import '../../providers/auth_provider.dart';
 

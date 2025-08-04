@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/theme/app_theme.dart';
 
 import '../../network/services/api_service.dart';
-import '../../network/generated/openapi.models.swagger.dart';
-import '../../network/generated/openapi.enums.swagger.dart' as enums;
+import '../../network/generated/api.models.swagger.dart';
+import '../../network/generated/api.enums.swagger.dart' as enums;
 import '../../providers/auth_provider.dart';
 import '../../core/models/user.dart';
 

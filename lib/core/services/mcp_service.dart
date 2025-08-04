@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'package:chopper/chopper.dart';
 import '../models/mcp_configuration.dart';
-import '../../network/generated/openapi.swagger.dart';
-import '../../network/generated/openapi.models.swagger.dart' as api;
+import '../../network/generated/api.swagger.dart';
+import '../../network/generated/api.models.swagger.dart' as api;
 import '../../network/clients/api_client.dart';
 import '../../providers/auth_provider.dart';
 
 /// Service for managing MCP (Model Context Protocol) configurations
 class McpService {
   late final ChopperClient _client;
-  late final Openapi _apiService;
+  late final Api _apiService;
 
   McpService({String? baseUrl, AuthProvider? authProvider, bool enableLogging = true}) {
     _client = ApiClientConfig.createClient(baseUrl: baseUrl, authProvider: authProvider, enableLogging: enableLogging);
-    _apiService = _client.getService<Openapi>();
+    _apiService = _client.getService<Api>();
   }
 
   /// Get all MCP configurations for the current user
@@ -277,105 +277,6 @@ class McpService {
     return McpConfiguration(
       id: json['id'] as String?,
       name: json['name'] as String? ?? '',
-      integrationIds: integrationIds,
-      createdAt: createdAt,
-      updatedAt: updatedAt,
-    );
-  }
-
-  /// Maps API DTO to local model
-  McpConfiguration _mapDtoToModel(api.McpConfigurationDto dto) {
-    print('🔧 McpService: Mapping DTO: $dto');
-    print('🔧 McpService: DTO id: ${dto.id}');
-    print('🔧 McpService: DTO name: ${dto.name}');
-    print('🔧 McpService: DTO integrationIds: ${dto.integrationIds}');
-    print('🔧 McpService: DTO integrationIds type: ${dto.integrationIds?.runtimeType}');
-    print('🔧 McpService: DTO createdAt: ${dto.createdAt}');
-    print('🔧 McpService: DTO createdAt type: ${dto.createdAt?.runtimeType}');
-    print('🔧 McpService: DTO updatedAt: ${dto.updatedAt}');
-    print('🔧 McpService: DTO updatedAt type: ${dto.updatedAt?.runtimeType}');
-
-    // Handle integration IDs
-    List<String> integrationIds = [];
-    if (dto.integrationIds != null) {
-      try {
-        if (dto.integrationIds is List) {
-          integrationIds = (dto.integrationIds as List).map((item) => item.toString()).toList();
-        } else if (dto.integrationIds is String) {
-          integrationIds = [dto.integrationIds.toString()];
-        } else {
-          // Handle other potential types by attempting to convert to string
-          integrationIds = [dto.integrationIds.toString()];
-        }
-        print('🔧 McpService: Parsed integrationIds: $integrationIds');
-      } catch (e) {
-        print('🔧 McpService: Error parsing integrationIds: $e');
-        // Fallback to an empty list if parsing fails
-        integrationIds = [];
-      }
-    }
-
-    // Convert the date arrays to DateTime objects
-    DateTime? createdAt;
-    DateTime? updatedAt;
-
-    if (dto.createdAt is List) {
-      final dateList = dto.createdAt as List;
-      try {
-        if (dateList.length >= 3) {
-          // Format is [year, month, day, hour, minute, second, nano]
-          createdAt = DateTime(
-            dateList[0] is int ? dateList[0] as int : int.parse(dateList[0].toString()),
-            dateList[1] is int ? dateList[1] as int : int.parse(dateList[1].toString()),
-            dateList[2] is int ? dateList[2] as int : int.parse(dateList[2].toString()),
-            dateList.length > 3 ? (dateList[3] is int ? dateList[3] as int : int.parse(dateList[3].toString())) : 0,
-            dateList.length > 4 ? (dateList[4] is int ? dateList[4] as int : int.parse(dateList[4].toString())) : 0,
-            dateList.length > 5 ? (dateList[5] is int ? dateList[5] as int : int.parse(dateList[5].toString())) : 0,
-          );
-          print('🔧 McpService: Parsed createdAt: $createdAt');
-        }
-      } catch (e) {
-        print('🔧 McpService: Error parsing createdAt: $e');
-      }
-    } else if (dto.createdAt != null) {
-      try {
-        createdAt = dto.createdAt is DateTime ? dto.createdAt : DateTime.parse(dto.createdAt.toString());
-        print('🔧 McpService: Using direct createdAt: $createdAt');
-      } catch (e) {
-        print('🔧 McpService: Error using direct createdAt: $e');
-      }
-    }
-
-    if (dto.updatedAt is List) {
-      final dateList = dto.updatedAt as List;
-      try {
-        if (dateList.length >= 3) {
-          // Format is [year, month, day, hour, minute, second, nano]
-          updatedAt = DateTime(
-            dateList[0] is int ? dateList[0] as int : int.parse(dateList[0].toString()),
-            dateList[1] is int ? dateList[1] as int : int.parse(dateList[1].toString()),
-            dateList[2] is int ? dateList[2] as int : int.parse(dateList[2].toString()),
-            dateList.length > 3 ? (dateList[3] is int ? dateList[3] as int : int.parse(dateList[3].toString())) : 0,
-            dateList.length > 4 ? (dateList[4] is int ? dateList[4] as int : int.parse(dateList[4].toString())) : 0,
-            dateList.length > 5 ? (dateList[5] is int ? dateList[5] as int : int.parse(dateList[5].toString())) : 0,
-          );
-          print('🔧 McpService: Parsed updatedAt: $updatedAt');
-        }
-      } catch (e) {
-        print('🔧 McpService: Error parsing updatedAt: $e');
-      }
-    } else if (dto.updatedAt != null) {
-      try {
-        updatedAt = dto.updatedAt is DateTime ? dto.updatedAt : DateTime.parse(dto.updatedAt.toString());
-        print('🔧 McpService: Using direct updatedAt: $updatedAt');
-      } catch (e) {
-        print('🔧 McpService: Error using direct updatedAt: $e');
-      }
-    }
-
-    return McpConfiguration(
-      id: dto.id,
-      name: dto.name ?? '',
       integrationIds: integrationIds,
       createdAt: createdAt,
       updatedAt: updatedAt,
