@@ -334,12 +334,7 @@ class _ActionButtons extends StatelessWidget {
 }
 
 class _ActionMenu extends StatefulWidget {
-  const _ActionMenu({this.onEdit, this.onDelete, this.onViewCode, this.onCopyCode});
-
-  final VoidCallback? onEdit;
-  final Future<bool> Function()? onDelete;
-  final VoidCallback? onViewCode;
-  final VoidCallback? onCopyCode;
+  const _ActionMenu();
 
   @override
   State<_ActionMenu> createState() => _ActionMenuState();
@@ -351,72 +346,52 @@ class _ActionMenuState extends State<_ActionMenu> {
     final colors = context.colors;
 
     return PopupMenuButton<String>(
-      icon: Icon(Icons.more_vert, color: colors.textColor.withOpacity(0.6), size: 20),
+      icon: Icon(Icons.more_vert, color: colors.textColor.withValues(alpha: 0.6), size: 20),
       onSelected: (value) {
-        switch (value) {
-          case 'edit':
-            widget.onEdit?.call();
-            break;
-          case 'view_code':
-            widget.onViewCode?.call();
-            break;
-          case 'copy_code':
-            widget.onCopyCode?.call();
-            break;
-          case 'delete':
-            if (widget.onDelete != null) {
-              widget.onDelete!.call();
-            }
-            break;
-        }
+        // Demo menu - no actual actions
       },
       itemBuilder: (context) => [
-        if (widget.onEdit != null)
-          PopupMenuItem(
-            value: 'edit',
-            child: Row(
-              children: [
-                Icon(Icons.edit, size: 16, color: colors.textColor),
-                const SizedBox(width: 8),
-                const Text('Edit'),
-              ],
-            ),
+        PopupMenuItem(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit, size: 16, color: colors.textColor),
+              const SizedBox(width: 8),
+              const Text('Edit'),
+            ],
           ),
-        if (widget.onViewCode != null)
-          PopupMenuItem(
-            value: 'view_code',
-            child: Row(
-              children: [
-                Icon(Icons.code, size: 16, color: colors.textColor),
-                const SizedBox(width: 8),
-                const Text('View Code'),
-              ],
-            ),
+        ),
+        PopupMenuItem(
+          value: 'view_code',
+          child: Row(
+            children: [
+              Icon(Icons.code, size: 16, color: colors.textColor),
+              const SizedBox(width: 8),
+              const Text('View Code'),
+            ],
           ),
-        if (widget.onCopyCode != null)
-          PopupMenuItem(
-            value: 'copy_code',
-            child: Row(
-              children: [
-                Icon(Icons.copy, size: 16, color: colors.textColor),
-                const SizedBox(width: 8),
-                const Text('Copy Code'),
-              ],
-            ),
+        ),
+        PopupMenuItem(
+          value: 'copy_code',
+          child: Row(
+            children: [
+              Icon(Icons.copy, size: 16, color: colors.textColor),
+              const SizedBox(width: 8),
+              const Text('Copy Code'),
+            ],
           ),
-        if (widget.onDelete != null) ...[
-          const PopupMenuDivider(),
-          PopupMenuItem(
-            value: 'delete',
-            child: Row(
-              children: [
-                Icon(Icons.delete, size: 16, color: colors.dangerColor),
-                const SizedBox(width: 8),
-                Text('Delete', style: TextStyle(color: colors.dangerColor)),
-              ],
-            ),
+        ),
+        const PopupMenuDivider(),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete, size: 16, color: colors.dangerColor),
+              const SizedBox(width: 8),
+              Text('Delete', style: TextStyle(color: colors.dangerColor)),
+            ],
           ),
-        ],
+        ),
       ],
     );
   }
