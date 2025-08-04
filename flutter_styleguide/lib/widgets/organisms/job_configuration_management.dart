@@ -10,12 +10,7 @@ import '../molecules/integration_type_selector.dart';
 import '../molecules/headers/page_action_bar.dart';
 import '../responsive/responsive_builder.dart';
 
-enum JobConfigurationView {
-  list,
-  discovery,
-  create,
-  edit,
-}
+enum JobConfigurationView { list, discovery, create, edit }
 
 /// Complete AI job configuration management interface organism
 class JobConfigurationManagement extends StatefulWidget {
@@ -29,6 +24,7 @@ class JobConfigurationManagement extends StatefulWidget {
   final Function(String) onExecuteConfiguration;
   final Function(String, Map<String, dynamic>) onTestConfiguration;
   final Future<JobConfigurationData?> Function(String)? onGetConfigurationDetails;
+  final Function(String)? onViewDetails;
   final VoidCallback? onCreateIntegration;
   final bool? isTestMode;
   final bool? testDarkMode;
@@ -44,6 +40,7 @@ class JobConfigurationManagement extends StatefulWidget {
     required this.onTestConfiguration,
     this.configuredIntegrations,
     this.onGetConfigurationDetails,
+    this.onViewDetails,
     this.onCreateIntegration,
     this.isTestMode = false,
     this.testDarkMode = false,
@@ -76,10 +73,7 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
     }
 
     return Container(
-      decoration: BoxDecoration(
-        color: colors.bgColor,
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
+      decoration: BoxDecoration(color: colors.bgColor, borderRadius: BorderRadius.circular(AppDimensions.radiusL)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -93,27 +87,14 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
           if (_currentView != JobConfigurationView.list)
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppDimensions.spacingL,
-                vertical: AppDimensions.spacingM,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingL, vertical: AppDimensions.spacingM),
               decoration: BoxDecoration(
                 color: colors.cardBg,
-                border: Border(
-                  bottom: BorderSide(color: colors.borderColor.withValues(alpha: 0.1)),
-                ),
+                border: Border(bottom: BorderSide(color: colors.borderColor.withValues(alpha: 0.1))),
               ),
-              child: Text(
-                _getHeaderSubtitle(),
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textSecondary,
-                ),
-              ),
+              child: Text(_getHeaderSubtitle(), style: TextStyle(fontSize: 14, color: colors.textSecondary)),
             ),
-          Expanded(
-            child: _buildContent(colors),
-          ),
+          Expanded(child: _buildContent(colors)),
         ],
       ),
     );
@@ -184,8 +165,8 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
         crossAxisCount: ResponsiveUtils.isWideScreen(context)
             ? 3
             : ResponsiveUtils.isTablet(context)
-                ? 2
-                : 1,
+            ? 2
+            : 1,
         crossAxisSpacing: AppDimensions.spacingL,
         mainAxisSpacing: AppDimensions.spacingL,
         mainAxisExtent: 320, // Slightly taller for job configurations
@@ -208,6 +189,7 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
           onEdit: () => _editConfiguration(configuration),
           onDelete: () => _deleteConfiguration(configuration),
           onTest: () => _testConfiguration(configuration),
+          onViewDetails: widget.onViewDetails != null ? () => widget.onViewDetails!(configuration.id) : null,
           isTestMode: widget.isTestMode,
           testDarkMode: widget.testDarkMode,
         );
@@ -222,27 +204,16 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.smart_toy_outlined,
-              size: 64,
-              color: colors.textMuted,
-            ),
+            Icon(Icons.smart_toy_outlined, size: 64, color: colors.textMuted),
             const SizedBox(height: AppDimensions.spacingL),
             Text(
               'No AI Job Configurations',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: colors.textColor,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textColor),
             ),
             const SizedBox(height: AppDimensions.spacingS),
             Text(
               'Create your first AI-powered job configuration to get started',
-              style: TextStyle(
-                fontSize: 16,
-                color: colors.textSecondary,
-              ),
+              style: TextStyle(fontSize: 16, color: colors.textSecondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppDimensions.spacingL),
@@ -275,27 +246,17 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
             children: [
               Text(
                 'Available Job Types',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: colors.textColor,
-                ),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textColor),
               ),
               const SizedBox(height: AppDimensions.spacingS),
               Text(
                 'Connect AI-powered automation to your development workflow',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: colors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 16, color: colors.textSecondary),
               ),
               const SizedBox(height: AppDimensions.spacingL),
               Text(
                 '${availableJobTypes.length} job type${availableJobTypes.length != 1 ? 's' : ''} available',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textMuted,
-                ),
+                style: TextStyle(fontSize: 14, color: colors.textMuted),
               ),
             ],
           ),
@@ -336,20 +297,12 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
             children: [
               Row(
                 children: [
-                  Icon(
-                    _getJobTypeIcon(jobType.type),
-                    size: 32,
-                    color: colors.accentColor,
-                  ),
+                  Icon(_getJobTypeIcon(jobType.type), size: 32, color: colors.accentColor),
                   const SizedBox(width: AppDimensions.spacingS),
                   Expanded(
                     child: Text(
                       jobType.displayName,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: colors.textColor,
-                      ),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colors.textColor),
                     ),
                   ),
                 ],
@@ -357,10 +310,7 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
               const SizedBox(height: AppDimensions.spacingS),
               Text(
                 jobType.description,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: colors.textSecondary),
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -378,20 +328,13 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
                     ),
                     child: Text(
                       _getJobTypeCategory(jobType.type),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: colors.accentColor,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: TextStyle(fontSize: 12, color: colors.accentColor, fontWeight: FontWeight.w500),
                     ),
                   ),
                   const Spacer(),
                   Text(
                     '${jobType.requiredIntegrations.length} integrations',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colors.textMuted,
-                    ),
+                    style: TextStyle(fontSize: 12, color: colors.textMuted),
                   ),
                 ],
               ),
@@ -421,27 +364,16 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.error_outline,
-                size: 64,
-                color: colors.textMuted,
-              ),
+              Icon(Icons.error_outline, size: 64, color: colors.textMuted),
               const SizedBox(height: AppDimensions.spacingL),
               Text(
                 'No Job Type Selected',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: colors.textColor,
-                ),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colors.textColor),
               ),
               const SizedBox(height: AppDimensions.spacingS),
               Text(
                 'Please go back and select a job type',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: colors.textSecondary,
-                ),
+                style: TextStyle(fontSize: 14, color: colors.textSecondary),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -459,8 +391,9 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
             jobType: _selectedType!,
             availableIntegrations: widget.availableIntegrations,
             initialValues: _configValues,
-            initialName:
-                _configurationName.isNotEmpty ? _configurationName : '${_selectedType!.displayName} Configuration',
+            initialName: _configurationName.isNotEmpty
+                ? _configurationName
+                : '${_selectedType!.displayName} Configuration',
             initialIntegrations: _selectedIntegrations,
             onConfigChanged: (values) {
               setState(() {
@@ -526,9 +459,7 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
   Widget _buildEditConfiguration(ThemeColorSet colors) {
     if (_editingConfiguration == null) return const SizedBox();
 
-    final jobType = widget.availableTypes.firstWhere(
-      (type) => type.type == _editingConfiguration!.jobType,
-    );
+    final jobType = widget.availableTypes.firstWhere((type) => type.type == _editingConfiguration!.jobType);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(AppDimensions.spacingL),
@@ -667,7 +598,8 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
     }
 
     debugPrint(
-        '🔧   - Configuration name validation: ${_configurationName.isNotEmpty ? "✅" : "❌"} ("$_configurationName")');
+      '🔧   - Configuration name validation: ${_configurationName.isNotEmpty ? "✅" : "❌"} ("$_configurationName")',
+    );
     debugPrint('🔧   - Can create: ${allValid && _configurationName.isNotEmpty}');
 
     if (nameWasEmpty) {
@@ -750,10 +682,7 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
         title: const Text('Delete Job Configuration'),
         content: Text('Are you sure you want to delete "${configuration.name}"? This action cannot be undone.'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
