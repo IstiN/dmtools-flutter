@@ -117,11 +117,7 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
       createdAt: DateTime.now().subtract(const Duration(days: 5)),
       createdByName: 'John Developer',
       requiredIntegrations: ['TrackerClient', 'AI', 'SourceCode'],
-      parameters: {
-        'includeCodeAnalysis': true,
-        'outputFormat': 'comment',
-        'ticketKey': 'DMC-123',
-      },
+      parameters: {'includeCodeAnalysis': true, 'outputFormat': 'comment', 'ticketKey': 'DMC-123'},
     ),
     JobConfigurationData(
       id: '2',
@@ -134,11 +130,7 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
       createdAt: DateTime.now().subtract(const Duration(days: 10)),
       createdByName: 'Jane Tester',
       requiredIntegrations: ['TrackerClient', 'AI'],
-      parameters: {
-        'testCaseType': 'both',
-        'includeEdgeCases': true,
-        'maxTestCases': 25,
-      },
+      parameters: {'testCaseType': 'both', 'includeEdgeCases': true, 'maxTestCases': 25},
     ),
   ];
 
@@ -148,15 +140,21 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader(
-            'Job Configuration Cards', 'Individual configuration cards with execution controls and status tracking'),
+          'Job Configuration Cards',
+          'Individual configuration cards with execution controls and status tracking',
+        ),
         _buildJobCards(),
         const SizedBox(height: AppDimensions.spacingXl),
-        _buildSectionHeader('Job Type Selector',
-            'Interactive grid selector for choosing AI job types when creating new configurations'),
+        _buildSectionHeader(
+          'Job Type Selector',
+          'Interactive grid selector for choosing AI job types when creating new configurations',
+        ),
         _buildJobTypeSelector(),
         const SizedBox(height: AppDimensions.spacingXl),
-        _buildSectionHeader('Job Configuration Form',
-            'Dynamic configuration form that generates fields based on job type parameters and integration requirements'),
+        _buildSectionHeader(
+          'Job Configuration Form',
+          'Dynamic configuration form that generates fields based on job type parameters and integration requirements',
+        ),
         _buildJobConfigForm(),
       ],
     );
@@ -168,18 +166,12 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.colors.textColor,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: context.colors.textColor),
         ),
         const SizedBox(height: AppDimensions.spacingS),
-        Text(
-          description,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.colors.textSecondary,
-              ),
-        ),
+        Text(description, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.colors.textSecondary)),
         const SizedBox(height: AppDimensions.spacingM),
       ],
     );
@@ -206,6 +198,7 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
               onTest: () => _showAction('Test ${_sampleConfigurations[0].name}'),
               onEdit: () => _showAction('Edit ${_sampleConfigurations[0].name}'),
               onDelete: () => _showAction('Delete ${_sampleConfigurations[0].name}'),
+              onViewDetails: () => _showAction('View Details ${_sampleConfigurations[0].name}'),
               isTestMode: true,
               testDarkMode: context.isDarkMode,
             ),
@@ -227,6 +220,7 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
               onTest: () => _showAction('Test ${_sampleConfigurations[1].name}'),
               onEdit: () => _showAction('Edit ${_sampleConfigurations[1].name}'),
               onDelete: () => _showAction('Delete ${_sampleConfigurations[1].name}'),
+              onViewDetails: () => _showAction('View Details ${_sampleConfigurations[1].name}'),
               isTestMode: true,
               testDarkMode: context.isDarkMode,
             ),
@@ -268,11 +262,7 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
         availableIntegrations: _sampleIntegrations,
         initialValues: _configValues.isNotEmpty
             ? _configValues
-            : {
-                'ticketKey': 'DMC-123',
-                'includeCodeAnalysis': true,
-                'outputFormat': 'comment',
-              },
+            : {'ticketKey': 'DMC-123', 'includeCodeAnalysis': true, 'outputFormat': 'comment'},
         initialIntegrations: _selectedIntegrations.isNotEmpty ? _selectedIntegrations : ['TrackerClient', 'AI'],
         onConfigChanged: (values) {
           setState(() {
@@ -314,12 +304,7 @@ class _JobConfigurationShowcaseState extends State<JobConfigurationShowcase> {
 
   void _showAction(String action) {
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(action),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(action), duration: const Duration(seconds: 2)));
     }
   }
 }

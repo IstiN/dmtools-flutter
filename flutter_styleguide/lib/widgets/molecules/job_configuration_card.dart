@@ -17,6 +17,7 @@ class JobConfigurationCard extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
   final VoidCallback? onTest;
+  final VoidCallback? onViewDetails;
   final bool? isTestMode;
   final bool? testDarkMode;
 
@@ -35,6 +36,7 @@ class JobConfigurationCard extends StatelessWidget {
     this.onEdit,
     this.onDelete,
     this.onTest,
+    this.onViewDetails,
     this.isTestMode = false,
     this.testDarkMode = false,
     super.key,
@@ -75,11 +77,7 @@ class JobConfigurationCard extends StatelessWidget {
                   // Description
                   Text(
                     description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colors.textSecondary,
-                      height: 1.4,
-                    ),
+                    style: TextStyle(fontSize: 14, color: colors.textSecondary, height: 1.4),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -119,10 +117,7 @@ class JobConfigurationCard extends StatelessWidget {
           Container(
             width: 8,
             height: 8,
-            decoration: BoxDecoration(
-              color: enabled ? colors.successColor : colors.textMuted,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: enabled ? colors.successColor : colors.textMuted, shape: BoxShape.circle),
           ),
           const SizedBox(width: AppDimensions.spacingS),
           Text(
@@ -135,11 +130,7 @@ class JobConfigurationCard extends StatelessWidget {
           ),
           const Spacer(),
           // Job type icon
-          Icon(
-            _getJobTypeIcon(jobType),
-            size: 20,
-            color: enabled ? colors.accentColor : colors.textMuted,
-          ),
+          Icon(_getJobTypeIcon(jobType), size: 20, color: enabled ? colors.accentColor : colors.textMuted),
         ],
       ),
     );
@@ -151,31 +142,20 @@ class JobConfigurationCard extends StatelessWidget {
       children: [
         Text(
           name,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: colors.textColor,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.textColor),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
         const SizedBox(height: AppDimensions.spacingXs),
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppDimensions.spacingS,
-            vertical: AppDimensions.spacingXs,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingS, vertical: AppDimensions.spacingXs),
           decoration: BoxDecoration(
             color: colors.accentColor.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
           ),
           child: Text(
             _getJobTypeDisplayName(jobType),
-            style: TextStyle(
-              fontSize: 12,
-              color: colors.accentColor,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 12, color: colors.accentColor, fontWeight: FontWeight.w500),
           ),
         ),
       ],
@@ -188,57 +168,43 @@ class JobConfigurationCard extends StatelessWidget {
       children: [
         Text(
           'Required Integrations',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: colors.textMuted,
-          ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: colors.textMuted),
         ),
         const SizedBox(height: AppDimensions.spacingXs),
         Wrap(
           spacing: AppDimensions.spacingXs,
           runSpacing: AppDimensions.spacingXs,
-          children: requiredIntegrations
-              .take(3)
-              .map((integration) => Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppDimensions.spacingS,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: colors.borderColor.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
-                    ),
-                    child: Text(
-                      integration,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: colors.textSecondary,
-                      ),
-                    ),
-                  ))
-              .toList()
-            ..addAll(requiredIntegrations.length > 3
-                ? [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppDimensions.spacingS,
-                        vertical: 2,
-                      ),
+          children:
+              requiredIntegrations
+                  .take(3)
+                  .map(
+                    (integration) => Container(
+                      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingS, vertical: 2),
                       decoration: BoxDecoration(
                         color: colors.borderColor.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
                       ),
-                      child: Text(
-                        '+${requiredIntegrations.length - 3}',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: colors.textSecondary,
-                        ),
-                      ),
+                      child: Text(integration, style: TextStyle(fontSize: 10, color: colors.textSecondary)),
                     ),
-                  ]
-                : []),
+                  )
+                  .toList()
+                ..addAll(
+                  requiredIntegrations.length > 3
+                      ? [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingS, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: colors.borderColor.withValues(alpha: 0.3),
+                              borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
+                            ),
+                            child: Text(
+                              '+${requiredIntegrations.length - 3}',
+                              style: TextStyle(fontSize: 10, color: colors.textSecondary),
+                            ),
+                          ),
+                        ]
+                      : [],
+                ),
         ),
       ],
     );
@@ -247,13 +213,7 @@ class JobConfigurationCard extends StatelessWidget {
   Widget _buildStatsSection(ThemeColorSet colors) {
     return Row(
       children: [
-        Expanded(
-          child: _buildStatItem(
-            'Executions',
-            executionCount.toString(),
-            colors,
-          ),
-        ),
+        Expanded(child: _buildStatItem('Executions', executionCount.toString(), colors)),
         Expanded(
           child: _buildStatItem(
             'Last Run',
@@ -269,21 +229,11 @@ class JobConfigurationCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            color: colors.textMuted,
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 10, color: colors.textMuted)),
         const SizedBox(height: 2),
         Text(
           value,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: colors.textSecondary,
-          ),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: colors.textSecondary),
         ),
       ],
     );
@@ -293,9 +243,7 @@ class JobConfigurationCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppDimensions.spacingS),
       decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(color: colors.borderColor.withValues(alpha: 0.2)),
-        ),
+        border: Border(top: BorderSide(color: colors.borderColor.withValues(alpha: 0.2))),
       ),
       child: Row(
         children: [
@@ -311,6 +259,15 @@ class JobConfigurationCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppDimensions.spacingS),
+          AppIconButton(
+            text: 'Details',
+            icon: Icons.info_outline,
+            onPressed: onViewDetails,
+            size: ButtonSize.small,
+            isTestMode: isTestMode ?? false,
+            testDarkMode: testDarkMode ?? false,
+          ),
+          const SizedBox(width: AppDimensions.spacingXs),
           AppIconButton(
             text: 'Test',
             icon: Icons.science,
