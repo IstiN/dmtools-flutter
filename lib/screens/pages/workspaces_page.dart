@@ -773,6 +773,20 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
               color: colors.textSecondary,
             ),
           ),
+          const SizedBox(height: 24),
+          PrimaryButton(
+            text: 'Create Workspace',
+            icon: Icons.add,
+            onPressed: () {
+              setState(() {
+                _showCreateForm = true;
+                _showEditForm = false;
+                _showShareForm = false;
+                _createNameController.clear();
+                _createDescriptionController.clear();
+              });
+            },
+          ),
         ],
       ),
     );

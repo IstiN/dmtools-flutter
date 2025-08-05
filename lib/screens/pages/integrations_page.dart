@@ -40,11 +40,8 @@ class _IntegrationsPageState extends AuthenticatedPage<IntegrationsPage> {
 
     print('🔧 IntegrationsPage: Loaded ${integrations.length} integrations');
 
-    if (integrations.isEmpty) {
-      setEmpty();
-    } else {
-      setLoaded();
-    }
+    // Always set loaded - let the IntegrationManagement component handle empty states internally
+    setLoaded();
   }
 
   @override

@@ -41,11 +41,8 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
 
     print('🔧 McpPage: Loaded ${configurations.length} configurations');
 
-    if (configurations.isEmpty) {
-      setEmpty();
-    } else {
-      setLoaded();
-    }
+    // Always set loaded - let the McpManagement component handle empty states internally
+    setLoaded();
   }
 
   List<IntegrationOption> _getAvailableIntegrations() {
