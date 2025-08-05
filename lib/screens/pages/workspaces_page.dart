@@ -75,11 +75,8 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
 
     print('🔧 WorkspacesPage: Loaded ${workspaces.length} workspaces');
 
-    if (workspaces.isEmpty) {
-      setEmpty();
-    } else {
-      setLoaded();
-    }
+    // Always set loaded - let the custom _buildWorkspacesList handle empty states internally
+    setLoaded();
   }
 
   @override
