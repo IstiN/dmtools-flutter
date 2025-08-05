@@ -221,7 +221,26 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
           _currentValues[param.key] = textValue;
           debugPrint('🔧     - Set current value: ${_currentValues[param.key]}');
         } else if (param.required) {
-          debugPrint('🔧     - ⚠️ Required field "${param.key}" has empty value!');
+          // For required fields without values, set a proper default
+          String defaultValue = '';
+          switch (param.key.toLowerCase()) {
+            case 'inputjql':
+              defaultValue = 'project = DMC';
+              break;
+            case 'initiator':
+              defaultValue = 'system';
+              break;
+            default:
+              defaultValue = param.defaultValue?.toString() ?? '';
+          }
+          
+          if (defaultValue.isNotEmpty) {
+            _currentValues[param.key] = defaultValue;
+            _controllers[param.key]!.text = defaultValue;
+            debugPrint('🔧     - Set required field default: ${_currentValues[param.key]}');
+          } else {
+            debugPrint('🔧     - ⚠️ Required field "${param.key}" has empty value!');
+          }
         }
 
         _controllers[param.key]!.addListener(() {
