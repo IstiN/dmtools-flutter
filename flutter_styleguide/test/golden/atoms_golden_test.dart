@@ -7,6 +7,7 @@ import 'package:dmtools_styleguide/widgets/atoms/form_elements.dart';
 import 'package:dmtools_styleguide/widgets/atoms/status_dot.dart';
 import 'package:dmtools_styleguide/widgets/atoms/tag_chip.dart';
 import 'package:dmtools_styleguide/widgets/atoms/texts/app_text.dart';
+import 'package:dmtools_styleguide/widgets/atoms/array_input.dart';
 import '../golden_test_helper.dart' as helper;
 
 void main() {
@@ -22,11 +23,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'all_buttons_light',
-            child: SizedBox(
-              width: 600,
-              height: 500,
-              child: helper.createTestApp(_buildAllButtons()),
-            ),
+            child: SizedBox(width: 600, height: 500, child: helper.createTestApp(_buildAllButtons())),
           ),
         ],
       ),
@@ -39,11 +36,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'all_buttons_dark',
-            child: SizedBox(
-              width: 600,
-              height: 500,
-              child: helper.createTestApp(_buildAllButtons(), darkMode: true),
-            ),
+            child: SizedBox(width: 600, height: 500, child: helper.createTestApp(_buildAllButtons(), darkMode: true)),
           ),
         ],
       ),
@@ -56,11 +49,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'all_form_elements_light',
-            child: SizedBox(
-              width: 500,
-              height: 400,
-              child: helper.createTestApp(_buildAllFormElements()),
-            ),
+            child: SizedBox(width: 500, height: 400, child: helper.createTestApp(_buildAllFormElements())),
           ),
         ],
       ),
@@ -90,11 +79,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'all_text_elements_light',
-            child: SizedBox(
-              width: 500,
-              height: 600,
-              child: helper.createTestApp(_buildAllTextElements()),
-            ),
+            child: SizedBox(width: 500, height: 600, child: helper.createTestApp(_buildAllTextElements())),
           ),
         ],
       ),
@@ -124,11 +109,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'all_tags_status_light',
-            child: SizedBox(
-              width: 500,
-              height: 400,
-              child: helper.createTestApp(_buildAllTagsAndStatus()),
-            ),
+            child: SizedBox(width: 500, height: 400, child: helper.createTestApp(_buildAllTagsAndStatus())),
           ),
         ],
       ),
@@ -151,6 +132,85 @@ void main() {
       ),
     );
   });
+
+  goldenTest(
+    'Array Input - Light Mode',
+    fileName: 'array_input_light',
+    builder: () => GoldenTestGroup(
+      children: [
+        GoldenTestScenario(
+          name: 'array_input_light',
+          child: SizedBox(width: 500, height: 600, child: helper.createTestApp(_buildArrayInputStates())),
+        ),
+      ],
+    ),
+  );
+
+  goldenTest(
+    'Array Input - Dark Mode',
+    fileName: 'array_input_dark',
+    builder: () => GoldenTestGroup(
+      children: [
+        GoldenTestScenario(
+          name: 'array_input_dark',
+          child: SizedBox(
+            width: 500,
+            height: 600,
+            child: helper.createTestApp(_buildArrayInputStatesDark(), darkMode: true),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildArrayInputStatesDark() {
+  return const Scaffold(
+    body: SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Array with items
+          SizedBox(
+            width: 400,
+            child: ArrayInput(
+              values: ['First item', 'Second item', 'Third item'],
+              label: 'Populated Array',
+              required: true,
+              isTestMode: true,
+              testDarkMode: true,
+            ),
+          ),
+          SizedBox(height: AppDimensions.spacingL),
+          // Empty array
+          SizedBox(
+            width: 400,
+            child: ArrayInput(
+              values: [],
+              label: 'Empty Array',
+              placeholder: 'Enter value',
+              isTestMode: true,
+              testDarkMode: true,
+            ),
+          ),
+          SizedBox(height: AppDimensions.spacingL),
+          // Required empty array (shows validation error)
+          SizedBox(
+            width: 400,
+            child: ArrayInput(
+              values: [],
+              label: 'Required Empty Array',
+              placeholder: 'Required field',
+              required: true,
+              isTestMode: true,
+              testDarkMode: true,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 Widget _buildAllButtons() {
@@ -163,49 +223,25 @@ Widget _buildAllButtons() {
           // Primary Buttons
           const PrimaryButton(text: 'Primary'),
           const SizedBox(height: 8),
-          const PrimaryButton(
-            text: 'Primary Small',
-            size: ButtonSize.small,
-          ),
+          const PrimaryButton(text: 'Primary Small', size: ButtonSize.small),
           const SizedBox(height: 8),
-          const PrimaryButton(
-            text: 'Primary Medium',
-          ),
+          const PrimaryButton(text: 'Primary Medium'),
           const SizedBox(height: 8),
-          const PrimaryButton(
-            text: 'Primary Large',
-            size: ButtonSize.large,
-          ),
+          const PrimaryButton(text: 'Primary Large', size: ButtonSize.large),
           const SizedBox(height: 8),
-          PrimaryButton(
-            text: 'Primary with Icon',
-            icon: Icons.star,
-            onPressed: () {},
-          ),
+          PrimaryButton(text: 'Primary with Icon', icon: Icons.star, onPressed: () {}),
           const SizedBox(height: 16),
 
           // Secondary Buttons
           const SecondaryButton(text: 'Secondary'),
           const SizedBox(height: 8),
-          const SecondaryButton(
-            text: 'Secondary Small',
-            size: ButtonSize.small,
-          ),
+          const SecondaryButton(text: 'Secondary Small', size: ButtonSize.small),
           const SizedBox(height: 8),
-          const SecondaryButton(
-            text: 'Secondary Medium',
-          ),
+          const SecondaryButton(text: 'Secondary Medium'),
           const SizedBox(height: 8),
-          const SecondaryButton(
-            text: 'Secondary Large',
-            size: ButtonSize.large,
-          ),
+          const SecondaryButton(text: 'Secondary Large', size: ButtonSize.large),
           const SizedBox(height: 8),
-          SecondaryButton(
-            text: 'Secondary with Icon',
-            icon: Icons.info,
-            onPressed: () {},
-          ),
+          SecondaryButton(text: 'Secondary with Icon', icon: Icons.info, onPressed: () {}),
           const SizedBox(height: 16),
 
           // Other button types
@@ -224,12 +260,7 @@ Widget _buildAllFormElements() {
   return const Scaffold(
     body: SingleChildScrollView(
       padding: EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          FormElementsWidget(),
-        ],
-      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [FormElementsWidget()]),
     ),
   );
 }
@@ -282,6 +313,47 @@ Widget _buildAllTagsAndStatus() {
           TagChip(label: 'Warning', variant: TagChipVariant.warning),
           SizedBox(height: 8),
           TagChip(label: 'Danger', variant: TagChipVariant.danger),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _buildArrayInputStates() {
+  return const Scaffold(
+    body: SingleChildScrollView(
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Array with items
+          SizedBox(
+            width: 400,
+            child: ArrayInput(
+              values: ['First item', 'Second item', 'Third item'],
+              label: 'Populated Array',
+              required: true,
+              isTestMode: true,
+            ),
+          ),
+          SizedBox(height: AppDimensions.spacingL),
+          // Empty array
+          SizedBox(
+            width: 400,
+            child: ArrayInput(values: [], label: 'Empty Array', placeholder: 'Enter value', isTestMode: true),
+          ),
+          SizedBox(height: AppDimensions.spacingL),
+          // Required empty array (shows validation error)
+          SizedBox(
+            width: 400,
+            child: ArrayInput(
+              values: [],
+              label: 'Required Empty Array',
+              placeholder: 'Required field',
+              required: true,
+              isTestMode: true,
+            ),
+          ),
         ],
       ),
     ),

@@ -576,6 +576,57 @@ class ApiService {
     }
   }
 
+  /// Execute a job configuration with manual request handling (bypasses JsonNode serialization issues)
+  Future<void> executeJobConfigurationRaw({
+    required String id,
+    Map<String, dynamic>? parameterOverrides,
+    Map<String, dynamic>? integrationOverrides,
+    String? executionMode,
+  }) async {
+    try {
+      // Build request manually to bypass broken JsonNode serialization
+      final requestBody = <String, dynamic>{};
+
+      if (parameterOverrides != null) {
+        // Ensure array parameters are properly converted to List<String>
+        final safeParameters = <String, dynamic>{};
+        for (final entry in parameterOverrides.entries) {
+          if (entry.value is List) {
+            // Convert any List<dynamic> to List<String>
+            safeParameters[entry.key] = (entry.value as List).map((item) => item?.toString() ?? '').toList();
+          } else {
+            safeParameters[entry.key] = entry.value;
+          }
+        }
+        requestBody['parameterOverrides'] = safeParameters;
+      }
+
+      if (integrationOverrides != null) {
+        requestBody['integrationOverrides'] = integrationOverrides;
+      }
+
+      if (executionMode != null) {
+        requestBody['executionMode'] = executionMode;
+      }
+
+      debugPrint('🔄 Executing job config $id with manual request body: $requestBody');
+
+      // Make direct API call with manual JSON body
+      final response = await _api.client.post(
+        Uri.parse('/api/v1/jobs/configurations/$id/execute'),
+        body: requestBody,
+      );
+
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to execute job configuration', response.statusCode);
+      }
+
+      debugPrint('✅ Job configuration executed successfully');
+    } catch (e) {
+      throw ApiException('Error executing job configuration: $e');
+    }
+  }
+
   /// Get raw job configuration data
   Future<Map<String, dynamic>> getJobConfigurationRaw(String id) async {
     try {

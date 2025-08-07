@@ -10,6 +10,7 @@ import '../../widgets/atoms/texts/app_text.dart';
 import '../../widgets/atoms/integration_type_icon.dart';
 import '../../widgets/atoms/sensitive_field_input.dart';
 import '../../widgets/atoms/integration_status_badge.dart';
+import '../../widgets/atoms/array_input.dart';
 
 class AtomsPage extends StatefulWidget {
   const AtomsPage({super.key});
@@ -23,6 +24,7 @@ class AtomsPageState extends State<AtomsPage> {
   bool _checkbox1Value = false;
   bool _checkbox2Value = true;
   String _radioValue = 'B';
+  List<String> _arrayValues = ['First item', 'Second item'];
 
   @override
   Widget build(BuildContext context) {
@@ -44,36 +46,21 @@ class AtomsPageState extends State<AtomsPage> {
               const SizedBox(height: AppDimensions.spacingM),
               const BaseStyleButton(text: 'Base Button'),
               const SizedBox(height: AppDimensions.spacingXs),
-              const RunButton(
-                text: 'Run',
-                icon: Icons.play_arrow,
-              ),
+              const RunButton(text: 'Run', icon: Icons.play_arrow),
               const SizedBox(height: AppDimensions.spacingM),
               Wrap(
                 spacing: AppDimensions.spacingM,
                 runSpacing: AppDimensions.spacingM,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  const AppIconButton(
-                    text: 'Settings',
-                    icon: Icons.settings,
-                  ),
+                  const AppIconButton(text: 'Settings', icon: Icons.settings),
                   const MediumBodyText('Dark Theme:'),
                   Theme(
                     data: ThemeData.dark(),
-                    child: const AppIconButton(
-                      text: 'Settings',
-                      icon: Icons.settings,
-                    ),
+                    child: const AppIconButton(text: 'Settings', icon: Icons.settings),
                   ),
-                  const PrimaryButton(
-                    text: 'Loading',
-                    isLoading: true,
-                  ),
-                  const PrimaryButton(
-                    text: 'Disabled',
-                    isDisabled: true,
-                  ),
+                  const PrimaryButton(text: 'Loading', isLoading: true),
+                  const PrimaryButton(text: 'Disabled', isDisabled: true),
                 ],
               ),
             ],
@@ -89,9 +76,7 @@ class AtomsPageState extends State<AtomsPage> {
                 width: AppDimensions.dialogWidth * 0.625, // 300px equivalent
                 child: FormGroup(
                   label: 'Text Label',
-                  child: TextInput(
-                    placeholder: 'Enter text...',
-                  ),
+                  child: TextInput(placeholder: 'Enter text...'),
                 ),
               ),
               const SizedBox(height: AppDimensions.spacingL),
@@ -99,9 +84,7 @@ class AtomsPageState extends State<AtomsPage> {
                 width: AppDimensions.dialogWidth * 0.625, // 300px equivalent
                 child: FormGroup(
                   label: 'Password Label',
-                  child: PasswordInput(
-                    placeholder: 'Enter password...',
-                  ),
+                  child: PasswordInput(placeholder: 'Enter password...'),
                 ),
               ),
               const SizedBox(height: AppDimensions.spacingL),
@@ -112,10 +95,7 @@ class AtomsPageState extends State<AtomsPage> {
                   child: SelectDropdown(
                     value: _dropdownValue,
                     items: ['Option 1', 'Option 2', 'Option 3']
-                        .map((String value) => DropdownMenuItem<String>(
-                              value: value,
-                              child: MediumBodyText(value),
-                            ))
+                        .map((String value) => DropdownMenuItem<String>(value: value, child: MediumBodyText(value)))
                         .toList(),
                     onChanged: (value) {
                       setState(() {
@@ -234,9 +214,7 @@ class AtomsPageState extends State<AtomsPage> {
             children: [
               ComponentItem(
                 title: 'View All Link',
-                child: ViewAllLink(
-                  onPressed: () {},
-                ),
+                child: ViewAllLink(onPressed: () {}),
               ),
             ],
           ),
@@ -249,32 +227,15 @@ class AtomsPageState extends State<AtomsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                OAuthProviderButton(
-                  provider: OAuthProvider.google,
-                  text: 'Continue with Google',
-                ),
+                OAuthProviderButton(provider: OAuthProvider.google, text: 'Continue with Google'),
                 SizedBox(height: AppDimensions.spacingM),
-                OAuthProviderButton(
-                  provider: OAuthProvider.microsoft,
-                  text: 'Continue with Microsoft',
-                ),
+                OAuthProviderButton(provider: OAuthProvider.microsoft, text: 'Continue with Microsoft'),
                 SizedBox(height: AppDimensions.spacingM),
-                OAuthProviderButton(
-                  provider: OAuthProvider.github,
-                  text: 'Continue with Github',
-                ),
+                OAuthProviderButton(provider: OAuthProvider.github, text: 'Continue with Github'),
                 SizedBox(height: AppDimensions.spacingM),
-                OAuthProviderButton(
-                  provider: OAuthProvider.google,
-                  text: 'Loading...',
-                  isLoading: true,
-                ),
+                OAuthProviderButton(provider: OAuthProvider.google, text: 'Loading...', isLoading: true),
                 SizedBox(height: AppDimensions.spacingM),
-                OAuthProviderButton(
-                  provider: OAuthProvider.google,
-                  text: 'Disabled',
-                  isDisabled: true,
-                ),
+                OAuthProviderButton(provider: OAuthProvider.google, text: 'Disabled', isDisabled: true),
               ],
             ),
           ),
@@ -343,11 +304,37 @@ class AtomsPageState extends State<AtomsPage> {
                 ),
               ),
               const SizedBox(height: AppDimensions.spacingM),
+              const SizedBox(width: 400, child: SensitiveFieldInput(placeholder: 'Enter your access token...')),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: 'Array Input',
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Array input component for handling list of string values with add, edit, and remove functionality.',
+              ),
+              const SizedBox(height: AppDimensions.spacingM),
+              SizedBox(
+                width: 400,
+                child: ArrayInput(
+                  values: _arrayValues,
+                  onChanged: (values) {
+                    setState(() {
+                      _arrayValues = values;
+                    });
+                  },
+                  label: 'Example Array Field',
+                  required: true,
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingM),
               const SizedBox(
                 width: 400,
-                child: SensitiveFieldInput(
-                  placeholder: 'Enter your access token...',
-                ),
+                child: ArrayInput(values: [], label: 'Empty Array Example', placeholder: 'Enter value'),
               ),
             ],
           ),

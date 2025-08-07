@@ -5,6 +5,7 @@ import '../../theme/app_dimensions.dart';
 
 import '../atoms/sensitive_field_input.dart';
 import '../atoms/buttons/app_buttons.dart';
+import '../atoms/array_input.dart';
 
 /// Configuration parameter model for dynamic form generation
 class ConfigParameter {
@@ -13,7 +14,7 @@ class ConfigParameter {
   final String description;
   final bool required;
   final bool sensitive;
-  final String type; // 'string', 'boolean', 'number', 'select', 'textarea'
+  final String type; // 'string', 'boolean', 'number', 'select', 'textarea', 'array'
   final dynamic defaultValue;
   final List<String> options; // For select type
   final String? placeholder;
@@ -153,6 +154,20 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
     return defaultValue;
   }
 
+  /// Helper method to safely convert dynamic lists to List of String
+  List<String> _safeStringList(dynamic value) {
+    if (value == null) {
+      return <String>[];
+    }
+    if (value is List<String>) {
+      return value;
+    }
+    if (value is List) {
+      return value.map((item) => item?.toString() ?? '').toList();
+    }
+    return <String>[];
+  }
+
   void _initializeControllers() {
     debugPrint('🔧 DynamicConfigForm: Initializing controllers');
     debugPrint('🔧   - Initial values: ${widget.initialValues}');
@@ -183,7 +198,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
       debugPrint('🔧     - Default value: ${param.defaultValue}');
       debugPrint('🔧     - Initial value: ${widget.initialValues[param.key]}');
 
-      if (param.type != 'boolean') {
+      if (param.type != 'boolean' && param.type != 'array') {
         var initialValue = widget.initialValues[param.key] ?? param.defaultValue;
 
         // For required fields without default values, provide sensible defaults
@@ -233,7 +248,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
             default:
               defaultValue = param.defaultValue?.toString() ?? '';
           }
-          
+
           if (defaultValue.isNotEmpty) {
             _currentValues[param.key] = defaultValue;
             _controllers[param.key]!.text = defaultValue;
@@ -246,6 +261,29 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
         _controllers[param.key]!.addListener(() {
           _updateValue(param.key, _controllers[param.key]!.text, param.type);
         });
+      } else if (param.type == 'array') {
+        // For array types, always ensure safe conversion
+        List<String> initialArray = [];
+
+        // Check initial values first
+        if (widget.initialValues[param.key] != null) {
+          initialArray = _safeStringList(widget.initialValues[param.key]);
+          debugPrint('🔧     - Converted array from initialValues: ${_currentValues[param.key]} -> $initialArray');
+        }
+        // Check if there's already a value in _currentValues that needs conversion
+        else if (_currentValues.containsKey(param.key)) {
+          initialArray = _safeStringList(_currentValues[param.key]);
+          debugPrint('🔧     - Converted existing array value: ${_currentValues[param.key]} -> $initialArray');
+        }
+        // Use default value if available
+        else if (param.defaultValue != null) {
+          initialArray = _safeStringList(param.defaultValue);
+          debugPrint('🔧     - Converted array from defaultValue: $initialArray');
+        }
+
+        // Always set the converted value
+        _currentValues[param.key] = initialArray;
+        debugPrint('🔧     - Set array value: ${_currentValues[param.key]}');
       } else {
         // For boolean types, we don't need controllers but still need initial values
         if (!_currentValues.containsKey(param.key)) {
@@ -273,6 +311,10 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
         break;
       case 'boolean':
         convertedValue = _safeBool(value);
+        break;
+      case 'array':
+        // Safely convert value to List<String>
+        convertedValue = _safeStringList(value);
         break;
       default:
         convertedValue = value.toString();
@@ -404,6 +446,9 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
         break;
       case 'number':
         field = _buildNumberField(param, colors);
+        break;
+      case 'array':
+        field = _buildArrayField(param, colors);
         break;
       default:
         field = _buildStringField(param, colors);
@@ -791,6 +836,26 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildArrayField(ConfigParameter param, ThemeColorSet colors) {
+    final currentArray = _currentValues[param.key] as List<String>? ?? <String>[];
+
+    return ArrayInput(
+      values: currentArray,
+      onChanged: (newValues) => _updateValue(param.key, newValues, param.type),
+      placeholder: param.placeholder ?? 'Enter new item',
+      label: param.displayName,
+      required: param.required,
+      isTestMode: widget.isTestMode ?? false,
+      testDarkMode: widget.testDarkMode ?? false,
+      validator: (values) {
+        if (param.required && (values == null || values.isEmpty)) {
+          return 'This field is required';
+        }
+        return null;
+      },
     );
   }
 }

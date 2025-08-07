@@ -8,6 +8,7 @@ import 'organisms/workspace_management_page.dart';
 import 'organisms/integration_management_page.dart';
 import 'organisms/navigation_sidebar_page.dart';
 import 'organisms/mcp_management_page.dart';
+import 'organisms/dynamic_form_page.dart';
 import 'job_configuration_page.dart';
 
 class OrganismCard {
@@ -97,6 +98,14 @@ class OrganismsPage extends StatelessWidget {
             'Complete MCP configuration management system with creation forms, list views, and code generation.',
         pageBuilder: (context) => const McpManagementPage(),
         icon: Icons.api,
+      ),
+      OrganismCard(
+        title: 'Dynamic Config Form',
+        code: '.dynamic-config-form',
+        description:
+            'Advanced form builder with support for multiple field types including arrays, validation, and dynamic content.',
+        pageBuilder: (context) => const DynamicFormPage(),
+        icon: Icons.dynamic_form,
       ),
     ];
 

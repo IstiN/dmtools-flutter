@@ -293,6 +293,16 @@ class MockApiService implements ApiService {
   }
 
   @override
+  Future<void> executeJobConfigurationRaw({
+    required String id,
+    Map<String, dynamic>? parameterOverrides,
+    Map<String, dynamic>? integrationOverrides,
+    String? executionMode,
+  }) async {
+    // Mock implementation
+  }
+
+  @override
   Future<Map<String, dynamic>> getJobConfigurationRaw(String id) async {
     return {
       'id': id,
