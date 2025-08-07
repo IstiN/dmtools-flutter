@@ -625,9 +625,10 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
 
   Future<void> _executeJobConfiguration(String id) async {
     try {
-      const request = ExecuteJobConfigurationRequest();
+      debugPrint('🔄 onExecuteConfiguration called with: $id');
 
-      await _apiService.executeJobConfiguration(id, request);
+      // Use the raw execution method to bypass JsonNode serialization issues
+      await _apiService.executeJobConfigurationRaw(id: id);
 
       // Update execution count locally
       final index = _jobConfigurations.indexWhere((config) => config.id == id);
