@@ -21,7 +21,6 @@ class UsersTable extends StatefulWidget {
     this.isLoading = false,
     this.onRefresh,
     this.onSearchChanged,
-
     this.onRoleChanged,
     super.key,
   });
