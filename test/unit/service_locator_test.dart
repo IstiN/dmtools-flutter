@@ -6,7 +6,7 @@ import 'package:dmtools/core/models/user.dart';
 import 'package:dmtools/core/services/oauth_service.dart';
 import 'package:dmtools/network/generated/api.enums.swagger.dart' as enums;
 import 'package:get_it/get_it.dart';
-import 'package:chopper/chopper.dart';
+
 import 'package:dmtools/network/generated/api.swagger.dart';
 
 void main() {
@@ -334,17 +334,34 @@ class MockApiService implements ApiService {
   @override
   void dispose() {}
 
-  @override
-  // TODO: implement _authProvider
-  AuthProvider? get _authProvider => throw UnimplementedError();
+
 
   @override
-  // TODO: implement _client
-  ChopperClient get _client => throw UnimplementedError();
+  Future<Map<String, dynamic>> getAdminUsers({
+    int page = 0,
+    int size = 50,
+    String? search,
+  }) async {
+    return {
+      'users': [],
+      'pagination': {
+        'currentPage': 0,
+        'totalPages': 0,
+        'totalElements': 0,
+        'size': size,
+        'hasNext': false,
+        'hasPrevious': false,
+      }
+    };
+  }
 
   @override
-  // TODO: implement _api
-  Api get _api => throw UnimplementedError();
+  Future<void> updateUserRole({
+    required String userId,
+    required String role,
+  }) async {
+    // Mock implementation - do nothing
+  }
 }
 
 class MockOAuthService extends OAuthService {
