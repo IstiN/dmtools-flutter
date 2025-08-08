@@ -1,5 +1,9 @@
 // ignore_for_file: type=lint
 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart' as json;
+import 'package:collection/collection.dart';
+import 'dart:convert';
 
 import 'openapi.models.swagger.dart';
 import 'package:chopper/chopper.dart';
@@ -7,7 +11,9 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
+import 'openapi.enums.swagger.dart' as enums;
 export 'openapi.enums.swagger.dart';
 export 'openapi.models.swagger.dart';
 
@@ -295,6 +301,23 @@ abstract class Openapi extends ChopperService {
     @Path('id') required String? id,
   });
 
+  ///Update user role
+  ///@param userId User ID
+  Future<chopper.Response<Object>> apiAdminUsersUserIdRolePut({
+    required String? userId,
+    required String? body,
+  }) {
+    return _apiAdminUsersUserIdRolePut(userId: userId, body: body);
+  }
+
+  ///Update user role
+  ///@param userId User ID
+  @PUT(path: '/api/admin/users/{userId}/role', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminUsersUserIdRolePut({
+    @Path('userId') required String? userId,
+    @Body() required String? body,
+  });
+
   ///
   Future<chopper.Response<String>> shutdownPost() {
     return _shutdownPost();
@@ -305,20 +328,22 @@ abstract class Openapi extends ChopperService {
   Future<chopper.Response<String>> _shutdownPost();
 
   ///
-  ///@param userId
-  Future<chopper.Response<Object>> mcpPost({
-    String? userId,
-    required Object? body,
+  ///@param configId
+  Future<chopper.Response<SseEmitter>> mcpStreamConfigIdPost({
+    required String? configId,
+    required String? body,
   }) {
-    return _mcpPost(userId: userId, body: body);
+    generatedMapping.putIfAbsent(SseEmitter, () => SseEmitter.fromJsonFactory);
+
+    return _mcpStreamConfigIdPost(configId: configId, body: body);
   }
 
   ///
-  ///@param userId
-  @POST(path: '/mcp', optionalBody: true)
-  Future<chopper.Response<Object>> _mcpPost({
-    @Query('userId') String? userId,
-    @Body() required Object? body,
+  ///@param configId
+  @POST(path: '/mcp/stream/{configId}', optionalBody: true)
+  Future<chopper.Response<SseEmitter>> _mcpStreamConfigIdPost({
+    @Path('configId') required String? configId,
+    @Body() required String? body,
   });
 
   ///
@@ -473,12 +498,18 @@ abstract class Openapi extends ChopperService {
 
   ///Webhook endpoint for job execution
   ///@param id Job configuration ID
-  ///@param X-API-Key API key for authentication (future enhancement)
-  Future<chopper.Response<Object>> apiV1JobConfigurationsIdWebhookPost({
+  ///@param X-API-Key API key for authentication
+  Future<chopper.Response<WebhookExecutionResponse>>
+  apiV1JobConfigurationsIdWebhookPost({
     required String? id,
     String? xAPIKey,
-    required ExecuteJobConfigurationRequest? body,
+    required WebhookExecuteRequest? body,
   }) {
+    generatedMapping.putIfAbsent(
+      WebhookExecutionResponse,
+      () => WebhookExecutionResponse.fromJsonFactory,
+    );
+
     return _apiV1JobConfigurationsIdWebhookPost(
       id: id,
       xAPIKey: xAPIKey?.toString(),
@@ -488,12 +519,55 @@ abstract class Openapi extends ChopperService {
 
   ///Webhook endpoint for job execution
   ///@param id Job configuration ID
-  ///@param X-API-Key API key for authentication (future enhancement)
+  ///@param X-API-Key API key for authentication
   @POST(path: '/api/v1/job-configurations/{id}/webhook', optionalBody: true)
-  Future<chopper.Response<Object>> _apiV1JobConfigurationsIdWebhookPost({
+  Future<chopper.Response<WebhookExecutionResponse>>
+  _apiV1JobConfigurationsIdWebhookPost({
     @Path('id') required String? id,
     @Header('X-API-Key') String? xAPIKey,
-    @Body() required ExecuteJobConfigurationRequest? body,
+    @Body() required WebhookExecuteRequest? body,
+  });
+
+  ///List webhook API keys
+  ///@param id Job configuration ID
+  Future<chopper.Response> apiV1JobConfigurationsIdWebhookKeysGet({
+    required String? id,
+  }) {
+    return _apiV1JobConfigurationsIdWebhookKeysGet(id: id);
+  }
+
+  ///List webhook API keys
+  ///@param id Job configuration ID
+  @GET(path: '/api/v1/job-configurations/{id}/webhook-keys')
+  Future<chopper.Response> _apiV1JobConfigurationsIdWebhookKeysGet({
+    @Path('id') required String? id,
+  });
+
+  ///Create webhook API key
+  ///@param id Job configuration ID
+  Future<chopper.Response<CreateWebhookKeyResponse>>
+  apiV1JobConfigurationsIdWebhookKeysPost({
+    required String? id,
+    required CreateWebhookKeyRequest? body,
+  }) {
+    generatedMapping.putIfAbsent(
+      CreateWebhookKeyResponse,
+      () => CreateWebhookKeyResponse.fromJsonFactory,
+    );
+
+    return _apiV1JobConfigurationsIdWebhookKeysPost(id: id, body: body);
+  }
+
+  ///Create webhook API key
+  ///@param id Job configuration ID
+  @POST(
+    path: '/api/v1/job-configurations/{id}/webhook-keys',
+    optionalBody: true,
+  )
+  Future<chopper.Response<CreateWebhookKeyResponse>>
+  _apiV1JobConfigurationsIdWebhookKeysPost({
+    @Path('id') required String? id,
+    @Body() required CreateWebhookKeyRequest? body,
   });
 
   ///Execute a saved job configuration
@@ -931,28 +1005,13 @@ abstract class Openapi extends ChopperService {
   });
 
   ///
-  ///@param userId
-  Future<chopper.Response<Object>> mcpToolsUserIdGet({
-    required String? userId,
-  }) {
-    return _mcpToolsUserIdGet(userId: userId);
+  Future<chopper.Response<Object>> apiAdminCacheClearPost() {
+    return _apiAdminCacheClearPost();
   }
 
   ///
-  ///@param userId
-  @GET(path: '/mcp/tools/{userId}')
-  Future<chopper.Response<Object>> _mcpToolsUserIdGet({
-    @Path('userId') required String? userId,
-  });
-
-  ///
-  Future<chopper.Response<Object>> mcpHealthGet() {
-    return _mcpHealthGet();
-  }
-
-  ///
-  @GET(path: '/mcp/health')
-  Future<chopper.Response<Object>> _mcpHealthGet();
+  @POST(path: '/api/admin/cache/clear', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminCacheClearPost();
 
   ///
   Future<chopper.Response<bool>> isLocalGet() {
@@ -1067,6 +1126,26 @@ abstract class Openapi extends ChopperService {
   ///Get available jobs
   @GET(path: '/api/v1/jobs/available')
   Future<chopper.Response> _apiV1JobsAvailableGet();
+
+  ///Get webhook integration examples
+  ///@param id Job configuration ID
+  Future<chopper.Response<WebhookExamplesDto>>
+  apiV1JobConfigurationsIdWebhookExamplesGet({required String? id}) {
+    generatedMapping.putIfAbsent(
+      WebhookExamplesDto,
+      () => WebhookExamplesDto.fromJsonFactory,
+    );
+
+    return _apiV1JobConfigurationsIdWebhookExamplesGet(id: id);
+  }
+
+  ///Get webhook integration examples
+  ///@param id Job configuration ID
+  @GET(path: '/api/v1/job-configurations/{id}/webhook-examples')
+  Future<chopper.Response<WebhookExamplesDto>>
+  _apiV1JobConfigurationsIdWebhookExamplesGet({
+    @Path('id') required String? id,
+  });
 
   ///
   Future<chopper.Response<String>> apiV1ChatHealthGet() {
@@ -1349,6 +1428,21 @@ abstract class Openapi extends ChopperService {
   @GET(path: '/api/health/_ah/health')
   Future<chopper.Response<String>> _apiHealthAhHealthGet();
 
+  ///
+  ///@param token
+  Future<chopper.Response<String>> apiFilesDownloadTokenGet({
+    required String? token,
+  }) {
+    return _apiFilesDownloadTokenGet(token: token);
+  }
+
+  ///
+  ///@param token
+  @GET(path: '/api/files/download/{token}')
+  Future<chopper.Response<String>> _apiFilesDownloadTokenGet({
+    @Path('token') required String? token,
+  });
+
   ///Get configuration
   Future<chopper.Response<Object>> apiConfigGet() {
     return _apiConfigGet();
@@ -1446,6 +1540,38 @@ abstract class Openapi extends ChopperService {
   @GET(path: '/api/auth/basic-test')
   Future<chopper.Response<String>> _apiAuthBasicTestGet();
 
+  ///Get paginated list of users
+  ///@param page Page number (zero-based)
+  ///@param size Page size (1-100)
+  ///@param search Search term for email or name
+  Future<chopper.Response<Object>> apiAdminUsersGet({
+    int? page,
+    int? size,
+    String? search,
+  }) {
+    return _apiAdminUsersGet(page: page, size: size, search: search);
+  }
+
+  ///Get paginated list of users
+  ///@param page Page number (zero-based)
+  ///@param size Page size (1-100)
+  ///@param search Search term for email or name
+  @GET(path: '/api/admin/users')
+  Future<chopper.Response<Object>> _apiAdminUsersGet({
+    @Query('page') int? page,
+    @Query('size') int? size,
+    @Query('search') String? search,
+  });
+
+  ///
+  Future<chopper.Response<Object>> apiAdminCacheStatsGet() {
+    return _apiAdminCacheStatsGet();
+  }
+
+  ///
+  @GET(path: '/api/admin/cache/stats')
+  Future<chopper.Response<Object>> _apiAdminCacheStatsGet();
+
   ///
   ///@param workspaceId
   ///@param targetUserId
@@ -1468,6 +1594,28 @@ abstract class Openapi extends ChopperService {
   _apiWorkspacesWorkspaceIdUsersTargetUserIdDelete({
     @Path('workspaceId') required String? workspaceId,
     @Path('targetUserId') required String? targetUserId,
+  });
+
+  ///Delete webhook API key
+  ///@param id Job configuration ID
+  ///@param keyId Webhook key ID
+  Future<chopper.Response> apiV1JobConfigurationsIdWebhookKeysKeyIdDelete({
+    required String? id,
+    required String? keyId,
+  }) {
+    return _apiV1JobConfigurationsIdWebhookKeysKeyIdDelete(
+      id: id,
+      keyId: keyId,
+    );
+  }
+
+  ///Delete webhook API key
+  ///@param id Job configuration ID
+  ///@param keyId Webhook key ID
+  @DELETE(path: '/api/v1/job-configurations/{id}/webhook-keys/{keyId}')
+  Future<chopper.Response> _apiV1JobConfigurationsIdWebhookKeysKeyIdDelete({
+    @Path('id') required String? id,
+    @Path('keyId') required String? keyId,
   });
 
   ///Remove from workspace

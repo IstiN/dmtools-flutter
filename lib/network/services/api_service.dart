@@ -1,5 +1,6 @@
 import 'package:chopper/chopper.dart';
 import '../generated/api.swagger.dart';
+import '../generated/latest_openapi.swagger.dart' as latest;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
@@ -99,6 +100,7 @@ class _MockData {
 class ApiService {
   final ChopperClient _client;
   late final Api _api;
+  late final latest.LatestOpenapi _latestApi;
   final AuthProvider? _authProvider;
 
   ApiService({
@@ -112,6 +114,7 @@ class ApiService {
           enableLogging: enableLogging,
         ) {
     _api = _client.getService<Api>();
+    _latestApi = _client.getService<latest.LatestOpenapi>();
   }
 
   /// Get the underlying Api client for direct API access
@@ -298,6 +301,55 @@ class ApiService {
         return response.body!;
       } else {
         throw ApiException('Failed to create default workspace', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  // --- Admin User Management Methods ---
+
+  /// Get paginated list of users (Admin only)
+  Future<Map<String, dynamic>> getAdminUsers({
+    int page = 0,
+    int size = 50,
+    String? search,
+  }) async {
+    try {
+      final response = await _latestApi.apiAdminUsersGet(
+        page: page,
+        size: size,
+        search: search,
+      );
+      if (response.isSuccessful && response.body != null) {
+        // Response is Object, so we need to parse it
+        if (response.body is Map<String, dynamic>) {
+          return response.body as Map<String, dynamic>;
+        } else if (response.body is String) {
+          return jsonDecode(response.body as String) as Map<String, dynamic>;
+        } else {
+          throw ApiException('Unexpected response format from /api/admin/users: ${response.body.runtimeType}');
+        }
+      } else {
+        throw ApiException('Failed to get admin users', response.statusCode);
+      }
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  /// Update user role (Admin only)
+  Future<void> updateUserRole({
+    required String userId,
+    required String role,
+  }) async {
+    try {
+      final response = await _latestApi.apiAdminUsersUserIdRolePut(
+        userId: userId,
+        body: role,
+      );
+      if (!response.isSuccessful) {
+        throw ApiException('Failed to update user role', response.statusCode);
       }
     } catch (e) {
       throw _handleError(e);
