@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
+import '../../core/pages/authenticated_page.dart';
 import '../../core/services/users_service.dart';
+import '../../core/services/workspace_service.dart';
+import '../../core/models/workspace.dart';
 import '../../network/services/api_service.dart';
 import '../../network/generated/api.models.swagger.dart';
+import '../../network/generated/api.enums.swagger.dart' as enums;
 import '../../widgets/users_table.dart';
 
 class UsersPage extends StatefulWidget {
@@ -14,82 +18,157 @@ class UsersPage extends StatefulWidget {
   State<UsersPage> createState() => _UsersPageState();
 }
 
-class _UsersPageState extends State<UsersPage> {
+class _UsersPageState extends AuthenticatedPage<UsersPage> {
   late UsersService _usersService;
+  late WorkspaceService _workspaceService;
   List<WorkspaceUserDto> _allUsers = [];
-  bool _isLoading = false;
-  String? _error;
+  String? _currentWorkspaceId;
+  enums.WorkspaceDtoCurrentUserRole? _currentUserRole;
   String _searchQuery = '';
 
   @override
-  void initState() {
-    super.initState();
-    final apiService = context.read<ApiService>();
-    _usersService = UsersService(apiService);
-    _loadUsers();
-  }
+  String get loadingMessage => 'Loading user management...';
 
-  Future<void> _loadUsers() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+  @override
+  String get errorTitle => 'Access Denied';
+
+  @override
+  String get emptyTitle => 'No Users Found';
+
+  @override
+  String get emptyMessage => 'This workspace has no users yet.';
+
+  @override
+  IconData get emptyIcon => Icons.people_outline;
+
+  @override
+  Future<void> loadAuthenticatedData() async {
+    // print('🔐 UsersPage: Loading authenticated data...');
 
     try {
-      // For demo purposes, we'll create some mock users since API might not have workspace data
-      // In production, this would get real workspace ID from context
-      _usersService.setCurrentWorkspace('demo-workspace-id');
-      
-      try {
-        final users = await _usersService.getWorkspaceUsers();
-        setState(() {
-          _allUsers = users;
-          _isLoading = false;
-        });
-      } catch (apiError) {
-        // If API fails, show mock data for demo
-        setState(() {
-          _allUsers = _createMockUsers();
-          _isLoading = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _error = e.toString();
-        _isLoading = false;
+      // Initialize services
+      final apiService = context.read<ApiService>();
+      _usersService = UsersService(apiService);
+      _workspaceService = WorkspaceService(apiService: apiService);
+
+      // Load workspaces and check admin access
+      final workspaces = await authService.execute(() async {
+        await _workspaceService.loadWorkspaces();
+        return _workspaceService.workspaces;
       });
+
+      if (workspaces.isEmpty) {
+        setError('No workspace found. Please create a workspace first.');
+        return;
+      }
+
+      // Use the first workspace (in real app this would be selected workspace)
+      final currentWorkspace = workspaces.first;
+      _currentWorkspaceId = currentWorkspace.id;
+      _currentUserRole = _convertLocalRoleToApi(currentWorkspace.currentUserRole);
+
+      // Check if user has admin role
+      if (_currentUserRole != enums.WorkspaceDtoCurrentUserRole.admin) {
+        setError('Admin access required. You do not have permission to manage users.');
+        return;
+      }
+
+      // Load workspace users
+      final users = await authService.execute(() async {
+        _usersService.setCurrentWorkspace(_currentWorkspaceId!);
+        return await _usersService.getWorkspaceUsers();
+      });
+
+      setState(() {
+        _allUsers = users;
+      });
+
+      if (users.isEmpty) {
+        setEmpty();
+      } else {
+        setLoaded();
+      }
+
+      // print('🔐 UsersPage: Loaded ${users.length} users for workspace $_currentWorkspaceId');
+    } catch (e) {
+      // print('🔐 UsersPage: Error loading data: $e');
+      setError('Failed to load users: $e');
     }
   }
 
-  List<WorkspaceUserDto> _createMockUsers() {
-    return [
-      const WorkspaceUserDto(
-        id: '1',
-        email: 'admin@dmtools.com',
-      ),
-      const WorkspaceUserDto(
-        id: '2', 
-        email: 'user1@dmtools.com',
-      ),
-      const WorkspaceUserDto(
-        id: '3',
-        email: 'user2@dmtools.com', 
-      ),
-      const WorkspaceUserDto(
-        id: '4',
-        email: 'manager@dmtools.com',
-      ),
-      const WorkspaceUserDto(
-        id: '5',
-        email: 'developer@dmtools.com',
-      ),
-    ];
+  /// Convert local WorkspaceRole to API enum
+  enums.WorkspaceDtoCurrentUserRole _convertLocalRoleToApi(WorkspaceRole localRole) {
+    return switch (localRole) {
+      WorkspaceRole.admin => enums.WorkspaceDtoCurrentUserRole.admin,
+      WorkspaceRole.user => enums.WorkspaceDtoCurrentUserRole.user,
+    };
+  }
+
+  Future<void> _changeUserRole(String userId, enums.WorkspaceUserDtoRole newRole) async {
+    try {
+      // Find the user in our list
+      final userIndex = _allUsers.indexWhere((user) => user.id == userId);
+      if (userIndex == -1) {
+        throw Exception('User not found');
+      }
+
+      final oldUser = _allUsers[userIndex];
+
+      // Update the user role locally for immediate UI feedback
+      setState(() {
+        _allUsers[userIndex] = WorkspaceUserDto(
+          id: oldUser.id,
+          email: oldUser.email,
+          role: newRole,
+        );
+      });
+
+      // Make API call to update role
+      await authService.execute(() async {
+        // For role change, we need to remove and re-add the user with new role
+        // This is based on the current API structure
+        final shareRole = newRole == enums.WorkspaceUserDtoRole.admin
+            ? enums.ShareWorkspaceRequestRole.admin
+            : enums.ShareWorkspaceRequestRole.user;
+
+        await _usersService.addUserToWorkspace(
+          userEmail: oldUser.email!,
+          role: shareRole,
+        );
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('User role changed to ${UsersService.roleToDisplayString(newRole)}'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      // Revert the UI change on error
+      await _reloadUsers();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to change user role: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _removeUser(String userId) async {
     try {
-      await _usersService.removeUserFromWorkspace(userId);
-      await _loadUsers(); // Reload users after removal
+      await authService.execute(() async {
+        await _usersService.removeUserFromWorkspace(userId);
+      });
+
+      // Reload users after removal
+      await _reloadUsers();
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -110,73 +189,23 @@ class _UsersPageState extends State<UsersPage> {
     }
   }
 
-  Future<void> _addUser(String email, String role) async {
+  Future<void> _reloadUsers() async {
     try {
-      final apiRole = UsersService.displayStringToShareRole(role);
-      await _usersService.addUserToWorkspace(
-        userEmail: email,
-        role: apiRole,
-      );
-      await _loadUsers(); // Reload users after addition
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('User added successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
+      final users = await authService.execute(() async {
+        return await _usersService.getWorkspaceUsers();
+      });
+
+      setState(() {
+        _allUsers = users;
+      });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to add user: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // print('Error reloading users: $e');
     }
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget buildAuthenticatedContent(BuildContext context) {
     final colors = context.colorsListening;
-
-    if (_error != null) {
-      return DecoratedBox(
-        decoration: BoxDecoration(
-          color: colors.cardBg,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: colors.borderColor),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
-              const SizedBox(height: 16),
-              Text(
-                'Error Loading Users',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: colors.textColor),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                _error!,
-                style: TextStyle(color: colors.textSecondary),
-              ),
-              const SizedBox(height: 16),
-              PrimaryButton(
-                text: 'Retry',
-                onPressed: _loadUsers,
-                size: ButtonSize.small,
-              ),
-            ],
-          ),
-        ),
-      );
-    }
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -193,77 +222,26 @@ class _UsersPageState extends State<UsersPage> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textColor),
               ),
               const Spacer(),
-              PrimaryButton(
-                text: 'Add User',
-                onPressed: () => _showAddUserDialog(),
-                size: ButtonSize.small,
-                icon: Icons.person_add,
+              Text(
+                '${_allUsers.length} users',
+                style: TextStyle(fontSize: 16, color: colors.textSecondary),
               ),
             ],
           ),
           const SizedBox(height: 24),
-          
-          // Users Table
+
+          // Users Table with Role Management
           Expanded(
             child: UsersTable(
               users: _allUsers,
               searchQuery: _searchQuery,
-              isLoading: _isLoading,
-              onRefresh: _loadUsers,
+              onRefresh: _reloadUsers,
               onSearchChanged: (query) => setState(() {
                 _searchQuery = query;
               }),
               onRemoveUser: _removeUser,
+              onRoleChanged: _changeUserRole,
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showAddUserDialog() {
-    final emailController = TextEditingController();
-    String selectedRole = 'User';
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Add User to Workspace'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email Address',
-                hintText: 'user@example.com',
-              ),
-            ),
-            const SizedBox(height: 16),
-            DropdownButtonFormField<String>(
-              value: selectedRole,
-              decoration: const InputDecoration(labelText: 'Role'),
-              items: const [
-                DropdownMenuItem(value: 'User', child: Text('User')),
-                DropdownMenuItem(value: 'Admin', child: Text('Admin')),
-              ],
-              onChanged: (value) => selectedRole = value ?? 'User',
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              if (emailController.text.isNotEmpty) {
-                Navigator.of(context).pop();
-                _addUser(emailController.text, selectedRole);
-              }
-            },
-            child: const Text('Add User'),
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 import '../network/generated/api.models.swagger.dart';
+import '../network/generated/api.enums.swagger.dart' as enums;
 import '../core/services/users_service.dart';
 
 /// A simplified users table for the main app
@@ -12,6 +13,7 @@ class UsersTable extends StatefulWidget {
   final VoidCallback? onRefresh;
   final Function(String)? onSearchChanged;
   final Function(String)? onRemoveUser;
+  final Function(String, enums.WorkspaceUserDtoRole)? onRoleChanged;
 
   const UsersTable({
     required this.users,
@@ -20,6 +22,7 @@ class UsersTable extends StatefulWidget {
     this.onRefresh,
     this.onSearchChanged,
     this.onRemoveUser,
+    this.onRoleChanged,
     super.key,
   });
 
@@ -250,73 +253,121 @@ class _UsersTableState extends State<UsersTable> {
                       child: SizedBox(
                         height: 56,
                         child: Row(
-                        children: [
-                          // Email
-                          Expanded(
-                            flex: 5,
-                            child: Text(
-                              user.email ?? '',
-                              style: TextStyle(
-                                color: colors.textColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                          children: [
+                            // Email
+                            Expanded(
+                              flex: 5,
+                              child: Text(
+                                user.email ?? '',
+                                style: TextStyle(
+                                  color: colors.textColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          // User ID
-                          Expanded(
-                            flex: 4,
-                            child: Text(
-                              user.id ?? '',
-                              style: TextStyle(
-                                color: colors.textSecondary,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
+                            // User ID
+                            Expanded(
+                              flex: 4,
+                              child: Text(
+                                user.id ?? '',
+                                style: TextStyle(
+                                  color: colors.textSecondary,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          // Role
-                          Expanded(
-                            flex: 3,
-                            child: DecoratedBox(
-                              decoration: BoxDecoration(
-                                color: UsersService.roleToDisplayString(user.role) == 'Admin'
-                                    ? colors.accentColor.withValues(alpha: 0.1)
-                                    : colors.textMuted.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                child: Text(
-                                  UsersService.roleToDisplayString(user.role),
-                                  style: TextStyle(
-                                    color: UsersService.roleToDisplayString(user.role) == 'Admin'
-                                        ? colors.accentColor
-                                        : colors.textMuted,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
+                            // Role
+                            Expanded(
+                              flex: 3,
+                              child: widget.onRoleChanged != null
+                                  ? SizedBox(
+                                      height: 32,
+                                      child: DecoratedBox(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: colors.borderColor.withValues(
+                                              alpha: context.isDarkMode ? 0.3 : 0.6,
+                                            ),
+                                          ),
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                                          child: DropdownButtonHideUnderline(
+                                            child: DropdownButton<enums.WorkspaceUserDtoRole>(
+                                              value: user.role ?? enums.WorkspaceUserDtoRole.user,
+                                              isDense: true,
+                                              style: TextStyle(
+                                                color: colors.textColor,
+                                                fontSize: 13,
+                                              ),
+                                              dropdownColor: colors.cardBg,
+                                              icon: Icon(
+                                                Icons.expand_more,
+                                                color: colors.textMuted,
+                                                size: 16,
+                                              ),
+                                              items: const [
+                                                DropdownMenuItem(
+                                                  value: enums.WorkspaceUserDtoRole.user,
+                                                  child: Text('User'),
+                                                ),
+                                                DropdownMenuItem(
+                                                  value: enums.WorkspaceUserDtoRole.admin,
+                                                  child: Text('Admin'),
+                                                ),
+                                              ],
+                                              onChanged: (newRole) {
+                                                if (newRole != null && newRole != user.role) {
+                                                  widget.onRoleChanged?.call(user.id ?? '', newRole);
+                                                }
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  : DecoratedBox(
+                                      decoration: BoxDecoration(
+                                        color: UsersService.roleToDisplayString(user.role) == 'Admin'
+                                            ? colors.accentColor.withValues(alpha: 0.1)
+                                            : colors.textMuted.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                        child: Text(
+                                          UsersService.roleToDisplayString(user.role),
+                                          style: TextStyle(
+                                            color: UsersService.roleToDisplayString(user.role) == 'Admin'
+                                                ? colors.accentColor
+                                                : colors.textMuted,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                            // Actions
+                            Expanded(
+                              flex: 3,
+                              child: Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () => widget.onRemoveUser?.call(user.id ?? ''),
+                                    icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
+                                    tooltip: 'Remove user',
                                   ),
-                                  textAlign: TextAlign.center,
-                                ),
+                                ],
                               ),
                             ),
-                          ),
-                          // Actions
-                          Expanded(
-                            flex: 3,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () => widget.onRemoveUser?.call(user.id ?? ''),
-                                  icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
-                                  tooltip: 'Remove user',
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          ],
                         ),
                       ),
                     ),
