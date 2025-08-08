@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../responsive/responsive_breakpoints.dart';
-import '../atoms/buttons/app_buttons.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 class ChatMessage {
   final String message;
   final bool isUser;
   final DateTime timestamp;
+  final bool enableMarkdown;
 
-  ChatMessage({
-    required this.message,
-    required this.isUser,
-    DateTime? timestamp,
-  }) : timestamp = timestamp ?? DateTime.now();
+  ChatMessage({required this.message, required this.isUser, DateTime? timestamp, this.enableMarkdown = true})
+    : timestamp = timestamp ?? DateTime.now();
 }
 
 /// Interactive chat interface widget with message display and input functionality.
@@ -107,13 +104,7 @@ class ChatInterfaceState extends State<ChatInterface> {
       decoration: BoxDecoration(
         color: colors.cardBg,
         borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 2))],
       ),
       child: Column(
         children: [
@@ -123,25 +114,15 @@ class ChatInterfaceState extends State<ChatInterface> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: colors.accentColor,
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(8),
-                  topRight: Radius.circular(8),
-                ),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), topRight: Radius.circular(8)),
               ),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.chat,
-                    color: Colors.white,
-                  ),
+                  const Icon(Icons.chat, color: Colors.white),
                   const SizedBox(width: 8),
                   Text(
                     widget.title,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                 ],
               ),
@@ -165,17 +146,12 @@ class ChatInterfaceState extends State<ChatInterface> {
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: colors.cardBg,
-              border: Border(
-                top: BorderSide(color: colors.borderColor),
-              ),
+              border: Border(top: BorderSide(color: colors.borderColor)),
             ),
             child: Row(
               children: [
                 IconButton(
-                  icon: Icon(
-                    Icons.attach_file,
-                    color: colors.textSecondary,
-                  ),
+                  icon: Icon(Icons.attach_file, color: colors.textSecondary),
                   onPressed: widget.onAttachmentPressed,
                 ),
                 Expanded(
@@ -229,15 +205,9 @@ class ChatInterfaceState extends State<ChatInterface> {
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: message.isUser ? colors.accentColor : colors.bgColor,
+          color: message.isUser ? colors.secondaryColor : colors.bgColor,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 2))],
         ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * ResponsiveBreakpoints.chatMaxWidthBreakpoint,
@@ -245,12 +215,14 @@ class ChatInterfaceState extends State<ChatInterface> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              message.message,
-              style: TextStyle(
-                color: message.isUser ? Colors.white : colors.textColor,
-              ),
-            ),
+            message.enableMarkdown
+                ? MarkdownRenderer(
+                    data: message.message,
+                    shrinkWrap: true,
+                    selectable: false,
+                    styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
+                  )
+                : Text(message.message, style: TextStyle(color: message.isUser ? Colors.white : colors.textColor)),
             const SizedBox(height: 4),
             Text(
               _formatTime(message.timestamp),
@@ -267,5 +239,38 @@ class ChatInterfaceState extends State<ChatInterface> {
 
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  MarkdownStyleSheet _buildMessageMarkdownStyleSheet(BuildContext context, bool isUser, dynamic colors) {
+    final theme = Theme.of(context);
+    final textColor = isUser ? Colors.white : colors.textColor;
+
+    return MarkdownStyleSheet.fromTheme(theme).copyWith(
+      p: theme.textTheme.bodyLarge?.copyWith(color: textColor),
+      h1: theme.textTheme.headlineLarge?.copyWith(color: textColor, fontWeight: FontWeight.bold),
+      h2: theme.textTheme.headlineMedium?.copyWith(color: textColor, fontWeight: FontWeight.bold),
+      h3: theme.textTheme.headlineSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      h4: theme.textTheme.titleLarge?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      h5: theme.textTheme.titleMedium?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      h6: theme.textTheme.titleSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      code: theme.textTheme.bodyMedium?.copyWith(
+        color: textColor,
+        fontFamily: 'monospace',
+        backgroundColor: Colors.transparent,
+      ),
+      codeblockDecoration: BoxDecoration(
+        color: isUser ? Colors.black.withValues(alpha: 0.2) : colors.inputBg,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      blockquote: theme.textTheme.bodyLarge?.copyWith(
+        color: textColor.withValues(alpha: 0.8),
+        fontStyle: FontStyle.italic,
+      ),
+      listBullet: theme.textTheme.bodyLarge?.copyWith(color: textColor),
+      a: theme.textTheme.bodyLarge?.copyWith(
+        color: isUser ? Colors.white : colors.accentColor,
+        decoration: TextDecoration.underline,
+      ),
+    );
   }
 }
