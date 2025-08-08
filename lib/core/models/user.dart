@@ -16,6 +16,7 @@ class UserDto {
     this.authenticated,
     this.provider,
     this.pictureUrl,
+    this.role,
   });
 
   factory UserDto.fromJson(Map<String, dynamic> json) => _$UserDtoFromJson(json);
@@ -56,6 +57,9 @@ class UserDto {
   @JsonKey(name: 'pictureUrl', includeIfNull: false)
   final String? pictureUrl;
 
+  @JsonKey(name: 'role', includeIfNull: false)
+  final String? role;
+
   static const fromJsonFactory = _$UserDtoFromJson;
 
   @override
@@ -90,6 +94,7 @@ class UserDto {
     bool? authenticated,
     String? provider,
     String? pictureUrl,
+    String? role,
   }) {
     return UserDto(
       id: id ?? this.id,
@@ -103,6 +108,7 @@ class UserDto {
       authenticated: authenticated ?? this.authenticated,
       provider: provider ?? this.provider,
       pictureUrl: pictureUrl ?? this.pictureUrl,
+      role: role ?? this.role,
     );
   }
 }

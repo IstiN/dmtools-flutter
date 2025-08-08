@@ -5,6 +5,7 @@ import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import '../core/routing/app_router.dart' as app_router;
 import '../providers/auth_provider.dart';
 
+
 class HomeScreen extends StatefulWidget {
   final Widget? child;
 
@@ -185,7 +186,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Convert app router NavigationItem to styleguide NavigationItem
   List<NavigationItem> _convertNavigationItems(List<app_router.NavigationItem> items) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isAdmin = authProvider.currentUser?.role == 'ADMIN';
+    
     return items
+        .where((item) {
+          // Show Users menu only for admin users
+          if (item.route == '/users') {
+            return isAdmin;
+          }
+          return true; // Show all other items
+        })
         .map((item) => NavigationItem(
               icon: item.icon,
               label: item.label,

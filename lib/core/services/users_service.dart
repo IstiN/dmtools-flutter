@@ -26,12 +26,11 @@ class AdminUsersResponse {
     // Handle both structures: Spring Boot style and actual API style
     if (json.containsKey('users') && json.containsKey('pagination')) {
       // Actual API structure: {users: [...], pagination: {...}}
-      final users = (json['users'] as List? ?? [])
-          .map((user) => AdminUserDto.fromJson(user as Map<String, dynamic>))
-          .toList();
-      
+      final users =
+          (json['users'] as List? ?? []).map((user) => AdminUserDto.fromJson(user as Map<String, dynamic>)).toList();
+
       final pagination = json['pagination'] as Map<String, dynamic>? ?? {};
-      
+
       return AdminUsersResponse(
         content: users,
         page: pagination['currentPage'] ?? 0,

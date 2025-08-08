@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
+
 import '../../screens/home_screen.dart';
 import '../../screens/loading_screen.dart';
 import '../../screens/unauthenticated_home_screen.dart';
@@ -88,6 +89,16 @@ class AppRouter {
         if (!isAuthenticated && _isProtectedRoute(currentPath)) {
           if (kDebugMode) print('🚫 Redirecting to unauthenticated: not authenticated on protected route');
           return '/unauthenticated';
+        }
+
+        // Check for admin-only routes
+        if (isAuthenticated && _isAdminOnlyRoute(currentPath)) {
+          final user = authProvider.currentUser;
+          final isAdmin = user?.role == 'ADMIN';
+          if (!isAdmin) {
+            if (kDebugMode) print('🚫 Redirecting to ai-jobs: non-admin user trying to access admin route');
+            return '/ai-jobs';
+          }
         }
 
         // If authenticated and on unauthenticated page, redirect to ai-jobs (first available page)
@@ -279,6 +290,14 @@ class AppRouter {
       '/mcp',
     ];
     return protectedRoutes.contains(path);
+  }
+
+  // Helper method to check if a route requires admin role
+  static bool _isAdminOnlyRoute(String path) {
+    const adminOnlyRoutes = [
+      '/users',
+    ];
+    return adminOnlyRoutes.contains(path);
   }
 
   // Helper method to create a fade transition page
