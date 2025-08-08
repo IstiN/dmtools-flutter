@@ -82,13 +82,15 @@ class _UsersTableState extends State<UsersTable> {
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: colors.cardBg,
-        border: Border.all(color: colors.borderColor.withValues(alpha: 0.2)),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
+    return SizedBox(
+      height: 600, // Fixed height to prevent overflow
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: colors.cardBg,
+          border: Border.all(color: colors.borderColor.withValues(alpha: 0.2)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Search Bar
@@ -413,6 +415,7 @@ class _UsersTableState extends State<UsersTable> {
               ),
             ),
         ],
+        ),
       ),
     );
   }
