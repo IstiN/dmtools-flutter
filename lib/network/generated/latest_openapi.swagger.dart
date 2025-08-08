@@ -5,7 +5,7 @@ import 'package:json_annotation/json_annotation.dart' as json;
 import 'package:collection/collection.dart';
 import 'dart:convert';
 
-import 'api.models.swagger.dart';
+import 'latest_openapi.models.swagger.dart';
 import 'package:chopper/chopper.dart';
 
 import 'client_mapping.dart';
@@ -13,19 +13,19 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
-import 'api.enums.swagger.dart' as enums;
-export 'api.enums.swagger.dart';
-export 'api.models.swagger.dart';
+import 'latest_openapi.enums.swagger.dart' as enums;
+export 'latest_openapi.enums.swagger.dart';
+export 'latest_openapi.models.swagger.dart';
 
-part 'api.swagger.chopper.dart';
+part 'latest_openapi.swagger.chopper.dart';
 
 // **************************************************************************
 // SwaggerChopperGenerator
 // **************************************************************************
 
 @ChopperApi()
-abstract class Api extends ChopperService {
-  static Api create({
+abstract class LatestOpenapi extends ChopperService {
+  static LatestOpenapi create({
     ChopperClient? client,
     http.Client? httpClient,
     Authenticator? authenticator,
@@ -35,11 +35,11 @@ abstract class Api extends ChopperService {
     List<Interceptor>? interceptors,
   }) {
     if (client != null) {
-      return _$Api(client);
+      return _$LatestOpenapi(client);
     }
 
     final newClient = ChopperClient(
-      services: [_$Api()],
+      services: [_$LatestOpenapi()],
       converter: converter ?? $JsonSerializableConverter(),
       interceptors: interceptors ?? [],
       client: httpClient,
@@ -47,7 +47,7 @@ abstract class Api extends ChopperService {
       errorConverter: errorConverter,
       baseUrl: baseUrl ?? Uri.parse('http://'),
     );
-    return _$Api(newClient);
+    return _$LatestOpenapi(newClient);
   }
 
   ///Get job configuration by ID
@@ -299,6 +299,23 @@ abstract class Api extends ChopperService {
   @PUT(path: '/api/integrations/{id}/disable', optionalBody: true)
   Future<chopper.Response<IntegrationDto>> _apiIntegrationsIdDisablePut({
     @Path('id') required String? id,
+  });
+
+  ///Update user role
+  ///@param userId User ID
+  Future<chopper.Response<Object>> apiAdminUsersUserIdRolePut({
+    required String? userId,
+    required String? body,
+  }) {
+    return _apiAdminUsersUserIdRolePut(userId: userId, body: body);
+  }
+
+  ///Update user role
+  ///@param userId User ID
+  @PUT(path: '/api/admin/users/{userId}/role', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminUsersUserIdRolePut({
+    @Path('userId') required String? userId,
+    @Body() required String? body,
   });
 
   ///
@@ -988,6 +1005,15 @@ abstract class Api extends ChopperService {
   });
 
   ///
+  Future<chopper.Response<Object>> apiAdminCacheClearPost() {
+    return _apiAdminCacheClearPost();
+  }
+
+  ///
+  @POST(path: '/api/admin/cache/clear', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminCacheClearPost();
+
+  ///
   Future<chopper.Response<bool>> isLocalGet() {
     return _isLocalGet();
   }
@@ -1513,6 +1539,38 @@ abstract class Api extends ChopperService {
   ///
   @GET(path: '/api/auth/basic-test')
   Future<chopper.Response<String>> _apiAuthBasicTestGet();
+
+  ///Get paginated list of users
+  ///@param page Page number (zero-based)
+  ///@param size Page size (1-100)
+  ///@param search Search term for email or name
+  Future<chopper.Response<Object>> apiAdminUsersGet({
+    int? page,
+    int? size,
+    String? search,
+  }) {
+    return _apiAdminUsersGet(page: page, size: size, search: search);
+  }
+
+  ///Get paginated list of users
+  ///@param page Page number (zero-based)
+  ///@param size Page size (1-100)
+  ///@param search Search term for email or name
+  @GET(path: '/api/admin/users')
+  Future<chopper.Response<Object>> _apiAdminUsersGet({
+    @Query('page') int? page,
+    @Query('size') int? size,
+    @Query('search') String? search,
+  });
+
+  ///
+  Future<chopper.Response<Object>> apiAdminCacheStatsGet() {
+    return _apiAdminCacheStatsGet();
+  }
+
+  ///
+  @GET(path: '/api/admin/cache/stats')
+  Future<chopper.Response<Object>> _apiAdminCacheStatsGet();
 
   ///
   ///@param workspaceId

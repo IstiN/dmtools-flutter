@@ -4,8 +4,6 @@ import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 import '../../core/pages/authenticated_page.dart';
 import '../../core/services/users_service.dart';
-import '../../core/services/workspace_service.dart';
-import '../../core/models/workspace.dart';
 import '../../network/services/api_service.dart';
 import '../../network/generated/api.models.swagger.dart';
 import '../../network/generated/api.enums.swagger.dart' as enums;
@@ -20,10 +18,7 @@ class UsersPage extends StatefulWidget {
 
 class _UsersPageState extends AuthenticatedPage<UsersPage> {
   late UsersService _usersService;
-  late WorkspaceService _workspaceService;
   List<WorkspaceUserDto> _allUsers = [];
-  String? _currentWorkspaceId;
-  enums.WorkspaceDtoCurrentUserRole? _currentUserRole;
   String _searchQuery = '';
 
   @override
@@ -49,35 +44,21 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
       // Initialize services
       final apiService = context.read<ApiService>();
       _usersService = UsersService(apiService);
-      _workspaceService = WorkspaceService(apiService: apiService);
 
-      // Load workspaces and check admin access
-      final workspaces = await authService.execute(() async {
-        await _workspaceService.loadWorkspaces();
-        return _workspaceService.workspaces;
+      // Check current user role from auth provider to ensure admin access
+      // In a real app, this would come from the current user context
+      // For now, we'll try to call the admin API and handle 403 errors
+
+      // Load admin users directly from new API
+      final adminUsersResponse = await authService.execute(() async {
+        return await _usersService.getAdminUsers(
+          size: 100, // Load more users for now
+          search: _searchQuery.isNotEmpty ? _searchQuery : null,
+        );
       });
 
-      if (workspaces.isEmpty) {
-        setError('No workspace found. Please create a workspace first.');
-        return;
-      }
-
-      // Use the first workspace (in real app this would be selected workspace)
-      final currentWorkspace = workspaces.first;
-      _currentWorkspaceId = currentWorkspace.id;
-      _currentUserRole = _convertLocalRoleToApi(currentWorkspace.currentUserRole);
-
-      // Check if user has admin role
-      if (_currentUserRole != enums.WorkspaceDtoCurrentUserRole.admin) {
-        setError('Admin access required. You do not have permission to manage users.');
-        return;
-      }
-
-      // Load workspace users
-      final users = await authService.execute(() async {
-        _usersService.setCurrentWorkspace(_currentWorkspaceId!);
-        return await _usersService.getWorkspaceUsers();
-      });
+      // Convert AdminUserDto to WorkspaceUserDto for compatibility
+      final users = adminUsersResponse.content.map((adminUser) => adminUser.toWorkspaceUserDto()).toList();
 
       setState(() {
         _allUsers = users;
@@ -89,19 +70,15 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
         setLoaded();
       }
 
-      // print('🔐 UsersPage: Loaded ${users.length} users for workspace $_currentWorkspaceId');
+      // print('🔐 UsersPage: Loaded ${users.length} admin users');
     } catch (e) {
       // print('🔐 UsersPage: Error loading data: $e');
-      setError('Failed to load users: $e');
+      if (e.toString().contains('403') || e.toString().contains('Forbidden')) {
+        setError('Admin access required. You do not have permission to manage users.');
+      } else {
+        setError('Failed to load users: $e');
+      }
     }
-  }
-
-  /// Convert local WorkspaceRole to API enum
-  enums.WorkspaceDtoCurrentUserRole _convertLocalRoleToApi(WorkspaceRole localRole) {
-    return switch (localRole) {
-      WorkspaceRole.admin => enums.WorkspaceDtoCurrentUserRole.admin,
-      WorkspaceRole.user => enums.WorkspaceDtoCurrentUserRole.user,
-    };
   }
 
   Future<void> _changeUserRole(String userId, enums.WorkspaceUserDtoRole newRole) async {
@@ -123,17 +100,11 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
         );
       });
 
-      // Make API call to update role
+      // Make API call to update role using new admin endpoint
       await authService.execute(() async {
-        // For role change, we need to remove and re-add the user with new role
-        // This is based on the current API structure
-        final shareRole = newRole == enums.WorkspaceUserDtoRole.admin
-            ? enums.ShareWorkspaceRequestRole.admin
-            : enums.ShareWorkspaceRequestRole.user;
-
-        await _usersService.addUserToWorkspace(
-          userEmail: oldUser.email!,
-          role: shareRole,
+        await _usersService.updateUserRole(
+          userId: userId,
+          role: newRole,
         );
       });
 
@@ -161,39 +132,26 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
   }
 
   Future<void> _removeUser(String userId) async {
-    try {
-      await authService.execute(() async {
-        await _usersService.removeUserFromWorkspace(userId);
-      });
-
-      // Reload users after removal
-      await _reloadUsers();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('User removed successfully'),
-            backgroundColor: Colors.green,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to remove user: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    }
+    // Admin user removal is not implemented in the new API
+    // This would require a different endpoint
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('User removal is not available for admin users'),
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
 
   Future<void> _reloadUsers() async {
     try {
-      final users = await authService.execute(() async {
-        return await _usersService.getWorkspaceUsers();
+      final adminUsersResponse = await authService.execute(() async {
+        return await _usersService.getAdminUsers(
+          size: 100,
+          search: _searchQuery.isNotEmpty ? _searchQuery : null,
+        );
       });
+
+      final users = adminUsersResponse.content.map((adminUser) => adminUser.toWorkspaceUserDto()).toList();
 
       setState(() {
         _allUsers = users;

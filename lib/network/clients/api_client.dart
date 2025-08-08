@@ -2,6 +2,7 @@ import 'package:chopper/chopper.dart';
 import 'package:flutter/foundation.dart';
 
 import '../generated/api.swagger.dart';
+import '../generated/latest_openapi.swagger.dart' as latest;
 import '../interceptors/auth_interceptor.dart';
 import '../interceptors/logging_interceptor.dart';
 import '../../providers/auth_provider.dart';
@@ -31,6 +32,7 @@ class ApiClientConfig {
       baseUrl: Uri.parse(baseUrl ?? AppConfig.baseUrl),
       services: [
         Api.create(),
+        latest.LatestOpenapi.create(),
       ],
       converter: $JsonSerializableConverter(),
       interceptors: interceptors,
