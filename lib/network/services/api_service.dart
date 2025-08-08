@@ -362,7 +362,7 @@ class ApiService {
     try {
       final response = await _latestApi.apiAdminUsersUserIdRolePut(
         userId: userId,
-        body: role,
+        body: jsonEncode({'role': role}), // Send as JSON-encoded object with 'role' field
       );
       if (!response.isSuccessful) {
         throw ApiException('Failed to update user role', response.statusCode);
