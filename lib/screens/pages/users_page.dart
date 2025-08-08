@@ -142,16 +142,7 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
     }
   }
 
-  Future<void> _removeUser(String userId) async {
-    // Admin user removal is not implemented in the new API
-    // This would require a different endpoint
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('User removal is not available for admin users'),
-        backgroundColor: Colors.orange,
-      ),
-    );
-  }
+
 
   Future<void> _reloadUsers() async {
     try {
@@ -199,20 +190,19 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Users Table with Role Management
+                Expanded(
+                  child: UsersTable(
+                    users: _allUsers,
+                    searchQuery: _searchQuery,
+                    onRefresh: _reloadUsers,
+                    onSearchChanged: (query) => setState(() {
+                      _searchQuery = query;
+                    }),
 
-          // Users Table with Role Management
-          Expanded(
-            child: UsersTable(
-              users: _allUsers,
-              searchQuery: _searchQuery,
-              onRefresh: _reloadUsers,
-              onSearchChanged: (query) => setState(() {
-                _searchQuery = query;
-              }),
-              onRemoveUser: _removeUser,
-              onRoleChanged: _changeUserRole,
-            ),
-          ),
+                    onRoleChanged: _changeUserRole,
+                  ),
+                ),
               ],
             ),
           ),
