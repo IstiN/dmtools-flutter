@@ -90,10 +90,7 @@ class ChatMessagingPage extends StatelessWidget {
             Container(
               constraints: const BoxConstraints(maxWidth: 300),
               padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                  color: colors.secondaryColor,
-                  borderRadius: BorderRadius.circular(18),
-                ),
+              decoration: BoxDecoration(color: colors.secondaryColor, borderRadius: BorderRadius.circular(18)),
               child: Text(
                 'Hello! Can you help me with the integration setup?',
                 style: TextStyle(color: colors.bgColor),
@@ -273,7 +270,7 @@ class ChatMessagingPage extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
                   decoration: BoxDecoration(
-                    color: context.colors.accentColor.withValues(alpha: 0.8),
+                    color: context.colors.secondaryColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: const MarkdownRenderer(
