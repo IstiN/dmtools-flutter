@@ -176,28 +176,29 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
   Widget buildAuthenticatedContent(BuildContext context) {
     final colors = context.colorsListening;
 
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            children: [
-              Icon(Icons.people_outlined, size: 32, color: colors.textColor),
-              const SizedBox(width: 12),
-              Text(
-                'Users Management',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textColor),
-              ),
-              const Spacer(),
-              Text(
-                '${_allUsers.length} users',
-                style: TextStyle(fontSize: 16, color: colors.textSecondary),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header with PageActionBar
+        PageActionBar(
+          title: 'Users Management',
+          showBorder: true,
+          actions: [
+            Text(
+              '${_allUsers.length} users',
+              style: TextStyle(fontSize: 16, color: colors.textSecondary),
+            ),
+          ],
+        ),
+        const SizedBox(height: 24),
+
+        // Scrollable content area
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
 
           // Users Table with Role Management
           Expanded(
@@ -212,8 +213,11 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
               onRoleChanged: _changeUserRole,
             ),
           ),
-        ],
-      ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
