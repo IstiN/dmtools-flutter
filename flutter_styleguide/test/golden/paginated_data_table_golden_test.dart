@@ -66,7 +66,7 @@ void main() {
 
 Widget _buildPaginatedDataTable() {
   return Material(
-    child: Container(
+    child: Padding(
       padding: const EdgeInsets.all(24),
       child: DMPaginatedDataTable(
         columns: const [
@@ -90,7 +90,7 @@ Widget _buildPaginatedDataTable() {
 
 Widget _buildEmptyDataTable() {
   return Material(
-    child: Container(
+    child: Padding(
       padding: const EdgeInsets.all(24),
       child: DMPaginatedDataTable(
         columns: const [
@@ -112,51 +112,34 @@ Widget _buildEmptyDataTable() {
   );
 }
 
-Widget _buildLoadingDataTable() {
-  return Material(
-    child: Container(
-      padding: const EdgeInsets.all(24),
-      child: DMPaginatedDataTable(
-        columns: const [
-          DataTableColumn(key: 'email', label: 'Email', width: 2.5),
-          DataTableColumn(key: 'name', label: 'Name', width: 1.5),
-          DataTableColumn(key: 'role', label: 'Role', width: 1.5),
-          DataTableColumn(key: 'joinDate', label: 'Join Date'),
-          DataTableColumn(key: 'lastLogin', label: 'Last Login'),
-        ],
-        data: const [],
-        pageSize: 5,
-        totalItems: 0,
-        searchQuery: '',
-        isLoading: true,
-        onPageChanged: (page) {},
-        onSearchChanged: (query) {},
-        rowBuilder: (user) => _buildUserRow(user),
-      ),
-    ),
-  );
-}
+
 
 Widget _buildStaticLoadingDataTable() {
   return Material(
-    child: Container(
+    child: Padding(
       padding: const EdgeInsets.all(24),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
+            SizedBox(
               width: 48,
               height: 48,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: Colors.blue.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(12)),
+              child: Padding(
+                padding: const EdgeInsets.all(8),
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(color: Colors.blue, borderRadius: BorderRadius.circular(12)),
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 16),
