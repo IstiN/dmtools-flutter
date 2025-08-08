@@ -319,8 +319,7 @@ const List<NavigationItem> navigationItems = [
   // NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
   NavigationItem(icon: Icons.extension_outlined, label: 'Integrations', route: '/integrations'),
   NavigationItem(icon: Icons.cable_outlined, label: 'MCP', route: '/mcp'),
-  // Temporarily hidden - Users
-  // NavigationItem(icon: Icons.people_outlined, label: 'Users', route: '/users'),
+  NavigationItem(icon: Icons.people_outlined, label: 'Users', route: '/users'),
   // Temporarily hidden - Settings
   // NavigationItem(icon: Icons.settings_outlined, label: 'Settings', route: '/settings'),
   // Temporarily hidden - API Demo
