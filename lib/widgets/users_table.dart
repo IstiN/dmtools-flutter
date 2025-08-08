@@ -191,17 +191,7 @@ class _UsersTableState extends State<UsersTable> {
                         ),
                       ),
                     ),
-                    Expanded(
-                      flex: 3,
-                      child: Text(
-                        'ACTIONS',
-                        style: TextStyle(
-                          color: colors.textColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+
                   ],
                 ),
               ),
@@ -352,11 +342,7 @@ class _UsersTableState extends State<UsersTable> {
                                                     ),
                                                   ),
                                           ),
-                                          // Actions
-                                          Expanded(
-                                            flex: 3,
-                                            child:                                             const SizedBox.shrink(), // Remove delete action
-                                          ),
+
                                         ],
                                       ),
                                     ),
