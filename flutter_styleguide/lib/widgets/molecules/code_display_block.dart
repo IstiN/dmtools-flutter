@@ -112,7 +112,7 @@ class CodeDisplayBlock extends StatelessWidget {
           backgroundColor: colors.cardBg,
           borderColor: colors.borderColor,
           textColor: colors.textColor,
-          lineNumberColor: colors.textColor.withOpacity(0.4),
+          lineNumberColor: colors.textColor.withValues(alpha: 0.4),
           headerBackgroundColor: colors.cardBg,
           headerTextColor: colors.textColor,
           scrollbarColor: colors.borderColor,
@@ -120,7 +120,7 @@ class CodeDisplayBlock extends StatelessWidget {
       case CodeDisplayTheme.dark:
         return _CodeTheme(
           backgroundColor: colors.codeBgColor,
-          borderColor: colors.borderColor.withOpacity(0.3),
+          borderColor: colors.borderColor.withValues(alpha: 0.3),
           textColor: const Color(0xFFE1E4E8), // GitHub dark theme text
           lineNumberColor: const Color(0xFF6A737D), // GitHub dark theme line numbers
           headerBackgroundColor: colors.codeBgColor,
@@ -133,7 +133,7 @@ class CodeDisplayBlock extends StatelessWidget {
         if (isDark) {
           return _CodeTheme(
             backgroundColor: colors.codeBgColor,
-            borderColor: colors.borderColor.withOpacity(0.3),
+            borderColor: colors.borderColor.withValues(alpha: 0.3),
             textColor: const Color(0xFFE1E4E8), // GitHub dark theme text
             lineNumberColor: const Color(0xFF6A737D), // GitHub dark theme line numbers
             headerBackgroundColor: colors.codeBgColor,
@@ -145,7 +145,7 @@ class CodeDisplayBlock extends StatelessWidget {
             backgroundColor: colors.cardBg,
             borderColor: colors.borderColor,
             textColor: colors.textColor,
-            lineNumberColor: colors.textColor.withOpacity(0.4),
+            lineNumberColor: colors.textColor.withValues(alpha: 0.4),
             headerBackgroundColor: colors.cardBg,
             headerTextColor: colors.textColor,
             scrollbarColor: colors.borderColor,
@@ -236,13 +236,16 @@ class _LanguageBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-      decoration: BoxDecoration(color: codeTheme.textColor.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+      decoration: BoxDecoration(
+        color: codeTheme.textColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(4),
+      ),
       child: Text(
         language.toUpperCase(),
         style: TextStyle(
           fontSize: dimensions.fontSize * 0.8,
           fontWeight: FontWeight.w500,
-          color: codeTheme.textColor.withOpacity(0.7),
+          color: codeTheme.textColor.withValues(alpha: 0.7),
           letterSpacing: 0.5,
         ),
       ),

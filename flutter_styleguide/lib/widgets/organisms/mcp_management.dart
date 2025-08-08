@@ -100,7 +100,7 @@ class _McpManagementState extends State<McpManagement> {
               padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spacingL, vertical: AppDimensions.spacingM),
               decoration: BoxDecoration(
                 color: colors.cardBg,
-                border: Border(bottom: BorderSide(color: colors.borderColor.withOpacity(0.1))),
+                border: Border(bottom: BorderSide(color: colors.borderColor.withValues(alpha: 0.1))),
               ),
               child: Text(_getHeaderSubtitle(), style: TextStyle(fontSize: 14, color: colors.textSecondary)),
             ),

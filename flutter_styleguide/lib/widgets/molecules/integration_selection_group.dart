@@ -101,7 +101,10 @@ class _HeaderSection extends StatelessWidget {
         ),
         if (description != null) ...[
           const SizedBox(height: 8),
-          Text(description!, style: TextStyle(fontSize: 14, color: colors.textColor.withOpacity(0.7), height: 1.4)),
+          Text(
+            description!,
+            style: TextStyle(fontSize: 14, color: colors.textColor.withValues(alpha: 0.7), height: 1.4),
+          ),
         ],
       ],
     );
@@ -123,7 +126,7 @@ class _SelectionCounter extends StatelessWidget {
     if (!hasLimits && selectedCount == 0) return const SizedBox.shrink();
 
     String text;
-    Color textColor = colors.textColor.withOpacity(0.6);
+    Color textColor = colors.textColor.withValues(alpha: 0.6);
 
     if (maxSelections != null) {
       text = '$selectedCount/${maxSelections!} selected';
@@ -144,7 +147,7 @@ class _SelectionCounter extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(color: textColor.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
+      decoration: BoxDecoration(color: textColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
       child: Text(
         text,
         style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: textColor),
@@ -350,9 +353,9 @@ class _ErrorMessage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: colors.dangerColor.withOpacity(0.1),
+        color: colors.dangerColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colors.dangerColor.withOpacity(0.3)),
+        border: Border.all(color: colors.dangerColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

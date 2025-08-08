@@ -182,7 +182,11 @@ class _DescriptionText extends StatelessWidget {
 
     return Text(
       description,
-      style: TextStyle(fontSize: dimensions.descriptionFontSize, color: colors.textColor.withOpacity(0.7), height: 1.4),
+      style: TextStyle(
+        fontSize: dimensions.descriptionFontSize,
+        color: colors.textColor.withValues(alpha: 0.7),
+        height: 1.4,
+      ),
       maxLines: 2,
       overflow: TextOverflow.ellipsis,
     );
@@ -204,7 +208,7 @@ class _IntegrationsPreview extends StatelessWidget {
         'No integrations configured',
         style: TextStyle(
           fontSize: dimensions.metaFontSize,
-          color: colors.textColor.withOpacity(0.5),
+          color: colors.textColor.withValues(alpha: 0.5),
           fontStyle: FontStyle.italic,
         ),
       );
@@ -218,9 +222,9 @@ class _IntegrationsPreview extends StatelessWidget {
             return Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: colors.accentColor.withOpacity(0.1),
+                color: colors.accentColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: colors.accentColor.withOpacity(0.3)),
+                border: Border.all(color: colors.accentColor.withValues(alpha: 0.3)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -243,14 +247,14 @@ class _IntegrationsPreview extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: colors.textColor.withOpacity(0.1),
+                  color: colors.textColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '+${integrationNames.length - 3} more',
                   style: TextStyle(
                     fontSize: dimensions.metaFontSize,
-                    color: colors.textColor.withOpacity(0.7),
+                    color: colors.textColor.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -285,7 +289,7 @@ class _CreatedAtText extends StatelessWidget {
 
     return Text(
       'Created $timeAgo',
-      style: TextStyle(fontSize: dimensions.metaFontSize, color: colors.textColor.withOpacity(0.5)),
+      style: TextStyle(fontSize: dimensions.metaFontSize, color: colors.textColor.withValues(alpha: 0.5)),
     );
   }
 }
@@ -305,7 +309,7 @@ class _ActionButtons extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppDimensions.spacingS),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: colors.borderColor.withOpacity(0.2))),
+        border: Border(top: BorderSide(color: colors.borderColor.withValues(alpha: 0.2))),
       ),
       child: Row(
         children: [

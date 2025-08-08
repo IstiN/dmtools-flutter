@@ -283,7 +283,7 @@ class _FormHeader extends StatelessWidget {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: colors.textColor),
           ),
           const SizedBox(height: 8),
-          Text(subtitle, style: TextStyle(fontSize: 16, color: colors.textColor.withOpacity(0.7))),
+          Text(subtitle, style: TextStyle(fontSize: 16, color: colors.textColor.withValues(alpha: 0.7))),
         ],
       ),
     );
@@ -310,7 +310,7 @@ class _NameSection extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Choose a descriptive name for your MCP configuration',
-          style: TextStyle(fontSize: 14, color: colors.textColor.withOpacity(0.7)),
+          style: TextStyle(fontSize: 14, color: colors.textColor.withValues(alpha: 0.7)),
         ),
         const SizedBox(height: 12),
         TextFormField(
@@ -336,13 +336,13 @@ class _NameSection extends StatelessWidget {
               borderSide: BorderSide(color: colors.dangerColor, width: 2),
             ),
             filled: true,
-            fillColor: enabled ? colors.bgColor : colors.bgColor.withOpacity(0.5),
+            fillColor: enabled ? colors.bgColor : colors.bgColor.withValues(alpha: 0.5),
             prefixIcon: Icon(
               Icons.label_outline,
-              color: enabled ? colors.textColor.withOpacity(0.6) : colors.textColor.withOpacity(0.3),
+              color: enabled ? colors.textColor.withValues(alpha: 0.6) : colors.textColor.withValues(alpha: 0.3),
             ),
           ),
-          style: TextStyle(color: enabled ? colors.textColor : colors.textColor.withOpacity(0.5)),
+          style: TextStyle(color: enabled ? colors.textColor : colors.textColor.withValues(alpha: 0.5)),
         ),
       ],
     );
@@ -378,7 +378,7 @@ class _IntegrationSection extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           'Choose which integrations to include in your MCP configuration',
-          style: TextStyle(fontSize: 14, color: colors.textColor.withOpacity(0.7)),
+          style: TextStyle(fontSize: 14, color: colors.textColor.withValues(alpha: 0.7)),
         ),
         const SizedBox(height: 16),
 
@@ -412,9 +412,9 @@ class _ErrorMessage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.dangerColor.withOpacity(0.1),
+        color: colors.dangerColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: colors.dangerColor.withOpacity(0.3)),
+        border: Border.all(color: colors.dangerColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -463,7 +463,7 @@ class _ActionSection extends StatelessWidget {
             Container(
               height: 48,
               decoration: BoxDecoration(
-                color: colors.accentColor.withOpacity(0.1),
+                color: colors.accentColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -524,9 +524,9 @@ class _ActionSection extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colors.successColor.withOpacity(0.1),
+                color: colors.successColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: colors.successColor.withOpacity(0.3)),
+                border: Border.all(color: colors.successColor.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
