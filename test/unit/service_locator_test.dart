@@ -334,8 +334,6 @@ class MockApiService implements ApiService {
   @override
   void dispose() {}
 
-
-
   @override
   Future<Map<String, dynamic>> getAdminUsers({
     int page = 0,
