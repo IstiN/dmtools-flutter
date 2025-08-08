@@ -68,6 +68,9 @@ export 'widgets/molecules/markdown_renderer.dart';
 export 'widgets/molecules/empty_state.dart';
 export 'widgets/molecules/loading_state_wrapper.dart';
 
+// Data Table Components
+export 'widgets/molecules/paginated_data_table.dart';
+
 // Webhook Components
 export 'widgets/molecules/webhook_key_item.dart';
 export 'widgets/molecules/webhook_key_list.dart';
