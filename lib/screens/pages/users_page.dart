@@ -50,6 +50,7 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
       // For now, we'll try to call the admin API and handle 403 errors
 
       // Load admin users directly from new API
+      print('🔐 UsersPage: Calling getAdminUsers API...');
       final adminUsersResponse = await authService.execute(() async {
         return await _usersService.getAdminUsers(
           size: 100, // Load more users for now
@@ -57,16 +58,26 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
         );
       });
 
+      print('🔐 UsersPage: API Response - content length: ${adminUsersResponse.content.length}');
+      print('🔐 UsersPage: API Response - totalElements: ${adminUsersResponse.totalElements}');
+
       // Convert AdminUserDto to WorkspaceUserDto for compatibility
       final users = adminUsersResponse.content.map((adminUser) => adminUser.toWorkspaceUserDto()).toList();
+
+      print('🔐 UsersPage: Converted users count: ${users.length}');
+      if (users.isNotEmpty) {
+        print('🔐 UsersPage: First user: ${users.first.email} (${users.first.role})');
+      }
 
       setState(() {
         _allUsers = users;
       });
 
       if (users.isEmpty) {
+        print('🔐 UsersPage: Setting EMPTY state - no users found');
         setEmpty();
       } else {
+        print('🔐 UsersPage: Setting LOADED state - ${users.length} users found');
         setLoaded();
       }
 

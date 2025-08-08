@@ -23,16 +23,38 @@ class AdminUsersResponse {
   });
 
   factory AdminUsersResponse.fromJson(Map<String, dynamic> json) {
-    return AdminUsersResponse(
-      content:
-          (json['content'] as List? ?? []).map((user) => AdminUserDto.fromJson(user as Map<String, dynamic>)).toList(),
-      page: json['page'] ?? 0,
-      size: json['size'] ?? 50,
-      totalElements: json['totalElements'] ?? 0,
-      totalPages: json['totalPages'] ?? 0,
-      first: json['first'] ?? true,
-      last: json['last'] ?? true,
-    );
+    // Handle both structures: Spring Boot style and actual API style
+    if (json.containsKey('users') && json.containsKey('pagination')) {
+      // Actual API structure: {users: [...], pagination: {...}}
+      final users = (json['users'] as List? ?? [])
+          .map((user) => AdminUserDto.fromJson(user as Map<String, dynamic>))
+          .toList();
+      
+      final pagination = json['pagination'] as Map<String, dynamic>? ?? {};
+      
+      return AdminUsersResponse(
+        content: users,
+        page: pagination['currentPage'] ?? 0,
+        size: pagination['size'] ?? 50,
+        totalElements: pagination['totalElements'] ?? 0,
+        totalPages: pagination['totalPages'] ?? 1,
+        first: !(pagination['hasPrevious'] ?? false),
+        last: !(pagination['hasNext'] ?? false),
+      );
+    } else {
+      // Spring Boot style: {content: [...], page: 0, ...}
+      return AdminUsersResponse(
+        content: (json['content'] as List? ?? [])
+            .map((user) => AdminUserDto.fromJson(user as Map<String, dynamic>))
+            .toList(),
+        page: json['page'] ?? 0,
+        size: json['size'] ?? 50,
+        totalElements: json['totalElements'] ?? 0,
+        totalPages: json['totalPages'] ?? 0,
+        first: json['first'] ?? true,
+        last: json['last'] ?? true,
+      );
+    }
   }
 }
 
@@ -60,8 +82,8 @@ class AdminUserDto {
       email: json['email'] ?? '',
       name: json['name'],
       role: json['role'],
-      createdAt: json['createdAt'],
-      lastLoginAt: json['lastLoginAt'],
+      createdAt: json['joinedAt'], // API uses 'joinedAt' instead of 'createdAt'
+      lastLoginAt: json['lastLogin'], // API uses 'lastLogin' instead of 'lastLoginAt'
     );
   }
 
@@ -80,6 +102,7 @@ class AdminUserDto {
       case 'ADMIN':
         return enums.WorkspaceUserDtoRole.admin;
       case 'USER':
+      case 'REGULAR_USER': // API uses REGULAR_USER instead of USER
         return enums.WorkspaceUserDtoRole.user;
       default:
         return enums.WorkspaceUserDtoRole.user;
@@ -100,13 +123,22 @@ class UsersService {
     String? search,
   }) async {
     try {
+      print('🔧 UsersService: Calling API with page=$page, size=$size, search=$search');
       final response = await _apiService.getAdminUsers(
         page: page,
         size: size,
         search: search,
       );
-      return AdminUsersResponse.fromJson(response);
+      print('🔧 UsersService: Raw API response type: ${response.runtimeType}');
+      print('🔧 UsersService: Raw API response keys: ${response.keys}');
+
+      final adminResponse = AdminUsersResponse.fromJson(response);
+      print('🔧 UsersService: Parsed response - content count: ${adminResponse.content.length}');
+      print('🔧 UsersService: Parsed response - totalElements: ${adminResponse.totalElements}');
+
+      return adminResponse;
     } catch (e) {
+      print('🔧 UsersService: Error loading admin users: $e');
       throw Exception('Failed to load admin users: $e');
     }
   }
@@ -133,9 +165,9 @@ class UsersService {
       case enums.WorkspaceUserDtoRole.admin:
         return 'ADMIN';
       case enums.WorkspaceUserDtoRole.user:
-        return 'USER';
+        return 'REGULAR_USER'; // API expects REGULAR_USER instead of USER
       case enums.WorkspaceUserDtoRole.swaggerGeneratedUnknown:
-        return 'USER';
+        return 'REGULAR_USER';
     }
   }
 
@@ -164,4 +196,3 @@ class UsersService {
     }
   }
 }
-
