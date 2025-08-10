@@ -91,6 +91,7 @@ class DynamicConfigForm extends StatefulWidget {
   final Map<String, dynamic> initialValues;
   final String? initialName;
   final List<String> requiredIntegrationTypes;
+  final List<String> optionalIntegrationTypes;
   final List<AvailableIntegration> availableIntegrations;
   final List<String> selectedIntegrations;
   final ValueChanged<Map<String, dynamic>> onConfigChanged;
@@ -113,6 +114,7 @@ class DynamicConfigForm extends StatefulWidget {
     required this.onConfigChanged,
     this.subtitle,
     this.initialName,
+    this.optionalIntegrationTypes = const [],
     this.onNameChanged,
     this.onIntegrationsChanged,
     this.onTestConfiguration,
@@ -408,10 +410,8 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
         ],
 
         // Integrations section
-        if (widget.requiredIntegrationTypes.isNotEmpty) ...[
+        if (widget.requiredIntegrationTypes.isNotEmpty || widget.optionalIntegrationTypes.isNotEmpty) ...[
           const SizedBox(height: AppDimensions.spacingL),
-          _buildSectionHeader('Required Integrations', colors),
-          const SizedBox(height: AppDimensions.spacingM),
           _buildIntegrationsSection(colors),
         ],
 
@@ -676,8 +676,14 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
   }
 
   Widget _buildIntegrationsSection(ThemeColorSet colors) {
-    return Column(
-      children: widget.requiredIntegrationTypes.map((type) {
+    final allSections = <Widget>[];
+
+    // Required integrations section
+    if (widget.requiredIntegrationTypes.isNotEmpty) {
+      allSections.add(_buildSectionHeader('Required Integrations', colors));
+      allSections.add(const SizedBox(height: AppDimensions.spacingM));
+
+      for (final type in widget.requiredIntegrationTypes) {
         final available = widget.availableIntegrations
             .where((integration) => integration.type == type && integration.enabled)
             .toList();
@@ -689,9 +695,35 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
             )
             .toList();
 
-        return _buildIntegrationTypeSelection(type, available, selected, colors);
-      }).toList(),
-    );
+        allSections.add(_buildIntegrationTypeSelection(type, available, selected, colors, true));
+      }
+    }
+
+    // Optional integrations section
+    if (widget.optionalIntegrationTypes.isNotEmpty) {
+      if (widget.requiredIntegrationTypes.isNotEmpty) {
+        allSections.add(const SizedBox(height: AppDimensions.spacingL));
+      }
+      allSections.add(_buildSectionHeader('Optional Integrations', colors));
+      allSections.add(const SizedBox(height: AppDimensions.spacingM));
+
+      for (final type in widget.optionalIntegrationTypes) {
+        final available = widget.availableIntegrations
+            .where((integration) => integration.type == type && integration.enabled)
+            .toList();
+
+        final selected = _currentIntegrations
+            .where(
+              (id) =>
+                  widget.availableIntegrations.any((integration) => integration.id == id && integration.type == type),
+            )
+            .toList();
+
+        allSections.add(_buildIntegrationTypeSelection(type, available, selected, colors, false));
+      }
+    }
+
+    return Column(children: allSections);
   }
 
   Widget _buildIntegrationTypeSelection(
@@ -699,6 +731,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
     List<AvailableIntegration> available,
     List<String> selected,
     ThemeColorSet colors,
+    bool isRequired,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AppDimensions.spacingM),
@@ -721,12 +754,18 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                 decoration: BoxDecoration(
-                  color: colors.warningColor.withValues(alpha: 0.1),
+                  color: isRequired
+                      ? colors.warningColor.withValues(alpha: 0.1)
+                      : colors.accentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Text(
-                  'Required',
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: colors.warningColor),
+                  isRequired ? 'Required' : 'Optional',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: isRequired ? colors.warningColor : colors.accentColor,
+                  ),
                 ),
               ),
             ],
@@ -751,6 +790,30 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
               ],
             ),
           ] else ...[
+            // For optional integrations, add a "None" option
+            if (!isRequired) ...[
+              RadioListTile<String?>(
+                value: null,
+                groupValue: selected.isNotEmpty ? selected.first : null,
+                onChanged: (value) {
+                  setState(() {
+                    // Remove any existing selections for this category type
+                    _currentIntegrations.removeWhere(
+                      (id) => widget.availableIntegrations.any((avail) => avail.id == id && avail.type == type),
+                    );
+                  });
+                  widget.onIntegrationsChanged?.call(_currentIntegrations);
+                },
+                title: Text('None', style: TextStyle(fontSize: 14, color: colors.textColor)),
+                subtitle: Text(
+                  'No integration selected for this category',
+                  style: TextStyle(fontSize: 12, color: colors.textSecondary),
+                ),
+                controlAffinity: ListTileControlAffinity.leading,
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+              ),
+            ],
             ...available.map((integration) {
               return RadioListTile<String>(
                 value: integration.id,
