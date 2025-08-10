@@ -221,6 +221,7 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
               description: jobTypeDto.description ?? 'AI job configuration',
               parameters: [], // Empty parameters as fallback
               requiredIntegrations: jobTypeDto.requiredIntegrations ?? [],
+              optionalIntegrations: jobTypeDto.optionalIntegrations ?? [],
             );
             convertedTypes.add(fallbackJobType);
             debugPrint('✅ Added fallback job type for ${jobTypeDto.displayName}');
@@ -265,9 +266,11 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
 
       final parameters = _convertConfigParams(dto.configParams ?? []);
       final requiredIntegrations = dto.requiredIntegrations ?? [];
+      final optionalIntegrations = dto.optionalIntegrations ?? [];
 
       debugPrint('📋 Converted parameters: ${parameters.length}');
       debugPrint('📋 Required integrations: $requiredIntegrations');
+      debugPrint('📋 Optional integrations: $optionalIntegrations');
 
       final jobType = JobType(
         type: dto.type ?? 'unknown',
@@ -275,6 +278,7 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
         description: dto.description ?? 'AI job configuration',
         parameters: parameters, // Use the converted parameters
         requiredIntegrations: requiredIntegrations, // Keep generic category names
+        optionalIntegrations: optionalIntegrations, // Keep generic category names
       );
 
       debugPrint('✅ Successfully created JobType: ${jobType.type} - ${jobType.displayName}');

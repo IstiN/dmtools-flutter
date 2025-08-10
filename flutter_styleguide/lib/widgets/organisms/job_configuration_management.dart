@@ -333,7 +333,7 @@ class _JobConfigurationManagementState extends State<JobConfigurationManagement>
                   ),
                   const Spacer(),
                   Text(
-                    '${jobType.requiredIntegrations.length} integrations',
+                    '${jobType.requiredIntegrations.length + jobType.optionalIntegrations.length} integrations',
                     style: TextStyle(fontSize: 12, color: colors.textMuted),
                   ),
                 ],
@@ -820,6 +820,7 @@ class JobType {
   final String description;
   final List<JobParameter> parameters;
   final List<String> requiredIntegrations;
+  final List<String> optionalIntegrations;
 
   const JobType({
     required this.type,
@@ -827,6 +828,7 @@ class JobType {
     required this.description,
     required this.parameters,
     required this.requiredIntegrations,
+    this.optionalIntegrations = const [],
   });
 }
 

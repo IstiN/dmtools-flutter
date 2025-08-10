@@ -49,6 +49,7 @@ class _JobConfigurationPageState extends State<JobConfigurationPage> {
         ),
       ],
       requiredIntegrations: ['TrackerClient', 'AI'],
+      optionalIntegrations: ['SourceCode'],
     ),
     const JobType(
       type: 'testcasesgenerator',
@@ -89,6 +90,7 @@ class _JobConfigurationPageState extends State<JobConfigurationPage> {
         ),
       ],
       requiredIntegrations: ['TrackerClient', 'AI'],
+      optionalIntegrations: ['Documentation'],
     ),
   ];
 
@@ -148,11 +150,7 @@ class _JobConfigurationPageState extends State<JobConfigurationPage> {
       createdAt: DateTime.now().subtract(const Duration(days: 10)),
       createdByName: 'Jane Tester',
       requiredIntegrations: ['TrackerClient', 'AI'],
-      parameters: {
-        'testCaseType': 'both',
-        'includeEdgeCases': true,
-        'maxTestCases': 25,
-      },
+      parameters: {'testCaseType': 'both', 'includeEdgeCases': true, 'maxTestCases': 25},
     ),
     JobConfigurationData(
       id: '3',
@@ -165,10 +163,7 @@ class _JobConfigurationPageState extends State<JobConfigurationPage> {
       createdAt: DateTime.now().subtract(const Duration(days: 15)),
       createdByName: 'Alex Analyst',
       requiredIntegrations: ['TrackerClient', 'AI', 'Documentation'],
-      parameters: {
-        'includeCodeAnalysis': false,
-        'outputFormat': 'field',
-      },
+      parameters: {'includeCodeAnalysis': false, 'outputFormat': 'field'},
     ),
   ];
 
@@ -199,12 +194,7 @@ class _JobConfigurationPageState extends State<JobConfigurationPage> {
   }
 
   void _showActionDialog(String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(action),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(action), duration: const Duration(seconds: 2)));
   }
 }
 
@@ -214,12 +204,7 @@ class ComponentDisplay extends StatelessWidget {
   final String description;
   final Widget child;
 
-  const ComponentDisplay({
-    required this.title,
-    required this.description,
-    required this.child,
-    super.key,
-  });
+  const ComponentDisplay({required this.title, required this.description, required this.child, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -228,18 +213,12 @@ class ComponentDisplay extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: context.colors.textColor,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: context.colors.textColor),
         ),
         const SizedBox(height: AppDimensions.spacingS),
-        Text(
-          description,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: context.colors.textSecondary,
-              ),
-        ),
+        Text(description, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: context.colors.textSecondary)),
         const SizedBox(height: AppDimensions.spacingM),
         child,
       ],

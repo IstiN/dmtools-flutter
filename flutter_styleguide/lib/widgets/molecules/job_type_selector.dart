@@ -62,12 +62,7 @@ class _JobTypeCard extends StatelessWidget {
   final VoidCallback onTap;
   final ThemeColorSet colors;
 
-  const _JobTypeCard({
-    required this.jobType,
-    required this.isSelected,
-    required this.onTap,
-    required this.colors,
-  });
+  const _JobTypeCard({required this.jobType, required this.isSelected, required this.onTap, required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -80,10 +75,7 @@ class _JobTypeCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-            border: Border.all(
-              color: isSelected ? colors.accentColor : colors.borderColor,
-              width: isSelected ? 2 : 1,
-            ),
+            border: Border.all(color: isSelected ? colors.accentColor : colors.borderColor, width: isSelected ? 2 : 1),
           ),
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.spacingM),
@@ -99,25 +91,14 @@ class _JobTypeCard extends StatelessWidget {
                         color: colors.accentColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(AppDimensions.radiusS),
                       ),
-                      child: Icon(
-                        _getJobTypeIcon(jobType.type),
-                        size: 24,
-                        color: colors.accentColor,
-                      ),
+                      child: Icon(_getJobTypeIcon(jobType.type), size: 24, color: colors.accentColor),
                     ),
                     const Spacer(),
                     if (isSelected)
                       Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: colors.accentColor,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.check,
-                          size: 16,
-                          color: Colors.white,
-                        ),
+                        decoration: BoxDecoration(color: colors.accentColor, shape: BoxShape.circle),
+                        child: const Icon(Icons.check, size: 16, color: Colors.white),
                       ),
                   ],
                 ),
@@ -126,11 +107,7 @@ class _JobTypeCard extends StatelessWidget {
                 // Title
                 Text(
                   jobType.displayName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: colors.textColor,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: colors.textColor),
                 ),
                 const SizedBox(height: AppDimensions.spacingS),
 
@@ -138,11 +115,7 @@ class _JobTypeCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     jobType.description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: colors.textSecondary,
-                      height: 1.3,
-                    ),
+                    style: TextStyle(fontSize: 12, color: colors.textSecondary, height: 1.3),
                     maxLines: 3,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -162,20 +135,13 @@ class _JobTypeCard extends StatelessWidget {
                       ),
                       child: Text(
                         _getJobTypeCategory(jobType.type),
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: colors.textMuted,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(fontSize: 10, color: colors.textMuted, fontWeight: FontWeight.w500),
                       ),
                     ),
                     const Spacer(),
                     Text(
-                      '${jobType.requiredIntegrations.length} integrations',
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: colors.textMuted,
-                      ),
+                      '${jobType.requiredIntegrations.length + jobType.optionalIntegrations.length} integrations',
+                      style: TextStyle(fontSize: 10, color: colors.textMuted),
                     ),
                   ],
                 ),

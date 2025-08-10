@@ -134,6 +134,7 @@ class JobConfigForm extends StatelessWidget {
       initialValues: initialValues,
       initialName: initialName ?? (onNameChanged != null ? '${jobType.displayName} Configuration' : null),
       requiredIntegrationTypes: jobType.requiredIntegrations,
+      optionalIntegrationTypes: jobType.optionalIntegrations,
       availableIntegrations: availableIntegrationsConverted,
       selectedIntegrations: initialIntegrations,
       onConfigChanged: onConfigChanged,
