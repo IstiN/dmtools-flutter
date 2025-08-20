@@ -1,6 +1,6 @@
 # AI-Powered Workflows for DMTools Flutter
 
-This directory contains AI-powered workflows that leverage the reusable agentic workflows from [`IstiN/dmtools-agentic-workflows`](https://github.com/IstiN/dmtools-agentic-workflows) for automated code assistance, discovery, and implementation.
+This directory contains AI-powered workflows that leverage the reusable agentic workflows from [`IstiN/dmtools-agentic-workflows`](https://github.com/IstiN/dmtools-agentic-workflows) for automated code discovery and implementation using Gemini AI.
 
 ## 🤖 Available Workflows
 
@@ -82,50 +82,6 @@ Explain the provider registration and dependency injection
 - Detailed documentation generation
 - Focus area customization for targeted analysis
 
-### 3. AI Code Assistance (`ai-assist.yml`)
-
-**Purpose**: Targeted code assistance and problem-solving
-
-**When to Use**:
-- Get help with specific code issues
-- Review and improve existing code
-- Solve debugging problems
-- Get suggestions for refactoring
-- Learn Flutter best practices
-
-**Workflow Inputs**:
-- `user_request` (required): Your assistance request or question
-- `target_files`: Specific files to analyze (comma-separated)
-- `model`: AI model for assistance (default: gemini/gemini-2.5-flash-preview-05-20)
-- `max_tokens`: Context size limit (default: 1,000,000)
-- `enable_debug_logging`: Enable detailed logging (default: true)
-- `flutter_component_focus`: Focus on specific component type
-
-**Component Focus Areas**:
-- `general`: General Flutter code assistance
-- `widgets`: Custom widget components
-- `providers`: State management providers
-- `screens`: Screen/page components
-- `styleguide`: Styleguide components
-- `network-layer`: API and networking code
-- `tests`: Test files and testing strategies
-
-**Example Requests**:
-```
-Review this provider implementation for performance issues
-Help optimize this widget's build method
-Fix the navigation issue in AuthScreen
-Improve error handling in the network layer
-Suggest better state management for this component
-Add accessibility features to these widgets
-```
-
-**Features**:
-- Targeted code analysis and suggestions
-- Flutter-specific best practice guidance
-- Performance optimization recommendations
-- Component-focused assistance
-
 ## 🔧 Setup Requirements
 
 ### Required Secrets
@@ -152,8 +108,7 @@ Set up these secrets in your repository settings:
 ### Custom Prompts
 Each workflow uses Flutter-specific prompts located in `.github/ai-prompts/`:
 - `flutter-implementation-prompt.md`: Flutter development best practices
-- `flutter-discovery-prompt.md`: Architecture analysis guidelines  
-- `flutter-assist-prompt.md`: Code assistance and review guidelines
+- `flutter-discovery-prompt.md`: Architecture analysis guidelines
 
 ### Project Context
 Workflows automatically include Flutter project context:
@@ -164,7 +119,7 @@ Workflows automatically include Flutter project context:
 - `flutter_styleguide/README.md`: Component library documentation
 
 ### Post-Workflow Analysis
-Implementation and assistance workflows include Flutter-specific validation:
+Implementation workflow includes Flutter-specific validation:
 - `flutter analyze` execution
 - `pubspec.yaml` syntax validation
 - Build configuration checks
@@ -202,19 +157,6 @@ Flutter Focus Area: state-management
 Model: gemini-2.5-flash-preview-05-20
 ```
 
-### Example 3: Code Review Assistance
-```yaml
-# Workflow: AI Code Assistance
-User Request: |
-  Review the AuthProvider implementation for security best practices.
-  Check token handling, session management, and error scenarios.
-  Suggest improvements for better user experience.
-
-Target Files: lib/providers/auth_provider.dart,lib/network/auth_client.dart
-Component Focus: providers
-Model: gemini/gemini-2.5-flash-preview-05-20
-```
-
 ## 📊 Workflow Outputs
 
 ### Implementation Workflow
@@ -226,11 +168,6 @@ Model: gemini/gemini-2.5-flash-preview-05-20
 - **Analysis Report**: Comprehensive architectural documentation
 - **Artifacts**: Discovery logs and full analysis report
 - **Summary**: Key findings and recommendations
-
-### Assistance Workflow
-- **Code Review**: Detailed analysis and suggestions
-- **Artifacts**: Assistance logs and recommendations
-- **Summary**: Action items and best practice guidance
 
 ## 🔍 Best Practices
 
