@@ -1,0 +1,208 @@
+name: AI Code Discovery
+
+on:
+  workflow_dispatch:
+    inputs:
+      user_request:
+        description: 'Your discovery request for AI analysis'
+        required: true
+        type: string
+      model:
+        description: 'Gemini model to use for discovery'
+        required: false
+        type: choice
+        default: 'gemini-2.5-flash-preview-05-20'
+        options:
+          - gemini-2.0-flash-exp
+          - gemini-1.5-pro-latest
+          - gemini-1.5-flash-latest
+          - gemini-1.0-pro-latest
+          - gemini-2.5-flash-preview-05-20
+          - gemini-2.5-pro-latest
+      enable_debug_logging:
+        description: 'Enable comprehensive debug logging for AI discovery'
+        required: false
+        type: boolean
+        default: true
+      flutter_focus_area:
+        description: 'Focus discovery on specific Flutter area'
+        required: false
+        type: choice
+        default: 'full-project'
+        options:
+          - full-project
+          - main-app-only
+          - styleguide-only
+          - state-management
+          - ui-components
+          - networking
+          - providers
+          - widgets
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  ai-discovery:
+    name: AI Code Discovery
+    uses: IstiN/dmtools-agentic-workflows/.github/workflows/reusable-gemini-discovery.yml@main
+    with:
+      user_request: ${{ inputs.user_request }}
+      model: ${{ inputs.model }}
+      enable_debug_logging: ${{ inputs.enable_debug_logging }}
+      
+      # Flutter-specific customizations
+      custom_discovery_prompt: '.github/ai-prompts/flutter-discovery-prompt.md'
+      custom_rules_file: '@commonrules.mdc'
+      additional_context_files: >-
+        README.md,
+        pubspec.yaml,
+        analysis_options.yaml,
+        flutter_styleguide/README.md,
+        flutter_styleguide/pubspec.yaml,
+        lib/main.dart,
+        lib/service_locator.dart,
+        docs/shared-css-architecture.md,
+        docs/shared-assets-implementation.md
+      
+      # Use specific version for stability
+      workflows_repo: 'IstiN/dmtools-agentic-workflows'
+      workflows_ref: 'main'
+      
+    secrets:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+  flutter-context-analysis:
+    name: Flutter Context Analysis
+    needs: ai-discovery
+    runs-on: ubuntu-latest
+    if: always() && (needs.ai-discovery.result == 'success' || needs.ai-discovery.result == 'failure')
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "3.32.x"
+        channel: "stable"
+        cache: true
+        
+    - name: Analyze Flutter project structure
+      run: |
+        echo "🔍 Analyzing Flutter project structure for discovery context..."
+        
+        echo "📱 **Flutter Project Structure Analysis**"
+        echo "========================================="
+        
+        # Main app analysis
+        echo "🏠 Main Application:"
+        echo "  - Entry point: lib/main.dart"
+        echo "  - Screens: $(find lib/screens -name "*.dart" 2>/dev/null | wc -l) screens"
+        echo "  - Widgets: $(find lib/widgets -name "*.dart" 2>/dev/null | wc -l) custom widgets"
+        echo "  - Providers: $(find lib/providers -name "*.dart" 2>/dev/null | wc -l) providers"
+        echo "  - Network layer: $(find lib/network -name "*.dart" 2>/dev/null | wc -l) network files"
+        echo "  - Core utilities: $(find lib/core -name "*.dart" 2>/dev/null | wc -l) core files"
+        
+        # Styleguide analysis
+        if [ -d "flutter_styleguide" ]; then
+          echo ""
+          echo "🎨 Styleguide Component Library:"
+          echo "  - Components: $(find flutter_styleguide/lib -name "*.dart" 2>/dev/null | wc -l) components"
+          echo "  - Tests: $(find flutter_styleguide/test -name "*.dart" 2>/dev/null | wc -l) test files"
+          echo "  - Golden tests: $(find flutter_styleguide/test -name "*.png" 2>/dev/null | wc -l) golden test images"
+        fi
+        
+        # Dependencies analysis
+        echo ""
+        echo "📦 Dependencies:"
+        if [ -f "pubspec.yaml" ]; then
+          echo "  - Main app dependencies: $(grep -c "^  [a-zA-Z]" pubspec.yaml || echo "0")"
+        fi
+        if [ -f "flutter_styleguide/pubspec.yaml" ]; then
+          echo "  - Styleguide dependencies: $(grep -c "^  [a-zA-Z]" flutter_styleguide/pubspec.yaml || echo "0")"
+        fi
+        
+        # Configuration analysis
+        echo ""
+        echo "⚙️ Configuration:"
+        echo "  - Flutter analysis options: $(test -f analysis_options.yaml && echo "✅ Present" || echo "❌ Missing")"
+        echo "  - Build configuration: $(test -f build.yaml && echo "✅ Present" || echo "❌ Missing")"
+        echo "  - App configs: $(ls app_config_*.json 2>/dev/null | wc -l) environment configs"
+        
+        # Focus area specific analysis
+        case "${{ inputs.flutter_focus_area }}" in
+          "state-management")
+            echo ""
+            echo "🔍 **State Management Focus Analysis:**"
+            echo "  - Providers: $(find lib/providers -name "*.dart" 2>/dev/null | wc -l) provider files"
+            echo "  - Service locator: $(test -f lib/service_locator.dart && echo "✅ Present" || echo "❌ Missing")"
+            grep -r "Provider\|ChangeNotifier\|StateNotifier" lib/ --include="*.dart" | wc -l | xargs echo "  - State management usage count:"
+            ;;
+          "ui-components")
+            echo ""
+            echo "🔍 **UI Components Focus Analysis:**"
+            echo "  - Custom widgets: $(find lib/widgets -name "*.dart" 2>/dev/null | wc -l) widgets"
+            echo "  - Styleguide components: $(find flutter_styleguide/lib -name "*.dart" 2>/dev/null | wc -l) components"
+            ;;
+          "networking")
+            echo ""
+            echo "🔍 **Networking Focus Analysis:**"
+            echo "  - Network files: $(find lib/network -name "*.dart" 2>/dev/null | wc -l) files"
+            echo "  - API configurations: $(ls app_config_*.json 2>/dev/null | wc -l) configs"
+            ;;
+        esac
+        
+    - name: Flutter Discovery Summary
+      run: |
+        echo "## 🔍 AI Discovery Summary - Flutter Project" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        echo "### 📱 Project Overview" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Project Type**: Flutter Web & Mobile Application" >> $GITHUB_STEP_SUMMARY
+        echo "- **Architecture**: Multi-module (Main App + Styleguide)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Focus Area**: ${{ inputs.flutter_focus_area }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Discovery Model**: ${{ inputs.model }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.ai-discovery.result }}" = "success" ]; then
+          echo "### ✅ Discovery Completed Successfully" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The AI discovery analysis has been completed. Key areas covered:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### 🏗️ Flutter Architecture" >> $GITHUB_STEP_SUMMARY
+          echo "- Widget tree structure and state management patterns" >> $GITHUB_STEP_SUMMARY
+          echo "- Provider-based dependency injection via service locator" >> $GITHUB_STEP_SUMMARY
+          echo "- Separation of concerns between main app and styleguide" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### 🎨 UI/UX Structure" >> $GITHUB_STEP_SUMMARY
+          echo "- Styleguide component library organization" >> $GITHUB_STEP_SUMMARY
+          echo "- Theme management and design system implementation" >> $GITHUB_STEP_SUMMARY
+          echo "- Responsive design patterns and shared assets" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### 🔧 Technical Implementation" >> $GITHUB_STEP_SUMMARY
+          echo "- Network layer architecture and API integration" >> $GITHUB_STEP_SUMMARY
+          echo "- Build configuration and environment management" >> $GITHUB_STEP_SUMMARY
+          echo "- Testing strategy including golden tests" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📊 Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. **Review Discovery Results**: Check the generated analysis artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "2. **Identify Improvements**: Look for architectural enhancement opportunities" >> $GITHUB_STEP_SUMMARY
+          echo "3. **Plan Implementation**: Use insights for future development tasks" >> $GITHUB_STEP_SUMMARY
+          echo "4. **Share Knowledge**: Distribute findings with the development team" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "### ❌ Discovery Issues" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The AI discovery analysis encountered issues. This could be due to:" >> $GITHUB_STEP_SUMMARY
+          echo "- Complex project structure requiring more specific queries" >> $GITHUB_STEP_SUMMARY
+          echo "- Model limitations with large Flutter codebases" >> $GITHUB_STEP_SUMMARY
+          echo "- Network or API issues during analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Recommendation**: Try again with a more specific focus area or a different model." >> $GITHUB_STEP_SUMMARY
+        fi

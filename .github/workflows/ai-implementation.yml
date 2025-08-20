@@ -1,0 +1,137 @@
+name: AI Code Implementation
+
+on:
+  workflow_dispatch:
+    inputs:
+      user_request:
+        description: 'Your coding request for AI implementation'
+        required: true
+        type: string
+      model:
+        description: 'Gemini model to use'
+        required: false
+        type: choice
+        default: 'gemini-2.5-flash-preview-05-20'
+        options:
+          - gemini-2.0-flash-exp
+          - gemini-1.5-pro-latest
+          - gemini-1.5-flash-latest
+          - gemini-1.0-pro-latest
+          - gemini-2.5-flash-preview-05-20
+          - gemini-2.5-pro-latest
+      pr_base_branch:
+        description: 'Base branch for the pull request'
+        required: false
+        type: string
+        default: 'main'
+      enable_debug_logging:
+        description: 'Enable comprehensive debug logging for AI implementation'
+        required: false
+        type: boolean
+        default: true
+      custom_rules_override:
+        description: 'Use custom Flutter-specific rules (recommended for Flutter projects)'
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  ai-implementation:
+    name: AI Code Implementation
+    uses: IstiN/dmtools-agentic-workflows/.github/workflows/reusable-gemini-implementation.yml@main
+    with:
+      user_request: ${{ inputs.user_request }}
+      model: ${{ inputs.model }}
+      pr_base_branch: ${{ inputs.pr_base_branch }}
+      enable_debug_logging: ${{ inputs.enable_debug_logging }}
+      
+      # Flutter-specific customizations
+      custom_implementation_prompt: ${{ inputs.custom_rules_override && '.github/ai-prompts/flutter-implementation-prompt.md' || '' }}
+      custom_rules_file: ${{ inputs.custom_rules_override && '@commonrules.mdc' || '' }}
+      additional_context_files: ${{ inputs.custom_rules_override && 'README.md,pubspec.yaml,analysis_options.yaml,flutter_styleguide/README.md' || '' }}
+      
+      # Use specific version for stability
+      workflows_repo: 'IstiN/dmtools-agentic-workflows'
+      workflows_ref: 'main'
+      
+    secrets:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+  post-implementation-flutter-checks:
+    name: Flutter Post-Implementation Checks
+    needs: ai-implementation
+    runs-on: ubuntu-latest
+    if: always() && (needs.ai-implementation.result == 'success' || needs.ai-implementation.result == 'failure')
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: "3.32.x"
+        channel: "stable"
+        cache: true
+        
+    - name: Flutter-specific validation
+      run: |
+        echo "🔍 Running Flutter-specific validation after AI implementation..."
+        
+        # Check if pubspec.yaml is valid
+        if [ -f "pubspec.yaml" ]; then
+          echo "✅ Checking pubspec.yaml syntax..."
+          flutter pub get --dry-run || echo "⚠️ pubspec.yaml may have issues"
+        fi
+        
+        # Check if styleguide pubspec is valid
+        if [ -f "flutter_styleguide/pubspec.yaml" ]; then
+          echo "✅ Checking styleguide pubspec.yaml syntax..."
+          cd flutter_styleguide
+          flutter pub get --dry-run || echo "⚠️ Styleguide pubspec.yaml may have issues"
+          cd ..
+        fi
+        
+        # Quick analysis check
+        echo "✅ Running quick Flutter analysis..."
+        flutter analyze --no-fatal-infos --no-fatal-warnings || echo "⚠️ Analysis found potential issues"
+        
+        echo "📋 Flutter validation completed"
+        
+    - name: AI Implementation Summary with Flutter Context
+      run: |
+        echo "## 🤖 AI Implementation Summary - Flutter Project" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📱 Flutter-Specific Considerations" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Project Type**: Flutter Web & Mobile Application" >> $GITHUB_STEP_SUMMARY
+        echo "- **Main App**: DMTools Flutter Client" >> $GITHUB_STEP_SUMMARY
+        echo "- **Styleguide**: Component library in \`flutter_styleguide/\`" >> $GITHUB_STEP_SUMMARY
+        echo "- **Custom Rules**: ${{ inputs.custom_rules_override && 'Applied Flutter-specific rules' || 'Used default rules' }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.ai-implementation.result }}" = "success" ]; then
+          echo "### ✅ Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. **Review Generated Code**: Check the created PR for Flutter best practices" >> $GITHUB_STEP_SUMMARY
+          echo "2. **Test UI Components**: Run \`flutter test\` in both main app and styleguide" >> $GITHUB_STEP_SUMMARY
+          echo "3. **Golden Tests**: Update golden tests if UI components were modified" >> $GITHUB_STEP_SUMMARY
+          echo "4. **Hot Reload**: Test hot reload functionality during development" >> $GITHUB_STEP_SUMMARY
+          echo "5. **Responsive Design**: Verify implementation works on different screen sizes" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "### ❌ Implementation Issues" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "The AI implementation encountered issues. Common Flutter-related problems:" >> $GITHUB_STEP_SUMMARY
+          echo "- Widget tree complexity or state management issues" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependency conflicts in pubspec.yaml" >> $GITHUB_STEP_SUMMARY
+          echo "- Analysis errors from linting rules" >> $GITHUB_STEP_SUMMARY
+          echo "- Theme or styling inconsistencies" >> $GITHUB_STEP_SUMMARY
+        fi
