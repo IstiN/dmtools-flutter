@@ -24,20 +24,6 @@ on:
         required: false
         type: boolean
         default: true
-      flutter_focus_area:
-        description: 'Focus discovery on specific Flutter area'
-        required: false
-        type: choice
-        default: 'full-project'
-        options:
-          - full-project
-          - main-app-only
-          - styleguide-only
-          - state-management
-          - ui-components
-          - networking
-          - providers
-          - widgets
 
 permissions:
   contents: read
@@ -134,28 +120,7 @@ jobs:
         echo "  - Build configuration: $(test -f build.yaml && echo "✅ Present" || echo "❌ Missing")"
         echo "  - App configs: $(ls app_config_*.json 2>/dev/null | wc -l) environment configs"
         
-        # Focus area specific analysis
-        case "${{ inputs.flutter_focus_area }}" in
-          "state-management")
-            echo ""
-            echo "🔍 **State Management Focus Analysis:**"
-            echo "  - Providers: $(find lib/providers -name "*.dart" 2>/dev/null | wc -l) provider files"
-            echo "  - Service locator: $(test -f lib/service_locator.dart && echo "✅ Present" || echo "❌ Missing")"
-            grep -r "Provider\|ChangeNotifier\|StateNotifier" lib/ --include="*.dart" | wc -l | xargs echo "  - State management usage count:"
-            ;;
-          "ui-components")
-            echo ""
-            echo "🔍 **UI Components Focus Analysis:**"
-            echo "  - Custom widgets: $(find lib/widgets -name "*.dart" 2>/dev/null | wc -l) widgets"
-            echo "  - Styleguide components: $(find flutter_styleguide/lib -name "*.dart" 2>/dev/null | wc -l) components"
-            ;;
-          "networking")
-            echo ""
-            echo "🔍 **Networking Focus Analysis:**"
-            echo "  - Network files: $(find lib/network -name "*.dart" 2>/dev/null | wc -l) files"
-            echo "  - API configurations: $(ls app_config_*.json 2>/dev/null | wc -l) configs"
-            ;;
-        esac
+
         
     - name: Flutter Discovery Summary
       run: |
@@ -166,7 +131,7 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **Project Type**: Flutter Web & Mobile Application" >> $GITHUB_STEP_SUMMARY
         echo "- **Architecture**: Multi-module (Main App + Styleguide)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Focus Area**: ${{ inputs.flutter_focus_area }}" >> $GITHUB_STEP_SUMMARY
+
         echo "- **Discovery Model**: ${{ inputs.model }}" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
