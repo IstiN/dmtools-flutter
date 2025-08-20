@@ -62,3 +62,110 @@ jobs:
     secrets:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+
+  display-flutter-implementation-summary:
+    name: Flutter Implementation Summary
+    needs: ai-implementation
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Download implementation artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: agentic-workflow-results-${{ github.run_number }}
+        path: outputs/
+        
+    - name: Display Flutter implementation summary
+      run: |
+        # Display comprehensive summary like original workflow
+        echo "## 🚀 Flutter Implementation Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Show request details
+        echo "### 📋 Request Details" >> $GITHUB_STEP_SUMMARY
+        echo "- **Project Type**: Flutter Web & Mobile Application" >> $GITHUB_STEP_SUMMARY
+        echo "- **Model**: ${{ inputs.model }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Custom Rules**: ${{ inputs.custom_rules_override && 'Applied Flutter-specific rules' || 'Used default rules' }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Show original request
+        echo "### 📝 Original Request" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        cat outputs/user-request.txt >> $GITHUB_STEP_SUMMARY
+        echo '```' >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Check if a PR was created by looking for pr_notes.json
+        if [ -f "outputs/pr_notes.json" ]; then
+          echo "### ✅ Implementation Results" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: Implementation completed with changes" >> $GITHUB_STEP_SUMMARY
+          
+          # Try to extract branch name from pr_notes.json
+          if command -v jq >/dev/null 2>&1; then
+            BRANCH_NAME=$(cat outputs/pr_notes.json | jq -r '.branchName' 2>/dev/null || echo "")
+            PR_TITLE=$(cat outputs/pr_notes.json | jq -r '.pullRequestTitle' 2>/dev/null || echo "")
+          else
+            BRANCH_NAME=$(grep '"branchName"' outputs/pr_notes.json | sed 's/.*"branchName"[^"]*"\([^"]*\)".*/\1/' 2>/dev/null || echo "")
+            PR_TITLE=$(grep '"pullRequestTitle"' outputs/pr_notes.json | sed 's/.*"pullRequestTitle"[^"]*"\([^"]*\)".*/\1/' 2>/dev/null || echo "")
+          fi
+          
+          if [ -n "$BRANCH_NAME" ]; then
+            echo "- **Branch**: $BRANCH_NAME" >> $GITHUB_STEP_SUMMARY
+          fi
+          if [ -n "$PR_TITLE" ]; then
+            echo "- **PR Title**: $PR_TITLE" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "- **Pull Request**: Check repository for created PR" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Show implementation summary from response.md
+          if [ -f "outputs/response.md" ]; then
+            echo "### 📊 Implementation Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat outputs/response.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### 📝 Implementation Details" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Implementation completed successfully. Check the created pull request for details." >> $GITHUB_STEP_SUMMARY
+          fi
+        else
+          echo "### ℹ️ No Changes Made" >> $GITHUB_STEP_SUMMARY
+          echo "AI implementation completed but no code changes were necessary or made." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Show response from response.md if available
+          if [ -f "outputs/response.md" ]; then
+            echo "### 📊 Implementation Analysis" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat outputs/response.md >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### 📝 Response Details" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Analysis completed. No implementation was needed." >> $GITHUB_STEP_SUMMARY
+          fi
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### 📊 Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Flutter implementation results and logs have been uploaded as workflow artifacts:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Artifact Name**: flutter-implementation-results-${{ github.run_number }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Retention**: 7 days" >> $GITHUB_STEP_SUMMARY
+        echo "- **Contents**: Implementation response, logs, prompts, and PR details" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Upload Flutter implementation artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: flutter-implementation-results-${{ github.run_number }}
+        path: |
+          outputs/response.md
+          outputs/response-log_*.txt
+          outputs/implementation-prompt-combined.md
+          outputs/user-request.txt
+          outputs/pr_notes.json
+          outputs/pr-generation-prompt.md
+          outputs/gemini-execution.log
+        retention-days: 7
+        if-no-files-found: warn
