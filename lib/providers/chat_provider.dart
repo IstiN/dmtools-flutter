@@ -139,11 +139,12 @@ class ChatProvider with ChangeNotifier {
       _setState(ChatState.loading);
       _clearError();
 
-      // Add user message to conversation
+      // Add user message to conversation with attachments
       final userMessage = ChatMessage(
         message: message,
         isUser: true,
         timestamp: DateTime.now(),
+        attachments: List.from(_attachments), // Copy current attachments
       );
       _messages.add(userMessage);
       notifyListeners(); // Update UI immediately with user message
@@ -334,6 +335,159 @@ class ChatProvider with ChangeNotifier {
     if (kDebugMode) {
       print('🗑️ Cleared all attachments');
     }
+  }
+
+  /// Edit a message at the specified index
+  void editMessage(int messageIndex, String newContent) {
+    if (messageIndex < 0 || messageIndex >= _messages.length) {
+      if (kDebugMode) {
+        print('❌ Invalid message index: $messageIndex');
+      }
+      return;
+    }
+
+    final message = _messages[messageIndex];
+
+    if (kDebugMode) {
+      print('✏️ Editing message at index $messageIndex');
+      print('📝 Original: ${message.message}');
+      print('📝 New: $newContent');
+    }
+
+    // Update the message content
+    _messages[messageIndex] = ChatMessage(
+      message: newContent,
+      isUser: message.isUser,
+      timestamp: message.timestamp,
+      enableMarkdown: message.enableMarkdown,
+      attachments: message.attachments, // Preserve original attachments
+    );
+
+    // If editing a user message, remove all messages after it and resend
+    if (message.isUser) {
+      final messagesToRemove = _messages.length - messageIndex - 1;
+      if (messagesToRemove > 0) {
+        _messages.removeRange(messageIndex + 1, _messages.length);
+        if (kDebugMode) {
+          print('🗑️ Removed $messagesToRemove messages after edited user message');
+        }
+      }
+
+      // Resend the conversation to get new AI response
+      _resendConversation();
+    }
+
+    notifyListeners();
+  }
+
+  /// Resend the entire conversation to get a new AI response
+  Future<void> _resendConversation() async {
+    if (_messages.isEmpty || _selectedAiIntegration == null) {
+      return;
+    }
+
+    if (kDebugMode) {
+      print('🔄 Resending conversation after edit...');
+      print('📨 Current conversation length: ${_messages.length}');
+    }
+
+    // Set loading state
+    _setState(ChatState.loading);
+
+    try {
+      // Send the conversation without adding a new user message
+      if (_attachments.isNotEmpty) {
+        await _resendWithFiles();
+      } else {
+        await _resendChatCompletion();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error resending conversation: $e');
+      }
+      _setError('Failed to get AI response after editing message');
+    }
+  }
+
+  /// Resend chat completion with existing conversation history
+  Future<void> _resendChatCompletion() async {
+    // Convert existing messages to API format
+    final apiMessages = _messages
+        .map((msg) => api.ChatMessage(
+              role: msg.isUser ? 'user' : 'assistant',
+              content: msg.message,
+            ))
+        .toList();
+
+    if (kDebugMode) {
+      print('🔄 Resending chat completion with ${apiMessages.length} messages');
+    }
+
+    final response = await _chatService.sendChatCompletion(
+      messages: apiMessages,
+      aiIntegrationId: _selectedAiIntegration!.id,
+    );
+
+    if (response?.success == true && response?.content != null) {
+      // Add AI response to conversation
+      final aiMessage = ChatMessage(
+        message: response!.content!,
+        isUser: false,
+      );
+
+      _messages.add(aiMessage);
+      _setState(ChatState.success);
+
+      if (kDebugMode) {
+        print('✅ AI response received and added after edit');
+      }
+    } else {
+      throw Exception('Invalid response from AI service');
+    }
+  }
+
+  /// Resend message with files using existing conversation
+  Future<void> _resendWithFiles() async {
+    // Convert existing messages to API format
+    final apiMessages = _messages
+        .map((msg) => api.ChatMessage(
+              role: msg.isUser ? 'user' : 'assistant',
+              content: msg.message,
+            ))
+        .toList();
+
+    if (kDebugMode) {
+      print('🔄 Resending with files: ${_attachments.length} attachments, ${apiMessages.length} messages');
+    }
+
+    final response = await _chatService.sendChatWithFiles(
+      messages: apiMessages,
+      files: _attachments.map((a) => a.bytes).toList(),
+      fileNames: _attachments.map((a) => a.name).toList(),
+      aiIntegrationId: _selectedAiIntegration!.id,
+    );
+
+    if (response?.success == true && response?.content != null) {
+      // Add AI response to conversation
+      final aiMessage = ChatMessage(
+        message: response!.content!,
+        isUser: false,
+      );
+
+      _messages.add(aiMessage);
+      _setState(ChatState.success);
+
+      if (kDebugMode) {
+        print('✅ AI response with files received and added after edit');
+      }
+    } else {
+      throw Exception('Invalid response from AI service');
+    }
+
+    // Clear attachments after successful send
+    _attachments.clear();
+    _isUploadingFiles = false;
+    _uploadProgress = null;
   }
 
   /// Clear conversation history

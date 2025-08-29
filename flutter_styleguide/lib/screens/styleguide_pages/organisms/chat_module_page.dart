@@ -69,7 +69,26 @@ class _ChatModulePageState extends State<ChatModulePage> {
                   ChatInterface(
                     messages: [
                       ChatMessage(message: 'Hello! How can I help you today?', isUser: false),
-                      ChatMessage(message: 'I need help with setting up a new agent.', isUser: true),
+                      ChatMessage(
+                        message: 'I need help with setting up a new agent. Here are my config files.',
+                        isUser: true,
+                        attachments: [
+                          FileAttachment(
+                            name: 'config.json',
+                            type: 'application/json',
+                            size: 1024,
+                            bytes: [],
+                            uploadedAt: DateTime.now(),
+                          ),
+                          FileAttachment(
+                            name: 'screenshot.png',
+                            type: 'image/png',
+                            size: 2048,
+                            bytes: [],
+                            uploadedAt: DateTime.now(),
+                          ),
+                        ],
+                      ),
                       ChatMessage(
                         message:
                             'Sure, I can guide you through the process. What type of agent would you like to create?',
@@ -130,6 +149,12 @@ class _ChatModulePageState extends State<ChatModulePage> {
                       setState(() {
                         _attachments = attachments;
                       });
+                    },
+                    onMessageEdit: (messageIndex, newContent) {
+                      // For demo purposes, just show a snackbar
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Message $messageIndex edited: ${newContent.substring(0, 30)}...')),
+                      );
                     },
                     title: 'AI-Enhanced Chat',
                     isTestMode: true,
