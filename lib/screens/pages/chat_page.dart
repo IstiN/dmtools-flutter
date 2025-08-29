@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../../providers/chat_provider.dart';
+import '../../providers/auth_provider.dart' as auth;
 import '../../core/services/file_service.dart';
 import '../../core/services/clipboard_js.dart' if (dart.library.io) '../../core/services/clipboard_stub.dart';
 import '../../service_locator.dart';
@@ -187,15 +188,22 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     // Note: No manual paste shortcuts needed - JavaScript paste listener handles everything automatically!
-    return Consumer<ChatProvider>(
-      builder: (context, chatProvider, child) {
-        // Show loading state while initializing
+    return Consumer2<ChatProvider, auth.AuthProvider>(
+      builder: (context, chatProvider, authProvider, child) {
+        // Show loading state while initializing or during authentication
         if (chatProvider.currentState == ChatState.loading && chatProvider.messages.isEmpty) {
           return _buildLoadingState();
         }
 
-        // Show empty state if no AI integrations are available
-        if (chatProvider.availableAiIntegrations.isEmpty && chatProvider.currentState != ChatState.loading) {
+        // Show loading state if user is authenticated but integrations haven't loaded yet
+        if (authProvider.isAuthenticated && chatProvider.availableAiIntegrations.isEmpty) {
+          return _buildLoadingState();
+        }
+
+        // Show empty state only if user is authenticated and no AI integrations are available after loading
+        if (chatProvider.availableAiIntegrations.isEmpty &&
+            authProvider.isAuthenticated &&
+            chatProvider.currentState != ChatState.loading) {
           return _buildEmptyState();
         }
 
