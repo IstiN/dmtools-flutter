@@ -42,7 +42,7 @@ void main() {
 
         // Assert
         expect(find.byType(AiIntegrationSelector), findsOneWidget);
-        expect(find.byType(IconButton), findsOneWidget);
+        expect(find.byType(DropdownButton<AiIntegration>), findsOneWidget);
       });
     });
 

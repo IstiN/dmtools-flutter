@@ -98,7 +98,9 @@ class _WebhookPageState extends State<WebhookPage> {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: colors.cardBg,
-        boxShadow: [BoxShadow(color: colors.shadowColor.withOpacity(0.1), blurRadius: 4, offset: const Offset(0, 2))],
+        boxShadow: [
+          BoxShadow(color: colors.shadowColor.withValues(alpha: 0.1), blurRadius: 4, offset: const Offset(0, 2)),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -267,7 +269,7 @@ class _WebhookPageState extends State<WebhookPage> {
   Widget _buildOverlays() {
     if (_showGenerateModal) {
       return Material(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         child: Center(
           child: WebhookKeyGenerateModal(
             onGenerate: (name, description) {
@@ -289,7 +291,7 @@ class _WebhookPageState extends State<WebhookPage> {
 
     if (_showDisplayModal) {
       return Material(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         child: Center(
           child: WebhookKeyDisplayModal(
             keyName: 'Sample API Key',

@@ -341,10 +341,9 @@ class NavigationItem {
 }
 
 const List<NavigationItem> navigationItems = [
-  // Temporarily hidden - Dashboard
-  // NavigationItem(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
-  NavigationItem(icon: Icons.smart_toy_outlined, label: 'AI Jobs', route: '/ai-jobs'),
+  // Chat first - primary feature
   NavigationItem(icon: Icons.chat_outlined, label: 'Chat', route: '/chat'),
+  NavigationItem(icon: Icons.smart_toy_outlined, label: 'AI Jobs', route: '/ai-jobs'),
   NavigationItem(icon: Icons.folder_outlined, label: 'Workspaces', route: '/workspaces'),
   // Temporarily hidden - Applications
   // NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),

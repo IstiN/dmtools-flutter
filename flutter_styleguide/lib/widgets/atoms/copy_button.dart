@@ -260,7 +260,6 @@ class _OutlinedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = isCopied ? colors.successColor : colors.accentColor;
     final contentColor = isCopied ? colors.successColor : colors.accentColor;
 
     return Material(
