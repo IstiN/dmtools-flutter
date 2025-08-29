@@ -85,9 +85,12 @@ class AiIntegrationSelector extends StatelessWidget {
           testDarkMode: testDarkMode,
         ),
         const SizedBox(width: 6),
-        Text(
-          integration.displayName,
-          style: TextStyle(color: colors.textColor, fontSize: 13, fontWeight: FontWeight.w500),
+        Flexible(
+          child: Text(
+            integration.displayName,
+            style: TextStyle(color: colors.textColor, fontSize: 13, fontWeight: FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
         if (!integration.isActive) ...[
           const SizedBox(width: 4),

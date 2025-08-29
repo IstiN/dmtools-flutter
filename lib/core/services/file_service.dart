@@ -4,10 +4,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:pasteboard/pasteboard.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
-// Conditional imports for clipboard handling
-import 'clipboard_web.dart' if (dart.library.io) 'clipboard_stub.dart';
-import 'clipboard_js.dart' if (dart.library.io) 'clipboard_stub.dart';
-
 /// Service for handling file operations including file picking and clipboard
 class FileService {
   static const List<String> supportedImageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
