@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../core/services/chat_service.dart';
 import '../core/services/integration_service.dart';
 import '../network/generated/api.swagger.dart' as api;
@@ -15,6 +16,8 @@ enum ChatState {
 
 /// Provider for managing chat state and operations
 class ChatProvider with ChangeNotifier {
+  static const String _selectedAiIntegrationKey = 'selected_ai_integration_id';
+
   final ChatService _chatService;
   final IntegrationService _integrationService;
 
@@ -29,6 +32,10 @@ class ChatProvider with ChangeNotifier {
 
   ChatProvider(this._chatService, this._integrationService) {
     _initializeAiIntegrations();
+
+    // Listen to auth changes to reload integrations when user becomes authenticated
+    final authProvider = _integrationService.authProvider;
+    authProvider?.addListener(_onAuthChanged);
   }
 
   // Getters
@@ -81,7 +88,7 @@ class ChatProvider with ChangeNotifier {
               ))
           .toList();
 
-      // Auto-select first available AI integration
+      // Auto-select first available AI integration (only if no saved preference)
       if (_availableAiIntegrations.isNotEmpty && _selectedAiIntegration == null) {
         _selectedAiIntegration = _availableAiIntegrations.first;
         if (kDebugMode) {
@@ -274,6 +281,7 @@ class ChatProvider with ChangeNotifier {
   void selectAiIntegration(AiIntegration? integration) {
     if (integration != _selectedAiIntegration) {
       _selectedAiIntegration = integration;
+      _saveSelectedAiIntegration(integration?.id);
       _clearError();
 
       if (kDebugMode) {
@@ -343,6 +351,7 @@ class ChatProvider with ChangeNotifier {
   /// Refresh AI integrations
   Future<void> refreshAiIntegrations() async {
     await _initializeAiIntegrations();
+    await _loadSelectedAiIntegration();
   }
 
   /// Clear error state
@@ -363,5 +372,81 @@ class ChatProvider with ChangeNotifier {
     if (kDebugMode) {
       print('🔄 Reset ChatProvider to initial state');
     }
+  }
+
+  /// Save selected AI integration to client preferences
+  Future<void> _saveSelectedAiIntegration(String? integrationId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (integrationId != null) {
+        await prefs.setString(_selectedAiIntegrationKey, integrationId);
+        if (kDebugMode) {
+          print('💾 Saved AI integration preference: $integrationId');
+        }
+      } else {
+        await prefs.remove(_selectedAiIntegrationKey);
+        if (kDebugMode) {
+          print('🗑️ Cleared AI integration preference');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Failed to save AI integration preference: $e');
+      }
+    }
+  }
+
+  /// Load selected AI integration from client preferences
+  Future<void> _loadSelectedAiIntegration() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedIntegrationId = prefs.getString(_selectedAiIntegrationKey);
+
+      if (savedIntegrationId != null && _availableAiIntegrations.isNotEmpty) {
+        final savedIntegration = _availableAiIntegrations
+            .where(
+              (integration) => integration.id == savedIntegrationId,
+            )
+            .firstOrNull;
+
+        if (savedIntegration != null) {
+          _selectedAiIntegration = savedIntegration;
+
+          if (kDebugMode) {
+            print('📥 Loaded saved AI integration: ${savedIntegration.displayName}');
+          }
+        } else {
+          // Fallback to first available if saved one not found
+          _selectedAiIntegration = _availableAiIntegrations.first;
+          if (kDebugMode) {
+            print('⚠️ Saved integration not found, using: ${_selectedAiIntegration?.displayName}');
+          }
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Failed to load AI integration preference: $e');
+      }
+    }
+  }
+
+  /// Handle authentication state changes
+  void _onAuthChanged() {
+    final authProvider = _integrationService.authProvider;
+    if (authProvider?.isAuthenticated == true && _availableAiIntegrations.isEmpty) {
+      if (kDebugMode) {
+        print('🔄 User authenticated, reloading AI integrations...');
+      }
+      // Reload integrations when user becomes authenticated
+      _initializeAiIntegrations();
+    }
+  }
+
+  @override
+  void dispose() {
+    // Clean up auth listener
+    final authProvider = _integrationService.authProvider;
+    authProvider?.removeListener(_onAuthChanged);
+    super.dispose();
   }
 }

@@ -113,6 +113,7 @@ class FileAttachmentPicker extends StatelessWidget {
     final isImage = _isImageFile(attachment.type);
 
     return Container(
+      key: ValueKey('attachment_${attachment.name}_${attachment.uploadedAt.millisecondsSinceEpoch}'),
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
@@ -133,13 +134,10 @@ class FileAttachmentPicker extends StatelessWidget {
             child: isImage
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(6),
-                    child: Image.memory(
-                      Uint8List.fromList(attachment.bytes),
-                      width: 32,
-                      height: 32,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Icon(_getFileIcon(attachment.type), color: _getFileColor(attachment.type), size: 16),
+                    child: _ImagePreview(
+                      key: ValueKey('image_${attachment.name}_${attachment.size}'),
+                      bytes: attachment.bytes,
+                      fileType: attachment.type,
                     ),
                   )
                 : Center(child: Icon(_getFileIcon(attachment.type), color: _getFileColor(attachment.type), size: 16)),
@@ -271,5 +269,95 @@ class FileAttachmentPicker extends StatelessWidget {
     final newAttachments = List<FileAttachment>.from(attachments);
     newAttachments.removeAt(index);
     onAttachmentsChanged?.call(newAttachments);
+  }
+}
+
+/// Private widget for image preview to prevent unnecessary rebuilds
+class _ImagePreview extends StatefulWidget {
+  final List<int> bytes;
+  final String fileType;
+
+  const _ImagePreview({required this.bytes, required this.fileType, super.key});
+
+  @override
+  State<_ImagePreview> createState() => _ImagePreviewState();
+}
+
+class _ImagePreviewState extends State<_ImagePreview> {
+  late final Uint8List _imageData;
+
+  @override
+  void initState() {
+    super.initState();
+    // Convert once and cache to prevent rebuilds
+    _imageData = Uint8List.fromList(widget.bytes);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Image.memory(
+      _imageData,
+      width: 32,
+      height: 32,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) =>
+          Icon(_getFileIcon(widget.fileType), color: _getFileColor(widget.fileType), size: 16),
+    );
+  }
+
+  // Helper methods for error fallback
+  IconData _getFileIcon(String type) {
+    switch (type.toLowerCase()) {
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'doc':
+      case 'docx':
+        return Icons.description;
+      case 'txt':
+      case 'rtf':
+        return Icons.text_snippet;
+      case 'dart':
+      case 'js':
+      case 'ts':
+      case 'html':
+      case 'css':
+      case 'json':
+      case 'yaml':
+      case 'xml':
+        return Icons.code;
+      default:
+        return Icons.image;
+    }
+  }
+
+  Color _getFileColor(String type) {
+    switch (type.toLowerCase()) {
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'bmp':
+      case 'webp':
+        return const Color(0xFF4CAF50); // Green for images
+      case 'pdf':
+        return const Color(0xFFF44336); // Red for PDF
+      case 'doc':
+      case 'docx':
+        return const Color(0xFF2196F3); // Blue for documents
+      case 'txt':
+      case 'rtf':
+        return const Color(0xFF9E9E9E); // Gray for text
+      case 'dart':
+      case 'js':
+      case 'ts':
+      case 'html':
+      case 'css':
+      case 'json':
+      case 'yaml':
+      case 'xml':
+        return const Color(0xFFFF9800); // Orange for code
+      default:
+        return const Color(0xFF607D8B); // Blue gray for unknown
+    }
   }
 }

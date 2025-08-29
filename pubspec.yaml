@@ -29,6 +29,7 @@ dependencies:
   # File picker and clipboard support
   file_picker: ^8.0.0+1
   pasteboard: ^0.2.0
+  shared_preferences: ^2.2.2
   # Local package dependency
   dmtools_styleguide:
     path: ./flutter_styleguide
