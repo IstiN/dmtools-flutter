@@ -585,6 +585,7 @@ Map<String, dynamic> _$AgentExecutionResponseToJson(
 ChatResponse _$ChatResponseFromJson(Map<String, dynamic> json) => ChatResponse(
       content: json['content'] as String?,
       model: json['model'] as String?,
+      ai: json['ai'] as String?,
       success: json['success'] as bool?,
       error: json['error'] as String?,
       source: json['source'] == null
@@ -601,6 +602,7 @@ Map<String, dynamic> _$ChatResponseToJson(ChatResponse instance) =>
     <String, dynamic>{
       if (instance.content case final value?) 'content': value,
       if (instance.model case final value?) 'model': value,
+      if (instance.ai case final value?) 'ai': value,
       if (instance.success case final value?) 'success': value,
       if (instance.error case final value?) 'error': value,
       if (instance.source?.toJson() case final value?) 'source': value,
@@ -664,6 +666,7 @@ ChatRequest _$ChatRequestFromJson(Map<String, dynamic> json) => ChatRequest(
               .toList() ??
           [],
       model: json['model'] as String?,
+      ai: json['ai'] as String?,
       agentTools: json['agentTools'] == null
           ? null
           : AgentToolsConfig.fromJson(
@@ -675,6 +678,7 @@ Map<String, dynamic> _$ChatRequestToJson(ChatRequest instance) =>
       if (instance.messages?.map((e) => e.toJson()).toList() case final value?)
         'messages': value,
       if (instance.model case final value?) 'model': value,
+      if (instance.ai case final value?) 'ai': value,
       if (instance.agentTools?.toJson() case final value?) 'agentTools': value,
     };
 

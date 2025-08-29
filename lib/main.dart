@@ -7,6 +7,7 @@ import 'core/routing/app_router.dart';
 import 'providers/auth_provider.dart';
 import 'providers/integration_provider.dart';
 import 'providers/mcp_provider.dart';
+import 'providers/chat_provider.dart';
 import 'network/services/api_service.dart';
 
 void main() async {
@@ -21,6 +22,7 @@ void main() async {
         Provider<ApiService>(create: (_) => ServiceLocator.get()),
         ChangeNotifierProvider(create: (_) => ServiceLocator.get<IntegrationProvider>()),
         ChangeNotifierProvider(create: (_) => ServiceLocator.get<McpProvider>()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<ChatProvider>()),
       ],
       child: const DMToolsApp(),
     ),

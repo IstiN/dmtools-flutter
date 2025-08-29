@@ -6,6 +6,8 @@ import 'package:dmtools_styleguide/widgets/organisms/page_header.dart';
 import 'package:dmtools_styleguide/widgets/organisms/welcome_banner.dart';
 import 'package:dmtools_styleguide/widgets/organisms/panel_base.dart';
 import 'package:dmtools_styleguide/widgets/organisms/workspace_management.dart';
+import 'package:dmtools_styleguide/widgets/molecules/ai_integration_selector.dart';
+import 'package:dmtools_styleguide/widgets/molecules/file_attachment_picker.dart';
 import '../golden_test_helper.dart' as helper;
 
 void main() {
@@ -17,11 +19,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'page_header_light',
-            child: SizedBox(
-              width: 1200,
-              height: 200,
-              child: helper.createTestApp(_buildPageHeader()),
-            ),
+            child: SizedBox(width: 1200, height: 200, child: helper.createTestApp(_buildPageHeader())),
           ),
         ],
       ),
@@ -34,11 +32,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'page_header_dark',
-            child: SizedBox(
-              width: 1200,
-              height: 200,
-              child: helper.createTestApp(_buildPageHeader(), darkMode: true),
-            ),
+            child: SizedBox(width: 1200, height: 200, child: helper.createTestApp(_buildPageHeader(), darkMode: true)),
           ),
         ],
       ),
@@ -51,11 +45,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'welcome_banner_light',
-            child: SizedBox(
-              width: 1000,
-              height: 600,
-              child: helper.createTestApp(_buildWelcomeBanner()),
-            ),
+            child: SizedBox(width: 1000, height: 600, child: helper.createTestApp(_buildWelcomeBanner())),
           ),
         ],
       ),
@@ -85,11 +75,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'chat_module_light',
-            child: SizedBox(
-              width: 800,
-              height: 600,
-              child: helper.createTestApp(_buildChatModule()),
-            ),
+            child: SizedBox(width: 800, height: 600, child: helper.createTestApp(_buildChatModule())),
           ),
         ],
       ),
@@ -102,10 +88,36 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'chat_module_dark',
+            child: SizedBox(width: 800, height: 600, child: helper.createTestApp(_buildChatModule(), darkMode: true)),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'Enhanced Chat Module with AI Integration - Light Mode',
+      fileName: 'enhanced_chat_module_light',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'enhanced_chat_module_light',
+            child: SizedBox(width: 800, height: 600, child: helper.createTestApp(_buildEnhancedChatModule())),
+          ),
+        ],
+      ),
+    );
+
+    goldenTest(
+      'Enhanced Chat Module with AI Integration - Dark Mode',
+      fileName: 'enhanced_chat_module_dark',
+      builder: () => GoldenTestGroup(
+        children: [
+          GoldenTestScenario(
+            name: 'enhanced_chat_module_dark',
             child: SizedBox(
               width: 800,
               height: 600,
-              child: helper.createTestApp(_buildChatModule(), darkMode: true),
+              child: helper.createTestApp(_buildEnhancedChatModule(), darkMode: true),
             ),
           ),
         ],
@@ -119,11 +131,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'panel_base_light',
-            child: SizedBox(
-              width: 800,
-              height: 400,
-              child: helper.createTestApp(_buildPanelBase()),
-            ),
+            child: SizedBox(width: 800, height: 400, child: helper.createTestApp(_buildPanelBase())),
           ),
         ],
       ),
@@ -136,11 +144,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'panel_base_dark',
-            child: SizedBox(
-              width: 800,
-              height: 400,
-              child: helper.createTestApp(_buildPanelBase(), darkMode: true),
-            ),
+            child: SizedBox(width: 800, height: 400, child: helper.createTestApp(_buildPanelBase(), darkMode: true)),
           ),
         ],
       ),
@@ -153,11 +157,7 @@ void main() {
         children: [
           GoldenTestScenario(
             name: 'workspace_management_light',
-            child: SizedBox(
-              width: 1000,
-              height: 600,
-              child: helper.createTestApp(_buildWorkspaceManagement()),
-            ),
+            child: SizedBox(width: 1000, height: 600, child: helper.createTestApp(_buildWorkspaceManagement())),
           ),
         ],
       ),
@@ -219,14 +219,8 @@ Widget _buildChatModule() {
       padding: const EdgeInsets.all(16.0),
       child: ChatInterface(
         messages: [
-          ChatMessage(
-            message: 'Hello! How can I help you today?',
-            isUser: false,
-          ),
-          ChatMessage(
-            message: 'I need help with setting up a new agent.',
-            isUser: true,
-          ),
+          ChatMessage(message: 'Hello! How can I help you today?', isUser: false),
+          ChatMessage(message: 'I need help with setting up a new agent.', isUser: true),
           ChatMessage(
             message: 'Sure, I can guide you through the process. What type of agent would you like to create?',
             isUser: false,
@@ -252,10 +246,7 @@ Widget _buildPanelBase() {
             onPressed: () {},
           ),
         ],
-        content: const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Text('This is the content area of the panel.'),
-        ),
+        content: const Padding(padding: EdgeInsets.all(16.0), child: Text('This is the content area of the panel.')),
       ),
     ),
   );
@@ -284,6 +275,52 @@ Widget _buildWorkspaceManagement() {
         ],
         onWorkspaceSelected: (_) {},
         onCreateWorkspace: () {},
+        isTestMode: true,
+      ),
+    ),
+  );
+}
+
+Widget _buildEnhancedChatModule() {
+  return Scaffold(
+    body: Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: ChatInterface(
+        messages: [
+          ChatMessage(
+            message: 'Welcome! I can help you with various tasks. Which AI would you like to use?',
+            isUser: false,
+          ),
+          ChatMessage(
+            message: 'I\'d like to analyze some code. Let me switch to OpenAI for better code analysis.',
+            isUser: true,
+          ),
+          ChatMessage(
+            message:
+                'Great choice! OpenAI is excellent for code analysis. Please share your code and I\'ll help you review it.',
+            isUser: false,
+          ),
+        ],
+        aiIntegrations: const [
+          AiIntegration(id: '1', type: 'openai', displayName: 'OpenAI GPT-4'),
+          AiIntegration(id: '2', type: 'gemini', displayName: 'Google Gemini'),
+          AiIntegration(id: '3', type: 'openai', displayName: 'Claude 3.5', isActive: false),
+        ],
+        selectedAiIntegration: const AiIntegration(id: '1', type: 'openai', displayName: 'OpenAI GPT-4'),
+        attachments: [
+          FileAttachment(
+            name: 'example.dart',
+            size: 2048,
+            type: 'dart',
+            bytes: const [],
+            uploadedAt: DateTime(2024, 1, 15, 10, 30),
+          ),
+        ],
+        onSendMessage: (message) {},
+        onAiIntegrationChanged: (integration) {},
+        onAttachmentsChanged: (attachments) {},
+        onAttachmentPressed: () {},
+        title: 'AI-Enhanced Chat',
         isTestMode: true,
       ),
     ),

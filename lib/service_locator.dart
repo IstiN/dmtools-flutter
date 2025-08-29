@@ -3,8 +3,11 @@ import './network/services/api_service.dart';
 import './providers/auth_provider.dart';
 import './providers/integration_provider.dart';
 import './providers/mcp_provider.dart';
+import './providers/chat_provider.dart';
 import './core/services/integration_service.dart';
 import './core/services/mcp_service.dart';
+import './core/services/chat_service.dart';
+import './core/services/file_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 
@@ -55,6 +58,27 @@ abstract final class ServiceLocator {
     // Create MCP provider with dependencies
     GetIt.I.registerLazySingleton<McpProvider>(
       () => McpProvider(get<McpService>()),
+    );
+
+    // Create ChatService with dependencies
+    GetIt.I.registerLazySingleton<ChatService>(
+      () => ChatService(
+        apiService: get<ApiService>(),
+        authProvider: get<AuthProvider>(),
+      ),
+    );
+
+    // Create FileService (no dependencies)
+    GetIt.I.registerLazySingleton<FileService>(
+      () => FileService(),
+    );
+
+    // Create ChatProvider with dependencies
+    GetIt.I.registerLazySingleton<ChatProvider>(
+      () => ChatProvider(
+        get<ChatService>(),
+        get<IntegrationService>(),
+      ),
     );
   }
 

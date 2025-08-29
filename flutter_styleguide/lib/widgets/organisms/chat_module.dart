@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
@@ -13,7 +14,7 @@ class ChatMessage {
 }
 
 /// Interactive chat interface widget with message display and input functionality.
-/// Provides a complete chat experience with message bubbles, input field, and optional header.
+/// Provides a complete chat experience with message bubbles, input field, AI integration selection, and optional header.
 class ChatInterface extends StatefulWidget {
   final List<ChatMessage> messages;
   final Function(String) onSendMessage;
@@ -21,6 +22,20 @@ class ChatInterface extends StatefulWidget {
   final bool showHeader;
   final String title;
   final bool isLoading;
+
+  /// AI integration selection
+  final List<AiIntegration> aiIntegrations;
+  final AiIntegration? selectedAiIntegration;
+  final ValueChanged<AiIntegration?>? onAiIntegrationChanged;
+
+  /// File attachment support
+  final List<FileAttachment> attachments;
+  final ValueChanged<List<FileAttachment>>? onAttachmentsChanged;
+  final bool isUploadingFiles;
+  final double? uploadProgress;
+
+  /// Text insertion callback (called when text should be inserted into input field)
+  final ValueChanged<String>? onTextInsert;
 
   /// Used in tests to override theme detection for predictable rendering
   final bool? isTestMode;
@@ -36,6 +51,14 @@ class ChatInterface extends StatefulWidget {
     this.showHeader = true,
     this.title = 'Chat',
     this.isLoading = false,
+    this.aiIntegrations = const [],
+    this.selectedAiIntegration,
+    this.onAiIntegrationChanged,
+    this.attachments = const [],
+    this.onAttachmentsChanged,
+    this.isUploadingFiles = false,
+    this.uploadProgress,
+    this.onTextInsert,
     this.isTestMode,
     this.testDarkMode,
   });
@@ -46,6 +69,32 @@ class ChatInterface extends StatefulWidget {
 
 class ChatInterfaceState extends State<ChatInterface> {
   final TextEditingController _messageController = TextEditingController();
+
+  /// Insert text into the message input field
+  void insertText(String text) {
+    final currentText = _messageController.text;
+    final currentSelection = _messageController.selection;
+
+    String newText;
+    int newCursorPosition;
+
+    if (currentSelection.isValid) {
+      // Replace selected text or insert at cursor position
+      newText = currentText.replaceRange(currentSelection.start, currentSelection.end, text);
+      newCursorPosition = currentSelection.start + text.length;
+    } else {
+      // Append to end
+      newText = currentText + text;
+      newCursorPosition = newText.length;
+    }
+
+    _messageController.text = newText;
+    _messageController.selection = TextSelection.collapsed(offset: newCursorPosition);
+
+    // Notify parent if callback is provided
+    widget.onTextInsert?.call(text);
+  }
+
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
@@ -92,6 +141,51 @@ class ChatInterfaceState extends State<ChatInterface> {
         _isLoading = false;
       });
     }
+  }
+
+  void _showAiIntegrationMenu(BuildContext buttonContext) {
+    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+    final RenderBox overlay = Navigator.of(buttonContext).overlay!.context.findRenderObject() as RenderBox;
+
+    final Offset buttonPosition = button.localToGlobal(Offset.zero, ancestor: overlay);
+    final Size buttonSize = button.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      buttonPosition.dx, // Left edge aligned with button
+      buttonPosition.dy + buttonSize.height + 4, // Below button with small gap
+      buttonPosition.dx + 200, // Right edge 200px from left (menu width)
+      buttonPosition.dy + buttonSize.height + 300, // Bottom edge (max menu height)
+    );
+
+    showMenu<AiIntegration>(
+      context: buttonContext,
+      position: position,
+      items: widget.aiIntegrations.map((integration) {
+        return PopupMenuItem<AiIntegration>(
+          value: integration,
+          child: Row(
+            children: [
+              IntegrationTypeIcon(
+                integrationType: integration.type,
+                size: 16,
+                isTestMode: widget.isTestMode,
+                testDarkMode: widget.testDarkMode,
+              ),
+              const SizedBox(width: 8),
+              Text(integration.displayName),
+              if (widget.selectedAiIntegration?.id == integration.id) ...[
+                const Spacer(),
+                Icon(Icons.check, size: 16, color: context.colorsListening.accentColor),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
+    ).then((selectedIntegration) {
+      if (selectedIntegration != null) {
+        widget.onAiIntegrationChanged?.call(selectedIntegration);
+      }
+    });
   }
 
   @override
@@ -148,47 +242,125 @@ class ChatInterfaceState extends State<ChatInterface> {
               color: colors.cardBg,
               border: Border(top: BorderSide(color: colors.borderColor)),
             ),
-            child: Row(
+            child: Column(
               children: [
-                IconButton(
-                  icon: Icon(Icons.attach_file, color: colors.textSecondary),
-                  onPressed: widget.onAttachmentPressed,
+                // Attachments display (only shows when there are attachments or uploading)
+                FileAttachmentPicker(
+                  attachments: widget.attachments,
+                  onAttachmentsChanged: widget.onAttachmentsChanged,
+                  onAttachmentPressed: widget.onAttachmentPressed,
+                  isLoading: widget.isUploadingFiles,
+                  uploadProgress: widget.uploadProgress,
+                  isTestMode: widget.isTestMode,
+                  testDarkMode: widget.testDarkMode,
                 ),
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    style: TextStyle(color: colors.textColor),
-                    decoration: InputDecoration(
-                      hintText: 'Type a message...',
-                      hintStyle: TextStyle(color: colors.textMuted),
-                      filled: true,
-                      fillColor: colors.inputBg,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: colors.borderColor),
+
+                // Input row with enhanced layout: [📎] [🤖 AI ▼] [Type a message... 📤]
+                Row(
+                  children: [
+                    // AI integration selector icon (first)
+                    if (widget.aiIntegrations.isNotEmpty || widget.selectedAiIntegration != null) ...[
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: widget.selectedAiIntegration != null
+                                  ? IntegrationTypeIcon(
+                                      integrationType: widget.selectedAiIntegration!.type,
+                                      size: 20,
+                                      isTestMode: widget.isTestMode,
+                                      testDarkMode: widget.testDarkMode,
+                                    )
+                                  : Icon(Icons.smart_toy_outlined, color: colors.textSecondary, size: 20),
+                            ),
+                            onPressed: () => _showAiIntegrationMenu(context),
+                            tooltip: widget.selectedAiIntegration?.displayName ?? 'Select AI Integration',
+                          ),
+                        ),
                       ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: colors.borderColor),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                      const SizedBox(width: 8),
+                    ],
+
+                    // File attachment button (second)
+                    SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: Icon(Icons.attach_file, color: colors.textSecondary, size: 20),
+                        onPressed: widget.onAttachmentPressed,
+                        tooltip: 'Attach files',
                       ),
                     ),
-                    onSubmitted: (_) => _sendMessage(),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                PrimaryButton(
-                  text: 'Send',
-                  onPressed: _sendMessage,
-                  icon: Icons.send,
-                  isLoading: _isLoading,
-                  isTestMode: widget.isTestMode ?? false,
-                  testDarkMode: context.isDarkMode,
+
+                    const SizedBox(width: 12),
+
+                    // Message input field with integrated send icon
+                    Expanded(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          minHeight: 40,
+                          maxHeight: 120, // Max 3 lines approximately
+                        ),
+                        child: CallbackShortcuts(
+                          bindings: <ShortcutActivator, VoidCallback>{
+                            const SingleActivator(LogicalKeyboardKey.enter): () {
+                              // Enter alone - send message
+                              _sendMessage();
+                            },
+                          },
+                          child: TextField(
+                            controller: _messageController,
+                            style: TextStyle(color: colors.textColor, fontSize: 14),
+                            // Single line input - Enter sends message
+                            textAlignVertical: TextAlignVertical.center,
+                            textInputAction: TextInputAction.send,
+                            onSubmitted: (value) {
+                              // Enter pressed - send message (backup)
+                              _sendMessage();
+                            },
+                            onChanged: (value) {
+                              // Trigger rebuild to show/hide send icon based on text
+                              setState(() {});
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Type a message...',
+                              hintStyle: TextStyle(color: colors.textMuted, fontSize: 14),
+                              filled: true,
+                              fillColor: colors.inputBg,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                                borderSide: BorderSide(color: colors.borderColor),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                                borderSide: BorderSide(color: colors.borderColor),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                                borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                              ),
+                              suffixIcon: _messageController.text.trim().isNotEmpty
+                                  ? IconButton(
+                                      icon: Icon(Icons.send, color: colors.accentColor, size: 20),
+                                      onPressed: (_isLoading || widget.isLoading) ? null : _sendMessage,
+                                      tooltip: 'Send message',
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -215,14 +387,38 @@ class ChatInterfaceState extends State<ChatInterface> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            message.enableMarkdown
-                ? MarkdownRenderer(
-                    data: message.message,
-                    shrinkWrap: true,
-                    selectable: false,
-                    styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
-                  )
-                : Text(message.message, style: TextStyle(color: message.isUser ? Colors.white : colors.textColor)),
+            // Message content with copy button
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: message.enableMarkdown
+                      ? MarkdownRenderer(
+                          data: message.message,
+                          shrinkWrap: true,
+                          selectable: false,
+                          styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
+                        )
+                      : Text(
+                          message.message,
+                          style: TextStyle(color: message.isUser ? Colors.white : colors.textColor),
+                        ),
+                ),
+                const SizedBox(width: 8),
+                // Copy button
+                IconButton(
+                  icon: Icon(
+                    Icons.copy,
+                    size: 16,
+                    color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
+                  ),
+                  onPressed: () => _copyMessageToClipboard(message.message),
+                  tooltip: 'Copy message',
+                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                  padding: EdgeInsets.zero,
+                ),
+              ],
+            ),
             const SizedBox(height: 4),
             Text(
               _formatTime(message.timestamp),
@@ -239,6 +435,22 @@ class ChatInterfaceState extends State<ChatInterface> {
 
   String _formatTime(DateTime time) {
     return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  /// Copy message content to clipboard
+  void _copyMessageToClipboard(String message) {
+    Clipboard.setData(ClipboardData(text: message));
+
+    // Show a brief confirmation
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Message copied to clipboard'),
+        duration: const Duration(seconds: 2),
+        backgroundColor: context.colorsListening.accentColor,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+      ),
+    );
   }
 
   MarkdownStyleSheet _buildMessageMarkdownStyleSheet(BuildContext context, bool isUser, dynamic colors) {

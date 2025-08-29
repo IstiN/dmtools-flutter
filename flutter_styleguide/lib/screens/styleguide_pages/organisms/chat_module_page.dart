@@ -4,9 +4,18 @@ import '../../../theme/app_theme.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_dimensions.dart';
 import '../../../widgets/organisms/chat_module.dart';
+import '../../../widgets/molecules/ai_integration_selector.dart';
+import '../../../widgets/molecules/file_attachment_picker.dart';
 import '../../../widgets/styleguide/component_display.dart';
 
-class ChatModulePage extends StatelessWidget {
+class ChatModulePage extends StatefulWidget {
+  const ChatModulePage({super.key});
+
+  @override
+  State<ChatModulePage> createState() => _ChatModulePageState();
+}
+
+class _ChatModulePageState extends State<ChatModulePage> {
   // Properties data structure for cleaner table generation
   static const List<Map<String, String>> _propertyData = [
     {'property': 'messages', 'type': 'List<ChatMessage>', 'description': 'List of chat messages to display'},
@@ -20,7 +29,15 @@ class ChatModulePage extends StatelessWidget {
     {'property': 'title', 'type': 'String', 'description': 'Title shown in the header'},
     {'property': 'isLoading', 'type': 'bool', 'description': 'Whether to show loading indicator'},
   ];
-  const ChatModulePage({super.key});
+  AiIntegration? _selectedAiIntegration;
+  List<FileAttachment> _attachments = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedAiIntegration = _getSampleAiIntegrations().first;
+    _attachments = _getSampleAttachments();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,6 +82,56 @@ class ChatModulePage extends StatelessWidget {
                     onAttachmentPressed: () {
                       // Handle attachment
                     },
+                    isTestMode: true,
+                    testDarkMode: isDarkMode,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 48),
+            ComponentDisplay(
+              title: 'Enhanced Chat with AI Integration',
+              description: 'Chat module with AI integration selector and file attachment support.',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: AppDimensions.spacingM),
+                  ChatInterface(
+                    messages: [
+                      ChatMessage(
+                        message: 'Welcome! I can help you with various tasks. Which AI would you like to use?',
+                        isUser: false,
+                      ),
+                      ChatMessage(
+                        message: 'I\'d like to analyze some code. Let me switch to OpenAI for better code analysis.',
+                        isUser: true,
+                      ),
+                      ChatMessage(
+                        message:
+                            'Great choice! OpenAI is excellent for code analysis. Please share your code and I\'ll help you review it.',
+                        isUser: false,
+                      ),
+                    ],
+                    aiIntegrations: _getSampleAiIntegrations(),
+                    selectedAiIntegration: _selectedAiIntegration,
+                    attachments: _attachments,
+                    onSendMessage: (message) {
+                      // Handle sending message
+                    },
+                    onAttachmentPressed: () {
+                      // Handle attachment
+                    },
+                    onAiIntegrationChanged: (integration) {
+                      setState(() {
+                        _selectedAiIntegration = integration;
+                      });
+                    },
+                    onAttachmentsChanged: (attachments) {
+                      setState(() {
+                        _attachments = attachments;
+                      });
+                    },
+                    title: 'AI-Enhanced Chat',
                     isTestMode: true,
                     testDarkMode: isDarkMode,
                   ),
@@ -310,5 +377,27 @@ ChatInterface(
         ),
       ],
     );
+  }
+
+  static List<AiIntegration> _getSampleAiIntegrations() {
+    return const [
+      AiIntegration(id: '1', type: 'openai', displayName: 'OpenAI GPT-4'),
+      AiIntegration(id: '2', type: 'gemini', displayName: 'Google Gemini'),
+      AiIntegration(id: '3', type: 'openai', displayName: 'Claude 3.5', isActive: false),
+    ];
+  }
+
+  static List<FileAttachment> _getSampleAttachments() {
+    return [
+      FileAttachment(name: 'main.dart', size: 2048, type: 'dart', bytes: const [], uploadedAt: DateTime.now()),
+      FileAttachment(name: 'design.pdf', size: 1024 * 1024, type: 'pdf', bytes: const [], uploadedAt: DateTime.now()),
+      FileAttachment(
+        name: 'screenshot.png',
+        size: 512 * 1024,
+        type: 'png',
+        bytes: const [],
+        uploadedAt: DateTime.now(),
+      ),
+    ];
   }
 }
