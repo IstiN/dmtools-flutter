@@ -2480,6 +2480,7 @@ class ChatResponse {
   const ChatResponse({
     this.content,
     this.model,
+    this.ai,
     this.success,
     this.error,
     this.source,
@@ -2496,6 +2497,8 @@ class ChatResponse {
   final String? content;
   @JsonKey(name: 'model', includeIfNull: false)
   final String? model;
+  @JsonKey(name: 'ai', includeIfNull: false)
+  final String? ai;
   @JsonKey(name: 'success', includeIfNull: false)
   final bool? success;
   @JsonKey(name: 'error', includeIfNull: false)
@@ -2521,6 +2524,8 @@ class ChatResponse {
                 )) &&
             (identical(other.model, model) ||
                 const DeepCollectionEquality().equals(other.model, model)) &&
+            (identical(other.ai, ai) ||
+                const DeepCollectionEquality().equals(other.ai, ai)) &&
             (identical(other.success, success) ||
                 const DeepCollectionEquality().equals(
                   other.success,
@@ -2544,6 +2549,7 @@ class ChatResponse {
   int get hashCode =>
       const DeepCollectionEquality().hash(content) ^
       const DeepCollectionEquality().hash(model) ^
+      const DeepCollectionEquality().hash(ai) ^
       const DeepCollectionEquality().hash(success) ^
       const DeepCollectionEquality().hash(error) ^
       const DeepCollectionEquality().hash(source) ^
@@ -2555,6 +2561,7 @@ extension $ChatResponseExtension on ChatResponse {
   ChatResponse copyWith({
     String? content,
     String? model,
+    String? ai,
     bool? success,
     String? error,
     ResponseSource? source,
@@ -2563,6 +2570,7 @@ extension $ChatResponseExtension on ChatResponse {
     return ChatResponse(
       content: content ?? this.content,
       model: model ?? this.model,
+      ai: ai ?? this.ai,
       success: success ?? this.success,
       error: error ?? this.error,
       source: source ?? this.source,
@@ -2573,6 +2581,7 @@ extension $ChatResponseExtension on ChatResponse {
   ChatResponse copyWithWrapped({
     Wrapped<String?>? content,
     Wrapped<String?>? model,
+    Wrapped<String?>? ai,
     Wrapped<bool?>? success,
     Wrapped<String?>? error,
     Wrapped<ResponseSource?>? source,
@@ -2581,6 +2590,7 @@ extension $ChatResponseExtension on ChatResponse {
     return ChatResponse(
       content: (content != null ? content.value : this.content),
       model: (model != null ? model.value : this.model),
+      ai: (ai != null ? ai.value : this.ai),
       success: (success != null ? success.value : this.success),
       error: (error != null ? error.value : this.error),
       source: (source != null ? source.value : this.source),
@@ -2811,7 +2821,7 @@ extension $ChatMessageExtension on ChatMessage {
 
 @JsonSerializable(explicitToJson: true)
 class ChatRequest {
-  const ChatRequest({this.messages, this.model, this.agentTools});
+  const ChatRequest({this.messages, this.model, this.ai, this.agentTools});
 
   factory ChatRequest.fromJson(Map<String, dynamic> json) =>
       _$ChatRequestFromJson(json);
@@ -2827,6 +2837,8 @@ class ChatRequest {
   final List<ChatMessage>? messages;
   @JsonKey(name: 'model', includeIfNull: false)
   final String? model;
+  @JsonKey(name: 'ai', includeIfNull: false)
+  final String? ai;
   @JsonKey(name: 'agentTools', includeIfNull: false)
   final AgentToolsConfig? agentTools;
   static const fromJsonFactory = _$ChatRequestFromJson;
@@ -2842,6 +2854,8 @@ class ChatRequest {
                 )) &&
             (identical(other.model, model) ||
                 const DeepCollectionEquality().equals(other.model, model)) &&
+            (identical(other.ai, ai) ||
+                const DeepCollectionEquality().equals(other.ai, ai)) &&
             (identical(other.agentTools, agentTools) ||
                 const DeepCollectionEquality().equals(
                   other.agentTools,
@@ -2856,6 +2870,7 @@ class ChatRequest {
   int get hashCode =>
       const DeepCollectionEquality().hash(messages) ^
       const DeepCollectionEquality().hash(model) ^
+      const DeepCollectionEquality().hash(ai) ^
       const DeepCollectionEquality().hash(agentTools) ^
       runtimeType.hashCode;
 }
@@ -2864,11 +2879,13 @@ extension $ChatRequestExtension on ChatRequest {
   ChatRequest copyWith({
     List<ChatMessage>? messages,
     String? model,
+    String? ai,
     AgentToolsConfig? agentTools,
   }) {
     return ChatRequest(
       messages: messages ?? this.messages,
       model: model ?? this.model,
+      ai: ai ?? this.ai,
       agentTools: agentTools ?? this.agentTools,
     );
   }
@@ -2876,11 +2893,13 @@ extension $ChatRequestExtension on ChatRequest {
   ChatRequest copyWithWrapped({
     Wrapped<List<ChatMessage>?>? messages,
     Wrapped<String?>? model,
+    Wrapped<String?>? ai,
     Wrapped<AgentToolsConfig?>? agentTools,
   }) {
     return ChatRequest(
       messages: (messages != null ? messages.value : this.messages),
       model: (model != null ? model.value : this.model),
+      ai: (ai != null ? ai.value : this.ai),
       agentTools: (agentTools != null ? agentTools.value : this.agentTools),
     );
   }

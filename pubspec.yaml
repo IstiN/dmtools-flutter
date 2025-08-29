@@ -26,6 +26,9 @@ dependencies:
   crypto: ^3.0.3
   # Web APIs for modern web support
   web: ^1.0.0
+  # File picker and clipboard support
+  file_picker: ^8.0.0+1
+  pasteboard: ^0.2.0
   # Local package dependency
   dmtools_styleguide:
     path: ./flutter_styleguide

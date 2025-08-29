@@ -56,6 +56,8 @@ export 'widgets/molecules/job_configuration_card.dart';
 export 'widgets/molecules/job_type_selector.dart';
 export 'widgets/molecules/job_config_form.dart';
 export 'widgets/molecules/job_showcase.dart';
+export 'widgets/molecules/ai_integration_selector.dart';
+export 'widgets/molecules/file_attachment_picker.dart';
 
 // MCP Molecules
 export 'widgets/molecules/mcp_card.dart';

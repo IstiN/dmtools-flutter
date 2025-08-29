@@ -1,5 +1,9 @@
 // ignore_for_file: type=lint
 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart' as json;
+import 'package:collection/collection.dart';
+import 'dart:convert';
 
 import 'openapi.models.swagger.dart';
 import 'package:chopper/chopper.dart';
@@ -7,7 +11,9 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
+import 'openapi.enums.swagger.dart' as enums;
 export 'openapi.enums.swagger.dart';
 export 'openapi.models.swagger.dart';
 
@@ -323,6 +329,23 @@ abstract class Openapi extends ChopperService {
 
   ///
   ///@param configId
+  Future<chopper.Response<SseEmitter>> mcpStreamConfigIdGet({
+    required String? configId,
+  }) {
+    generatedMapping.putIfAbsent(SseEmitter, () => SseEmitter.fromJsonFactory);
+
+    return _mcpStreamConfigIdGet(configId: configId);
+  }
+
+  ///
+  ///@param configId
+  @GET(path: '/mcp/stream/{configId}')
+  Future<chopper.Response<SseEmitter>> _mcpStreamConfigIdGet({
+    @Path('configId') required String? configId,
+  });
+
+  ///
+  ///@param configId
   Future<chopper.Response<SseEmitter>> mcpStreamConfigIdPost({
     required String? configId,
     required String? body,
@@ -591,25 +614,29 @@ abstract class Openapi extends ChopperService {
   ///
   ///@param message
   ///@param model
+  ///@param ai
   Future<chopper.Response<ChatResponse>> apiV1ChatSimplePost({
     required String? message,
     String? model,
+    String? ai,
   }) {
     generatedMapping.putIfAbsent(
       ChatResponse,
       () => ChatResponse.fromJsonFactory,
     );
 
-    return _apiV1ChatSimplePost(message: message, model: model);
+    return _apiV1ChatSimplePost(message: message, model: model, ai: ai);
   }
 
   ///
   ///@param message
   ///@param model
+  ///@param ai
   @POST(path: '/api/v1/chat/simple', optionalBody: true)
   Future<chopper.Response<ChatResponse>> _apiV1ChatSimplePost({
     @Query('message') required String? message,
     @Query('model') String? model,
+    @Query('ai') String? ai,
   });
 
   ///
@@ -997,6 +1024,15 @@ abstract class Openapi extends ChopperService {
   Future<chopper.Response<Object>> _apiAuthLocalLoginPost({
     @Body() required Object? body,
   });
+
+  ///Re-evaluate all user roles
+  Future<chopper.Response<Object>> apiAdminUsersRolesReevaluatePost() {
+    return _apiAdminUsersRolesReevaluatePost();
+  }
+
+  ///Re-evaluate all user roles
+  @POST(path: '/api/admin/users/roles/reevaluate', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminUsersRolesReevaluatePost();
 
   ///
   Future<chopper.Response<Object>> apiAdminCacheClearPost() {

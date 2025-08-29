@@ -231,6 +231,18 @@ final class _$LatestOpenapi extends LatestOpenapi {
   }
 
   @override
+  Future<Response<SseEmitter>> _mcpStreamConfigIdGet(
+      {required String? configId}) {
+    final Uri $url = Uri.parse('/mcp/stream/${configId}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<SseEmitter, SseEmitter>($request);
+  }
+
+  @override
   Future<Response<SseEmitter>> _mcpStreamConfigIdPost({
     required String? configId,
     required String? body,
@@ -434,11 +446,13 @@ final class _$LatestOpenapi extends LatestOpenapi {
   Future<Response<ChatResponse>> _apiV1ChatSimplePost({
     required String? message,
     String? model,
+    String? ai,
   }) {
     final Uri $url = Uri.parse('/api/v1/chat/simple');
     final Map<String, dynamic> $params = <String, dynamic>{
       'message': message,
       'model': model,
+      'ai': ai,
     };
     final Request $request = Request(
       'POST',
@@ -786,6 +800,17 @@ final class _$LatestOpenapi extends LatestOpenapi {
       $url,
       client.baseUrl,
       body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAdminUsersRolesReevaluatePost() {
+    final Uri $url = Uri.parse('/api/admin/users/roles/reevaluate');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
     );
     return client.send<Object, Object>($request);
   }

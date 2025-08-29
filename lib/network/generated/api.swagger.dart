@@ -1,5 +1,9 @@
 // ignore_for_file: type=lint
 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart' as json;
+import 'package:collection/collection.dart';
+import 'dart:convert';
 
 import 'api.models.swagger.dart';
 import 'package:chopper/chopper.dart';
@@ -7,7 +11,9 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
+import 'api.enums.swagger.dart' as enums;
 export 'api.enums.swagger.dart';
 export 'api.models.swagger.dart';
 
@@ -295,6 +301,23 @@ abstract class Api extends ChopperService {
     @Path('id') required String? id,
   });
 
+  ///Update user role
+  ///@param userId User ID
+  Future<chopper.Response<Object>> apiAdminUsersUserIdRolePut({
+    required String? userId,
+    required String? body,
+  }) {
+    return _apiAdminUsersUserIdRolePut(userId: userId, body: body);
+  }
+
+  ///Update user role
+  ///@param userId User ID
+  @PUT(path: '/api/admin/users/{userId}/role', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminUsersUserIdRolePut({
+    @Path('userId') required String? userId,
+    @Body() required String? body,
+  });
+
   ///
   Future<chopper.Response<String>> shutdownPost() {
     return _shutdownPost();
@@ -303,6 +326,23 @@ abstract class Api extends ChopperService {
   ///
   @POST(path: '/shutdown', optionalBody: true)
   Future<chopper.Response<String>> _shutdownPost();
+
+  ///
+  ///@param configId
+  Future<chopper.Response<SseEmitter>> mcpStreamConfigIdGet({
+    required String? configId,
+  }) {
+    generatedMapping.putIfAbsent(SseEmitter, () => SseEmitter.fromJsonFactory);
+
+    return _mcpStreamConfigIdGet(configId: configId);
+  }
+
+  ///
+  ///@param configId
+  @GET(path: '/mcp/stream/{configId}')
+  Future<chopper.Response<SseEmitter>> _mcpStreamConfigIdGet({
+    @Path('configId') required String? configId,
+  });
 
   ///
   ///@param configId
@@ -574,25 +614,29 @@ abstract class Api extends ChopperService {
   ///
   ///@param message
   ///@param model
+  ///@param ai
   Future<chopper.Response<ChatResponse>> apiV1ChatSimplePost({
     required String? message,
     String? model,
+    String? ai,
   }) {
     generatedMapping.putIfAbsent(
       ChatResponse,
       () => ChatResponse.fromJsonFactory,
     );
 
-    return _apiV1ChatSimplePost(message: message, model: model);
+    return _apiV1ChatSimplePost(message: message, model: model, ai: ai);
   }
 
   ///
   ///@param message
   ///@param model
+  ///@param ai
   @POST(path: '/api/v1/chat/simple', optionalBody: true)
   Future<chopper.Response<ChatResponse>> _apiV1ChatSimplePost({
     @Query('message') required String? message,
     @Query('model') String? model,
+    @Query('ai') String? ai,
   });
 
   ///
@@ -980,6 +1024,24 @@ abstract class Api extends ChopperService {
   Future<chopper.Response<Object>> _apiAuthLocalLoginPost({
     @Body() required Object? body,
   });
+
+  ///Re-evaluate all user roles
+  Future<chopper.Response<Object>> apiAdminUsersRolesReevaluatePost() {
+    return _apiAdminUsersRolesReevaluatePost();
+  }
+
+  ///Re-evaluate all user roles
+  @POST(path: '/api/admin/users/roles/reevaluate', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminUsersRolesReevaluatePost();
+
+  ///
+  Future<chopper.Response<Object>> apiAdminCacheClearPost() {
+    return _apiAdminCacheClearPost();
+  }
+
+  ///
+  @POST(path: '/api/admin/cache/clear', optionalBody: true)
+  Future<chopper.Response<Object>> _apiAdminCacheClearPost();
 
   ///
   Future<chopper.Response<bool>> isLocalGet() {
@@ -1507,6 +1569,38 @@ abstract class Api extends ChopperService {
   ///
   @GET(path: '/api/auth/basic-test')
   Future<chopper.Response<String>> _apiAuthBasicTestGet();
+
+  ///Get paginated list of users
+  ///@param page Page number (zero-based)
+  ///@param size Page size (1-100)
+  ///@param search Search term for email or name
+  Future<chopper.Response<Object>> apiAdminUsersGet({
+    int? page,
+    int? size,
+    String? search,
+  }) {
+    return _apiAdminUsersGet(page: page, size: size, search: search);
+  }
+
+  ///Get paginated list of users
+  ///@param page Page number (zero-based)
+  ///@param size Page size (1-100)
+  ///@param search Search term for email or name
+  @GET(path: '/api/admin/users')
+  Future<chopper.Response<Object>> _apiAdminUsersGet({
+    @Query('page') int? page,
+    @Query('size') int? size,
+    @Query('search') String? search,
+  });
+
+  ///
+  Future<chopper.Response<Object>> apiAdminCacheStatsGet() {
+    return _apiAdminCacheStatsGet();
+  }
+
+  ///
+  @GET(path: '/api/admin/cache/stats')
+  Future<chopper.Response<Object>> _apiAdminCacheStatsGet();
 
   ///
   ///@param workspaceId

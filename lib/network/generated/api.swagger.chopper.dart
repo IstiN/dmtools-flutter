@@ -204,6 +204,22 @@ final class _$Api extends Api {
   }
 
   @override
+  Future<Response<Object>> _apiAdminUsersUserIdRolePut({
+    required String? userId,
+    required String? body,
+  }) {
+    final Uri $url = Uri.parse('/api/admin/users/${userId}/role');
+    final $body = body;
+    final Request $request = Request(
+      'PUT',
+      $url,
+      client.baseUrl,
+      body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
   Future<Response<String>> _shutdownPost() {
     final Uri $url = Uri.parse('/shutdown');
     final Request $request = Request(
@@ -212,6 +228,18 @@ final class _$Api extends Api {
       client.baseUrl,
     );
     return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<SseEmitter>> _mcpStreamConfigIdGet(
+      {required String? configId}) {
+    final Uri $url = Uri.parse('/mcp/stream/${configId}');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<SseEmitter, SseEmitter>($request);
   }
 
   @override
@@ -418,11 +446,13 @@ final class _$Api extends Api {
   Future<Response<ChatResponse>> _apiV1ChatSimplePost({
     required String? message,
     String? model,
+    String? ai,
   }) {
     final Uri $url = Uri.parse('/api/v1/chat/simple');
     final Map<String, dynamic> $params = <String, dynamic>{
       'message': message,
       'model': model,
+      'ai': ai,
     };
     final Request $request = Request(
       'POST',
@@ -770,6 +800,28 @@ final class _$Api extends Api {
       $url,
       client.baseUrl,
       body: $body,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAdminUsersRolesReevaluatePost() {
+    final Uri $url = Uri.parse('/api/admin/users/roles/reevaluate');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAdminCacheClearPost() {
+    final Uri $url = Uri.parse('/api/admin/cache/clear');
+    final Request $request = Request(
+      'POST',
+      $url,
+      client.baseUrl,
     );
     return client.send<Object, Object>($request);
   }
@@ -1255,6 +1307,38 @@ final class _$Api extends Api {
       client.baseUrl,
     );
     return client.send<String, String>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAdminUsersGet({
+    int? page,
+    int? size,
+    String? search,
+  }) {
+    final Uri $url = Uri.parse('/api/admin/users');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'page': page,
+      'size': size,
+      'search': search,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<Object, Object>($request);
+  }
+
+  @override
+  Future<Response<Object>> _apiAdminCacheStatsGet() {
+    final Uri $url = Uri.parse('/api/admin/cache/stats');
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+    );
+    return client.send<Object, Object>($request);
   }
 
   @override
