@@ -37,6 +37,7 @@ export 'widgets/atoms/mcp_status_chip.dart';
 export 'widgets/atoms/integration_checkbox.dart';
 export 'widgets/atoms/copy_button.dart';
 export 'widgets/atoms/array_input.dart';
+export 'widgets/atoms/loading_indicators.dart';
 
 // Widgets - Molecules (existing files only)
 export 'widgets/molecules/agent_card.dart';

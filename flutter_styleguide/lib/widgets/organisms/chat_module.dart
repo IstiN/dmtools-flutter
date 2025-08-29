@@ -8,9 +8,15 @@ class ChatMessage {
   final bool isUser;
   final DateTime timestamp;
   final bool enableMarkdown;
+  final List<FileAttachment> attachments;
 
-  ChatMessage({required this.message, required this.isUser, DateTime? timestamp, this.enableMarkdown = true})
-    : timestamp = timestamp ?? DateTime.now();
+  ChatMessage({
+    required this.message,
+    required this.isUser,
+    DateTime? timestamp,
+    this.enableMarkdown = true,
+    this.attachments = const [],
+  }) : timestamp = timestamp ?? DateTime.now();
 }
 
 /// Interactive chat interface widget with message display and input functionality.
@@ -37,6 +43,9 @@ class ChatInterface extends StatefulWidget {
   /// Text insertion callback (called when text should be inserted into input field)
   final ValueChanged<String>? onTextInsert;
 
+  /// Message editing callbacks
+  final Function(int messageIndex, String newContent)? onMessageEdit;
+
   /// Used in tests to override theme detection for predictable rendering
   final bool? isTestMode;
 
@@ -59,6 +68,7 @@ class ChatInterface extends StatefulWidget {
     this.isUploadingFiles = false,
     this.uploadProgress,
     this.onTextInsert,
+    this.onMessageEdit,
     this.isTestMode,
     this.testDarkMode,
   });
@@ -109,7 +119,8 @@ class ChatInterfaceState extends State<ChatInterface> {
   @override
   void didUpdateWidget(ChatInterface oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.messages.length > oldWidget.messages.length) {
+    // Scroll to bottom when new messages are added or loading state changes
+    if (widget.messages.length > oldWidget.messages.length || widget.isLoading != oldWidget.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
       });
@@ -227,10 +238,15 @@ class ChatInterfaceState extends State<ChatInterface> {
             child: ListView.builder(
               controller: _scrollController,
               padding: const EdgeInsets.all(16),
-              itemCount: widget.messages.length,
+              itemCount: widget.messages.length + (widget.isLoading ? 1 : 0),
               itemBuilder: (context, index) {
-                final message = widget.messages[index];
-                return _buildMessageBubble(message, colors);
+                if (index < widget.messages.length) {
+                  final message = widget.messages[index];
+                  return _buildMessageBubble(message, colors, index);
+                } else {
+                  // Show loading indicator as the last item
+                  return _buildLoadingBubble(colors);
+                }
               },
             ),
           ),
@@ -370,7 +386,7 @@ class ChatInterfaceState extends State<ChatInterface> {
     );
   }
 
-  Widget _buildMessageBubble(ChatMessage message, dynamic colors) {
+  Widget _buildMessageBubble(ChatMessage message, dynamic colors, int index) {
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -405,20 +421,45 @@ class ChatInterfaceState extends State<ChatInterface> {
                         ),
                 ),
                 const SizedBox(width: 8),
-                // Copy button
-                IconButton(
+                // Message actions menu
+                PopupMenuButton<String>(
                   icon: Icon(
-                    Icons.copy,
+                    Icons.more_vert,
                     size: 16,
                     color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
                   ),
-                  onPressed: () => _copyMessageToClipboard(message.message),
-                  tooltip: 'Copy message',
+                  tooltip: 'Message actions',
                   constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
                   padding: EdgeInsets.zero,
+                  itemBuilder: (context) => [
+                    const PopupMenuItem<String>(
+                      value: 'copy',
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
+                      ),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
+                      ),
+                    ),
+                  ],
+                  onSelected: (value) => _handleMessageAction(value, index, message),
                 ),
               ],
             ),
+            // Show file attachments if any
+            if (message.attachments.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: message.attachments.map((attachment) => _buildFileTag(attachment, colors)).toList(),
+              ),
+            ],
             const SizedBox(height: 4),
             Text(
               _formatTime(message.timestamp),
@@ -431,6 +472,102 @@ class ChatInterfaceState extends State<ChatInterface> {
         ),
       ),
     );
+  }
+
+  Widget _buildLoadingBubble(dynamic colors) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: colors.cardBg,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+          border: Border.all(color: colors.borderColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BouncingDotsIndicator(size: 8.0),
+            const SizedBox(width: 8.0),
+            Text(
+              'AI is thinking...',
+              style: TextStyle(color: colors.textSecondary, fontSize: 14, fontStyle: FontStyle.italic),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFileTag(FileAttachment attachment, dynamic colors) {
+    // Beautiful, modern color scheme for different file types
+    Color tagColor;
+    IconData icon;
+
+    if (attachment.type.startsWith('image/')) {
+      // Vibrant purple for images - eye-catching and modern
+      tagColor = const Color(0xFF9333EA);
+      icon = Icons.image_outlined;
+    } else if (attachment.type.contains('pdf')) {
+      // Bold red for PDFs - professional and recognizable
+      tagColor = const Color(0xFFDC2626);
+      icon = Icons.picture_as_pdf_outlined;
+    } else if (attachment.type.contains('text') ||
+        attachment.type.contains('json') ||
+        attachment.type.contains('code')) {
+      // Rich blue for code/text files - tech and trustworthy
+      tagColor = const Color(0xFF2563EB);
+      icon = Icons.code_outlined;
+    } else if (attachment.type.contains('zip') || attachment.type.contains('archive')) {
+      // Bright orange for archives - highly visible
+      tagColor = const Color(0xFFEA580C);
+      icon = Icons.folder_zip_outlined;
+    } else if (attachment.type.contains('video')) {
+      // Hot pink for videos - creative and energetic
+      tagColor = const Color(0xFFDB2777);
+      icon = Icons.videocam_outlined;
+    } else if (attachment.type.contains('audio')) {
+      // Strong teal for audio - distinctive and calming
+      tagColor = const Color(0xFF0891B2);
+      icon = Icons.audiotrack_outlined;
+    } else {
+      // Deep slate for unknown files - visible but not overwhelming
+      tagColor = const Color(0xFF475569);
+      icon = Icons.insert_drive_file_outlined;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: tagColor, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            _truncateFileName(attachment.name),
+            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _truncateFileName(String fileName) {
+    if (fileName.length <= 20) return fileName;
+
+    final parts = fileName.split('.');
+    if (parts.length > 1) {
+      final name = parts.sublist(0, parts.length - 1).join('.');
+      final extension = parts.last;
+
+      if (name.length > 15) {
+        return '${name.substring(0, 12)}....$extension';
+      }
+    }
+
+    return fileName.length > 20 ? '${fileName.substring(0, 17)}...' : fileName;
   }
 
   String _formatTime(DateTime time) {
@@ -449,6 +586,31 @@ class ChatInterfaceState extends State<ChatInterface> {
         backgroundColor: context.colorsListening.accentColor,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
+  /// Handle message action menu selection
+  void _handleMessageAction(String action, int messageIndex, ChatMessage message) {
+    switch (action) {
+      case 'copy':
+        _copyMessageToClipboard(message.message);
+        break;
+      case 'edit':
+        _showEditMessageDialog(messageIndex, message);
+        break;
+    }
+  }
+
+  /// Show dialog to edit message content
+  void _showEditMessageDialog(int messageIndex, ChatMessage message) {
+    showDialog(
+      context: context,
+      builder: (context) => _MessageEditDialog(
+        message: message,
+        onSave: (newContent) {
+          widget.onMessageEdit?.call(messageIndex, newContent);
+        },
       ),
     );
   }
@@ -482,6 +644,187 @@ class ChatInterfaceState extends State<ChatInterface> {
       a: theme.textTheme.bodyLarge?.copyWith(
         color: isUser ? Colors.white : colors.accentColor,
         decoration: TextDecoration.underline,
+      ),
+    );
+  }
+}
+
+/// Dialog for editing message content with markdown support
+class _MessageEditDialog extends StatefulWidget {
+  final ChatMessage message;
+  final ValueChanged<String> onSave;
+
+  const _MessageEditDialog({required this.message, required this.onSave});
+
+  @override
+  State<_MessageEditDialog> createState() => _MessageEditDialogState();
+}
+
+class _MessageEditDialogState extends State<_MessageEditDialog> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.message.message);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _insertMarkdown(String before, String after, {String? placeholder}) {
+    final text = _controller.text;
+    final selection = _controller.selection;
+
+    String selectedText = '';
+    if (selection.isValid && !selection.isCollapsed) {
+      selectedText = text.substring(selection.start, selection.end);
+    } else if (placeholder != null) {
+      selectedText = placeholder;
+    }
+
+    final newText = text.substring(0, selection.start) + before + selectedText + after + text.substring(selection.end);
+
+    _controller.value = TextEditingValue(
+      text: newText,
+      selection: TextSelection.collapsed(offset: selection.start + before.length + selectedText.length),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return AlertDialog(
+      backgroundColor: colors.cardBg,
+      title: Text('Edit Message', style: TextStyle(color: colors.textColor)),
+      content: SizedBox(
+        width: 600,
+        height: 400,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Markdown formatting toolbar
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              decoration: BoxDecoration(
+                color: colors.cardBg,
+                borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+                border: Border.all(color: colors.borderColor),
+              ),
+              child: Wrap(
+                spacing: 8,
+                children: [
+                  _buildToolbarButton(
+                    icon: Icons.format_bold,
+                    tooltip: 'Bold',
+                    onPressed: () => _insertMarkdown('**', '**', placeholder: 'bold text'),
+                  ),
+                  _buildToolbarButton(
+                    icon: Icons.format_italic,
+                    tooltip: 'Italic',
+                    onPressed: () => _insertMarkdown('*', '*', placeholder: 'italic text'),
+                  ),
+                  _buildToolbarButton(
+                    icon: Icons.code,
+                    tooltip: 'Inline Code',
+                    onPressed: () => _insertMarkdown('`', '`', placeholder: 'code'),
+                  ),
+                  _buildToolbarButton(
+                    icon: Icons.code_off,
+                    tooltip: 'Code Block',
+                    onPressed: () => _insertMarkdown('```\n', '\n```', placeholder: 'code block'),
+                  ),
+                  _buildToolbarButton(
+                    icon: Icons.format_list_bulleted,
+                    tooltip: 'Bullet List',
+                    onPressed: () => _insertMarkdown('- ', '', placeholder: 'list item'),
+                  ),
+                  _buildToolbarButton(
+                    icon: Icons.format_list_numbered,
+                    tooltip: 'Numbered List',
+                    onPressed: () => _insertMarkdown('1. ', '', placeholder: 'list item'),
+                  ),
+                  _buildToolbarButton(
+                    icon: Icons.format_quote,
+                    tooltip: 'Quote',
+                    onPressed: () => _insertMarkdown('> ', '', placeholder: 'quote'),
+                  ),
+                  _buildToolbarButton(
+                    icon: Icons.link,
+                    tooltip: 'Link',
+                    onPressed: () => _insertMarkdown('[', '](url)', placeholder: 'link text'),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Text editor
+            Expanded(
+              child: TextField(
+                controller: _controller,
+                maxLines: null,
+                expands: true,
+                decoration: InputDecoration(
+                  hintText: 'Enter your message in markdown format...',
+                  hintStyle: TextStyle(color: colors.textSecondary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                    borderSide: BorderSide(color: colors.borderColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                    borderSide: BorderSide(color: colors.borderColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                    borderSide: BorderSide(color: colors.accentColor),
+                  ),
+                  filled: true,
+                  fillColor: colors.inputBg,
+                ),
+                style: TextStyle(color: colors.textColor, fontFamily: 'monospace'),
+                textAlignVertical: TextAlignVertical.top,
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text('Cancel', style: TextStyle(color: colors.textSecondary)),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            final newContent = _controller.text.trim();
+            if (newContent.isNotEmpty) {
+              widget.onSave(newContent);
+              Navigator.of(context).pop();
+            }
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: colors.accentColor, foregroundColor: Colors.white),
+          child: const Text('Save'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildToolbarButton({required IconData icon, required String tooltip, required VoidCallback onPressed}) {
+    final colors = context.colors;
+
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+        child: Container(
+          padding: const EdgeInsets.all(6),
+          child: Icon(icon, size: 18, color: colors.textSecondary),
+        ),
       ),
     );
   }

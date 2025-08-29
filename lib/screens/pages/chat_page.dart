@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../../providers/chat_provider.dart';
-import '../../providers/auth_provider.dart' as auth;
+
 import '../../core/services/file_service.dart';
 import '../../core/services/clipboard_js.dart' if (dart.library.io) '../../core/services/clipboard_stub.dart';
 import '../../service_locator.dart';
@@ -188,23 +188,16 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     // Note: No manual paste shortcuts needed - JavaScript paste listener handles everything automatically!
-    return Consumer2<ChatProvider, auth.AuthProvider>(
-      builder: (context, chatProvider, authProvider, child) {
-        // Show loading state while initializing or during authentication
+    return Consumer<ChatProvider>(
+      builder: (context, chatProvider, child) {
+        // Show loading state while initializing
         if (chatProvider.currentState == ChatState.loading && chatProvider.messages.isEmpty) {
           return _buildLoadingState();
         }
 
-        // Show loading state if user is authenticated but integrations haven't loaded yet
-        if (authProvider.isAuthenticated && chatProvider.availableAiIntegrations.isEmpty) {
+        // Show loading state if integrations are still loading (to prevent empty state flash)
+        if (chatProvider.availableAiIntegrations.isEmpty) {
           return _buildLoadingState();
-        }
-
-        // Show empty state only if user is authenticated and no AI integrations are available after loading
-        if (chatProvider.availableAiIntegrations.isEmpty &&
-            authProvider.isAuthenticated &&
-            chatProvider.currentState != ChatState.loading) {
-          return _buildEmptyState();
         }
 
         // Main chat interface
@@ -231,6 +224,11 @@ class _ChatPageState extends State<ChatPage> {
           // Text insertion callback
           onTextInsert: (text) {
             // Text was inserted into input field
+          },
+
+          // Message editing support
+          onMessageEdit: (messageIndex, newContent) {
+            chatProvider.editMessage(messageIndex, newContent);
           },
         );
       },
@@ -274,10 +272,10 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  /// Handle attachment button press - open file picker
+  /// Handle attachment button press - open file picker directly
   Future<void> _handleAttachmentPressed(ChatProvider chatProvider) async {
     try {
-      await _showFileSelectionOptions(chatProvider);
+      await _pickFiles(chatProvider);
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -290,56 +288,7 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  /// Show file selection options
-  Future<void> _showFileSelectionOptions(ChatProvider chatProvider) async {
-    final colors = context.colorsListening;
 
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Attach Files', style: TextStyle(color: colors.textColor)),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Choose how you want to attach files:',
-                style: TextStyle(color: colors.textSecondary),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Cancel', style: TextStyle(color: colors.textSecondary)),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _pickFiles(chatProvider);
-              },
-              child: Text('Browse Files', style: TextStyle(color: colors.accentColor)),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _pickImages(chatProvider);
-              },
-              child: Text('Images Only', style: TextStyle(color: colors.accentColor)),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                await _pasteFromClipboard(chatProvider);
-              },
-              child: Text('Paste from Clipboard', style: TextStyle(color: colors.accentColor)),
-            ),
-          ],
-        );
-      },
-    );
-  }
 
   /// Pick any files using file picker
   Future<void> _pickFiles(ChatProvider chatProvider) async {
