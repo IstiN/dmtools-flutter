@@ -7,6 +7,7 @@ import '../../../widgets/organisms/chat_module.dart';
 import '../../../widgets/molecules/ai_integration_selector.dart';
 import '../../../widgets/molecules/file_attachment_picker.dart';
 import '../../../widgets/styleguide/component_display.dart';
+import '../../../models/mcp_config_option.dart';
 
 class ChatModulePage extends StatefulWidget {
   const ChatModulePage({super.key});
@@ -31,12 +32,14 @@ class _ChatModulePageState extends State<ChatModulePage> {
   ];
   AiIntegration? _selectedAiIntegration;
   List<FileAttachment> _attachments = [];
+  McpConfigOption? _selectedMcpConfiguration;
 
   @override
   void initState() {
     super.initState();
     _selectedAiIntegration = _getSampleAiIntegrations().first;
     _attachments = _getSampleAttachments();
+    _selectedMcpConfiguration = const McpConfigOption.none(); // Start with "None"
   }
 
   @override
@@ -109,8 +112,8 @@ class _ChatModulePageState extends State<ChatModulePage> {
             ),
             const SizedBox(height: 48),
             ComponentDisplay(
-              title: 'Enhanced Chat with AI Integration',
-              description: 'Chat module with AI integration selector and file attachment support.',
+              title: 'Enhanced Chat with AI Integration & MCP',
+              description: 'Chat module with AI integration selector, MCP configuration support, and file attachment.',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -133,6 +136,8 @@ class _ChatModulePageState extends State<ChatModulePage> {
                     ],
                     aiIntegrations: _getSampleAiIntegrations(),
                     selectedAiIntegration: _selectedAiIntegration,
+                    mcpConfigurations: _getSampleMcpConfigurations(),
+                    selectedMcpConfiguration: _selectedMcpConfiguration,
                     attachments: _attachments,
                     onSendMessage: (message) {
                       // Handle sending message
@@ -143,6 +148,11 @@ class _ChatModulePageState extends State<ChatModulePage> {
                     onAiIntegrationChanged: (integration) {
                       setState(() {
                         _selectedAiIntegration = integration;
+                      });
+                    },
+                    onMcpConfigurationChanged: (mcpConfig) {
+                      setState(() {
+                        _selectedMcpConfiguration = mcpConfig;
                       });
                     },
                     onAttachmentsChanged: (attachments) {
@@ -423,6 +433,15 @@ ChatInterface(
         bytes: const [],
         uploadedAt: DateTime.now(),
       ),
+    ];
+  }
+
+  static List<McpConfigOption> _getSampleMcpConfigurations() {
+    return const [
+      McpConfigOption.fromConfig(id: 'jira-1', name: 'Jira Integration'),
+      McpConfigOption.fromConfig(id: 'confluence-1', name: 'Confluence Tools'),
+      McpConfigOption.fromConfig(id: 'github-1', name: 'GitHub Assistant'),
+      McpConfigOption.fromConfig(id: 'gitlab-1', name: 'GitLab Helper'),
     ];
   }
 }

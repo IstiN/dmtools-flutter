@@ -2374,6 +2374,312 @@ extension $ExecutionParametersDtoExtension on ExecutionParametersDto {
 }
 
 @JsonSerializable(explicitToJson: true)
+class ChatResponse {
+  const ChatResponse({this.content, required this.success, this.error});
+
+  factory ChatResponse.fromJson(Map<String, dynamic> json) =>
+      _$ChatResponseFromJson(json);
+
+  static const toJsonFactory = _$ChatResponseToJson;
+  Map<String, dynamic> toJson() => _$ChatResponseToJson(this);
+
+  @JsonKey(name: 'content', includeIfNull: false)
+  final String? content;
+  @JsonKey(name: 'success', includeIfNull: false)
+  final bool success;
+  @JsonKey(name: 'error', includeIfNull: false)
+  final String? error;
+  static const fromJsonFactory = _$ChatResponseFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ChatResponse &&
+            (identical(other.content, content) ||
+                const DeepCollectionEquality().equals(
+                  other.content,
+                  content,
+                )) &&
+            (identical(other.success, success) ||
+                const DeepCollectionEquality().equals(
+                  other.success,
+                  success,
+                )) &&
+            (identical(other.error, error) ||
+                const DeepCollectionEquality().equals(other.error, error)));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(content) ^
+      const DeepCollectionEquality().hash(success) ^
+      const DeepCollectionEquality().hash(error) ^
+      runtimeType.hashCode;
+}
+
+extension $ChatResponseExtension on ChatResponse {
+  ChatResponse copyWith({String? content, bool? success, String? error}) {
+    return ChatResponse(
+      content: content ?? this.content,
+      success: success ?? this.success,
+      error: error ?? this.error,
+    );
+  }
+
+  ChatResponse copyWithWrapped({
+    Wrapped<String?>? content,
+    Wrapped<bool>? success,
+    Wrapped<String?>? error,
+  }) {
+    return ChatResponse(
+      content: (content != null ? content.value : this.content),
+      success: (success != null ? success.value : this.success),
+      error: (error != null ? error.value : this.error),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ChatMessage {
+  const ChatMessage({
+    required this.role,
+    required this.content,
+    this.fileNames,
+  });
+
+  factory ChatMessage.fromJson(Map<String, dynamic> json) =>
+      _$ChatMessageFromJson(json);
+
+  static const toJsonFactory = _$ChatMessageToJson;
+  Map<String, dynamic> toJson() => _$ChatMessageToJson(this);
+
+  @JsonKey(
+    name: 'role',
+    includeIfNull: false,
+    toJson: chatMessageRoleToJson,
+    fromJson: chatMessageRoleFromJson,
+  )
+  final enums.ChatMessageRole role;
+  @JsonKey(name: 'content', includeIfNull: false)
+  final String content;
+  @JsonKey(name: 'fileNames', includeIfNull: false, defaultValue: <String>[])
+  final List<String>? fileNames;
+  static const fromJsonFactory = _$ChatMessageFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ChatMessage &&
+            (identical(other.role, role) ||
+                const DeepCollectionEquality().equals(other.role, role)) &&
+            (identical(other.content, content) ||
+                const DeepCollectionEquality().equals(
+                  other.content,
+                  content,
+                )) &&
+            (identical(other.fileNames, fileNames) ||
+                const DeepCollectionEquality().equals(
+                  other.fileNames,
+                  fileNames,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(role) ^
+      const DeepCollectionEquality().hash(content) ^
+      const DeepCollectionEquality().hash(fileNames) ^
+      runtimeType.hashCode;
+}
+
+extension $ChatMessageExtension on ChatMessage {
+  ChatMessage copyWith({
+    enums.ChatMessageRole? role,
+    String? content,
+    List<String>? fileNames,
+  }) {
+    return ChatMessage(
+      role: role ?? this.role,
+      content: content ?? this.content,
+      fileNames: fileNames ?? this.fileNames,
+    );
+  }
+
+  ChatMessage copyWithWrapped({
+    Wrapped<enums.ChatMessageRole>? role,
+    Wrapped<String>? content,
+    Wrapped<List<String>?>? fileNames,
+  }) {
+    return ChatMessage(
+      role: (role != null ? role.value : this.role),
+      content: (content != null ? content.value : this.content),
+      fileNames: (fileNames != null ? fileNames.value : this.fileNames),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class ChatRequest {
+  const ChatRequest({
+    required this.messages,
+    this.model,
+    this.ai,
+    this.mcpConfigId,
+  });
+
+  factory ChatRequest.fromJson(Map<String, dynamic> json) =>
+      _$ChatRequestFromJson(json);
+
+  static const toJsonFactory = _$ChatRequestToJson;
+  Map<String, dynamic> toJson() => _$ChatRequestToJson(this);
+
+  @JsonKey(
+    name: 'messages',
+    includeIfNull: false,
+    defaultValue: <ChatMessage>[],
+  )
+  final List<ChatMessage> messages;
+  @JsonKey(name: 'model', includeIfNull: false)
+  final String? model;
+  @JsonKey(name: 'ai', includeIfNull: false)
+  final String? ai;
+  @JsonKey(name: 'mcpConfigId', includeIfNull: false)
+  final String? mcpConfigId;
+  static const fromJsonFactory = _$ChatRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is ChatRequest &&
+            (identical(other.messages, messages) ||
+                const DeepCollectionEquality().equals(
+                  other.messages,
+                  messages,
+                )) &&
+            (identical(other.model, model) ||
+                const DeepCollectionEquality().equals(other.model, model)) &&
+            (identical(other.ai, ai) ||
+                const DeepCollectionEquality().equals(other.ai, ai)) &&
+            (identical(other.mcpConfigId, mcpConfigId) ||
+                const DeepCollectionEquality().equals(
+                  other.mcpConfigId,
+                  mcpConfigId,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(messages) ^
+      const DeepCollectionEquality().hash(model) ^
+      const DeepCollectionEquality().hash(ai) ^
+      const DeepCollectionEquality().hash(mcpConfigId) ^
+      runtimeType.hashCode;
+}
+
+extension $ChatRequestExtension on ChatRequest {
+  ChatRequest copyWith({
+    List<ChatMessage>? messages,
+    String? model,
+    String? ai,
+    String? mcpConfigId,
+  }) {
+    return ChatRequest(
+      messages: messages ?? this.messages,
+      model: model ?? this.model,
+      ai: ai ?? this.ai,
+      mcpConfigId: mcpConfigId ?? this.mcpConfigId,
+    );
+  }
+
+  ChatRequest copyWithWrapped({
+    Wrapped<List<ChatMessage>>? messages,
+    Wrapped<String?>? model,
+    Wrapped<String?>? ai,
+    Wrapped<String?>? mcpConfigId,
+  }) {
+    return ChatRequest(
+      messages: (messages != null ? messages.value : this.messages),
+      model: (model != null ? model.value : this.model),
+      ai: (ai != null ? ai.value : this.ai),
+      mcpConfigId: (mcpConfigId != null ? mcpConfigId.value : this.mcpConfigId),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
+class AgentExecutionRequest {
+  const AgentExecutionRequest({this.agentName, this.parameters});
+
+  factory AgentExecutionRequest.fromJson(Map<String, dynamic> json) =>
+      _$AgentExecutionRequestFromJson(json);
+
+  static const toJsonFactory = _$AgentExecutionRequestToJson;
+  Map<String, dynamic> toJson() => _$AgentExecutionRequestToJson(this);
+
+  @JsonKey(name: 'agentName', includeIfNull: false)
+  final String? agentName;
+  @JsonKey(name: 'parameters', includeIfNull: false)
+  final Map<String, dynamic>? parameters;
+  static const fromJsonFactory = _$AgentExecutionRequestFromJson;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is AgentExecutionRequest &&
+            (identical(other.agentName, agentName) ||
+                const DeepCollectionEquality().equals(
+                  other.agentName,
+                  agentName,
+                )) &&
+            (identical(other.parameters, parameters) ||
+                const DeepCollectionEquality().equals(
+                  other.parameters,
+                  parameters,
+                )));
+  }
+
+  @override
+  String toString() => jsonEncode(this);
+
+  @override
+  int get hashCode =>
+      const DeepCollectionEquality().hash(agentName) ^
+      const DeepCollectionEquality().hash(parameters) ^
+      runtimeType.hashCode;
+}
+
+extension $AgentExecutionRequestExtension on AgentExecutionRequest {
+  AgentExecutionRequest copyWith({
+    String? agentName,
+    Map<String, dynamic>? parameters,
+  }) {
+    return AgentExecutionRequest(
+      agentName: agentName ?? this.agentName,
+      parameters: parameters ?? this.parameters,
+    );
+  }
+
+  AgentExecutionRequest copyWithWrapped({
+    Wrapped<String?>? agentName,
+    Wrapped<Map<String, dynamic>?>? parameters,
+  }) {
+    return AgentExecutionRequest(
+      agentName: (agentName != null ? agentName.value : this.agentName),
+      parameters: (parameters != null ? parameters.value : this.parameters),
+    );
+  }
+}
+
+@JsonSerializable(explicitToJson: true)
 class AgentExecutionResponse {
   const AgentExecutionResponse({
     this.result,
@@ -2471,500 +2777,6 @@ extension $AgentExecutionResponseExtension on AgentExecutionResponse {
       executionType: (executionType != null
           ? executionType.value
           : this.executionType),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class ChatResponse {
-  const ChatResponse({
-    this.content,
-    this.model,
-    this.ai,
-    this.success,
-    this.error,
-    this.source,
-    this.agentExecutions,
-  });
-
-  factory ChatResponse.fromJson(Map<String, dynamic> json) =>
-      _$ChatResponseFromJson(json);
-
-  static const toJsonFactory = _$ChatResponseToJson;
-  Map<String, dynamic> toJson() => _$ChatResponseToJson(this);
-
-  @JsonKey(name: 'content', includeIfNull: false)
-  final String? content;
-  @JsonKey(name: 'model', includeIfNull: false)
-  final String? model;
-  @JsonKey(name: 'ai', includeIfNull: false)
-  final String? ai;
-  @JsonKey(name: 'success', includeIfNull: false)
-  final bool? success;
-  @JsonKey(name: 'error', includeIfNull: false)
-  final String? error;
-  @JsonKey(name: 'source', includeIfNull: false)
-  final ResponseSource? source;
-  @JsonKey(
-    name: 'agentExecutions',
-    includeIfNull: false,
-    defaultValue: <AgentExecutionResponse>[],
-  )
-  final List<AgentExecutionResponse>? agentExecutions;
-  static const fromJsonFactory = _$ChatResponseFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is ChatResponse &&
-            (identical(other.content, content) ||
-                const DeepCollectionEquality().equals(
-                  other.content,
-                  content,
-                )) &&
-            (identical(other.model, model) ||
-                const DeepCollectionEquality().equals(other.model, model)) &&
-            (identical(other.ai, ai) ||
-                const DeepCollectionEquality().equals(other.ai, ai)) &&
-            (identical(other.success, success) ||
-                const DeepCollectionEquality().equals(
-                  other.success,
-                  success,
-                )) &&
-            (identical(other.error, error) ||
-                const DeepCollectionEquality().equals(other.error, error)) &&
-            (identical(other.source, source) ||
-                const DeepCollectionEquality().equals(other.source, source)) &&
-            (identical(other.agentExecutions, agentExecutions) ||
-                const DeepCollectionEquality().equals(
-                  other.agentExecutions,
-                  agentExecutions,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(content) ^
-      const DeepCollectionEquality().hash(model) ^
-      const DeepCollectionEquality().hash(ai) ^
-      const DeepCollectionEquality().hash(success) ^
-      const DeepCollectionEquality().hash(error) ^
-      const DeepCollectionEquality().hash(source) ^
-      const DeepCollectionEquality().hash(agentExecutions) ^
-      runtimeType.hashCode;
-}
-
-extension $ChatResponseExtension on ChatResponse {
-  ChatResponse copyWith({
-    String? content,
-    String? model,
-    String? ai,
-    bool? success,
-    String? error,
-    ResponseSource? source,
-    List<AgentExecutionResponse>? agentExecutions,
-  }) {
-    return ChatResponse(
-      content: content ?? this.content,
-      model: model ?? this.model,
-      ai: ai ?? this.ai,
-      success: success ?? this.success,
-      error: error ?? this.error,
-      source: source ?? this.source,
-      agentExecutions: agentExecutions ?? this.agentExecutions,
-    );
-  }
-
-  ChatResponse copyWithWrapped({
-    Wrapped<String?>? content,
-    Wrapped<String?>? model,
-    Wrapped<String?>? ai,
-    Wrapped<bool?>? success,
-    Wrapped<String?>? error,
-    Wrapped<ResponseSource?>? source,
-    Wrapped<List<AgentExecutionResponse>?>? agentExecutions,
-  }) {
-    return ChatResponse(
-      content: (content != null ? content.value : this.content),
-      model: (model != null ? model.value : this.model),
-      ai: (ai != null ? ai.value : this.ai),
-      success: (success != null ? success.value : this.success),
-      error: (error != null ? error.value : this.error),
-      source: (source != null ? source.value : this.source),
-      agentExecutions: (agentExecutions != null
-          ? agentExecutions.value
-          : this.agentExecutions),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class ResponseSource {
-  const ResponseSource({this.type, this.name});
-
-  factory ResponseSource.fromJson(Map<String, dynamic> json) =>
-      _$ResponseSourceFromJson(json);
-
-  static const toJsonFactory = _$ResponseSourceToJson;
-  Map<String, dynamic> toJson() => _$ResponseSourceToJson(this);
-
-  @JsonKey(name: 'type', includeIfNull: false)
-  final String? type;
-  @JsonKey(name: 'name', includeIfNull: false)
-  final String? name;
-  static const fromJsonFactory = _$ResponseSourceFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is ResponseSource &&
-            (identical(other.type, type) ||
-                const DeepCollectionEquality().equals(other.type, type)) &&
-            (identical(other.name, name) ||
-                const DeepCollectionEquality().equals(other.name, name)));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(type) ^
-      const DeepCollectionEquality().hash(name) ^
-      runtimeType.hashCode;
-}
-
-extension $ResponseSourceExtension on ResponseSource {
-  ResponseSource copyWith({String? type, String? name}) {
-    return ResponseSource(type: type ?? this.type, name: name ?? this.name);
-  }
-
-  ResponseSource copyWithWrapped({
-    Wrapped<String?>? type,
-    Wrapped<String?>? name,
-  }) {
-    return ResponseSource(
-      type: (type != null ? type.value : this.type),
-      name: (name != null ? name.value : this.name),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class AgentToolsConfig {
-  const AgentToolsConfig({
-    this.enabled,
-    this.availableAgents,
-    this.availableOrchestrators,
-  });
-
-  factory AgentToolsConfig.fromJson(Map<String, dynamic> json) =>
-      _$AgentToolsConfigFromJson(json);
-
-  static const toJsonFactory = _$AgentToolsConfigToJson;
-  Map<String, dynamic> toJson() => _$AgentToolsConfigToJson(this);
-
-  @JsonKey(name: 'enabled', includeIfNull: false)
-  final bool? enabled;
-  @JsonKey(
-    name: 'availableAgents',
-    includeIfNull: false,
-    defaultValue: <String>[],
-  )
-  final List<String>? availableAgents;
-  @JsonKey(
-    name: 'availableOrchestrators',
-    includeIfNull: false,
-    defaultValue: <String>[],
-  )
-  final List<String>? availableOrchestrators;
-  static const fromJsonFactory = _$AgentToolsConfigFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is AgentToolsConfig &&
-            (identical(other.enabled, enabled) ||
-                const DeepCollectionEquality().equals(
-                  other.enabled,
-                  enabled,
-                )) &&
-            (identical(other.availableAgents, availableAgents) ||
-                const DeepCollectionEquality().equals(
-                  other.availableAgents,
-                  availableAgents,
-                )) &&
-            (identical(other.availableOrchestrators, availableOrchestrators) ||
-                const DeepCollectionEquality().equals(
-                  other.availableOrchestrators,
-                  availableOrchestrators,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(enabled) ^
-      const DeepCollectionEquality().hash(availableAgents) ^
-      const DeepCollectionEquality().hash(availableOrchestrators) ^
-      runtimeType.hashCode;
-}
-
-extension $AgentToolsConfigExtension on AgentToolsConfig {
-  AgentToolsConfig copyWith({
-    bool? enabled,
-    List<String>? availableAgents,
-    List<String>? availableOrchestrators,
-  }) {
-    return AgentToolsConfig(
-      enabled: enabled ?? this.enabled,
-      availableAgents: availableAgents ?? this.availableAgents,
-      availableOrchestrators:
-          availableOrchestrators ?? this.availableOrchestrators,
-    );
-  }
-
-  AgentToolsConfig copyWithWrapped({
-    Wrapped<bool?>? enabled,
-    Wrapped<List<String>?>? availableAgents,
-    Wrapped<List<String>?>? availableOrchestrators,
-  }) {
-    return AgentToolsConfig(
-      enabled: (enabled != null ? enabled.value : this.enabled),
-      availableAgents: (availableAgents != null
-          ? availableAgents.value
-          : this.availableAgents),
-      availableOrchestrators: (availableOrchestrators != null
-          ? availableOrchestrators.value
-          : this.availableOrchestrators),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class ChatMessage {
-  const ChatMessage({this.role, this.content, this.fileNames});
-
-  factory ChatMessage.fromJson(Map<String, dynamic> json) =>
-      _$ChatMessageFromJson(json);
-
-  static const toJsonFactory = _$ChatMessageToJson;
-  Map<String, dynamic> toJson() => _$ChatMessageToJson(this);
-
-  @JsonKey(name: 'role', includeIfNull: false)
-  final String? role;
-  @JsonKey(name: 'content', includeIfNull: false)
-  final String? content;
-  @JsonKey(name: 'fileNames', includeIfNull: false, defaultValue: <String>[])
-  final List<String>? fileNames;
-  static const fromJsonFactory = _$ChatMessageFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is ChatMessage &&
-            (identical(other.role, role) ||
-                const DeepCollectionEquality().equals(other.role, role)) &&
-            (identical(other.content, content) ||
-                const DeepCollectionEquality().equals(
-                  other.content,
-                  content,
-                )) &&
-            (identical(other.fileNames, fileNames) ||
-                const DeepCollectionEquality().equals(
-                  other.fileNames,
-                  fileNames,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(role) ^
-      const DeepCollectionEquality().hash(content) ^
-      const DeepCollectionEquality().hash(fileNames) ^
-      runtimeType.hashCode;
-}
-
-extension $ChatMessageExtension on ChatMessage {
-  ChatMessage copyWith({
-    String? role,
-    String? content,
-    List<String>? fileNames,
-  }) {
-    return ChatMessage(
-      role: role ?? this.role,
-      content: content ?? this.content,
-      fileNames: fileNames ?? this.fileNames,
-    );
-  }
-
-  ChatMessage copyWithWrapped({
-    Wrapped<String?>? role,
-    Wrapped<String?>? content,
-    Wrapped<List<String>?>? fileNames,
-  }) {
-    return ChatMessage(
-      role: (role != null ? role.value : this.role),
-      content: (content != null ? content.value : this.content),
-      fileNames: (fileNames != null ? fileNames.value : this.fileNames),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class ChatRequest {
-  const ChatRequest({this.messages, this.model, this.ai, this.agentTools});
-
-  factory ChatRequest.fromJson(Map<String, dynamic> json) =>
-      _$ChatRequestFromJson(json);
-
-  static const toJsonFactory = _$ChatRequestToJson;
-  Map<String, dynamic> toJson() => _$ChatRequestToJson(this);
-
-  @JsonKey(
-    name: 'messages',
-    includeIfNull: false,
-    defaultValue: <ChatMessage>[],
-  )
-  final List<ChatMessage>? messages;
-  @JsonKey(name: 'model', includeIfNull: false)
-  final String? model;
-  @JsonKey(name: 'ai', includeIfNull: false)
-  final String? ai;
-  @JsonKey(name: 'agentTools', includeIfNull: false)
-  final AgentToolsConfig? agentTools;
-  static const fromJsonFactory = _$ChatRequestFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is ChatRequest &&
-            (identical(other.messages, messages) ||
-                const DeepCollectionEquality().equals(
-                  other.messages,
-                  messages,
-                )) &&
-            (identical(other.model, model) ||
-                const DeepCollectionEquality().equals(other.model, model)) &&
-            (identical(other.ai, ai) ||
-                const DeepCollectionEquality().equals(other.ai, ai)) &&
-            (identical(other.agentTools, agentTools) ||
-                const DeepCollectionEquality().equals(
-                  other.agentTools,
-                  agentTools,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(messages) ^
-      const DeepCollectionEquality().hash(model) ^
-      const DeepCollectionEquality().hash(ai) ^
-      const DeepCollectionEquality().hash(agentTools) ^
-      runtimeType.hashCode;
-}
-
-extension $ChatRequestExtension on ChatRequest {
-  ChatRequest copyWith({
-    List<ChatMessage>? messages,
-    String? model,
-    String? ai,
-    AgentToolsConfig? agentTools,
-  }) {
-    return ChatRequest(
-      messages: messages ?? this.messages,
-      model: model ?? this.model,
-      ai: ai ?? this.ai,
-      agentTools: agentTools ?? this.agentTools,
-    );
-  }
-
-  ChatRequest copyWithWrapped({
-    Wrapped<List<ChatMessage>?>? messages,
-    Wrapped<String?>? model,
-    Wrapped<String?>? ai,
-    Wrapped<AgentToolsConfig?>? agentTools,
-  }) {
-    return ChatRequest(
-      messages: (messages != null ? messages.value : this.messages),
-      model: (model != null ? model.value : this.model),
-      ai: (ai != null ? ai.value : this.ai),
-      agentTools: (agentTools != null ? agentTools.value : this.agentTools),
-    );
-  }
-}
-
-@JsonSerializable(explicitToJson: true)
-class AgentExecutionRequest {
-  const AgentExecutionRequest({this.agentName, this.parameters});
-
-  factory AgentExecutionRequest.fromJson(Map<String, dynamic> json) =>
-      _$AgentExecutionRequestFromJson(json);
-
-  static const toJsonFactory = _$AgentExecutionRequestToJson;
-  Map<String, dynamic> toJson() => _$AgentExecutionRequestToJson(this);
-
-  @JsonKey(name: 'agentName', includeIfNull: false)
-  final String? agentName;
-  @JsonKey(name: 'parameters', includeIfNull: false)
-  final Map<String, dynamic>? parameters;
-  static const fromJsonFactory = _$AgentExecutionRequestFromJson;
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other is AgentExecutionRequest &&
-            (identical(other.agentName, agentName) ||
-                const DeepCollectionEquality().equals(
-                  other.agentName,
-                  agentName,
-                )) &&
-            (identical(other.parameters, parameters) ||
-                const DeepCollectionEquality().equals(
-                  other.parameters,
-                  parameters,
-                )));
-  }
-
-  @override
-  String toString() => jsonEncode(this);
-
-  @override
-  int get hashCode =>
-      const DeepCollectionEquality().hash(agentName) ^
-      const DeepCollectionEquality().hash(parameters) ^
-      runtimeType.hashCode;
-}
-
-extension $AgentExecutionRequestExtension on AgentExecutionRequest {
-  AgentExecutionRequest copyWith({
-    String? agentName,
-    Map<String, dynamic>? parameters,
-  }) {
-    return AgentExecutionRequest(
-      agentName: agentName ?? this.agentName,
-      parameters: parameters ?? this.parameters,
-    );
-  }
-
-  AgentExecutionRequest copyWithWrapped({
-    Wrapped<String?>? agentName,
-    Wrapped<Map<String, dynamic>?>? parameters,
-  }) {
-    return AgentExecutionRequest(
-      agentName: (agentName != null ? agentName.value : this.agentName),
-      parameters: (parameters != null ? parameters.value : this.parameters),
     );
   }
 }
@@ -5503,6 +5315,80 @@ jobExecutionResponseStatusNullableListFromJson(
 
   return jobExecutionResponseStatus
       .map((e) => jobExecutionResponseStatusFromJson(e.toString()))
+      .toList();
+}
+
+String? chatMessageRoleNullableToJson(enums.ChatMessageRole? chatMessageRole) {
+  return chatMessageRole?.value;
+}
+
+String? chatMessageRoleToJson(enums.ChatMessageRole chatMessageRole) {
+  return chatMessageRole.value;
+}
+
+enums.ChatMessageRole chatMessageRoleFromJson(
+  Object? chatMessageRole, [
+  enums.ChatMessageRole? defaultValue,
+]) {
+  return enums.ChatMessageRole.values.firstWhereOrNull(
+        (e) => e.value == chatMessageRole,
+      ) ??
+      defaultValue ??
+      enums.ChatMessageRole.swaggerGeneratedUnknown;
+}
+
+enums.ChatMessageRole? chatMessageRoleNullableFromJson(
+  Object? chatMessageRole, [
+  enums.ChatMessageRole? defaultValue,
+]) {
+  if (chatMessageRole == null) {
+    return null;
+  }
+  return enums.ChatMessageRole.values.firstWhereOrNull(
+        (e) => e.value == chatMessageRole,
+      ) ??
+      defaultValue;
+}
+
+String chatMessageRoleExplodedListToJson(
+  List<enums.ChatMessageRole>? chatMessageRole,
+) {
+  return chatMessageRole?.map((e) => e.value!).join(',') ?? '';
+}
+
+List<String> chatMessageRoleListToJson(
+  List<enums.ChatMessageRole>? chatMessageRole,
+) {
+  if (chatMessageRole == null) {
+    return [];
+  }
+
+  return chatMessageRole.map((e) => e.value!).toList();
+}
+
+List<enums.ChatMessageRole> chatMessageRoleListFromJson(
+  List? chatMessageRole, [
+  List<enums.ChatMessageRole>? defaultValue,
+]) {
+  if (chatMessageRole == null) {
+    return defaultValue ?? [];
+  }
+
+  return chatMessageRole
+      .map((e) => chatMessageRoleFromJson(e.toString()))
+      .toList();
+}
+
+List<enums.ChatMessageRole>? chatMessageRoleNullableListFromJson(
+  List? chatMessageRole, [
+  List<enums.ChatMessageRole>? defaultValue,
+]) {
+  if (chatMessageRole == null) {
+    return defaultValue;
+  }
+
+  return chatMessageRole
+      .map((e) => chatMessageRoleFromJson(e.toString()))
       .toList();
 }
 

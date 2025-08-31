@@ -70,7 +70,6 @@ class ChatService with ChangeNotifier {
 
         final mockResponse = api.ChatResponse(
           content: 'This is a mock response to: "$message"',
-          model: model ?? 'mock-gpt-4',
           success: true,
         );
 
@@ -121,6 +120,7 @@ class ChatService with ChangeNotifier {
   Future<api.ChatResponse?> sendChatCompletion({
     required List<api.ChatMessage> messages,
     String? aiIntegrationId,
+    String? mcpConfigurationId,
     List<Object>? agentTools,
   }) async {
     if (messages.isEmpty) {
@@ -141,7 +141,6 @@ class ChatService with ChangeNotifier {
         final lastMessage = messages.last.content ?? '';
         final mockResponse = api.ChatResponse(
           content: 'This is a mock completion response to: "$lastMessage"',
-          ai: aiIntegrationId ?? 'mock-ai',
           success: true,
         );
 
@@ -164,6 +163,7 @@ class ChatService with ChangeNotifier {
         final chatRequest = api.ChatRequest(
           messages: messages,
           ai: aiIntegrationId,
+          mcpConfigId: mcpConfigurationId,
         );
 
         final response = await _apiService.apiClient.apiV1ChatCompletionsPost(
@@ -197,6 +197,7 @@ class ChatService with ChangeNotifier {
     required List<List<int>> files,
     List<String>? fileNames,
     String? aiIntegrationId,
+    String? mcpConfigurationId,
     List<Object>? agentTools,
   }) async {
     if (messages.isEmpty) {
@@ -221,7 +222,6 @@ class ChatService with ChangeNotifier {
         final lastMessage = messages.last.content ?? '';
         final mockResponse = api.ChatResponse(
           content: 'This is a mock response with ${files.length} file(s) to: "$lastMessage"',
-          ai: aiIntegrationId ?? 'mock-ai',
           success: true,
         );
 
@@ -244,6 +244,7 @@ class ChatService with ChangeNotifier {
         final chatRequest = api.ChatRequest(
           messages: messages,
           ai: aiIntegrationId,
+          mcpConfigId: mcpConfigurationId,
         );
 
         // Convert ChatRequest to JSON string for multipart upload

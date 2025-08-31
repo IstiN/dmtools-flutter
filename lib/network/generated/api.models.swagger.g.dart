@@ -562,6 +562,67 @@ Map<String, dynamic> _$ExecutionParametersDtoToJson(
       if (instance.executionMode case final value?) 'executionMode': value,
     };
 
+ChatResponse _$ChatResponseFromJson(Map<String, dynamic> json) => ChatResponse(
+      content: json['content'] as String?,
+      success: json['success'] as bool,
+      error: json['error'] as String?,
+    );
+
+Map<String, dynamic> _$ChatResponseToJson(ChatResponse instance) =>
+    <String, dynamic>{
+      if (instance.content case final value?) 'content': value,
+      'success': instance.success,
+      if (instance.error case final value?) 'error': value,
+    };
+
+ChatMessage _$ChatMessageFromJson(Map<String, dynamic> json) => ChatMessage(
+      role: chatMessageRoleFromJson(json['role']),
+      content: json['content'] as String,
+      fileNames: (json['fileNames'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
+    );
+
+Map<String, dynamic> _$ChatMessageToJson(ChatMessage instance) =>
+    <String, dynamic>{
+      if (chatMessageRoleToJson(instance.role) case final value?) 'role': value,
+      'content': instance.content,
+      if (instance.fileNames case final value?) 'fileNames': value,
+    };
+
+ChatRequest _$ChatRequestFromJson(Map<String, dynamic> json) => ChatRequest(
+      messages: (json['messages'] as List<dynamic>?)
+              ?.map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          [],
+      model: json['model'] as String?,
+      ai: json['ai'] as String?,
+      mcpConfigId: json['mcpConfigId'] as String?,
+    );
+
+Map<String, dynamic> _$ChatRequestToJson(ChatRequest instance) =>
+    <String, dynamic>{
+      'messages': instance.messages.map((e) => e.toJson()).toList(),
+      if (instance.model case final value?) 'model': value,
+      if (instance.ai case final value?) 'ai': value,
+      if (instance.mcpConfigId case final value?) 'mcpConfigId': value,
+    };
+
+AgentExecutionRequest _$AgentExecutionRequestFromJson(
+        Map<String, dynamic> json) =>
+    AgentExecutionRequest(
+      agentName: json['agentName'] as String?,
+      parameters: json['parameters'] as Map<String, dynamic>?,
+    );
+
+Map<String, dynamic> _$AgentExecutionRequestToJson(
+        AgentExecutionRequest instance) =>
+    <String, dynamic>{
+      if (instance.agentName case final value?) 'agentName': value,
+      if (instance.parameters case final value?) 'parameters': value,
+    };
+
 AgentExecutionResponse _$AgentExecutionResponseFromJson(
         Map<String, dynamic> json) =>
     AgentExecutionResponse(
@@ -580,120 +641,6 @@ Map<String, dynamic> _$AgentExecutionResponseToJson(
       if (instance.success case final value?) 'success': value,
       if (instance.error case final value?) 'error': value,
       if (instance.executionType case final value?) 'executionType': value,
-    };
-
-ChatResponse _$ChatResponseFromJson(Map<String, dynamic> json) => ChatResponse(
-      content: json['content'] as String?,
-      model: json['model'] as String?,
-      ai: json['ai'] as String?,
-      success: json['success'] as bool?,
-      error: json['error'] as String?,
-      source: json['source'] == null
-          ? null
-          : ResponseSource.fromJson(json['source'] as Map<String, dynamic>),
-      agentExecutions: (json['agentExecutions'] as List<dynamic>?)
-              ?.map((e) =>
-                  AgentExecutionResponse.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$ChatResponseToJson(ChatResponse instance) =>
-    <String, dynamic>{
-      if (instance.content case final value?) 'content': value,
-      if (instance.model case final value?) 'model': value,
-      if (instance.ai case final value?) 'ai': value,
-      if (instance.success case final value?) 'success': value,
-      if (instance.error case final value?) 'error': value,
-      if (instance.source?.toJson() case final value?) 'source': value,
-      if (instance.agentExecutions?.map((e) => e.toJson()).toList()
-          case final value?)
-        'agentExecutions': value,
-    };
-
-ResponseSource _$ResponseSourceFromJson(Map<String, dynamic> json) =>
-    ResponseSource(
-      type: json['type'] as String?,
-      name: json['name'] as String?,
-    );
-
-Map<String, dynamic> _$ResponseSourceToJson(ResponseSource instance) =>
-    <String, dynamic>{
-      if (instance.type case final value?) 'type': value,
-      if (instance.name case final value?) 'name': value,
-    };
-
-AgentToolsConfig _$AgentToolsConfigFromJson(Map<String, dynamic> json) =>
-    AgentToolsConfig(
-      enabled: json['enabled'] as bool?,
-      availableAgents: (json['availableAgents'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      availableOrchestrators: (json['availableOrchestrators'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$AgentToolsConfigToJson(AgentToolsConfig instance) =>
-    <String, dynamic>{
-      if (instance.enabled case final value?) 'enabled': value,
-      if (instance.availableAgents case final value?) 'availableAgents': value,
-      if (instance.availableOrchestrators case final value?)
-        'availableOrchestrators': value,
-    };
-
-ChatMessage _$ChatMessageFromJson(Map<String, dynamic> json) => ChatMessage(
-      role: json['role'] as String?,
-      content: json['content'] as String?,
-      fileNames: (json['fileNames'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-    );
-
-Map<String, dynamic> _$ChatMessageToJson(ChatMessage instance) =>
-    <String, dynamic>{
-      if (instance.role case final value?) 'role': value,
-      if (instance.content case final value?) 'content': value,
-      if (instance.fileNames case final value?) 'fileNames': value,
-    };
-
-ChatRequest _$ChatRequestFromJson(Map<String, dynamic> json) => ChatRequest(
-      messages: (json['messages'] as List<dynamic>?)
-              ?.map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          [],
-      model: json['model'] as String?,
-      ai: json['ai'] as String?,
-      agentTools: json['agentTools'] == null
-          ? null
-          : AgentToolsConfig.fromJson(
-              json['agentTools'] as Map<String, dynamic>),
-    );
-
-Map<String, dynamic> _$ChatRequestToJson(ChatRequest instance) =>
-    <String, dynamic>{
-      if (instance.messages?.map((e) => e.toJson()).toList() case final value?)
-        'messages': value,
-      if (instance.model case final value?) 'model': value,
-      if (instance.ai case final value?) 'ai': value,
-      if (instance.agentTools?.toJson() case final value?) 'agentTools': value,
-    };
-
-AgentExecutionRequest _$AgentExecutionRequestFromJson(
-        Map<String, dynamic> json) =>
-    AgentExecutionRequest(
-      agentName: json['agentName'] as String?,
-      parameters: json['parameters'] as Map<String, dynamic>?,
-    );
-
-Map<String, dynamic> _$AgentExecutionRequestToJson(
-        AgentExecutionRequest instance) =>
-    <String, dynamic>{
-      if (instance.agentName case final value?) 'agentName': value,
-      if (instance.parameters case final value?) 'parameters': value,
     };
 
 ScriptGenerationRequest _$ScriptGenerationRequestFromJson(

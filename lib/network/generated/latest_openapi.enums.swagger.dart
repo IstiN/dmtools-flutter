@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:collection/collection.dart';
 
 enum IntegrationUserDtoPermissionLevel {
   @JsonValue(null)
@@ -76,6 +77,24 @@ enum JobExecutionResponseStatus {
   final String? value;
 
   const JobExecutionResponseStatus(this.value);
+}
+
+enum ChatMessageRole {
+  @JsonValue(null)
+  swaggerGeneratedUnknown(null),
+
+  @JsonValue('user')
+  user('user'),
+  @JsonValue('assistant')
+  assistant('assistant'),
+  @JsonValue('system')
+  system('system'),
+  @JsonValue('model')
+  model('model');
+
+  final String? value;
+
+  const ChatMessageRole(this.value);
 }
 
 enum ShareIntegrationRequestPermissionLevel {

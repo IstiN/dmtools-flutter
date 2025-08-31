@@ -34,6 +34,11 @@ class ChatInterface extends StatefulWidget {
   final AiIntegration? selectedAiIntegration;
   final ValueChanged<AiIntegration?>? onAiIntegrationChanged;
 
+  /// MCP Configuration selection
+  final List<McpConfigOption> mcpConfigurations;
+  final McpConfigOption? selectedMcpConfiguration;
+  final ValueChanged<McpConfigOption?>? onMcpConfigurationChanged;
+
   /// File attachment support
   final List<FileAttachment> attachments;
   final ValueChanged<List<FileAttachment>>? onAttachmentsChanged;
@@ -63,6 +68,9 @@ class ChatInterface extends StatefulWidget {
     this.aiIntegrations = const [],
     this.selectedAiIntegration,
     this.onAiIntegrationChanged,
+    this.mcpConfigurations = const [],
+    this.selectedMcpConfiguration,
+    this.onMcpConfigurationChanged,
     this.attachments = const [],
     this.onAttachmentsChanged,
     this.isUploadingFiles = false,
@@ -199,6 +207,59 @@ class ChatInterfaceState extends State<ChatInterface> {
     });
   }
 
+  void _showMcpConfigurationMenu(BuildContext buttonContext) {
+    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+    final RenderBox overlay = Navigator.of(buttonContext).overlay!.context.findRenderObject() as RenderBox;
+
+    final Offset buttonPosition = button.localToGlobal(Offset.zero, ancestor: overlay);
+    final Size buttonSize = button.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      buttonPosition.dx, // Left edge aligned with button
+      buttonPosition.dy + buttonSize.height + 4, // Below button with small gap
+      buttonPosition.dx + 220, // Right edge 220px from left (menu width)
+      buttonPosition.dy + buttonSize.height + 300, // Bottom edge (max menu height)
+    );
+
+    // Always include "None" option as first item
+    final noneOption = const McpConfigOption.none();
+    final allConfigurations = [noneOption, ...widget.mcpConfigurations];
+
+    showMenu<McpConfigOption>(
+      context: buttonContext,
+      position: position,
+      items: allConfigurations.map((config) {
+        return PopupMenuItem<McpConfigOption>(
+          value: config,
+          child: Row(
+            children: [
+              Icon(
+                config.isNone ? Icons.block : Icons.cable_outlined,
+                size: 16,
+                color: config.isNone ? context.colorsListening.textMuted : context.colorsListening.accentColor,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                config.name,
+                style: TextStyle(
+                  color: config.isNone ? context.colorsListening.textMuted : context.colorsListening.textColor,
+                ),
+              ),
+              if (widget.selectedMcpConfiguration == config) ...[
+                const Spacer(),
+                Icon(Icons.check, size: 16, color: context.colorsListening.accentColor),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
+    ).then((selectedConfig) {
+      if (selectedConfig != null) {
+        widget.onMcpConfigurationChanged?.call(selectedConfig);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
@@ -271,7 +332,7 @@ class ChatInterfaceState extends State<ChatInterface> {
                   testDarkMode: widget.testDarkMode,
                 ),
 
-                // Input row with enhanced layout: [📎] [🤖 AI ▼] [Type a message... 📤]
+                // Input row with enhanced layout: [🤖 AI ▼] [🔧 MCP ▼] [📎] [Type a message... 📤]
                 Row(
                   children: [
                     // AI integration selector icon (first)
@@ -302,7 +363,31 @@ class ChatInterfaceState extends State<ChatInterface> {
                       const SizedBox(width: 8),
                     ],
 
-                    // File attachment button (second)
+                    // MCP Configuration selector icon (second)
+                    if (widget.mcpConfigurations.isNotEmpty) ...[
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: Builder(
+                          builder: (context) {
+                            // Determine icon color based on selection
+                            final bool hasActiveSelection =
+                                widget.selectedMcpConfiguration != null && !widget.selectedMcpConfiguration!.isNone;
+                            final iconColor = hasActiveSelection ? colors.accentColor : colors.textSecondary;
+
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(Icons.cable_outlined, color: iconColor, size: 20),
+                              onPressed: () => _showMcpConfigurationMenu(context),
+                              tooltip: widget.selectedMcpConfiguration?.name ?? 'Select MCP Configuration',
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+
+                    // File attachment button (third)
                     SizedBox(
                       height: 40,
                       width: 40,

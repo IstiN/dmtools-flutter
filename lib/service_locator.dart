@@ -78,6 +78,7 @@ abstract final class ServiceLocator {
       () => ChatProvider(
         get<ChatService>(),
         get<IntegrationService>(),
+        get<McpProvider>(),
       ),
     );
   }

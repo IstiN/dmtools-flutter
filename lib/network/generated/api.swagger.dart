@@ -1,5 +1,9 @@
 // ignore_for_file: type=lint
 
+import 'package:json_annotation/json_annotation.dart';
+import 'package:json_annotation/json_annotation.dart' as json;
+import 'package:collection/collection.dart';
+import 'dart:convert';
 
 import 'api.models.swagger.dart';
 import 'package:chopper/chopper.dart';
@@ -7,7 +11,9 @@ import 'package:chopper/chopper.dart';
 import 'client_mapping.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart' show MultipartFile;
 import 'package:chopper/chopper.dart' as chopper;
+import 'api.enums.swagger.dart' as enums;
 export 'api.enums.swagger.dart';
 export 'api.models.swagger.dart';
 
@@ -605,10 +611,10 @@ abstract class Api extends ChopperService {
     @Body() required ExecuteJobConfigurationRequest? body,
   });
 
-  ///
-  ///@param message
-  ///@param model
-  ///@param ai
+  ///Simple Chat Message
+  ///@param message The text message to send to the AI
+  ///@param model AI model to use (optional)
+  ///@param ai AI integration to use (optional)
   Future<chopper.Response<ChatResponse>> apiV1ChatSimplePost({
     required String? message,
     String? model,
@@ -622,10 +628,10 @@ abstract class Api extends ChopperService {
     return _apiV1ChatSimplePost(message: message, model: model, ai: ai);
   }
 
-  ///
-  ///@param message
-  ///@param model
-  ///@param ai
+  ///Simple Chat Message
+  ///@param message The text message to send to the AI
+  ///@param model AI model to use (optional)
+  ///@param ai AI integration to use (optional)
   @POST(path: '/api/v1/chat/simple', optionalBody: true)
   Future<chopper.Response<ChatResponse>> _apiV1ChatSimplePost({
     @Query('message') required String? message,
@@ -633,7 +639,7 @@ abstract class Api extends ChopperService {
     @Query('ai') String? ai,
   });
 
-  ///
+  ///Chat Completions with MCP Tools Support
   Future<chopper.Response<ChatResponse>> apiV1ChatCompletionsPost({
     required ChatRequest? body,
   }) {
@@ -645,14 +651,14 @@ abstract class Api extends ChopperService {
     return _apiV1ChatCompletionsPost(body: body);
   }
 
-  ///
+  ///Chat Completions with MCP Tools Support
   @POST(path: '/api/v1/chat/completions', optionalBody: true)
   Future<chopper.Response<ChatResponse>> _apiV1ChatCompletionsPost({
     @Body() required ChatRequest? body,
   });
 
-  ///
-  ///@param chatRequest
+  ///Chat Completions with File Upload and MCP Tools
+  ///@param chatRequest JSON string containing the chat request (same structure as /completions)
   Future<chopper.Response<ChatResponse>> apiV1ChatCompletionsWithFilesPost({
     required String? chatRequest,
     required List<List<int>> files,
@@ -668,8 +674,8 @@ abstract class Api extends ChopperService {
     );
   }
 
-  ///
-  ///@param chatRequest
+  ///Chat Completions with File Upload and MCP Tools
+  ///@param chatRequest JSON string containing the chat request (same structure as /completions)
   @POST(path: '/api/v1/chat/completions-with-files', optionalBody: true)
   @Multipart()
   Future<chopper.Response<ChatResponse>> _apiV1ChatCompletionsWithFilesPost({
@@ -1171,14 +1177,14 @@ abstract class Api extends ChopperService {
     @Path('id') required String? id,
   });
 
-  ///
-  Future<chopper.Response<String>> apiV1ChatHealthGet() {
+  ///Health Check
+  Future<chopper.Response> apiV1ChatHealthGet() {
     return _apiV1ChatHealthGet();
   }
 
-  ///
+  ///Health Check
   @GET(path: '/api/v1/chat/health')
-  Future<chopper.Response<String>> _apiV1ChatHealthGet();
+  Future<chopper.Response> _apiV1ChatHealthGet();
 
   ///
   ///@param detailed

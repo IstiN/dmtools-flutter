@@ -5,7 +5,8 @@ import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../../providers/chat_provider.dart';
 import '../../providers/auth_provider.dart' as auth;
 import '../../core/services/file_service.dart';
-import '../../core/services/web_paste_service.dart' if (dart.library.io) '../../core/services/web_paste_service_stub.dart';
+import '../../core/services/web_paste_service.dart'
+    if (dart.library.io) '../../core/services/web_paste_service_stub.dart';
 import '../../service_locator.dart';
 import 'dart:async';
 
@@ -72,7 +73,7 @@ class _ChatPageState extends State<ChatPage> {
     try {
       final type = data['type'] as String;
       final content = data['content'];
-      
+
       if (type == 'image') {
         final imageData = content as Map<String, dynamic>;
         final attachment = FileAttachment(
@@ -82,16 +83,16 @@ class _ChatPageState extends State<ChatPage> {
           bytes: List<int>.from(imageData['bytes'] as List),
           uploadedAt: DateTime.now(),
         );
-        
+
         chatProvider.addAttachments([attachment]);
-        
+
         if (kDebugMode) {
           print('✅ Image attachment added: ${attachment.name} (${attachment.size} bytes)');
         }
       } else if (type == 'text') {
         final text = content as String;
         _chatInterfaceKey.currentState?.insertText(text);
-        
+
         if (kDebugMode) {
           print('✅ Text inserted into chat input: ${text.length} characters');
         }
@@ -131,6 +132,11 @@ class _ChatPageState extends State<ChatPage> {
           aiIntegrations: chatProvider.availableAiIntegrations,
           selectedAiIntegration: chatProvider.selectedAiIntegration,
           onAiIntegrationChanged: (integration) => chatProvider.selectAiIntegration(integration),
+
+          // MCP Configuration support
+          mcpConfigurations: chatProvider.availableMcpConfigurations,
+          selectedMcpConfiguration: chatProvider.selectedMcpConfiguration,
+          onMcpConfigurationChanged: (configuration) => chatProvider.selectMcpConfiguration(configuration),
 
           // File attachment support
           attachments: chatProvider.attachments,
