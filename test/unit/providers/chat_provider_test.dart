@@ -2,8 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 import 'package:dmtools/providers/chat_provider.dart';
-import 'package:dmtools/core/services/chat_service.dart';
-import 'package:dmtools/core/services/integration_service.dart';
 
 void main() {
   group('ChatProvider Tests', () {

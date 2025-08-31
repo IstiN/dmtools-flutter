@@ -8,6 +8,7 @@ import 'package:dmtools_styleguide/widgets/organisms/panel_base.dart';
 import 'package:dmtools_styleguide/widgets/organisms/workspace_management.dart';
 import 'package:dmtools_styleguide/widgets/molecules/ai_integration_selector.dart';
 import 'package:dmtools_styleguide/widgets/molecules/file_attachment_picker.dart';
+import 'package:dmtools_styleguide/models/mcp_config_option.dart';
 import '../golden_test_helper.dart' as helper;
 
 void main() {
@@ -307,6 +308,13 @@ Widget _buildEnhancedChatModule() {
           AiIntegration(id: '3', type: 'openai', displayName: 'Claude 3.5', isActive: false),
         ],
         selectedAiIntegration: const AiIntegration(id: '1', type: 'openai', displayName: 'OpenAI GPT-4'),
+        mcpConfigurations: const [
+          McpConfigOption.fromConfig(id: 'jira-1', name: 'Jira Integration'),
+          McpConfigOption.fromConfig(id: 'confluence-1', name: 'Confluence Tools'),
+          McpConfigOption.fromConfig(id: 'github-1', name: 'GitHub Assistant'),
+        ],
+        selectedMcpConfiguration: const McpConfigOption.fromConfig(id: 'jira-1', name: 'Jira Integration'),
+        onMcpConfigurationChanged: (config) {},
         attachments: [
           FileAttachment(
             name: 'example.dart',
@@ -320,7 +328,7 @@ Widget _buildEnhancedChatModule() {
         onAiIntegrationChanged: (integration) {},
         onAttachmentsChanged: (attachments) {},
         onAttachmentPressed: () {},
-        title: 'AI-Enhanced Chat',
+        title: 'AI-Enhanced Chat with MCP',
         isTestMode: true,
       ),
     ),
