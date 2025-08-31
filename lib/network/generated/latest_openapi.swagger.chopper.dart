@@ -934,14 +934,14 @@ final class _$LatestOpenapi extends LatestOpenapi {
   }
 
   @override
-  Future<Response<String>> _apiV1ChatHealthGet() {
+  Future<Response<dynamic>> _apiV1ChatHealthGet() {
     final Uri $url = Uri.parse('/api/v1/chat/health');
     final Request $request = Request(
       'GET',
       $url,
       client.baseUrl,
     );
-    return client.send<String, String>($request);
+    return client.send<dynamic, dynamic>($request);
   }
 
   @override

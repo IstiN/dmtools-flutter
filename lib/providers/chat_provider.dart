@@ -2,7 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/services/chat_service.dart';
 import '../core/services/integration_service.dart';
+import '../core/models/mcp_configuration.dart' as main_app;
+import '../providers/mcp_provider.dart';
 import '../network/generated/api.swagger.dart' as api;
+import '../network/generated/api.enums.swagger.dart' as enums;
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 /// Enumeration of possible chat states
@@ -17,25 +20,33 @@ enum ChatState {
 /// Provider for managing chat state and operations
 class ChatProvider with ChangeNotifier {
   static const String _selectedAiIntegrationKey = 'selected_ai_integration_id';
+  static const String _selectedMcpConfigurationKey = 'selected_mcp_configuration_id';
 
   final ChatService _chatService;
   final IntegrationService _integrationService;
+  final McpProvider _mcpProvider;
 
   ChatState _currentState = ChatState.initial;
   final List<ChatMessage> _messages = [];
   List<AiIntegration> _availableAiIntegrations = [];
   AiIntegration? _selectedAiIntegration;
+  List<McpConfigOption> _availableMcpConfigurations = [];
+  McpConfigOption? _selectedMcpConfiguration;
   List<FileAttachment> _attachments = [];
   bool _isUploadingFiles = false;
   double? _uploadProgress;
   String? _error;
 
-  ChatProvider(this._chatService, this._integrationService) {
+  ChatProvider(this._chatService, this._integrationService, this._mcpProvider) {
     _initializeAiIntegrations();
+    _initializeMcpConfigurations();
 
     // Listen to auth changes to reload integrations when user becomes authenticated
     final authProvider = _integrationService.authProvider;
     authProvider?.addListener(_onAuthChanged);
+
+    // Listen to MCP configurations changes
+    _mcpProvider.addListener(_onMcpConfigurationsChanged);
   }
 
   // Getters
@@ -43,6 +54,8 @@ class ChatProvider with ChangeNotifier {
   List<ChatMessage> get messages => List.unmodifiable(_messages);
   List<AiIntegration> get availableAiIntegrations => List.unmodifiable(_availableAiIntegrations);
   AiIntegration? get selectedAiIntegration => _selectedAiIntegration;
+  List<McpConfigOption> get availableMcpConfigurations => List.unmodifiable(_availableMcpConfigurations);
+  McpConfigOption? get selectedMcpConfiguration => _selectedMcpConfiguration;
   List<FileAttachment> get attachments => List.unmodifiable(_attachments);
   bool get isUploadingFiles => _isUploadingFiles;
   double? get uploadProgress => _uploadProgress;
@@ -187,7 +200,7 @@ class ChatProvider with ChangeNotifier {
         _setState(ChatState.success);
 
         if (kDebugMode) {
-          print('✅ Message sent successfully: ${response.model}');
+          print('✅ Message sent successfully: ${response.success}');
         }
       } else {
         // Remove user message if API call failed
@@ -213,7 +226,7 @@ class ChatProvider with ChangeNotifier {
     // Convert local ChatMessage list to API ChatMessage format
     final apiMessages = _messages
         .map((msg) => api.ChatMessage(
-              role: msg.isUser ? 'user' : 'assistant',
+              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
               content: msg.message,
             ))
         .toList();
@@ -221,6 +234,7 @@ class ChatProvider with ChangeNotifier {
     return await _chatService.sendChatCompletion(
       messages: apiMessages,
       aiIntegrationId: _selectedAiIntegration?.id,
+      mcpConfigurationId: _selectedMcpConfiguration?.id,
     );
   }
 
@@ -234,7 +248,7 @@ class ChatProvider with ChangeNotifier {
       // Convert full conversation history to API format, including current message with files
       final apiMessages = _messages
           .map((msg) => api.ChatMessage(
-                role: msg.isUser ? 'user' : 'assistant',
+                role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
                 content: msg.message,
               ))
           .toList();
@@ -263,6 +277,7 @@ class ChatProvider with ChangeNotifier {
         files: files,
         fileNames: _attachments.map((attachment) => attachment.name).toList(),
         aiIntegrationId: _selectedAiIntegration?.id,
+        mcpConfigurationId: _selectedMcpConfiguration?.id,
       );
 
       _isUploadingFiles = false;
@@ -414,7 +429,7 @@ class ChatProvider with ChangeNotifier {
     // Convert existing messages to API format
     final apiMessages = _messages
         .map((msg) => api.ChatMessage(
-              role: msg.isUser ? 'user' : 'assistant',
+              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
               content: msg.message,
             ))
         .toList();
@@ -426,6 +441,7 @@ class ChatProvider with ChangeNotifier {
     final response = await _chatService.sendChatCompletion(
       messages: apiMessages,
       aiIntegrationId: _selectedAiIntegration!.id,
+      mcpConfigurationId: _selectedMcpConfiguration?.id,
     );
 
     if (response?.success == true && response?.content != null) {
@@ -451,7 +467,7 @@ class ChatProvider with ChangeNotifier {
     // Convert existing messages to API format
     final apiMessages = _messages
         .map((msg) => api.ChatMessage(
-              role: msg.isUser ? 'user' : 'assistant',
+              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
               content: msg.message,
             ))
         .toList();
@@ -465,6 +481,7 @@ class ChatProvider with ChangeNotifier {
       files: _attachments.map((a) => a.bytes).toList(),
       fileNames: _attachments.map((a) => a.name).toList(),
       aiIntegrationId: _selectedAiIntegration!.id,
+      mcpConfigurationId: _selectedMcpConfiguration?.id,
     );
 
     if (response?.success == true && response?.content != null) {
@@ -596,11 +613,120 @@ class ChatProvider with ChangeNotifier {
     }
   }
 
+  /// Initialize available MCP configurations from McpProvider
+  Future<void> _initializeMcpConfigurations() async {
+    try {
+      // Load MCP configurations from McpProvider
+      await _mcpProvider.loadConfigurations();
+      _updateMcpConfigurationsFromProvider();
+
+      // Load saved preference for selected MCP configuration
+      await _loadSelectedMcpConfiguration();
+
+      if (kDebugMode) {
+        print('✅ Loaded ${_availableMcpConfigurations.length} MCP configurations');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Error loading MCP configurations: $e');
+      }
+    }
+  }
+
+  /// Convert main app McpConfiguration to styleguide McpConfigOption
+  McpConfigOption _convertMcpConfiguration(main_app.McpConfiguration config) {
+    return McpConfigOption.fromConfig(
+      id: config.id ?? '',
+      name: config.name,
+    );
+  }
+
+  /// Update MCP configurations from provider
+  void _updateMcpConfigurationsFromProvider() {
+    _availableMcpConfigurations =
+        _mcpProvider.configurations.map((config) => _convertMcpConfiguration(config)).toList();
+    notifyListeners();
+  }
+
+  /// Handle MCP configurations changes
+  void _onMcpConfigurationsChanged() {
+    _updateMcpConfigurationsFromProvider();
+  }
+
+  /// Select MCP configuration
+  void selectMcpConfiguration(McpConfigOption? configuration) {
+    _selectedMcpConfiguration = configuration;
+    _saveMcpConfigurationPreference(configuration?.id);
+    notifyListeners();
+
+    if (kDebugMode) {
+      print('🔧 Selected MCP configuration: ${configuration?.name ?? "None"}');
+    }
+  }
+
+  /// Save selected MCP configuration to client preferences
+  Future<void> _saveMcpConfigurationPreference(String? configurationId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (configurationId != null && configurationId.isNotEmpty) {
+        await prefs.setString(_selectedMcpConfigurationKey, configurationId);
+        if (kDebugMode) {
+          print('💾 Saved MCP configuration preference: $configurationId');
+        }
+      } else {
+        await prefs.remove(_selectedMcpConfigurationKey);
+        if (kDebugMode) {
+          print('🗑️ Cleared MCP configuration preference');
+        }
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Failed to save MCP configuration preference: $e');
+      }
+    }
+  }
+
+  /// Load selected MCP configuration from client preferences
+  Future<void> _loadSelectedMcpConfiguration() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedConfigurationId = prefs.getString(_selectedMcpConfigurationKey);
+
+      if (savedConfigurationId != null && _availableMcpConfigurations.isNotEmpty) {
+        final savedConfiguration =
+            _availableMcpConfigurations.where((config) => config.id == savedConfigurationId).firstOrNull;
+
+        if (savedConfiguration != null) {
+          _selectedMcpConfiguration = savedConfiguration;
+          if (kDebugMode) {
+            print('📥 Loaded saved MCP configuration: ${savedConfiguration.name}');
+          }
+        } else {
+          // Default to "None" if saved configuration not found
+          _selectedMcpConfiguration = const McpConfigOption.none();
+          if (kDebugMode) {
+            print('⚠️ Saved MCP configuration not found, defaulting to None');
+          }
+        }
+      } else {
+        // Default to "None" if no saved preference
+        _selectedMcpConfiguration = const McpConfigOption.none();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Failed to load MCP configuration preference: $e');
+      }
+      // Default to "None" on error
+      _selectedMcpConfiguration = const McpConfigOption.none();
+    }
+  }
+
   @override
   void dispose() {
-    // Clean up auth listener
+    // Clean up listeners
     final authProvider = _integrationService.authProvider;
     authProvider?.removeListener(_onAuthChanged);
+    _mcpProvider.removeListener(_onMcpConfigurationsChanged);
     super.dispose();
   }
 }

@@ -3,6 +3,7 @@ library;
 // Models
 export 'models/agent.dart';
 export 'models/mcp_configuration.dart';
+export 'models/mcp_config_option.dart';
 export 'models/webhook_key.dart';
 export 'models/webhook_example_data.dart';
 export 'core/models/agent.dart';
