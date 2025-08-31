@@ -1,6 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 import 'package:dmtools/core/services/file_service.dart';
 

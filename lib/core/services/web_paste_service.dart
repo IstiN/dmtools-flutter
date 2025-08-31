@@ -4,7 +4,6 @@
 import 'dart:async';
 import 'dart:js' as js;
 import 'package:flutter/foundation.dart';
-import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'clipboard_js.dart';
 
 class WebPasteService {
