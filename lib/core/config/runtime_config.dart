@@ -1,5 +1,5 @@
-import 'dart:js' as js;
 import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'runtime_config_stub.dart' if (dart.library.js) 'runtime_config_web.dart';
 
 /// Runtime configuration that can be set via JavaScript without rebuilding the app
 class RuntimeConfig {
@@ -18,7 +18,7 @@ class RuntimeConfig {
 
     try {
       // Try to read configuration from window.dmtoolsConfig
-      final jsConfig = js.context['dmtoolsConfig'];
+      final jsConfig = getJsConfig();
       if (jsConfig != null) {
         _config = {
           'apiBaseUrl': jsConfig['apiBaseUrl'],
