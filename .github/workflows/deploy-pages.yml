@@ -92,11 +92,29 @@ jobs:
 
           # Copy main app to root
           cp -r build/web/* _site/
-
+          
           # Create styleguide subdirectory and copy styleguide build
           mkdir -p _site/styleguide
           cp -r flutter_styleguide/build/web/* _site/styleguide/
-
+          
+          # Configure production API URLs for GitHub Pages deployment
+          echo "🔧 Configuring production API URLs for GitHub Pages..."
+          
+          # Copy and configure main app config files with production API URL
+          cp web/config.js _site/config.js
+          sed -i.bak "s|apiBaseUrl: 'http://localhost:8080'|apiBaseUrl: 'https://dmtools-431977789017.us-central1.run.app'|g" _site/config.js
+          cp config.template.js _site/config.template.js
+          
+          # Copy and configure styleguide config files with production API URL
+          cp flutter_styleguide/web/config.js _site/styleguide/config.js
+          sed -i.bak "s|apiBaseUrl: 'http://localhost:8080'|apiBaseUrl: 'https://dmtools-431977789017.us-central1.run.app'|g" _site/styleguide/config.js
+          cp config.template.js _site/styleguide/config.template.js
+          
+          # Remove backup files
+          rm -f _site/config.js.bak _site/styleguide/config.js.bak
+          
+          echo "✅ Production API URLs configured for GitHub Pages"
+          
           # Add cache busting information to deployment
           echo "🏷️ Adding cache version info to deployment..."
           BUILD_VERSION=$(grep -o '[0-9]\{14\}-[a-f0-9]\{7\}' _site/index.html | head -1)
