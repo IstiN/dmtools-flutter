@@ -341,17 +341,17 @@ class NavigationItem {
 const List<NavigationItem> navigationItems = [
   // Core functional pages
   NavigationItem(icon: Icons.smart_toy_outlined, label: 'AI Jobs', route: '/ai-jobs'),
-  NavigationItem(icon: Icons.workspaces_outlined, label: 'Workspaces', route: '/workspaces'),
   NavigationItem(icon: Icons.integration_instructions_outlined, label: 'Integrations', route: '/integrations'),
   NavigationItem(icon: Icons.chat_outlined, label: 'Chat', route: '/chat'),
   NavigationItem(icon: Icons.hub_outlined, label: 'MCP', route: '/mcp'),
-
+  
   // Admin-only pages (filtered by role in home_screen.dart)
   NavigationItem(icon: Icons.people_outline, label: 'Users', route: '/users'),
-
-  // Development/Demo pages (TODO: hide in production)
-  NavigationItem(icon: Icons.api_outlined, label: 'API Demo', route: '/api-demo'),
-
+  
+  // Temporarily hidden pages (not needed for now)
+  // NavigationItem(icon: Icons.workspaces_outlined, label: 'Workspaces', route: '/workspaces'),
+  // NavigationItem(icon: Icons.api_outlined, label: 'API Demo', route: '/api-demo'),
+  
   // Placeholder pages (TODO: implement and uncomment when ready)
   // NavigationItem(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
   // NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
