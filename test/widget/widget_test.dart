@@ -11,9 +11,29 @@ import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 
 import 'package:dmtools/main.dart';
-import 'package:dmtools/providers/auth_provider.dart';
+import 'package:dmtools/providers/enhanced_auth_provider.dart';
 import 'package:dmtools/network/services/api_service.dart';
+import 'package:dmtools/core/services/auth_config_service.dart';
+import 'package:dmtools/core/services/local_auth_service.dart';
+import 'package:dmtools/core/services/credentials_service.dart';
+import 'package:dmtools/network/services/auth_api_service.dart';
 import '../unit/service_locator_test.dart';
+
+// Simple mock for testing
+class MockEnhancedAuthProvider extends EnhancedAuthProvider {
+  MockEnhancedAuthProvider()
+      : super(
+          authConfigService: AuthConfigService(),
+          localAuthService: LocalAuthService(),
+          credentialsService: CredentialsService(),
+          authApiService: AuthApiService(),
+        );
+
+  @override
+  Future<void> initializeAuth() async {
+    // Do nothing for tests
+  }
+}
 
 void main() {
   testWidgets('DMTools app smoke test', (WidgetTester tester) async {
@@ -22,7 +42,7 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ThemeProvider()),
-          ChangeNotifierProvider(create: (_) => AuthProvider()),
+          ChangeNotifierProvider<EnhancedAuthProvider>(create: (_) => MockEnhancedAuthProvider()),
           Provider<ApiService>(create: (_) => MockApiService()),
         ],
         child: const DMToolsApp(),

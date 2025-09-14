@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
-import '../core/routing/app_router.dart' as app_router;
+import '../core/routing/enhanced_app_router.dart' as app_router;
 import '../providers/enhanced_auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {

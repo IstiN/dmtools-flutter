@@ -324,3 +324,29 @@ class EnhancedAppRouter {
     );
   }
 }
+
+// Navigation items for the main app
+class NavigationItem {
+  final IconData icon;
+  final String label;
+  final String route;
+
+  const NavigationItem({
+    required this.icon,
+    required this.label,
+    required this.route,
+  });
+}
+
+const List<NavigationItem> navigationItems = [
+  NavigationItem(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
+  NavigationItem(icon: Icons.smart_toy_outlined, label: 'AI Jobs', route: '/ai-jobs'),
+  NavigationItem(icon: Icons.workspaces_outlined, label: 'Workspaces', route: '/workspaces'),
+  NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
+  NavigationItem(icon: Icons.integration_instructions_outlined, label: 'Integrations', route: '/integrations'),
+  NavigationItem(icon: Icons.people_outline, label: 'Users', route: '/users'),
+  NavigationItem(icon: Icons.chat_outlined, label: 'Chat', route: '/chat'),
+  NavigationItem(icon: Icons.hub_outlined, label: 'MCP', route: '/mcp'),
+  NavigationItem(icon: Icons.api_outlined, label: 'API Demo', route: '/api-demo'),
+  NavigationItem(icon: Icons.settings_outlined, label: 'Settings', route: '/settings'),
+];

@@ -545,7 +545,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
           Switch(
             value: value,
             onChanged: (newValue) => _updateValue(param.key, newValue, param.type),
-            activeThumbColor: colors.accentColor,
+            thumbColor: WidgetStateProperty.all(colors.accentColor),
           ),
         ],
       ),
