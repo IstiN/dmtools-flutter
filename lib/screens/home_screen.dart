@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -194,6 +195,13 @@ class _HomeScreenState extends State<HomeScreen> {
           if (item.route == '/users') {
             return isAdmin;
           }
+
+          // Hide API Demo in production (based on build mode or environment)
+          if (item.route == '/api-demo') {
+            // Show API Demo only in debug mode or demo mode
+            return authProvider.isDemoMode || kDebugMode;
+          }
+
           return true; // Show all other items
         })
         .map((item) => NavigationItem(
