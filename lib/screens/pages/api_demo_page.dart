@@ -5,7 +5,7 @@ import 'package:dmtools_styleguide/theme/app_theme.dart';
 import '../../network/services/api_service.dart';
 import '../../network/generated/api.models.swagger.dart';
 import '../../network/generated/api.enums.swagger.dart' as enums;
-import '../../providers/auth_provider.dart';
+import '../../providers/enhanced_auth_provider.dart';
 import '../../core/models/user.dart';
 
 class ApiDemoPage extends StatefulWidget {
@@ -17,7 +17,7 @@ class ApiDemoPage extends StatefulWidget {
 
 class _ApiDemoPageState extends State<ApiDemoPage> {
   late ApiService _apiService;
-  late AuthProvider _authProvider;
+  late EnhancedAuthProvider _authProvider;
   List<WorkspaceDto> _workspaces = [];
   UserDto? _currentUser;
   bool _isLoading = false;
@@ -29,7 +29,7 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
   void initState() {
     super.initState();
     _apiService = context.read<ApiService>();
-    _authProvider = context.read<AuthProvider>();
+    _authProvider = context.read<EnhancedAuthProvider>();
     _loadWorkspaces();
     _loadCurrentUser();
   }
