@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../../providers/mcp_provider.dart';
-import '../../providers/auth_provider.dart' as app_auth;
+import '../../providers/enhanced_auth_provider.dart';
 import '../../providers/integration_provider.dart';
 import '../../core/pages/authenticated_page.dart';
 
@@ -46,7 +46,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
   }
 
   List<IntegrationOption> _getAvailableIntegrations() {
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
 
     if (!authProvider.isAuthenticated) {
       // Demo mode - return demo integrations only
@@ -166,7 +166,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
 
   @override
   Widget buildAuthenticatedContent(BuildContext context) {
-    return Consumer2<McpProvider, app_auth.AuthProvider>(
+    return Consumer2<McpProvider, EnhancedAuthProvider>(
       builder: (context, mcpProvider, authProvider, child) {
         print('🔧 McpPage: Building authenticated content with ${mcpProvider.configurations.length} configurations');
 
@@ -175,7 +175,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
     );
   }
 
-  Widget _buildLoadedState(McpProvider mcpProvider, app_auth.AuthProvider authProvider) {
+  Widget _buildLoadedState(McpProvider mcpProvider, EnhancedAuthProvider authProvider) {
     // Convert main app configurations to styleguide format
     final styleguideConfigs = mcpProvider.configurations.map((config) {
       return McpConfiguration(

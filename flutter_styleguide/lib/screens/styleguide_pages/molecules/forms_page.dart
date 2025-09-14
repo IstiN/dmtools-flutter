@@ -100,7 +100,7 @@ class FormsPage extends StatelessWidget {
             const Text('Integration Type Selector', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: AppDimensions.spacingM),
             DropdownButtonFormField<String>(
-              value: 'GitHub',
+              initialValue: 'GitHub',
               decoration: const InputDecoration(labelText: 'Integration Type', border: OutlineInputBorder()),
               items: [
                 'GitHub',
@@ -141,7 +141,7 @@ class FormsPage extends StatelessWidget {
             const Text('Job Type Selector', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             const SizedBox(height: AppDimensions.spacingM),
             DropdownButtonFormField<String>(
-              value: 'Analysis',
+              initialValue: 'Analysis',
               decoration: const InputDecoration(labelText: 'Job Type', border: OutlineInputBorder()),
               items: [
                 'Analysis',

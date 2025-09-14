@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../config/app_config.dart';
 import '../../network/generated/api.models.swagger.dart' as api;
 import '../../network/services/api_service.dart';
-import '../../providers/auth_provider.dart';
+import '../interfaces/auth_token_provider.dart';
 
 /// Local model for integration data in the main app
 class IntegrationModel {
@@ -178,13 +178,13 @@ class IntegrationService with ChangeNotifier {
   List<IntegrationModel> _integrations = [];
   List<IntegrationTypeModel> _availableTypes = [];
   final ApiService _apiService;
-  final AuthProvider? _authProvider;
+  final AuthTokenProvider? _authProvider;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<IntegrationModel> get integrations => List.unmodifiable(_integrations);
   List<IntegrationTypeModel> get availableTypes => List.unmodifiable(_availableTypes);
-  AuthProvider? get authProvider => _authProvider;
+  AuthTokenProvider? get authProvider => _authProvider;
 
   /// Get all integration types that support MCP
   List<IntegrationTypeModel> get mcpSupportedTypes =>
@@ -197,7 +197,7 @@ class IntegrationService with ChangeNotifier {
         return integrationTypeModel?.supportsMcp ?? false;
       }).toList());
 
-  IntegrationService({required ApiService apiService, AuthProvider? authProvider})
+  IntegrationService({required ApiService apiService, AuthTokenProvider? authProvider})
       : _apiService = apiService,
         _authProvider = authProvider {
     _initializeMockData();

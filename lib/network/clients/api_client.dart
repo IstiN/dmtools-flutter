@@ -5,7 +5,7 @@ import '../generated/api.swagger.dart';
 import '../generated/latest_openapi.swagger.dart' as latest;
 import '../interceptors/auth_interceptor.dart';
 import '../interceptors/logging_interceptor.dart';
-import '../../providers/auth_provider.dart';
+import '../../core/interfaces/auth_token_provider.dart';
 import '../../core/config/app_config.dart';
 
 /// Configuration for API client
@@ -13,7 +13,7 @@ class ApiClientConfig {
   /// Create a configured Chopper client
   static ChopperClient createClient({
     String? baseUrl,
-    AuthProvider? authProvider,
+    AuthTokenProvider? authProvider,
     bool enableLogging = true,
   }) {
     final List<Interceptor> interceptors = [];

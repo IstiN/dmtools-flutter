@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
+import '../providers/enhanced_auth_provider.dart';
 import '../service_locator.dart';
 
 // Conditional imports for web-specific functionality
@@ -45,7 +45,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
   }
 
   Future<void> _handleCallback() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
     final router = GoRouter.of(context);
     final tempCode = widget.callbackUri.queryParameters['code'];
 
@@ -101,7 +101,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
     try {
       _updateStep('Processing OAuth callback...');
 
-      final success = await authProvider.handleCallback(widget.callbackUri).timeout(
+      final success = await authProvider.handleOAuthCallback(widget.callbackUri).timeout(
         const Duration(seconds: 30),
         onTimeout: () {
           if (kDebugMode) {

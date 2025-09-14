@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../../providers/chat_provider.dart';
-import '../../providers/auth_provider.dart' as auth;
+import '../../providers/enhanced_auth_provider.dart';
 import '../../core/services/file_service.dart';
 import '../../core/services/web_paste_service.dart'
     if (dart.library.io) '../../core/services/web_paste_service_stub.dart';
@@ -106,16 +107,16 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer2<ChatProvider, auth.AuthProvider>(
+    return Consumer2<ChatProvider, EnhancedAuthProvider>(
       builder: (context, chatProvider, authProvider, child) {
-        // Show loading state if user is authenticated but integrations haven't loaded yet
-        if (authProvider.isAuthenticated && chatProvider.availableAiIntegrations.isEmpty) {
+        // Show loading state if chat is actually loading (not just empty)
+        if (chatProvider.isLoading) {
           return _buildLoadingState();
         }
 
-        // Show loading state if integrations are still loading
+        // Show empty state if no integrations are available after loading is complete
         if (chatProvider.availableAiIntegrations.isEmpty) {
-          return _buildLoadingState();
+          return _buildEmptyState();
         }
 
         // Main chat interface
@@ -169,6 +170,47 @@ class _ChatPageState extends State<ChatPage> {
           Text(
             'Loading...',
             style: TextStyle(color: context.colors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.chat_bubble_outline,
+            size: 64,
+            color: context.colors.textSecondary,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No AI integrations available',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: context.colors.textColor,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Please configure AI integrations to start chatting.',
+            style: TextStyle(color: context.colors.textSecondary),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          OutlineButton(
+            text: 'Go to Integrations',
+            onPressed: () {
+              // Navigate to integrations page
+              // Using the same router context
+              if (context.mounted) {
+                context.go('/integrations');
+              }
+            },
           ),
         ],
       ),

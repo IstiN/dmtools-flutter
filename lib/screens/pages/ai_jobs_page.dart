@@ -7,6 +7,7 @@ import '../../network/services/api_service.dart';
 import '../../network/generated/api.models.swagger.dart';
 import '../../core/pages/authenticated_page.dart';
 import '../../providers/webhook_state_provider.dart';
+import '../../providers/enhanced_auth_provider.dart';
 import '../../core/services/webhook_api_service.dart';
 
 class AiJobsPage extends StatefulWidget {
@@ -355,36 +356,44 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
         }
       }
 
-      // If no integrations loaded, create fallback integrations to ensure form works
+      // If no integrations loaded, only create fallback integrations in demo/mock mode
       if (availableIntegrations.isEmpty) {
-        debugPrint('⚠️ No integrations found, creating fallback integrations for form functionality');
-        availableIntegrations = [
-          const AvailableIntegration(
-            id: 'fallback-tracker-1',
-            name: 'Sample Jira Integration',
-            type: 'TrackerClient',
-            displayName: 'Sample Jira Integration',
-            enabled: true,
-            description: 'jira:Sample Jira integration for testing',
-          ),
-          const AvailableIntegration(
-            id: 'fallback-ai-1',
-            name: 'Sample AI Integration',
-            type: 'AI',
-            displayName: 'Sample AI Integration',
-            enabled: true,
-            description: 'openai:Sample AI integration for testing',
-          ),
-          const AvailableIntegration(
-            id: 'fallback-doc-1',
-            name: 'Sample Documentation Integration',
-            type: 'Documentation',
-            displayName: 'Sample Documentation Integration',
-            enabled: true,
-            description: 'confluence:Sample documentation integration for testing',
-          ),
-        ];
-        debugPrint('✅ Created ${availableIntegrations.length} fallback integrations');
+        // Check if we should create fallback integrations (only in development/demo mode)
+        final authProvider = context.read<EnhancedAuthProvider>();
+        final shouldCreateFallbacks = authProvider.isDemoMode || authProvider.shouldUseMockData;
+
+        if (shouldCreateFallbacks) {
+          debugPrint('⚠️ No integrations found, creating fallback integrations for form functionality (demo mode)');
+          availableIntegrations = [
+            const AvailableIntegration(
+              id: 'fallback-tracker-1',
+              name: 'Sample Jira Integration',
+              type: 'TrackerClient',
+              displayName: 'Sample Jira Integration',
+              enabled: true,
+              description: 'jira:Sample Jira integration for testing',
+            ),
+            const AvailableIntegration(
+              id: 'fallback-ai-1',
+              name: 'Sample AI Integration',
+              type: 'AI',
+              displayName: 'Sample AI Integration',
+              enabled: true,
+              description: 'openai:Sample AI integration for testing',
+            ),
+            const AvailableIntegration(
+              id: 'fallback-doc-1',
+              name: 'Sample Documentation Integration',
+              type: 'Documentation',
+              displayName: 'Sample Documentation Integration',
+              enabled: true,
+              description: 'confluence:Sample documentation integration for testing',
+            ),
+          ];
+          debugPrint('✅ Created ${availableIntegrations.length} fallback integrations (demo mode)');
+        } else {
+          debugPrint('ℹ️ No integrations found in production mode - showing empty state');
+        }
       } else {
         debugPrint('✅ Created ${availableIntegrations.length} integrations from API data');
       }
@@ -401,30 +410,40 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
     } catch (e) {
       debugPrint('💥 Critical error in _loadIntegrations: $e');
 
-      // Create fallback integrations even on error to ensure form functionality
-      final fallbackIntegrations = [
-        const AvailableIntegration(
-          id: 'fallback-tracker-1',
-          name: 'Sample Jira Integration',
-          type: 'TrackerClient',
-          displayName: 'Sample Jira Integration',
-          enabled: true,
-          description: 'jira:Sample Jira integration for testing',
-        ),
-        const AvailableIntegration(
-          id: 'fallback-ai-1',
-          name: 'Sample AI Integration',
-          type: 'AI',
-          displayName: 'Sample AI Integration',
-          enabled: true,
-          description: 'openai:Sample AI integration for testing',
-        ),
-      ];
+      // Only create fallback integrations on error if in demo/mock mode
+      final authProvider = context.read<EnhancedAuthProvider>();
+      final shouldCreateFallbacks = authProvider.isDemoMode || authProvider.shouldUseMockData;
 
-      setState(() {
-        _availableIntegrations = fallbackIntegrations;
-      });
-      debugPrint('✅ Error recovery: Set fallback integrations for form functionality');
+      if (shouldCreateFallbacks) {
+        final fallbackIntegrations = [
+          const AvailableIntegration(
+            id: 'fallback-tracker-1',
+            name: 'Sample Jira Integration',
+            type: 'TrackerClient',
+            displayName: 'Sample Jira Integration',
+            enabled: true,
+            description: 'jira:Sample Jira integration for testing',
+          ),
+          const AvailableIntegration(
+            id: 'fallback-ai-1',
+            name: 'Sample AI Integration',
+            type: 'AI',
+            displayName: 'Sample AI Integration',
+            enabled: true,
+            description: 'openai:Sample AI integration for testing',
+          ),
+        ];
+
+        setState(() {
+          _availableIntegrations = fallbackIntegrations;
+        });
+        debugPrint('✅ Error recovery: Set fallback integrations for form functionality (demo mode)');
+      } else {
+        setState(() {
+          _availableIntegrations = [];
+        });
+        debugPrint('ℹ️ Error recovery: No fallback integrations in production mode');
+      }
     }
 
     debugPrint('🏁 _loadIntegrations() completed - Final count: ${_availableIntegrations.length}');

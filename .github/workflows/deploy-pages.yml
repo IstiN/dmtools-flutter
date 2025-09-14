@@ -363,10 +363,30 @@ jobs:
           
           ## 🚀 Quick Start
           
-          1. **Extract** this ZIP file to your web server's document root
+          1. **Extract** this ZIP file to a directory
           2. **Configure API** by editing `config.js` and `styleguide/config.js`
-          3. **Deploy** to your web server
+          3. **Serve the files** (see options below)
           4. **Access** your application
+          
+          ## 🖥️ Local Testing Options
+          
+          **Important**: Don't open `index.html` directly in browser. Use a local server:
+          
+          ```bash
+          # Option 1: Python (recommended)
+          python3 -m http.server 8000
+          # Then open: http://localhost:8000
+          
+          # Option 2: Node.js
+          npx serve .
+          
+          # Option 3: PHP  
+          php -S localhost:8000
+          ```
+          
+          ## 🌐 Production Deployment
+          
+          For production, deploy to your web server
           
           ## ⚙️ API Configuration
           
@@ -502,9 +522,29 @@ jobs:
           
           ## 🚀 Quick Start
           
-          1. **Extract** this ZIP file to your web server's document root
+          1. **Extract** this ZIP file to a directory
           2. **Configure API** by editing `config.js`
-          3. **Deploy** to your web server
+          3. **Serve the files** (see options below)
+          
+          ## 🖥️ Local Testing Options
+          
+          **Important**: Don't open `index.html` directly in browser. Use a local server:
+          
+          ```bash
+          # Option 1: Python (recommended)
+          python3 -m http.server 8000
+          # Then open: http://localhost:8000
+          
+          # Option 2: Node.js
+          npx serve .
+          
+          # Option 3: PHP
+          php -S localhost:8000
+          ```
+          
+          ## 🌐 Production Deployment
+          
+          For production, deploy to your web server
           
           ## ⚙️ API Configuration
           
@@ -565,9 +605,29 @@ jobs:
           
           ## 🚀 Quick Start
           
-          1. **Extract** this ZIP file to your web server's document root
+          1. **Extract** this ZIP file to a directory
           2. **Configure API** by editing `config.js` (for live examples)
-          3. **Deploy** to your web server
+          3. **Serve the files** (see options below)
+          
+          ## 🖥️ Local Testing Options
+          
+          **Important**: Don't open `index.html` directly in browser. Use a local server:
+          
+          ```bash
+          # Option 1: Python (recommended)
+          python3 -m http.server 8000
+          # Then open: http://localhost:8000
+          
+          # Option 2: Node.js
+          npx serve .
+          
+          # Option 3: PHP
+          php -S localhost:8000
+          ```
+          
+          ## 🌐 Production Deployment
+          
+          For production, deploy to your web server
           
           ## ⚙️ API Configuration
           

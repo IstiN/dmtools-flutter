@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../network/services/api_service.dart';
 import '../../network/generated/api.swagger.dart' as api;
-import '../../providers/auth_provider.dart';
+import '../../core/interfaces/auth_token_provider.dart';
 import '../../core/config/app_config.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,13 +12,13 @@ class ChatService with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   final ApiService _apiService;
-  final AuthProvider? _authProvider;
+  final AuthTokenProvider? _authProvider;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
-  AuthProvider? get authProvider => _authProvider;
+  AuthTokenProvider? get authProvider => _authProvider;
 
-  ChatService({required ApiService apiService, AuthProvider? authProvider})
+  ChatService({required ApiService apiService, AuthTokenProvider? authProvider})
       : _apiService = apiService,
         _authProvider = authProvider;
 

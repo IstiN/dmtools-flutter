@@ -49,6 +49,7 @@ export 'widgets/molecules/headers/app_header.dart';
 export 'widgets/molecules/headers/page_action_bar.dart';
 export 'widgets/molecules/cards/feature_card.dart';
 export 'widgets/molecules/login_provider_selector.dart';
+export 'widgets/molecules/local_login_form.dart';
 export 'widgets/molecules/notification_message.dart';
 export 'widgets/molecules/section_header.dart';
 export 'widgets/molecules/integration_card.dart';

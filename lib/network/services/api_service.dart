@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import '../clients/api_client.dart';
-import '../../providers/auth_provider.dart';
+import '../../core/interfaces/auth_token_provider.dart';
 import '../generated/api.enums.swagger.dart' as enums;
 import '../../core/models/user.dart'; // Import our custom UserDto
 
@@ -101,11 +101,11 @@ class ApiService {
   final ChopperClient _client;
   late final Api _api;
   late final latest.LatestOpenapi _latestApi;
-  final AuthProvider? _authProvider;
+  final AuthTokenProvider? _authProvider;
 
   ApiService({
     String? baseUrl,
-    AuthProvider? authProvider,
+    AuthTokenProvider? authProvider,
     bool enableLogging = true,
   })  : _authProvider = authProvider,
         _client = ApiClientConfig.createClient(

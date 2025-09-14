@@ -7,7 +7,7 @@ import '../../network/generated/api.models.swagger.dart' as api;
 import '../../network/generated/api.enums.swagger.dart' as enums;
 import '../../core/pages/authenticated_page.dart';
 import '../../network/services/api_service.dart';
-import '../../providers/auth_provider.dart' as app_auth;
+import '../../providers/enhanced_auth_provider.dart';
 import 'package:flutter/foundation.dart';
 
 class WorkspacesPage extends StatefulWidget {
@@ -63,7 +63,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
 
     final workspaces = await authService.execute(() async {
       // Set authProvider now that we're authenticated
-      final authProvider = context.read<app_auth.AuthProvider>();
+      final authProvider = context.read<EnhancedAuthProvider>();
       _workspaceService = WorkspaceService(
         apiService: context.read<ApiService>(),
         authProvider: authProvider,
@@ -204,7 +204,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
     // Debug button (only in debug mode)
     if (kDebugMode) {
       actions.add(
-        Consumer<app_auth.AuthProvider>(
+        Consumer<EnhancedAuthProvider>(
           builder: (context, authProvider, child) {
             return SecondaryButton(
               text: 'Debug Auth',
@@ -310,7 +310,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
     );
   }
 
-  void _showAuthDebugDialog(app_auth.AuthProvider authProvider) {
+  void _showAuthDebugDialog(EnhancedAuthProvider authProvider) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

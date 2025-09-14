@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import '../core/routing/app_router.dart' as app_router;
-import '../providers/auth_provider.dart';
-
+import '../providers/enhanced_auth_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   final Widget? child;
@@ -28,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDesktopLayout() {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context);
     final colors = context.colorsListening;
 
     return Scaffold(
@@ -111,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMobileLayout() {
     final themeProvider = Provider.of<ThemeProvider>(context);
-    final authProvider = Provider.of<AuthProvider>(context);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context);
 
     return Scaffold(
       key: _scaffoldKey,
@@ -186,9 +185,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Convert app router NavigationItem to styleguide NavigationItem
   List<NavigationItem> _convertNavigationItems(List<app_router.NavigationItem> items) {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
     final isAdmin = authProvider.currentUser?.role == 'ADMIN';
-    
+
     return items
         .where((item) {
           // Show Users menu only for admin users
