@@ -340,7 +340,7 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
                 builder: (context) {
                   final colors = context.colorsListening;
                   return DropdownButtonFormField<enums.ShareWorkspaceRequestRole>(
-                    value: selectedRole,
+                    initialValue: selectedRole,
                     style: TextStyle(color: colors.textColor),
                     decoration: InputDecoration(
                       labelText: 'Role',

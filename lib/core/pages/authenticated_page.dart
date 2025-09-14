@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import '../mixins/loading_state_mixin.dart' as app_loading;
 import '../services/authenticated_service.dart';
-import '../../providers/auth_provider.dart' as app_auth;
+import '../../providers/enhanced_auth_provider.dart';
 
 /// Abstract base class for pages that require authentication.
 /// Handles auth state management, loading states, and provides a clean
@@ -76,7 +76,7 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
 
     // Initialize auth service immediately (not in post frame callback)
     _authService = AuthenticatedService(context);
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
     _lastAuthState = authProvider.isAuthenticated;
 
     // Listen for auth state changes
@@ -90,7 +90,7 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
   void dispose() {
     // Clean up auth listener
     try {
-      final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
       authProvider.removeListener(_onAuthStateChanged);
     } catch (_) {
       // Provider might not be available during disposal
@@ -101,7 +101,7 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
   void _onAuthStateChanged() {
     if (!mounted) return;
 
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
     final currentAuthState = authProvider.isAuthenticated;
 
     if (currentAuthState != _lastAuthState) {
@@ -120,7 +120,7 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
     print('🔐 AuthenticatedPage: Starting authenticated data load...');
 
     try {
-      final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
 
       if (!authProvider.isAuthenticated) {
         print('🔐 AuthenticatedPage: User not authenticated, waiting for auth...');
@@ -153,7 +153,7 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<app_auth.AuthProvider>(
+    return Consumer<EnhancedAuthProvider>(
       builder: (context, authProvider, child) {
         print('🔐 AuthenticatedPage: Building with auth: ${authProvider.isAuthenticated}, state: $loadingState');
 

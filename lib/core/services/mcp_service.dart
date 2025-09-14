@@ -4,14 +4,14 @@ import '../models/mcp_configuration.dart';
 import '../../network/generated/api.swagger.dart';
 import '../../network/generated/api.models.swagger.dart' as api;
 import '../../network/clients/api_client.dart';
-import '../../providers/auth_provider.dart';
+import '../../core/interfaces/auth_token_provider.dart';
 
 /// Service for managing MCP (Model Context Protocol) configurations
 class McpService {
   late final ChopperClient _client;
   late final Api _apiService;
 
-  McpService({String? baseUrl, AuthProvider? authProvider, bool enableLogging = true}) {
+  McpService({String? baseUrl, AuthTokenProvider? authProvider, bool enableLogging = true}) {
     _client = ApiClientConfig.createClient(baseUrl: baseUrl, authProvider: authProvider, enableLogging: enableLogging);
     _apiService = _client.getService<Api>();
   }

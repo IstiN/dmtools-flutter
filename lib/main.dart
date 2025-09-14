@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
-import 'core/routing/app_router.dart';
-import 'providers/auth_provider.dart';
+import 'core/routing/enhanced_app_router.dart';
+import 'providers/enhanced_auth_provider.dart';
 import 'providers/integration_provider.dart';
 import 'providers/mcp_provider.dart';
 import 'providers/chat_provider.dart';
@@ -18,7 +18,7 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ServiceLocator.get<AuthProvider>()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<EnhancedAuthProvider>()),
         Provider<ApiService>(create: (_) => ServiceLocator.get()),
         ChangeNotifierProvider(create: (_) => ServiceLocator.get<IntegrationProvider>()),
         ChangeNotifierProvider(create: (_) => ServiceLocator.get<McpProvider>()),
@@ -77,11 +77,11 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
 
     // Initialize authentication state
     if (mounted) {
-      final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.initialize();
+      final enhancedAuthProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
+      await enhancedAuthProvider.initializeAuth();
 
       // Load user info from API if authenticated
-      if (authProvider.isAuthenticated) {
+      if (enhancedAuthProvider.isAuthenticated) {
         await ServiceLocator.initializeUserInfo();
       }
     }
@@ -101,10 +101,10 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
       value: _themeProvider,
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          final authProvider = Provider.of<AuthProvider>(context);
+          final enhancedAuthProvider = Provider.of<EnhancedAuthProvider>(context);
 
           // Create router only once
-          _router ??= AppRouter.createRouter(authProvider);
+          _router ??= EnhancedAppRouter.createRouter(enhancedAuthProvider);
 
           return MaterialApp.router(
             title: 'DMTools',

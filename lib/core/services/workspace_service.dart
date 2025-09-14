@@ -5,7 +5,7 @@ import '../models/workspace.dart';
 import '../../network/generated/api.models.swagger.dart' as api;
 import '../../network/generated/api.enums.swagger.dart' as enums;
 import '../../network/services/api_service.dart';
-import '../../providers/auth_provider.dart';
+import '../../core/interfaces/auth_token_provider.dart';
 
 class WorkspaceService with ChangeNotifier {
   static const String _currentUserId = 'user-123';
@@ -16,13 +16,13 @@ class WorkspaceService with ChangeNotifier {
   String? _error;
   List<Workspace> _workspaces = [];
   final ApiService? _apiService;
-  final AuthProvider? _authProvider;
+  final AuthTokenProvider? _authProvider;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
   List<Workspace> get workspaces => List.unmodifiable(_workspaces);
 
-  WorkspaceService({ApiService? apiService, AuthProvider? authProvider})
+  WorkspaceService({ApiService? apiService, AuthTokenProvider? authProvider})
       : _apiService = apiService,
         _authProvider = authProvider {
     _initializeMockData();

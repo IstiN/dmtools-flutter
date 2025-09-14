@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../core/services/oauth_service.dart';
 import '../core/models/user.dart';
+import '../core/interfaces/auth_token_provider.dart';
 
 enum AuthState {
   initial,
@@ -10,7 +11,7 @@ enum AuthState {
   error,
 }
 
-class AuthProvider with ChangeNotifier {
+class AuthProvider with ChangeNotifier implements AuthTokenProvider {
   final OAuthService _oauthService;
 
   AuthState _authState = AuthState.initial;
@@ -25,12 +26,15 @@ class AuthProvider with ChangeNotifier {
 
   // Getters
   AuthState get authState => _authState;
+  @override
   bool get isAuthenticated => _authState == AuthState.authenticated;
   bool get isLoading => _authState == AuthState.loading;
   bool get hasError => _authState == AuthState.error;
   String? get error => _error;
+  @override
   UserDto? get currentUser => _currentUser;
   OAuthToken? get currentToken => _currentToken;
+  @override
   bool get isDemoMode => _isDemoMode;
 
   /// Initialize authentication state
@@ -216,6 +220,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Get valid access token for API calls
+  @override
   Future<String?> getAccessToken() async {
     if (await refreshTokenIfNeeded()) {
       return _currentToken?.accessToken;
@@ -254,6 +259,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Check if should use mock data
+  @override
   bool get shouldUseMockData => _isDemoMode;
 
   /// Enable demo mode with mock data

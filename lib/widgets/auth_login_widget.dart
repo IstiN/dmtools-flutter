@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/auth_provider.dart';
+import '../providers/enhanced_auth_provider.dart';
 import '../core/services/oauth_service.dart' show OAuthProvider;
+import 'local_login_form.dart';
 
-class AuthLoginWidget extends StatelessWidget {
+class AuthLoginWidget extends StatefulWidget {
   final String title;
   final String subtitle;
 
@@ -14,8 +15,15 @@ class AuthLoginWidget extends StatelessWidget {
   });
 
   @override
+  State<AuthLoginWidget> createState() => _AuthLoginWidgetState();
+}
+
+class _AuthLoginWidgetState extends State<AuthLoginWidget> {
+  bool _showLocalLogin = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
+    return Consumer<EnhancedAuthProvider>(
       builder: (context, authProvider, child) {
         return Container(
           width: 480, // Fixed width to match styleguide
@@ -36,7 +44,7 @@ class AuthLoginWidget extends StatelessWidget {
             children: [
               // Title
               Text(
-                title,
+                widget.title,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -46,7 +54,7 @@ class AuthLoginWidget extends StatelessWidget {
 
               // Subtitle
               Text(
-                subtitle,
+                widget.subtitle,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
@@ -82,27 +90,60 @@ class AuthLoginWidget extends StatelessWidget {
                 const SizedBox(height: 24),
               ],
 
-              // OAuth provider buttons
-              _OAuthProviderButton(
-                provider: OAuthProvider.google,
-                text: 'Continue with Google',
-                onPressed: authProvider.isLoading ? null : () => _handleLogin(context, OAuthProvider.google),
-                isLoading: authProvider.isLoading,
-              ),
-              const SizedBox(height: 16),
-              _OAuthProviderButton(
-                provider: OAuthProvider.microsoft,
-                text: 'Continue with Microsoft',
-                onPressed: authProvider.isLoading ? null : () => _handleLogin(context, OAuthProvider.microsoft),
-                isLoading: authProvider.isLoading,
-              ),
-              const SizedBox(height: 16),
-              _OAuthProviderButton(
-                provider: OAuthProvider.github,
-                text: 'Continue with GitHub',
-                onPressed: authProvider.isLoading ? null : () => _handleLogin(context, OAuthProvider.github),
-                isLoading: authProvider.isLoading,
-              ),
+              // OAuth provider buttons - dynamically generated based on enabled providers
+              ...authProvider.enabledProviders.map((providerName) {
+                final provider = _getOAuthProviderFromString(providerName);
+                if (provider == null) return const SizedBox.shrink();
+
+                return Column(
+                  children: [
+                    _OAuthProviderButton(
+                      provider: provider,
+                      text: _getProviderDisplayText(provider),
+                      onPressed: authProvider.isLoading ? null : () => _handleLogin(context, provider),
+                      isLoading: authProvider.isLoading,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }),
+
+              // Local login - show when local auth is enabled by server
+              if (authProvider.hasLocalAuth) ...[
+                if (authProvider.enabledProviders.isNotEmpty) const SizedBox(height: 8),
+                if (authProvider.enabledProviders.isNotEmpty) _buildDivider(context),
+                if (authProvider.enabledProviders.isNotEmpty) const SizedBox(height: 24),
+
+                // Show form immediately in standalone mode, button in mixed mode
+                if (authProvider.isStandaloneMode || _showLocalLogin)
+                  // Show form directly in standalone mode OR when button was clicked in mixed mode
+                  LocalLoginForm(
+                    onSuccess: () {
+                      setState(() {
+                        _showLocalLogin = false;
+                      });
+                    },
+                    onCancel: authProvider.hasOAuthProviders
+                        ? () {
+                            setState(() {
+                              _showLocalLogin = false;
+                            });
+                          }
+                        : null, // No cancel in standalone mode since it's the only option
+                  )
+                else
+                  // Show button only in mixed mode (OAuth + local)
+                  _LocalLoginButton(
+                    isLoading: authProvider.isLoading,
+                    onPressed: authProvider.isLoading
+                        ? null
+                        : () {
+                            setState(() {
+                              _showLocalLogin = true;
+                            });
+                          },
+                  ),
+              ],
             ],
           ),
         );
@@ -111,9 +152,9 @@ class AuthLoginWidget extends StatelessWidget {
   }
 
   Future<void> _handleLogin(BuildContext context, OAuthProvider provider) async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
 
-    final success = await authProvider.login(provider);
+    final success = await authProvider.loginWithOAuth(provider);
     if (!success && context.mounted) {
       // Error handling is managed by the AuthProvider and displayed in the UI
       ScaffoldMessenger.of(context).showSnackBar(
@@ -123,6 +164,52 @@ class AuthLoginWidget extends StatelessWidget {
         ),
       );
     }
+  }
+
+  /// Convert provider name string to OAuthProvider enum
+  OAuthProvider? _getOAuthProviderFromString(String providerName) {
+    switch (providerName.toLowerCase()) {
+      case 'google':
+        return OAuthProvider.google;
+      case 'microsoft':
+        return OAuthProvider.microsoft;
+      case 'github':
+        return OAuthProvider.github;
+      default:
+        return null;
+    }
+  }
+
+  /// Get display text for OAuth provider
+  String _getProviderDisplayText(OAuthProvider provider) {
+    switch (provider) {
+      case OAuthProvider.google:
+        return 'Continue with Google';
+      case OAuthProvider.microsoft:
+        return 'Continue with Microsoft';
+      case OAuthProvider.github:
+        return 'Continue with GitHub';
+    }
+  }
+
+  /// Build divider between OAuth and local login
+  Widget _buildDivider(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(child: Divider()),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'or',
+            style: TextStyle(
+              color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.6),
+              fontSize: 14,
+            ),
+          ),
+        ),
+        const Expanded(child: Divider()),
+      ],
+    );
   }
 }
 
@@ -240,6 +327,41 @@ class _OAuthProviderButtonState extends State<_OAuthProviderButton> {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LocalLoginButton extends StatelessWidget {
+  final bool isLoading;
+  final VoidCallback? onPressed;
+
+  const _LocalLoginButton({
+    required this.isLoading,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 48,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: const Icon(Icons.login, size: 20),
+        label: Text(
+          isLoading ? 'Loading...' : 'Sign in with Username & Password',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(
+            color: Theme.of(context).dividerColor,
+            width: 1.5,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
           ),
         ),
       ),

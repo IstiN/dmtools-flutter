@@ -258,8 +258,7 @@ class _McpManagementState extends State<McpManagement> {
       padding: const EdgeInsets.all(AppDimensions.spacingL),
       child: McpCreationForm(
         availableIntegrations: widget.availableIntegrations,
-        onSubmit: widget.onCreateConfiguration != null
-            ? (name, integrations) async {
+        onSubmit: (name, integrations) async {
                 print('🔧 McpManagement: onSubmit called from McpCreationForm');
                 print('🔧 McpManagement: name = "$name", integrations = $integrations');
                 try {
@@ -301,8 +300,7 @@ class _McpManagementState extends State<McpManagement> {
                   print('🔧 McpManagement: Stack trace: $stackTrace');
                   return false;
                 }
-              }
-            : null,
+              },
         onCancel: () {
           print('🔧 McpManagement: onCancel called from McpCreationForm');
           _switchToView(McpManagementView.list);

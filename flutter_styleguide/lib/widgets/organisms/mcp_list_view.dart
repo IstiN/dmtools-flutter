@@ -323,7 +323,7 @@ class _FilterDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<McpListFilter>(
-      value: value,
+      initialValue: value,
       onChanged: (filter) => filter != null ? onChanged?.call(filter) : null,
       decoration: InputDecoration(
         labelText: 'Filter',
@@ -350,7 +350,7 @@ class _SortDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<McpListSort>(
-      value: value,
+      initialValue: value,
       onChanged: (sort) => sort != null ? onChanged?.call(sort) : null,
       decoration: InputDecoration(
         labelText: 'Sort by',

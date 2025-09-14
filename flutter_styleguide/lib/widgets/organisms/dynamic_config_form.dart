@@ -545,7 +545,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
           Switch(
             value: value,
             onChanged: (newValue) => _updateValue(param.key, newValue, param.type),
-            activeColor: colors.accentColor,
+            activeThumbColor: colors.accentColor,
           ),
         ],
       ),
@@ -568,7 +568,7 @@ class _DynamicConfigFormState extends State<DynamicConfigForm> {
         ],
         const SizedBox(height: 8),
         DropdownButtonFormField<String>(
-          value: param.options.contains(value) ? value : null,
+          initialValue: param.options.contains(value) ? value : null,
           decoration: InputDecoration(
             contentPadding: const EdgeInsets.symmetric(
               horizontal: AppDimensions.spacingM,

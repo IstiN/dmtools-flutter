@@ -1,6 +1,8 @@
 import './core/config/app_config.dart';
 import './network/services/api_service.dart';
+import './network/services/auth_api_service.dart';
 import './providers/auth_provider.dart';
+import './providers/enhanced_auth_provider.dart';
 import './providers/integration_provider.dart';
 import './providers/mcp_provider.dart';
 import './providers/chat_provider.dart';
@@ -8,6 +10,9 @@ import './core/services/integration_service.dart';
 import './core/services/mcp_service.dart';
 import './core/services/chat_service.dart';
 import './core/services/file_service.dart';
+import './core/services/auth_config_service.dart';
+import './core/services/local_auth_service.dart';
+import './core/services/credentials_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 
@@ -24,11 +29,27 @@ abstract final class ServiceLocator {
     // Create AuthProvider first (no dependencies)
     GetIt.I.registerLazySingleton(() => AuthProvider());
 
-    // Create API service with AuthProvider
+    // Create enhanced auth services
+    GetIt.I.registerLazySingleton<AuthConfigService>(() => AuthConfigService());
+    GetIt.I.registerLazySingleton<LocalAuthService>(() => LocalAuthService());
+    GetIt.I.registerLazySingleton<CredentialsService>(() => CredentialsService());
+    GetIt.I.registerLazySingleton<AuthApiService>(() => AuthApiService());
+
+    // Create EnhancedAuthProvider with dependencies
+    GetIt.I.registerLazySingleton<EnhancedAuthProvider>(
+      () => EnhancedAuthProvider(
+        authConfigService: get<AuthConfigService>(),
+        localAuthService: get<LocalAuthService>(),
+        credentialsService: get<CredentialsService>(),
+        authApiService: get<AuthApiService>(),
+      ),
+    );
+
+    // Create API service with EnhancedAuthProvider
     GetIt.I.registerLazySingleton<ApiService>(
       () => ApiService(
         baseUrl: AppConfig.baseUrl,
-        authProvider: get<AuthProvider>(),
+        authProvider: get<EnhancedAuthProvider>(),
         enableLogging: AppConfig.enableLogging,
       ),
     );
@@ -37,7 +58,7 @@ abstract final class ServiceLocator {
     GetIt.I.registerLazySingleton<IntegrationService>(
       () => IntegrationService(
         apiService: get<ApiService>(),
-        authProvider: get<AuthProvider>(),
+        authProvider: get<EnhancedAuthProvider>(),
       ),
     );
 
@@ -50,7 +71,7 @@ abstract final class ServiceLocator {
     GetIt.I.registerLazySingleton<McpService>(
       () => McpService(
         baseUrl: AppConfig.baseUrl,
-        authProvider: get<AuthProvider>(),
+        authProvider: get<EnhancedAuthProvider>(),
         enableLogging: AppConfig.enableLogging,
       ),
     );
@@ -64,7 +85,7 @@ abstract final class ServiceLocator {
     GetIt.I.registerLazySingleton<ChatService>(
       () => ChatService(
         apiService: get<ApiService>(),
-        authProvider: get<AuthProvider>(),
+        authProvider: get<EnhancedAuthProvider>(),
       ),
     );
 

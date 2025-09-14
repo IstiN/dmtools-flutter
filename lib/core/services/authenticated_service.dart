@@ -1,6 +1,6 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/widgets.dart';
-import '../../providers/auth_provider.dart' as app_auth;
+import '../../providers/enhanced_auth_provider.dart';
 import '../../providers/integration_provider.dart';
 
 /// High-level service that ensures authentication before executing any operations.
@@ -102,7 +102,7 @@ class AuthenticatedService {
 
   /// Checks if user is currently authenticated without triggering auth flow
   bool get isAuthenticated {
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
     return authProvider.isAuthenticated;
   }
 
@@ -114,7 +114,7 @@ class AuthenticatedService {
 
   /// Gets current auth status information
   AuthStatus get authStatus {
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
     final integrationProvider = Provider.of<IntegrationProvider>(context, listen: false);
 
     return AuthStatus(
@@ -129,7 +129,7 @@ class AuthenticatedService {
   // Private methods
 
   Future<void> _ensureAuthenticated() async {
-    final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
 
     if (authProvider.isAuthenticated) {
       print('🔐 AuthenticatedService: User already authenticated');

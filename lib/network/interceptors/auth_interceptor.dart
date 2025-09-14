@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:chopper/chopper.dart';
-import '../../providers/auth_provider.dart';
+import '../../core/interfaces/auth_token_provider.dart';
 
 /// Interceptor that adds authentication headers to requests
 class AuthInterceptor implements Interceptor {
-  final AuthProvider authProvider;
+  final AuthTokenProvider authProvider;
 
   const AuthInterceptor(this.authProvider);
 
@@ -16,12 +16,15 @@ class AuthInterceptor implements Interceptor {
     final accessToken = await authProvider.getAccessToken();
 
     if (accessToken != null) {
+      print('🔑 AuthInterceptor: Adding Authorization header for ${chain.request.url}');
+      print('🔑 AuthInterceptor: Token: ${accessToken.substring(0, 20)}...');
       final request = applyHeaders(
         chain.request,
         {'Authorization': 'Bearer $accessToken'},
       );
       return chain.proceed(request);
     } else {
+      print('❌ AuthInterceptor: No access token available for ${chain.request.url}');
       // No valid token, proceed without auth header
       // The API will return 401 if authentication is required
       return chain.proceed(chain.request);

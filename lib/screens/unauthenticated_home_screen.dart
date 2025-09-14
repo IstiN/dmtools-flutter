@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'package:dmtools_styleguide/widgets/atoms/logos/dna_logo.dart';
 import '../widgets/auth_login_widget.dart';
-import '../providers/auth_provider.dart' as app_auth;
+import '../providers/enhanced_auth_provider.dart';
 
 class UnauthenticatedHomeScreen extends StatelessWidget {
   const UnauthenticatedHomeScreen({super.key});
@@ -80,7 +80,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                         secondaryActionText: 'Demo',
                         onSecondaryAction: () async {
                           // Enable demo mode
-                          final authProvider = Provider.of<app_auth.AuthProvider>(context, listen: false);
+                          final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
                           await authProvider.enableDemoMode();
                         },
                         logoWidget: DnaLogo(
