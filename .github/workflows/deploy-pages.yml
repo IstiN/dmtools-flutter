@@ -27,7 +27,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.32.x"
+          flutter-version: "3.35.x"
           channel: "stable"
 
       - name: Setup Pages
@@ -92,29 +92,29 @@ jobs:
 
           # Copy main app to root
           cp -r build/web/* _site/
-          
+
           # Create styleguide subdirectory and copy styleguide build
           mkdir -p _site/styleguide
           cp -r flutter_styleguide/build/web/* _site/styleguide/
-          
+
           # Configure production API URLs for GitHub Pages deployment
           echo "🔧 Configuring production API URLs for GitHub Pages..."
-          
+
           # Copy and configure main app config files with production API URL
           cp web/config.js _site/config.js
           sed -i.bak "s|apiBaseUrl: 'http://localhost:8080'|apiBaseUrl: 'https://dmtools-431977789017.us-central1.run.app'|g" _site/config.js
           cp config.template.js _site/config.template.js
-          
+
           # Copy and configure styleguide config files with production API URL
           cp flutter_styleguide/web/config.js _site/styleguide/config.js
           sed -i.bak "s|apiBaseUrl: 'http://localhost:8080'|apiBaseUrl: 'https://dmtools-431977789017.us-central1.run.app'|g" _site/styleguide/config.js
           cp config.template.js _site/styleguide/config.template.js
-          
+
           # Remove backup files
           rm -f _site/config.js.bak _site/styleguide/config.js.bak
-          
+
           echo "✅ Production API URLs configured for GitHub Pages"
-          
+
           # Add cache busting information to deployment
           echo "🏷️ Adding cache version info to deployment..."
           BUILD_VERSION=$(grep -o '[0-9]\{14\}-[a-f0-9]\{7\}' _site/index.html | head -1)
@@ -249,7 +249,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.32.x"
+          flutter-version: "3.35.x"
           channel: "stable"
 
       - name: Install dependencies - Main App
@@ -282,7 +282,7 @@ jobs:
           cd flutter_styleguide
           flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/styleguide/ --dart-define=FLUTTER_ENV=production --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
           cd ..
-          
+
       - name: Build Styleguide for Web (Standalone Package)
         run: |
           cd flutter_styleguide
@@ -299,140 +299,140 @@ jobs:
           mkdir -p release_combined
           mkdir -p release_main_app
           mkdir -p release_styleguide
-          
+
           # === COMBINED PACKAGE (Original) ===
           # Copy main app to root
           cp -r build/web/* release_combined/
-          
+
           # Create styleguide subdirectory and copy styleguide build
           mkdir -p release_combined/styleguide
           cp -r flutter_styleguide/build/web/* release_combined/styleguide/
-          
+
           # Copy configuration files for combined package
           cp config.template.js release_combined/config.template.js
           cp config.template.js release_combined/styleguide/config.template.js
           cp config.template.js release_combined/config.js
           cp config.template.js release_combined/styleguide/config.js
-          
+
           # === MAIN APP PACKAGE (Separate) ===
           # Copy main app files
           cp -r build/web/* release_main_app/
-          
+
           # Copy configuration files for main app
           cp config.template.js release_main_app/config.template.js
           cp config.template.js release_main_app/config.js
-          
+
           # === STYLEGUIDE PACKAGE (Separate) ===
           # Copy styleguide files (standalone build with root base href)
           cp -r flutter_styleguide/build/web_standalone/* release_styleguide/
-          
+
           # Copy configuration files for styleguide
           cp config.template.js release_styleguide/config.template.js
           cp config.template.js release_styleguide/config.js
-          
+
           # Add release information to all packages
           BUILD_VERSION=$(grep -o '[0-9]\{14\}-[a-f0-9]\{7\}' release_combined/index.html | head -1)
-          
+
           # Create version info for all packages
           echo "Cache version: $BUILD_VERSION" > release_combined/VERSION.txt
           echo "Release time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> release_combined/VERSION.txt
           echo "Git commit: ${{ github.sha }}" >> release_combined/VERSION.txt
           echo "Build number: ${{ github.run_number }}" >> release_combined/VERSION.txt
-          
+
           echo "Cache version: $BUILD_VERSION" > release_main_app/VERSION.txt
           echo "Release time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> release_main_app/VERSION.txt
           echo "Git commit: ${{ github.sha }}" >> release_main_app/VERSION.txt
           echo "Build number: ${{ github.run_number }}" >> release_main_app/VERSION.txt
-          
+
           echo "Cache version: $BUILD_VERSION" > release_styleguide/VERSION.txt
           echo "Release time: $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> release_styleguide/VERSION.txt
           echo "Git commit: ${{ github.sha }}" >> release_styleguide/VERSION.txt
           echo "Build number: ${{ github.run_number }}" >> release_styleguide/VERSION.txt
-          
+
           # Create README for COMBINED package
           cat > release_combined/README.md << 'EOF'
           # DMTools Flutter SPA Release
-          
+
           This is a self-contained Single Page Application (SPA) release of DMTools Flutter.
-          
+
           ## What's Included
-          
+
           - **Main Application** (`/`) - The core DMTools AI Agent Management Platform
           - **Styleguide** (`/styleguide/`) - Interactive component library and design system
           - **Configuration Files** - Easy setup for your API server
-          
+
           ## 🚀 Quick Start
-          
+
           1. **Extract** this ZIP file to a directory
           2. **Configure API** by editing `config.js` and `styleguide/config.js`
           3. **Serve the files** (see options below)
           4. **Access** your application
-          
+
           ## 🖥️ Local Testing Options
-          
+
           **Important**: Don't open `index.html` directly in browser. Use a local server:
-          
+
           ```bash
           # Option 1: Python (recommended)
           python3 -m http.server 8000
           # Then open: http://localhost:8000
-          
+
           # Option 2: Node.js
           npx serve .
-          
+
           # Option 3: PHP  
           php -S localhost:8000
           ```
-          
+
           ## 🌐 Production Deployment
-          
+
           For production, deploy to your web server
-          
+
           ## ⚙️ API Configuration
-          
+
           **IMPORTANT**: You must configure the API base URL before the app will work.
-          
+
           ### Easy Configuration
-          
+
           Edit the `apiBaseUrl` in both configuration files:
-          
+
           ```bash
           # Edit main app configuration
           nano config.js
-          
+
           # Edit styleguide configuration  
           nano styleguide/config.js
           ```
-          
+
           Change this line in both files:
           ```javascript
           apiBaseUrl: 'http://localhost:8080',  // ← Change this to your API server
           ```
-          
+
           ### Common API URLs
-          
+
           - **Local development**: `http://localhost:8080`
           - **Internal server**: `http://your-server:8080`
           - **Docker**: `http://dmtools-api:8080`
           - **Production**: `https://api.yourcompany.com`
-          
+
           ### Testing Configuration
-          
+
           Open browser console and run:
           ```javascript
           window.dmtoolsConfigHelpers.testConnection()
           ```
-          
+
           ## 📁 Deployment Instructions
-          
+
           1. Extract this ZIP file to your web server's document root
           2. **Configure API URLs** in `config.js` files (see above)
           3. Configure your web server to serve the files with proper MIME types
           4. Ensure your server supports SPA routing (redirect all routes to index.html)
           5. Configure cache headers as recommended below
-          
+
           ### Nginx Configuration Example
-          
+
           ```nginx
           server {
               listen 80;
@@ -462,9 +462,9 @@ jobs:
               }
           }
           ```
-          
+
           ### Apache Configuration Example
-          
+
           ```apache
           <VirtualHost *:80>
               ServerName your-domain.com
@@ -498,70 +498,70 @@ jobs:
               </LocationMatch>
           </VirtualHost>
           ```
-          
+
           ## Version Information
-          
+
           See `VERSION.txt` for build details and versioning information.
-          
+
           ## Support
-          
+
           For deployment issues or questions, please refer to the main repository documentation or create an issue.
           EOF
-          
+
           # Create README for MAIN APP package
           cat > release_main_app/README.md << 'EOF'
           # DMTools Flutter - Main Application
-          
+
           This package contains only the main DMTools AI Agent Management Platform.
-          
+
           ## What's Included
-          
+
           - **Main Application** - Core DMTools AI Agent Management Platform
           - **Configuration Files** - Easy API setup
           - **Complete Assets** - All fonts, images, and static resources
-          
+
           ## 🚀 Quick Start
-          
+
           1. **Extract** this ZIP file to a directory
           2. **Configure API** by editing `config.js`
           3. **Serve the files** (see options below)
-          
+
           ## 🖥️ Local Testing Options
-          
+
           **Important**: Don't open `index.html` directly in browser. Use a local server:
-          
+
           ```bash
           # Option 1: Python (recommended)
           python3 -m http.server 8000
           # Then open: http://localhost:8000
-          
+
           # Option 2: Node.js
           npx serve .
-          
+
           # Option 3: PHP
           php -S localhost:8000
           ```
-          
+
           ## 🌐 Production Deployment
-          
+
           For production, deploy to your web server
-          
+
           ## ⚙️ API Configuration
-          
+
           Edit the `apiBaseUrl` in the configuration file:
-          
+
           ```bash
           # Edit main app configuration
           nano config.js
           ```
-          
+
           Change this line:
           ```javascript
           apiBaseUrl: 'http://localhost:8080',  // ← Change this to your API server
           ```
-          
+
           ## 📁 Server Configuration
-          
+
           ### Nginx Example
           ```nginx
           server {
@@ -587,66 +587,66 @@ jobs:
               }
           }
           ```
-          
+
           See `VERSION.txt` for build details and versioning information.
           EOF
-          
+
           # Create README for STYLEGUIDE package
           cat > release_styleguide/README.md << 'EOF'
           # DMTools Flutter - Styleguide & Design System
-          
+
           This package contains only the DMTools Styleguide and Design System documentation.
-          
+
           ## What's Included
-          
+
           - **Interactive Styleguide** - Component library and design system
           - **Configuration Files** - Easy API setup for live examples
           - **Complete Assets** - All fonts, images, and icons
-          
+
           ## 🚀 Quick Start
-          
+
           1. **Extract** this ZIP file to a directory
           2. **Configure API** by editing `config.js` (for live examples)
           3. **Serve the files** (see options below)
-          
+
           ## 🖥️ Local Testing Options
-          
+
           **Important**: Don't open `index.html` directly in browser. Use a local server:
-          
+
           ```bash
           # Option 1: Python (recommended)
           python3 -m http.server 8000
           # Then open: http://localhost:8000
-          
+
           # Option 2: Node.js
           npx serve .
-          
+
           # Option 3: PHP
           php -S localhost:8000
           ```
-          
+
           ## 🌐 Production Deployment
-          
+
           For production, deploy to your web server
-          
+
           ## ⚙️ API Configuration
-          
+
           Edit the `apiBaseUrl` in the configuration file:
-          
+
           ```bash
           # Edit styleguide configuration
           nano config.js
           ```
-          
+
           Change this line:
           ```javascript
           apiBaseUrl: 'http://localhost:8080',  // ← Change this to your API server
           ```
-          
+
           **Note**: API configuration is only needed if you want to test live examples in the styleguide. The documentation itself works without any API connection.
-          
+
           ## 📁 Server Configuration
-          
+
           ### Nginx Example
           ```nginx
           server {
@@ -672,10 +672,10 @@ jobs:
               }
           }
           ```
-          
+
           See `VERSION.txt` for build details and versioning information.
           EOF
-          
+
           # List the release structure for debugging
           echo "📦 Release packages created:"
           echo "Combined package:"
@@ -694,37 +694,37 @@ jobs:
           # Generate version based on date and short commit hash
           VERSION="v$(date +'%Y.%m.%d')-$(echo ${{ github.sha }} | cut -c1-7)"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          
+
           # Get cache version for release notes
           BUILD_VERSION=$(grep -o '[0-9]\{14\}-[a-f0-9]\{7\}' release_combined/index.html | head -1)
           echo "build_version=$BUILD_VERSION" >> $GITHUB_OUTPUT
-          
+
           echo "Generated release version: $VERSION"
           echo "Build version: $BUILD_VERSION"
 
       - name: Create release ZIP files
         run: |
           echo "📦 Creating release ZIP files..."
-          
+
           # Create combined package ZIP
           cd release_combined
           zip -r ../dmtools-flutter-spa-combined-${{ steps.release_info.outputs.version }}.zip . -x "*.DS_Store"
           cd ..
-          
+
           # Create main app package ZIP
           cd release_main_app
           zip -r ../dmtools-flutter-main-app-${{ steps.release_info.outputs.version }}.zip . -x "*.DS_Store"
           cd ..
-          
+
           # Create styleguide package ZIP
           cd release_styleguide
           zip -r ../dmtools-flutter-styleguide-${{ steps.release_info.outputs.version }}.zip . -x "*.DS_Store"
           cd ..
-          
+
           # Show all ZIP file sizes
           echo "📊 Created ZIP files:"
           ls -lh dmtools-flutter-*-${{ steps.release_info.outputs.version }}.zip
-          
+
           # Verify ZIP contents for debugging
           echo ""
           echo "📋 ZIP file contents preview:"
@@ -750,76 +750,76 @@ jobs:
           name: DMTools Flutter SPA Release ${{ steps.release_info.outputs.version }}
           body: |
             # 🚀 DMTools Flutter SPA Release
-            
+
             This release contains the complete Single Page Application (SPA) build of DMTools Flutter, ready for self-hosting.
-            
+
             ## 📦 Available Packages
-            
+
             **Choose the package that fits your needs:**
-            
+
             ### 🔗 Combined Package
             - **File**: `dmtools-flutter-spa-combined-*.zip`
             - **Contents**: Main app + Styleguide in one package
             - **Best for**: Complete deployment with both applications
-            
+
             ### 📱 Main Application Only
             - **File**: `dmtools-flutter-main-app-*.zip`
             - **Contents**: Core DMTools AI Agent Management Platform
             - **Best for**: Production deployment without styleguide
-            
+
             ### 🎨 Styleguide Only
             - **File**: `dmtools-flutter-styleguide-*.zip`
             - **Contents**: Interactive component library and design system
             - **Best for**: Design team reference or separate styleguide hosting
-            
+
             ## ✨ Key Features
-            
+
             - **Easy API Configuration** - No rebuilding required, just edit config.js
             - **Complete Assets** - All fonts, images, and static resources included
             - **Service Workers** - For offline functionality and cache management
             - **Production Optimized** - Minified, tree-shaken, and cache-optimized builds
-            
+
             ## 🏗️ Build Information
-            
+
             - **Build Version:** `${{ steps.release_info.outputs.build_version }}`
             - **Git Commit:** `${{ github.sha }}`
             - **Build Number:** `${{ github.run_number }}`
             - **Release Date:** `$(date -u '+%Y-%m-%d %H:%M:%S UTC')`
-            
+
             ## 📋 Quick Deployment
-            
+
             1. **Choose** your package from the downloads below
             2. **Extract** to your web server's document root
             3. **Configure API** by editing `config.js` file(s)
             4. **Deploy** - it's ready to use!
-            
+
             ## ⚙️ API Configuration
-            
+
             Each package includes easy-to-edit configuration:
             ```javascript
             // Edit this line in config.js
             apiBaseUrl: 'http://localhost:8080'  // ← Change to your API server
             ```
-            
+
             - **Combined**: Edit `config.js` and `styleguide/config.js`
             - **Main App**: Edit `config.js`
             - **Styleguide**: Edit `config.js`
-            
+
             **Default**: `http://localhost:8080` (ready for local testing)
-            
+
             ## 🔧 Server Requirements
-            
+
             - Web server capable of serving static files (nginx, Apache, IIS, etc.)
             - Support for custom MIME types
             - Ability to configure fallback routing for SPA
             - HTTPS recommended for production use
-            
+
             ## 📚 Documentation
-            
+
             Detailed deployment instructions and server configuration examples are included in the `README.md` file within the ZIP archive.
-            
+
             ---
-            
+
             **Note:** This is an automated release generated from the main branch. For issues or questions, please refer to the main repository.
           files: |
             dmtools-flutter-spa-combined-${{ steps.release_info.outputs.version }}.zip
