@@ -14,13 +14,17 @@ class ApiClientConfig {
   static ChopperClient createClient({
     String? baseUrl,
     AuthTokenProvider? authProvider,
+    Function()? onAuthenticationFailed,
     bool enableLogging = true,
   }) {
     final List<Interceptor> interceptors = [];
 
     // Add authentication interceptor if auth provider is provided
     if (authProvider != null) {
-      interceptors.add(AuthInterceptor(authProvider));
+      interceptors.add(AuthInterceptor(
+        authProvider,
+        onAuthenticationFailed: onAuthenticationFailed,
+      ));
     }
 
     // Add logging interceptor in debug mode

@@ -99,7 +99,24 @@ class AuthApiService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        return UserDto.fromJson(data);
+        final user = UserDto.fromJson(data);
+        
+        // Validate that the user is actually authenticated
+        if (user.authenticated != true) {
+          if (kDebugMode) {
+            print('❌ AuthApiService: User is not authenticated (authenticated: ${user.authenticated})');
+          }
+          throw Exception('User authentication validation failed: authenticated field is false');
+        }
+        
+        if (kDebugMode) {
+          print('✅ AuthApiService: User authenticated successfully');
+          print('   Name: ${user.name}');
+          print('   Email: ${user.email}');
+          print('   Authenticated: ${user.authenticated}');
+        }
+        
+        return user;
       } else if (response.statusCode == 401) {
         throw Exception('Unauthorized: Invalid or expired token');
       } else {

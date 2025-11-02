@@ -106,11 +106,13 @@ class ApiService {
   ApiService({
     String? baseUrl,
     AuthTokenProvider? authProvider,
+    Function()? onAuthenticationFailed,
     bool enableLogging = true,
   })  : _authProvider = authProvider,
         _client = ApiClientConfig.createClient(
           baseUrl: baseUrl,
           authProvider: authProvider,
+          onAuthenticationFailed: onAuthenticationFailed,
           enableLogging: enableLogging,
         ) {
     _api = _client.getService<Api>();
