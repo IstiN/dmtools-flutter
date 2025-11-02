@@ -47,11 +47,15 @@ abstract final class ServiceLocator {
 
     // Create API service with EnhancedAuthProvider
     GetIt.I.registerLazySingleton<ApiService>(
-      () => ApiService(
-        baseUrl: AppConfig.baseUrl,
-        authProvider: get<EnhancedAuthProvider>(),
-        enableLogging: AppConfig.enableLogging,
-      ),
+      () {
+        final authProvider = get<EnhancedAuthProvider>();
+        return ApiService(
+          baseUrl: AppConfig.baseUrl,
+          authProvider: authProvider,
+          onAuthenticationFailed: authProvider.handleAuthenticationFailure,
+          enableLogging: AppConfig.enableLogging,
+        );
+      },
     );
 
     // Create IntegrationService with dependencies

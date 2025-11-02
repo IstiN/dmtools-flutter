@@ -124,6 +124,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
         if (savedToken != null) {
           try {
             // Validate the token by trying to get user data
+            // This will throw an exception if user.authenticated is false
             final user = await _authApiService.getCurrentUser(savedToken);
             _localToken = savedToken;
             _currentUser = user;
@@ -135,9 +136,11 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
           } catch (tokenValidationError) {
             if (kDebugMode) {
               print('⚠️ Saved token validation failed: $tokenValidationError');
+              print('   Clearing invalid token and saved credentials');
             }
-            // Clear invalid token and continue to check credentials
+            // Clear invalid token and credentials
             await _credentialsService.clearSavedLocalToken();
+            await _credentialsService.clearSavedCredentials();
           }
         }
 
@@ -251,6 +254,15 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
     try {
       final response = await _localAuthService.login(username, password);
 
+      // Validate that the user is authenticated
+      if (response.user.authenticated != true) {
+        if (kDebugMode) {
+          print('❌ Login failed: User is not authenticated');
+        }
+        _setError('Authentication validation failed');
+        return false;
+      }
+
       _localToken = response.token;
       _currentToken = null; // Clear any OAuth token
       _currentUser = response.user;
@@ -314,8 +326,13 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
       _currentUser = null;
       _isDemoMode = false;
 
-      // Clear saved token but keep credentials if user chose to save them
+      // Clear saved token and credentials to prevent auto-login
       await _credentialsService.clearSavedLocalToken();
+      await _credentialsService.clearSavedCredentials();
+
+      if (kDebugMode) {
+        print('🔓 Logout: Cleared token and saved credentials');
+      }
 
       _setUnauthenticated();
     } catch (e) {
@@ -435,6 +452,24 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
   /// Check if user has specific scope (OAuth only)
   bool hasScope(String scope) {
     return _currentToken?.scopes.contains(scope) ?? false;
+  }
+
+  /// Handle authentication failure from API interceptor
+  Future<void> handleAuthenticationFailure() async {
+    if (kDebugMode) {
+      print('🚨 EnhancedAuthProvider: Authentication failure detected');
+      print('   Logging out user and clearing session');
+    }
+    
+    // Prevent multiple simultaneous logout calls
+    if (_authState == AuthState.loading) {
+      if (kDebugMode) {
+        print('⚠️ EnhancedAuthProvider: Logout already in progress, skipping');
+      }
+      return;
+    }
+
+    await logout();
   }
 
   /// Get authorization header
