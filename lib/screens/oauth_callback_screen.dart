@@ -87,7 +87,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
         if (authProvider.isAuthenticated) {
           router.go('/dashboard');
         } else {
-          router.go('/unauthenticated');
+          router.go('/auth');
         }
       }
       return;
@@ -289,7 +289,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        GoRouter.of(context).go('/unauthenticated');
+                        GoRouter.of(context).go('/auth');
                       },
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),

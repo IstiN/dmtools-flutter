@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: !authProvider.isAuthenticated
                   ? () {
                       // This shouldn't happen as unauthenticated users should be on a different screen
-                      context.go('/unauthenticated');
+                      context.go('/auth');
                     }
                   : null,
             ),
@@ -160,7 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: !authProvider.isAuthenticated
                   ? () {
                       // This shouldn't happen as unauthenticated users should be on a different screen
-                      context.go('/unauthenticated');
+                      context.go('/auth');
                     }
                   : null,
             ),

@@ -46,6 +46,44 @@
       "console": "terminal"
     },
     {
+      "name": "Flutter Styleguide (macOS)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}/flutter_styleguide",
+      "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "macos"
+      ],
+      "console": "terminal"
+    },
+    {
+      "name": "[DEV] Main App (macOS)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}",
+      "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "macos",
+        "--dart-define-from-file=app_config_dev.json"
+      ],
+      "console": "terminal"
+    },
+    {
+      "name": "[PROD] Main App (macOS)",
+      "request": "launch",
+      "type": "dart",
+      "cwd": "${workspaceFolder}",
+      "program": "lib/main.dart",
+      "args": [
+        "-d",
+        "macos",
+        "--dart-define-from-file=app_config_prod.json"
+      ],
+      "console": "terminal"
+    },
+    {
       "name": "Build Styleguide Web Production SPA",
       "type": "node-terminal",
       "request": "launch",
@@ -57,6 +95,13 @@
       "type": "node-terminal",
       "request": "launch",
       "command": "flutter build web --release --csp --source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Build Main App macOS Production",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "flutter build macos --release --dart-define-from-file=app_config_prod.json",
       "cwd": "${workspaceFolder}"
     }
   ]
