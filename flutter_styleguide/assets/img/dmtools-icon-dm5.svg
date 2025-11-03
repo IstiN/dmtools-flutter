@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Black background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#000000"/>
+  
+  <!-- Vertical oval with DNA helix -->
+  <ellipse cx="155" cy="200" rx="45" ry="75" fill="#ffffff" opacity="0.15"/>
+  <ellipse cx="155" cy="200" rx="35" ry="65" fill="#ffffff"/>
+  
+  <!-- DNA dots -->
+  <circle cx="140" cy="170" r="5" fill="#06b6d4"/>
+  <circle cx="170" cy="180" r="5" fill="#f97316"/>
+  <circle cx="140" cy="200" r="5" fill="#06b6d4"/>
+  <circle cx="170" cy="220" r="5" fill="#f97316"/>
+  
+  <!-- DM text -->
+  <text x="220" y="230" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="125" fill="#ffffff">DM</text>
+  
+  <!-- ai subscript with glow -->
+  <circle cx="350" cy="285" r="25" fill="#06b6d4" opacity="0.2"/>
+  <text x="330" y="300" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="45" fill="#06b6d4">ai</text>
+</svg>
+

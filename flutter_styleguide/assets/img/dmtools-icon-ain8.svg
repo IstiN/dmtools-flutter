@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Black background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#000000"/>
+  
+  <!-- Neural network dots pattern -->
+  <circle cx="80" cy="100" r="4" fill="#3b82f6" opacity="0.3"/>
+  <circle cx="430" cy="120" r="4" fill="#06b6d4" opacity="0.3"/>
+  <circle cx="90" cy="410" r="4" fill="#f97316" opacity="0.3"/>
+  <circle cx="420" cy="390" r="4" fill="#3b82f6" opacity="0.3"/>
+  
+  <!-- AI large -->
+  <text x="120" y="305" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="168" fill="#3b82f6">AI</text>
+  
+  <!-- .n accent -->
+  <text x="355" y="295" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="88" fill="#f97316">.n</text>
+</svg>
+

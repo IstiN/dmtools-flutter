@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="blueGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#466af1" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded square background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#1a1a1a"/>
+  
+  <!-- DNA-inspired diamond/rhombus symbol -->
+  <path d="M 140 180 L 200 140 L 260 180 L 200 220 Z" fill="#ffffff" opacity="0.95"/>
+  
+  <!-- Small DNA dots on symbol -->
+  <circle cx="170" cy="160" r="4" fill="#06b6d4"/>
+  <circle cx="230" cy="160" r="4" fill="#f97316"/>
+  
+  <!-- DM text -->
+  <text x="285" y="205" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="110" fill="#ffffff">DM</text>
+  
+  <!-- Small ai text below -->
+  <text x="320" y="290" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="48" fill="#06b6d4">ai</text>
+</svg>

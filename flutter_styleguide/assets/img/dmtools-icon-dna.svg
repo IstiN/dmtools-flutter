@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="DMTools DNA Icon">
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#466af1" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="grayGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6b7280" />
+      <stop offset="100%" stop-color="#9ca3af" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle for better visibility -->
+  <circle cx="256" cy="256" r="240" fill="#ffffff" opacity="0.05"/>
+  
+  <!-- DNA Helix Structure -->
+  <!-- Left strand (blue) -->
+  <path d="M 180 80 Q 140 140 160 200 Q 180 260 160 320 Q 140 380 180 440" 
+        stroke="url(#blueGradient)" 
+        stroke-width="16" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <!-- Right strand (gray) -->
+  <path d="M 332 80 Q 372 140 352 200 Q 332 260 352 320 Q 372 380 332 440" 
+        stroke="url(#grayGradient)" 
+        stroke-width="16" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <!-- Connection nodes (cyan and orange alternating) -->
+  <!-- Top connections -->
+  <line x1="180" y1="110" x2="332" y2="110" stroke="#06b6d4" stroke-width="8" opacity="0.8"/>
+  <circle cx="180" cy="110" r="10" fill="#06b6d4"/>
+  <circle cx="332" cy="110" r="10" fill="#06b6d4"/>
+  
+  <line x1="170" y1="170" x2="342" y2="170" stroke="#f97316" stroke-width="8" opacity="0.8"/>
+  <circle cx="170" cy="170" r="10" fill="#f97316"/>
+  <circle cx="342" cy="170" r="10" fill="#f97316"/>
+  
+  <!-- Middle connections -->
+  <line x1="160" y1="230" x2="352" y2="230" stroke="#06b6d4" stroke-width="8" opacity="0.8"/>
+  <circle cx="160" cy="230" r="10" fill="#06b6d4"/>
+  <circle cx="352" cy="230" r="10" fill="#06b6d4"/>
+  
+  <line x1="170" y1="290" x2="342" y2="290" stroke="#f97316" stroke-width="8" opacity="0.8"/>
+  <circle cx="170" cy="290" r="10" fill="#f97316"/>
+  <circle cx="342" cy="290" r="10" fill="#f97316"/>
+  
+  <!-- Bottom connections -->
+  <line x1="160" y1="350" x2="352" y2="350" stroke="#06b6d4" stroke-width="8" opacity="0.8"/>
+  <circle cx="160" cy="350" r="10" fill="#06b6d4"/>
+  <circle cx="352" cy="350" r="10" fill="#06b6d4"/>
+  
+  <line x1="180" y1="410" x2="332" y2="410" stroke="#f97316" stroke-width="8" opacity="0.8"/>
+  <circle cx="180" cy="410" r="10" fill="#f97316"/>
+  <circle cx="332" cy="410" r="10" fill="#f97316"/>
+  
+  <!-- DM Text in center -->
+  <text x="256" y="276" 
+        text-anchor="middle" 
+        font-family="'Segoe UI', 'SF Pro', Arial, sans-serif" 
+        font-weight="bold" 
+        font-size="120" 
+        fill="#466af1"
+        opacity="0.95">DM</text>
+</svg>

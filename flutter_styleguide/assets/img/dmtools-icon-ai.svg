@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="DMTools AI Icon">
+  <defs>
+    <linearGradient id="blueGradientAI" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#466af1" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#0891b2" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle for better visibility -->
+  <circle cx="256" cy="256" r="240" fill="#ffffff" opacity="0.05"/>
+  
+  <!-- Neural network nodes (background) -->
+  <!-- Top layer nodes -->
+  <circle cx="180" cy="140" r="8" fill="#6b7280" opacity="0.4"/>
+  <circle cx="256" cy="120" r="8" fill="#6b7280" opacity="0.4"/>
+  <circle cx="332" cy="140" r="8" fill="#6b7280" opacity="0.4"/>
+  
+  <!-- Middle layer nodes -->
+  <circle cx="160" cy="220" r="8" fill="#9ca3af" opacity="0.4"/>
+  <circle cx="352" cy="220" r="8" fill="#9ca3af" opacity="0.4"/>
+  
+  <!-- Bottom layer nodes -->
+  <circle cx="180" cy="380" r="8" fill="#6b7280" opacity="0.4"/>
+  <circle cx="256" cy="400" r="8" fill="#6b7280" opacity="0.4"/>
+  <circle cx="332" cy="380" r="8" fill="#6b7280" opacity="0.4"/>
+  
+  <!-- Connection lines (subtle) -->
+  <line x1="180" y1="140" x2="160" y2="220" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="120" x2="160" y2="220" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  <line x1="332" y1="140" x2="352" y2="220" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  <line x1="256" y1="120" x2="352" y2="220" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  
+  <line x1="160" y1="220" x2="180" y2="380" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  <line x1="160" y1="220" x2="256" y2="400" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  <line x1="352" y1="220" x2="332" y2="380" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  <line x1="352" y1="220" x2="256" y2="400" stroke="#9ca3af" stroke-width="2" opacity="0.3"/>
+  
+  <!-- Main DM text -->
+  <text x="178" y="290" 
+        text-anchor="end" 
+        font-family="'Segoe UI', 'SF Pro', Arial, sans-serif" 
+        font-weight="bold" 
+        font-size="140" 
+        fill="url(#blueGradientAI)">DM</text>
+  
+  <!-- Dot separator with glow -->
+  <circle cx="256" cy="246" r="14" fill="#f97316" opacity="0.9"/>
+  <circle cx="256" cy="246" r="20" fill="#f97316" opacity="0.2"/>
+  
+  <!-- AI text -->
+  <text x="334" y="290" 
+        text-anchor="start" 
+        font-family="'Segoe UI', 'SF Pro', Arial, sans-serif" 
+        font-weight="bold" 
+        font-size="140" 
+        fill="url(#cyanGradient)">ai</text>
+  
+  <!-- Accent nodes on top of text -->
+  <circle cx="140" cy="200" r="6" fill="#06b6d4" opacity="0.8"/>
+  <circle cx="372" cy="200" r="6" fill="#f97316" opacity="0.8"/>
+  <circle cx="256" cy="320" r="6" fill="#06b6d4" opacity="0.8"/>
+</svg>

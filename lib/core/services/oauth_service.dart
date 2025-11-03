@@ -66,7 +66,17 @@ class OAuthService {
 
   OAuthService({
     FlutterSecureStorage? secureStorage,
-  })  : _secureStorage = secureStorage ?? const FlutterSecureStorage(),
+  })  : _secureStorage = secureStorage ?? const FlutterSecureStorage(
+          aOptions: AndroidOptions(
+            encryptedSharedPreferences: true,
+          ),
+          iOptions: IOSOptions(
+            accessibility: KeychainAccessibility.first_unlock_this_device,
+          ),
+          mOptions: MacOsOptions(
+            accessibility: KeychainAccessibility.first_unlock_this_device,
+          ),
+        ),
         _clientRedirectUri = _getClientRedirectUri(),
         _baseUrl = AppConfig.baseUrl;
 

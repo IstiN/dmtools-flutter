@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Purple background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#581c87"/>
+  
+  <!-- AI -->
+  <text x="115" y="295" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="158" fill="#ffffff">AI</text>
+  
+  <!-- .n with underline -->
+  <line x1="340" y1="300" x2="430" y2="300" stroke="#fbbf24" stroke-width="4"/>
+  <text x="345" y="290" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="90" fill="#fde047">.n</text>
+</svg>

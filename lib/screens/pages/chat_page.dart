@@ -109,13 +109,14 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Consumer2<ChatProvider, EnhancedAuthProvider>(
       builder: (context, chatProvider, authProvider, child) {
-        // Show loading state if chat is actually loading (not just empty)
-        if (chatProvider.isLoading) {
+        // Show loading state only during initial load (no integrations loaded yet)
+        // Don't show full-screen loading during message sending/receiving
+        if (chatProvider.isLoading && chatProvider.availableAiIntegrations.isEmpty && chatProvider.messages.isEmpty) {
           return _buildLoadingState();
         }
 
         // Show empty state if no integrations are available after loading is complete
-        if (chatProvider.availableAiIntegrations.isEmpty) {
+        if (chatProvider.availableAiIntegrations.isEmpty && !chatProvider.isLoading) {
           return _buildEmptyState();
         }
 

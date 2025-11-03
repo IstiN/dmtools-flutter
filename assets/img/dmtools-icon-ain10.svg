@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Deep purple -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#4c1d95"/>
+  
+  <!-- Connection line between AI and .n -->
+  <line x1="320" y1="260" x2="360" y2="260" stroke="#06b6d4" stroke-width="6" opacity="0.5"/>
+  
+  <!-- AI -->
+  <text x="105" y="300" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="165" fill="#a78bfa">AI</text>
+  
+  <!-- .n highlighted -->
+  <circle cx="395" cy="250" r="45" fill="#06b6d4" opacity="0.2"/>
+  <text x="360" y="285" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="85" fill="#22d3ee">.n</text>
+</svg>

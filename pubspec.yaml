@@ -47,6 +47,8 @@ dev_dependencies:
   swagger_dart_code_generator: ^3.0.3
   # Testing dependencies
   mockito: ^5.4.4
+  # Icon generation
+  flutter_launcher_icons: ^0.14.4
 
 flutter:
   uses-material-design: true

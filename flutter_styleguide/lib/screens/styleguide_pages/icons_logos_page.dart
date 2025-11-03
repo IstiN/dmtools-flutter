@@ -26,6 +26,108 @@ class IconsLogosPage extends StatelessWidget {
         ),
         const SizedBox(height: AppDimensions.spacingXl),
         const ComponentDisplay(
+          title: '🔍 READABILITY COMPARISON - Larger ai Badge',
+          child: Column(
+            children: [
+              const ComponentItem(
+                title: 'V1: Current Version (ai badge 80x50, font-size 32)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm.svg',
+                  description: '⚠️ ai badge too small - hard to read at icon sizes',
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
+                title: 'V2: Improved Version (ai badge 110x70, font-size 48)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm-v2.svg',
+                  description: '🔸 Larger badge in bottom-right corner',
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
+                title: 'V3: Extra Large Version (ai badge 140x90, font-size 64)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm-v3.svg',
+                  description: '🔸 Extra large badge in bottom-right corner',
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
+                title: 'V4: Maximum Size (ai badge 182x142, font-size 80)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm-v4.svg',
+                  description: '🔸 Badge fills all available space to bottom and right edges',
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
+                title: 'V5: V3 Base + Larger Text (badge 125x90, font-size 72)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm-v5.svg',
+                  description: '🔸 Narrower badge with larger "ai" text for better readability',
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
+                title: 'V6: Maximum Text Size (badge 115x90, font-size 78) - Cyan Badge',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm-v6.svg',
+                  description: '🔸 Cyan badge (115px) + large text (78px)',
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
+                title: 'V7: BLACK Badge with ".ai" (badge 115x90, font-size 78)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm-v7.svg',
+                  description: '✅ Black badge + dot prefix ".ai" - tech domain extension style',
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        const ComponentDisplay(
+          title: '⭐ FINAL SELECTED ICONS - Ready for Deployment',
+          child: Column(
+            children: [
+              const ComponentItem(
+                title: 'DM.ai Icon V1 (Based on Variant 2 + DM5 pill element)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-dm.svg',
+                  description: 'Dark slate gradient • Pill icon with DNA dots • Cyan ai badge bottom-aligned',
+                ),
+              ),
+              const SizedBox(height: AppDimensions.spacingL),
+              const ComponentItem(
+                title: 'AI.n Icon (Based on Variant 5 with closer spacing)',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-icon-final-selected-ain.svg',
+                  description: 'Purple gradient • Adobe Illustrator style • Tighter spacing between AI and .n',
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: '🆕 REFINED: DM + ai Badge Concepts - 5 Final Variants',
+          child: _IconVariantsGrid(
+            iconPaths: List.generate(5, (i) => 'assets/img/dmtools-icon-final-dm${i + 1}.svg'),
+            showLarger: true,
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        ComponentDisplay(
+          title: '🆕 REFINED: AI.n Closer Spacing - 5 Final Variants',
+          child: _IconVariantsGrid(
+            iconPaths: List.generate(5, (i) => 'assets/img/dmtools-icon-final-ain${i + 1}.svg'),
+            showLarger: true,
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        const ComponentDisplay(
           title: 'Original Concepts',
           child: ComponentItem(
             title: 'Icon (Favicon) - Intelligent Network Fusion',
@@ -392,6 +494,298 @@ class LogoUsageGuide extends StatelessWidget {
           Expanded(child: MediumBodyText(description)),
         ],
       ),
+    );
+  }
+}
+
+class NewIconPreview extends StatelessWidget {
+  final String assetPath;
+  final String description;
+
+  const NewIconPreview({
+    required this.assetPath,
+    required this.description,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context);
+    final colors = theme.isDarkMode ? AppColors.dark : AppColors.light;
+
+    const sizes = [16.0, 32.0, 64.0, 128.0, 256.0];
+    const backgrounds = [
+      _BackgroundConfig('White', Colors.white, Colors.black),
+      _BackgroundConfig('Light Gray', Color(0xFFF5F5F5), Colors.black),
+      _BackgroundConfig('Dark Gray', Color(0xFF424242), Colors.white),
+      _BackgroundConfig('Black', Colors.black, Colors.white),
+      _BackgroundConfig('Blue', Color(0xFF466AF1), Colors.white),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        MediumBodyText(description, color: colors.textSecondary),
+        const SizedBox(height: AppDimensions.spacingM),
+        
+        // Size demonstration
+        const MediumTitleText('Multiple Sizes:'),
+        const SizedBox(height: AppDimensions.spacingS),
+        Wrap(
+          spacing: AppDimensions.spacingM,
+          runSpacing: AppDimensions.spacingM,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: sizes.map((size) {
+            return _IconSizePreview(
+              assetPath: assetPath,
+              size: size,
+              colors: colors,
+            );
+          }).toList(),
+        ),
+        
+        const SizedBox(height: AppDimensions.spacingL),
+        
+        // Background variations
+        const MediumTitleText('Background Variations:'),
+        const SizedBox(height: AppDimensions.spacingS),
+        Wrap(
+          spacing: AppDimensions.spacingM,
+          runSpacing: AppDimensions.spacingM,
+          children: backgrounds.map((bg) {
+            return _IconBackgroundPreview(
+              assetPath: assetPath,
+              config: bg,
+            );
+          }).toList(),
+        ),
+        
+        const SizedBox(height: AppDimensions.spacingM),
+        CodeText(assetPath, color: colors.textSecondary),
+      ],
+    );
+  }
+}
+
+class _IconSizePreview extends StatelessWidget {
+  final String assetPath;
+  final double size;
+  final ThemeColorSet colors;
+
+  const _IconSizePreview({
+    required this.assetPath,
+    required this.size,
+    required this.colors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border.all(color: colors.borderColor),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.spacingS),
+            child: SvgPicture.asset(
+              assetPath,
+              width: size,
+              height: size,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXs),
+        SmallBodyText('${size.toInt()}px', color: colors.textSecondary),
+      ],
+    );
+  }
+}
+
+class _IconBackgroundPreview extends StatelessWidget {
+  final String assetPath;
+  final _BackgroundConfig config;
+
+  const _IconBackgroundPreview({
+    required this.assetPath,
+    required this.config,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        DecoratedBox(
+          decoration: BoxDecoration(
+            color: config.bgColor,
+            borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.spacingM),
+            child: SvgPicture.asset(
+              assetPath,
+              width: 64,
+              height: 64,
+            ),
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingXs),
+        SmallBodyText(config.label, color: config.labelColor),
+      ],
+    );
+  }
+}
+
+class _BackgroundConfig {
+  final String label;
+  final Color bgColor;
+  final Color labelColor;
+
+  const _BackgroundConfig(this.label, this.bgColor, this.labelColor);
+}
+
+class _IconVariantsGrid extends StatelessWidget {
+  final List<String> iconPaths;
+  final bool showLarger;
+
+  const _IconVariantsGrid({
+    required this.iconPaths,
+    this.showLarger = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context);
+    final colors = theme.isDarkMode ? AppColors.dark : AppColors.light;
+
+    return Padding(
+      padding: const EdgeInsets.all(AppDimensions.spacingM),
+      child: Wrap(
+        spacing: AppDimensions.spacingM,
+        runSpacing: AppDimensions.spacingM,
+        children: iconPaths.asMap().entries.map((entry) {
+          final index = entry.key;
+          final path = entry.value;
+          
+          return _IconVariantCard(
+            iconPath: path,
+            variantNumber: index + 1,
+            colors: colors,
+            size: showLarger ? 150 : 120,
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+class _IconVariantCard extends StatelessWidget {
+  final String iconPath;
+  final int variantNumber;
+  final ThemeColorSet colors;
+  final double size;
+
+  const _IconVariantCard({
+    required this.iconPath,
+    required this.variantNumber,
+    required this.colors,
+    this.size = 120,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(color: colors.borderColor),
+        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppDimensions.spacingM),
+        child: Column(
+          children: [
+            SvgPicture.asset(
+              iconPath,
+              width: size,
+              height: size,
+            ),
+            const SizedBox(height: AppDimensions.spacingS),
+            SmallBodyText(
+              'Variant $variantNumber',
+              color: colors.textSecondary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FinalIconPreview extends StatelessWidget {
+  final String assetPath;
+  final String description;
+
+  const _FinalIconPreview({
+    required this.assetPath,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Provider.of<ThemeProvider>(context);
+    final colors = theme.isDarkMode ? AppColors.dark : AppColors.light;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        MediumBodyText(description, color: colors.textSecondary),
+        const SizedBox(height: AppDimensions.spacingM),
+        
+        // Large preview
+        Row(
+          children: [
+            DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(color: colors.borderColor),
+                borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppDimensions.spacingL),
+                child: SvgPicture.asset(
+                  assetPath,
+                  width: 200,
+                  height: 200,
+                ),
+              ),
+            ),
+            const SizedBox(width: AppDimensions.spacingL),
+            
+            // Multiple sizes
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const MediumTitleText('Multiple Sizes:'),
+                const SizedBox(height: AppDimensions.spacingS),
+                Wrap(
+                  spacing: AppDimensions.spacingM,
+                  runSpacing: AppDimensions.spacingM,
+                  children: [16.0, 32.0, 64.0, 128.0].map((size) {
+                    return _IconSizePreview(
+                      assetPath: assetPath,
+                      size: size,
+                      colors: colors,
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
+          ],
+        ),
+        
+        const SizedBox(height: AppDimensions.spacingM),
+        CodeText(assetPath, color: colors.textSecondary),
+      ],
     );
   }
 }

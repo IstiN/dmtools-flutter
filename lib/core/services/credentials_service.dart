@@ -34,6 +34,9 @@ class CredentialsService {
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
+    mOptions: MacOsOptions(
+      accessibility: KeychainAccessibility.first_unlock_this_device,
+    ),
   );
 
   static const String _usernameKey = 'local_auth_username';
@@ -55,9 +58,24 @@ class CredentialsService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to save credentials: $e');
+        print('❌ Failed to save credentials to keychain: $e');
+        print('⚠️ Falling back to SharedPreferences');
       }
-      rethrow;
+      // Fallback to SharedPreferences
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_usernameKey, username);
+        await prefs.setString(_passwordKey, password);
+        await prefs.setBool(_saveCredentialsKey, true);
+        if (kDebugMode) {
+          print('✅ Credentials saved to SharedPreferences (fallback)');
+        }
+      } catch (fallbackError) {
+        if (kDebugMode) {
+          print('❌ Fallback also failed: $fallbackError');
+        }
+        // Don't rethrow - credentials saving is not critical
+      }
     }
   }
 
@@ -87,7 +105,30 @@ class CredentialsService {
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to get saved credentials: $e');
+        print('❌ Failed to get saved credentials from keychain: $e');
+        print('⚠️ Trying SharedPreferences fallback');
+      }
+      // Fallback to SharedPreferences
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final shouldSave = prefs.getBool(_saveCredentialsKey) ?? false;
+        if (!shouldSave) {
+          return null;
+        }
+        
+        final username = prefs.getString(_usernameKey);
+        final password = prefs.getString(_passwordKey);
+        
+        if (username != null && password != null && username.isNotEmpty && password.isNotEmpty) {
+          if (kDebugMode) {
+            print('✅ Retrieved saved credentials from SharedPreferences for: $username');
+          }
+          return SavedCredentials(username: username, password: password);
+        }
+      } catch (fallbackError) {
+        if (kDebugMode) {
+          print('❌ Fallback also failed: $fallbackError');
+        }
       }
       return null;
     }
@@ -108,9 +149,24 @@ class CredentialsService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to clear saved credentials: $e');
+        print('❌ Failed to clear saved credentials from keychain: $e');
       }
-      rethrow;
+    }
+    
+    // Also clear from SharedPreferences fallback
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_usernameKey);
+      await prefs.remove(_passwordKey);
+      await prefs.remove(_localTokenKey);
+      await prefs.setBool(_saveCredentialsKey, false);
+      if (kDebugMode) {
+        print('🗑️ Credentials cleared from SharedPreferences (fallback)');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Failed to clear credentials from SharedPreferences: $e');
+      }
     }
   }
 
@@ -155,9 +211,22 @@ class CredentialsService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to save local token: $e');
+        print('❌ Failed to save local token to keychain: $e');
+        print('⚠️ Falling back to SharedPreferences for debug mode');
       }
-      rethrow;
+      // Fallback to SharedPreferences for macOS debug mode without code signing
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(_localTokenKey, token);
+        if (kDebugMode) {
+          print('✅ Local token saved to SharedPreferences (fallback)');
+        }
+      } catch (fallbackError) {
+        if (kDebugMode) {
+          print('❌ Fallback also failed: $fallbackError');
+        }
+        rethrow;
+      }
     }
   }
 
@@ -174,7 +243,23 @@ class CredentialsService {
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to get saved local token: $e');
+        print('❌ Failed to get saved local token from keychain: $e');
+        print('⚠️ Trying SharedPreferences fallback');
+      }
+      // Fallback to SharedPreferences
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        final token = prefs.getString(_localTokenKey);
+        if (token != null && token.isNotEmpty) {
+          if (kDebugMode) {
+            print('✅ Retrieved token from SharedPreferences (fallback): ${token.substring(0, 20)}...');
+          }
+          return token;
+        }
+      } catch (fallbackError) {
+        if (kDebugMode) {
+          print('❌ Fallback also failed: $fallbackError');
+        }
       }
       return null;
     }
@@ -189,9 +274,21 @@ class CredentialsService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to clear saved local token: $e');
+        print('❌ Failed to clear saved local token from keychain: $e');
       }
-      rethrow;
+    }
+    
+    // Also clear from SharedPreferences fallback
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_localTokenKey);
+      if (kDebugMode) {
+        print('🗑️ Token cleared from SharedPreferences (fallback)');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('❌ Failed to clear token from SharedPreferences: $e');
+      }
     }
   }
 

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradAIN3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#115e59" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Teal gradient background (like variant 7) -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="url(#bgGradAIN3)"/>
+  
+  <!-- AI text -->
+  <text x="110" y="295" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="165" fill="#5eead4">AI</text>
+  
+  <!-- .n badge -->
+  <rect x="345" y="230" width="80" height="80" rx="15" fill="#14b8a6" opacity="0.8"/>
+  <text x="358" y="283" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="52" fill="#f0fdfa">.n</text>
+</svg>

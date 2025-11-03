@@ -1,0 +1,21 @@
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/img/dmtools-icon-final-selected-dm.svg"
+  
+  # Android adaptive icon
+  adaptive_icon_background: "#1e293b"
+  adaptive_icon_foreground: "assets/img/dmtools-icon-final-selected-dm.svg"
+  
+  # Web
+  web:
+    generate: true
+    image_path: "assets/img/dmtools-icon-final-selected-dm.svg"
+    background_color: "#1e293b"
+    theme_color: "#1e293b"
+  
+  # macOS
+  macos:
+    generate: true
+    image_path: "assets/img/dmtools-icon-final-selected-dm.svg"
+

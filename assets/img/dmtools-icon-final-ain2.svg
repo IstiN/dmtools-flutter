@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Black background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#000000"/>
+  
+  <!-- AI text with gradient -->
+  <defs>
+    <linearGradient id="aiGradAIN2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+  </defs>
+  <text x="108" y="300" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="170" fill="url(#aiGradAIN2)">AI</text>
+  
+  <!-- .n in badge -->
+  <rect x="350" y="235" width="75" height="75" rx="14" fill="#f97316"/>
+  <text x="360" y="286" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="48" fill="#ffffff">.n</text>
+</svg>
