@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradDM4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Dark blue gradient -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="url(#bgGradDM4)"/>
+  
+  <!-- Square minimal icon -->
+  <rect x="115" y="115" width="80" height="80" rx="16" fill="#ffffff" opacity="0.95"/>
+  <rect x="135" y="135" width="40" height="40" rx="8" fill="#3b82f6"/>
+  
+  <!-- DM text -->
+  <text x="125" y="310" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="158" fill="#ffffff">DM</text>
+  
+  <!-- ai badge Adobe Illustrator style -->
+  <rect x="378" y="238" width="75" height="75" rx="16" fill="#fbbf24"/>
+  <text x="388" y="287" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="40" fill="#78350f">ai</text>
+</svg>

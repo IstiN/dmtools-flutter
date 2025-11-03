@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad9" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e3a8a" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Gradient background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="url(#bgGrad9)"/>
+  
+  <!-- Rounded diamond -->
+  <path d="M 180 120 L 240 180 L 180 240 L 120 180 Z" fill="#ffffff" opacity="0.9" stroke="#3b82f6" stroke-width="4"/>
+  
+  <!-- DNA spiral inside -->
+  <path d="M 150 180 Q 180 165 210 180 T 150 180" stroke="#06b6d4" stroke-width="4" fill="none"/>
+  
+  <!-- DM -->
+  <text x="270" y="220" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="118" fill="#ffffff">DM</text>
+  
+  <!-- ai with background -->
+  <rect x="300" y="250" width="80" height="55" rx="10" fill="#06b6d4" opacity="0.2"/>
+  <text x="315" y="290" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="44" fill="#22d3ee">ai</text>
+</svg>

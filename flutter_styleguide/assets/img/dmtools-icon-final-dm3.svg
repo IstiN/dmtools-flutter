@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Navy background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#1e3a8a"/>
+  
+  <!-- DNA eye/lens symbol -->
+  <ellipse cx="155" cy="155" rx="50" ry="30" fill="#ffffff" opacity="0.95"/>
+  <ellipse cx="155" cy="155" rx="30" ry="18" fill="#3b82f6" opacity="0.6"/>
+  <path d="M 125 155 Q 155 145 185 155" stroke="#22d3ee" stroke-width="3" fill="none"/>
+  
+  <!-- DM text -->
+  <text x="135" y="305" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="152" fill="#ffffff">DM</text>
+  
+  <!-- ai badge positioned closer -->
+  <rect x="385" y="245" width="65" height="65" rx="14" fill="#f97316"/>
+  <text x="395" y="288" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="36" fill="#ffffff">ai</text>
+</svg>
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradAin2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Gradient background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="url(#bgGradAin2)"/>
+  
+  <!-- AI -->
+  <text x="110" y="295" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="155" fill="#ffffff">AI</text>
+  
+  <!-- .n with glow -->
+  <circle cx="385" cy="255" r="35" fill="#f97316" opacity="0.3"/>
+  <text x="358" y="285" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="85" fill="#fbbf24">.n</text>
+</svg>
+

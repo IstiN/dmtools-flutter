@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGrad6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Gradient background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="url(#bgGrad6)"/>
+  
+  <!-- Diamond shape -->
+  <path d="M 180 110 L 240 170 L 180 230 L 120 170 Z" fill="#ffffff" opacity="0.95"/>
+  
+  <!-- Inner diamond for depth -->
+  <path d="M 180 140 L 210 170 L 180 200 L 150 170 Z" fill="#3b82f6" opacity="0.3"/>
+  
+  <!-- DM -->
+  <text x="270" y="210" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="115" fill="#ffffff">DM</text>
+  
+  <!-- ai text -->
+  <text x="315" y="285" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="46" fill="#fde047">ai</text>
+</svg>

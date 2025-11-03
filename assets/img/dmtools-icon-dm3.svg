@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Dark background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#0f172a"/>
+  
+  <!-- Rhombus with glow -->
+  <path d="M 190 120 L 250 160 L 190 200 L 130 160 Z" fill="#3b82f6" opacity="0.3"/>
+  <path d="M 190 130 L 235 160 L 190 190 L 145 160 Z" fill="#ffffff"/>
+  
+  <!-- DM text large -->
+  <text x="150" y="310" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="140" fill="#ffffff">DM</text>
+  
+  <!-- ai text integrated -->
+  <text x="395" y="310" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="65" fill="#06b6d4">ai</text>
+</svg>

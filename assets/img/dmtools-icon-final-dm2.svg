@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradDM2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#334155" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Dark slate gradient background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="url(#bgGradDM2)"/>
+  
+  <!-- Simple circle icon top left -->
+  <circle cx="145" cy="145" r="45" fill="#ffffff" opacity="0.95"/>
+  <circle cx="145" cy="145" r="12" fill="#3b82f6"/>
+  
+  <!-- DM text -->
+  <text x="130" y="310" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="155" fill="#ffffff">DM</text>
+  
+  <!-- ai badge with glow -->
+  <circle cx="390" cy="255" r="35" fill="#06b6d4" opacity="0.2"/>
+  <rect x="350" y="230" width="80" height="50" rx="10" fill="#06b6d4"/>
+  <text x="366" y="264" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="32" fill="#ffffff">ai</text>
+</svg>

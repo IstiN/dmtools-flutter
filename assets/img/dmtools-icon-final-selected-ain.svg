@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradAINFinal" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87" />
+      <stop offset="100%" stop-color="#7c3aed" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Purple gradient background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="url(#bgGradAINFinal)"/>
+  
+  <!-- AI text -->
+  <text x="108" y="298" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="168" fill="#ffffff">AI</text>
+  
+  <!-- .n badge Adobe Illustrator style - bottom aligned with AI -->
+  <rect x="310" y="220" width="78" height="78" rx="16" fill="#fbbf24"/>
+  <text x="319" y="273" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="50" fill="#78350f">.n</text>
+</svg>

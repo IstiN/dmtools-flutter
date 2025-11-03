@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Navy background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#0c4a6e"/>
+  
+  <!-- Hexagon shape -->
+  <path d="M 180 130 L 230 150 L 230 190 L 180 210 L 130 190 L 130 150 Z" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- DNA helix in hexagon -->
+  <path d="M 150 150 Q 180 160 210 150" stroke="#06b6d4" stroke-width="2.5" fill="none"/>
+  <path d="M 150 170 Q 180 160 210 170" stroke="#3b82f6" stroke-width="2.5" fill="none"/>
+  <path d="M 150 190 Q 180 180 210 190" stroke="#06b6d4" stroke-width="2.5" fill="none"/>
+  
+  <!-- DM -->
+  <text x="270" y="215" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="120" fill="#ffffff">DM</text>
+  
+  <!-- ai -->
+  <text x="325" y="295" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="500" font-size="48" fill="#22d3ee">ai</text>
+</svg>

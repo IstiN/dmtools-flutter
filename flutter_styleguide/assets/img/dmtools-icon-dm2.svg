@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Rounded square background with gradient -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#1e3a8a"/>
+  
+  <!-- Oval/ellipse symbol -->
+  <ellipse cx="180" cy="180" rx="60" ry="80" fill="#ffffff" opacity="0.9"/>
+  
+  <!-- DNA helix lines inside oval -->
+  <path d="M 150 150 Q 180 165 210 150" stroke="#3b82f6" stroke-width="3" fill="none"/>
+  <path d="M 150 180 Q 180 165 210 180" stroke="#06b6d4" stroke-width="3" fill="none"/>
+  <path d="M 150 210 Q 180 195 210 210" stroke="#3b82f6" stroke-width="3" fill="none"/>
+  
+  <!-- DM text -->
+  <text x="270" y="220" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="120" fill="#ffffff">DM</text>
+  
+  <!-- ai subscript -->
+  <text x="330" y="300" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="500" font-size="42" fill="#06b6d4">ai</text>
+</svg>
+

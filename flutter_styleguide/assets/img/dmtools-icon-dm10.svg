@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Black background -->
+  <rect x="50" y="50" width="412" height="412" rx="90" fill="#000000"/>
+  
+  <!-- Vertical pill/oval shape -->
+  <rect x="120" y="130" width="90" height="130" rx="45" fill="#ffffff" opacity="0.95"/>
+  
+  <!-- DNA helix pattern -->
+  <circle cx="145" cy="155" r="7" fill="#3b82f6"/>
+  <circle cx="185" cy="165" r="7" fill="#06b6d4"/>
+  <circle cx="145" cy="180" r="7" fill="#06b6d4"/>
+  <circle cx="185" cy="190" r="7" fill="#3b82f6"/>
+  <circle cx="145" cy="205" r="7" fill="#3b82f6"/>
+  <circle cx="185" cy="215" r="7" fill="#06b6d4"/>
+  <circle cx="145" cy="230" r="7" fill="#06b6d4"/>
+  <circle cx="185" cy="240" r="7" fill="#3b82f6"/>
+  
+  <!-- DM -->
+  <text x="230" y="225" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="128" fill="#ffffff">DM</text>
+  
+  <!-- ai -->
+  <text x="335" y="305" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="600" font-size="48" fill="#06b6d4">ai</text>
+</svg>
+
