@@ -71,9 +71,9 @@ jobs:
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
           
           if [ "${{ matrix.arch }}" = "arm64" ]; then
-            BUNDLE_NAME="dmtools-standalone-macos-aarch64-$SERVER_VERSION.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-aarch64.zip"
           else
-            BUNDLE_NAME="dmtools-standalone-macos-x64-$SERVER_VERSION.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-x64.zip"
           fi
           
           mkdir -p dist
@@ -135,7 +135,7 @@ jobs:
         shell: bash
         run: |
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
-          BUNDLE_NAME="dmtools-standalone-windows-x64-$SERVER_VERSION.zip"
+          BUNDLE_NAME="dmtools-standalone-windows-x64.zip"
           
           mkdir -p dist
           chmod +x scripts/pack-windows.sh
