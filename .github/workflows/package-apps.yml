@@ -45,16 +45,16 @@ jobs:
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
           
           if [ "${{ matrix.arch }}" = "arm64" ]; then
-            BUNDLE_NAME="dmtools-standalone-macos-aarch64-$SERVER_VERSION.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-aarch64.zip"
           else
-            BUNDLE_NAME="dmtools-standalone-macos-x64-$SERVER_VERSION.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-x64.zip"
           fi
           
           echo "Downloading $BUNDLE_NAME from release $SERVER_VERSION"
           
-          # Download from dmtools-server repository (standalone bundle)
+          # Download from dmtools repository (standalone bundle)
           curl -L -o "$BUNDLE_NAME" \
-            "https://github.com/IstiN/dmtools-server/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
+            "https://github.com/IstiN/dmtools/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
           
           if [ ! -f "$BUNDLE_NAME" ]; then
             echo "Failed to download server bundle"
@@ -91,7 +91,9 @@ jobs:
           path: dist/*.dmg
           retention-days: 7
 
-  build-windows:
+  # Windows build temporarily disabled - Windows desktop support not yet enabled
+  # Run: flutter create --platforms=windows . to enable Windows support
+  build-windows-disabled:
     runs-on: windows-latest
     
     steps:
@@ -114,13 +116,13 @@ jobs:
         shell: bash
         run: |
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
-          BUNDLE_NAME="dmtools-standalone-windows-x64-$SERVER_VERSION.zip"
+          BUNDLE_NAME="dmtools-standalone-windows-x64.zip"
           
           echo "Downloading $BUNDLE_NAME from release $SERVER_VERSION"
           
-          # Download from dmtools-server repository (standalone bundle)
+          # Download from dmtools repository (standalone bundle)
           curl -L -o "$BUNDLE_NAME" \
-            "https://github.com/IstiN/dmtools-server/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
+            "https://github.com/IstiN/dmtools/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
           
           if [ ! -f "$BUNDLE_NAME" ]; then
             echo "Failed to download server bundle"
@@ -153,7 +155,7 @@ jobs:
 
   create-release:
     if: ${{ github.event.inputs.create_release == 'true' }}
-    needs: [build-macos, build-windows]
+    needs: [build-macos]  # Windows temporarily disabled
     runs-on: ubuntu-latest
     permissions:
       contents: write
