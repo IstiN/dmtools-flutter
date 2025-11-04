@@ -22,8 +22,9 @@ echo "Server Bundle: $SERVER_BUNDLE_ZIP"
 echo "Output Directory: $OUTPUT_DIR"
 echo "Version: $VERSION"
 
-# Create output directory
+# Create output directory and convert to absolute path
 mkdir -p "$OUTPUT_DIR"
+OUTPUT_DIR=$(cd "$OUTPUT_DIR" && pwd)
 TEMP_DIR=$(mktemp -d)
 
 # Extract server bundle
