@@ -22,6 +22,18 @@ echo "Server Bundle: $SERVER_BUNDLE_ZIP"
 echo "Output Directory: $OUTPUT_DIR"
 echo "Version: $VERSION"
 
+# Extract architecture from bundle filename (e.g., aarch64 or x64)
+BUNDLE_BASENAME=$(basename "$SERVER_BUNDLE_ZIP")
+if [[ "$BUNDLE_BASENAME" =~ aarch64 ]]; then
+    ARCH="arm64"
+elif [[ "$BUNDLE_BASENAME" =~ x64 ]]; then
+    ARCH="x64"
+else
+    # Fallback to system architecture if not found in bundle name
+    ARCH=$(uname -m)
+fi
+echo "Architecture: $ARCH"
+
 # Create output directory
 mkdir -p "$OUTPUT_DIR"
 TEMP_DIR=$(mktemp -d)
@@ -244,7 +256,7 @@ fi
 
 # Create DMG with drag & drop window
 echo "💿 Creating DMG with installation window..."
-DMG_NAME="DMTools-$VERSION-macos-$(uname -m).dmg"
+DMG_NAME="DMTools-$VERSION-macos-$ARCH.dmg"
 DMG_PATH="$OUTPUT_DIR/$DMG_NAME"
 
 # Remove old DMG if exists
