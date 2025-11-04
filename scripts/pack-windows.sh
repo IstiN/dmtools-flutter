@@ -65,7 +65,7 @@ cp -R "$SERVER_DIR"/* "$PACKAGE_DIR/server/"
 echo "📝 Creating setup script..."
 cat > "$PACKAGE_DIR/setup.cmd" << 'EOF'
 @echo off
-echo ======================================== 
+echo ========================================
 echo   DMTools Setup
 echo ========================================
 echo.
@@ -102,6 +102,13 @@ echo [SUCCESS] Setup completed! You can now run launch.cmd
 echo.
 pause
 EOF
+
+# Convert to Windows line endings (CRLF)
+if command -v unix2dos &> /dev/null; then
+    unix2dos "$PACKAGE_DIR/setup.cmd" 2>/dev/null || sed -i 's/$/\r/' "$PACKAGE_DIR/setup.cmd"
+else
+    sed -i '' $'s/$/\r/' "$PACKAGE_DIR/setup.cmd" 2>/dev/null || sed -i 's/$/\r/' "$PACKAGE_DIR/setup.cmd"
+fi
 
 # Create launcher batch script
 echo "📝 Creating launcher script..."
@@ -197,6 +204,13 @@ exit /b 1
 exit /b 0
 EOF
 
+# Convert to Windows line endings (CRLF)
+if command -v unix2dos &> /dev/null; then
+    unix2dos "$PACKAGE_DIR/launch.cmd" 2>/dev/null || sed -i 's/$/\r/' "$PACKAGE_DIR/launch.cmd"
+else
+    sed -i '' $'s/$/\r/' "$PACKAGE_DIR/launch.cmd" 2>/dev/null || sed -i 's/$/\r/' "$PACKAGE_DIR/launch.cmd"
+fi
+
 # Create README
 cat > "$PACKAGE_DIR/README.txt" << EOF
 DMTools v$VERSION - Windows Edition
@@ -247,6 +261,13 @@ https://aka.ms/vs/17/release/vc_redist.x64.exe
 
 For more help: https://github.com/IstiN/dmtools
 EOF
+
+# Convert to Windows line endings (CRLF)
+if command -v unix2dos &> /dev/null; then
+    unix2dos "$PACKAGE_DIR/README.txt" 2>/dev/null || sed -i 's/$/\r/' "$PACKAGE_DIR/README.txt"
+else
+    sed -i '' $'s/$/\r/' "$PACKAGE_DIR/README.txt" 2>/dev/null || sed -i 's/$/\r/' "$PACKAGE_DIR/README.txt"
+fi
 
 # Create ZIP package
 echo "📦 Creating ZIP package..."
