@@ -45,16 +45,16 @@ jobs:
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
           
           if [ "${{ matrix.arch }}" = "arm64" ]; then
-            BUNDLE_NAME="dmtools-server-api-macos-aarch64.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-aarch64-$SERVER_VERSION.zip"
           else
-            BUNDLE_NAME="dmtools-server-api-macos-x64.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-x64-$SERVER_VERSION.zip"
           fi
           
           echo "Downloading $BUNDLE_NAME from release $SERVER_VERSION"
           
-          # Download from GitHub releases
+          # Download from dmtools-server repository (standalone bundle)
           curl -L -o "$BUNDLE_NAME" \
-            "https://github.com/IstiN/dmtools/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
+            "https://github.com/IstiN/dmtools-server/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
           
           if [ ! -f "$BUNDLE_NAME" ]; then
             echo "Failed to download server bundle"
@@ -71,9 +71,9 @@ jobs:
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
           
           if [ "${{ matrix.arch }}" = "arm64" ]; then
-            BUNDLE_NAME="dmtools-server-api-macos-aarch64.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-aarch64-$SERVER_VERSION.zip"
           else
-            BUNDLE_NAME="dmtools-server-api-macos-x64.zip"
+            BUNDLE_NAME="dmtools-standalone-macos-x64-$SERVER_VERSION.zip"
           fi
           
           mkdir -p dist
@@ -114,13 +114,13 @@ jobs:
         shell: bash
         run: |
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
-          BUNDLE_NAME="dmtools-server-api-windows-x64.zip"
+          BUNDLE_NAME="dmtools-standalone-windows-x64-$SERVER_VERSION.zip"
           
           echo "Downloading $BUNDLE_NAME from release $SERVER_VERSION"
           
-          # Download from GitHub releases
+          # Download from dmtools-server repository (standalone bundle)
           curl -L -o "$BUNDLE_NAME" \
-            "https://github.com/IstiN/dmtools/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
+            "https://github.com/IstiN/dmtools-server/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
           
           if [ ! -f "$BUNDLE_NAME" ]; then
             echo "Failed to download server bundle"
@@ -133,7 +133,7 @@ jobs:
         shell: bash
         run: |
           SERVER_VERSION="${{ github.event.inputs.server_version }}"
-          BUNDLE_NAME="dmtools-server-api-windows-x64.zip"
+          BUNDLE_NAME="dmtools-standalone-windows-x64-$SERVER_VERSION.zip"
           
           mkdir -p dist
           chmod +x scripts/pack-windows.sh
