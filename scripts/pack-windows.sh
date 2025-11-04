@@ -171,7 +171,15 @@ ZIP_NAME="DMTools-$VERSION-windows-x64.zip"
 ZIP_PATH="$OUTPUT_DIR/$ZIP_NAME"
 
 cd "$TEMP_DIR"
-zip -r -q "$ZIP_PATH" "$PACKAGE_NAME"
+# Use 7z (available on Windows GitHub runners) instead of zip
+if command -v 7z &> /dev/null; then
+    7z a -tzip "$ZIP_PATH" "$PACKAGE_NAME" > /dev/null
+elif command -v zip &> /dev/null; then
+    zip -r -q "$ZIP_PATH" "$PACKAGE_NAME"
+else
+    echo "❌ Error: No zip command available (tried 7z and zip)"
+    exit 1
+fi
 
 # Cleanup
 cd "$SCRIPT_DIR"
