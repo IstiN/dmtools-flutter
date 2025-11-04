@@ -20,8 +20,8 @@
 ## 📋 Changes Made:
 
 ### Fixed in `package-apps.yml`:
-✅ Changed from **API-only** to **standalone** server bundles
-✅ Updated download URL from `IstiN/dmtools` to `IstiN/dmtools-server`
+✅ Changed from **API-only** to **standalone** server bundles  
+✅ Updated download URL from `IstiN/dmtools` to `IstiN/dmtools-server`  
 ✅ Fixed bundle naming: `dmtools-standalone-{platform}-{version}.zip`
 
 ### Why standalone?
@@ -46,7 +46,7 @@
 - ✅ Auto-start on app launch
 - ✅ Auto-stop on app close
 - ✅ Health check with retry logic
-- ✅ Port selection dialog if 8080 busy
+- ✅ Port selection dialog if 8080 is busy
 
 ## 📖 Full Documentation:
 See [.github/workflows/README-PACKAGING.md](.github/workflows/README-PACKAGING.md)
@@ -65,4 +65,3 @@ See [.github/workflows/README-PACKAGING.md](.github/workflows/README-PACKAGING.m
 - `lib/main.dart` - Command line args parsing
 - `lib/service_locator.dart` - Server port configuration
 - `lib/core/services/credentials_service.dart` - Credentials fallback
-
