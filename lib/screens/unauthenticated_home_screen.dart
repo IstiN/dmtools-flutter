@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
@@ -21,6 +22,9 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
       backgroundColor: colors.bgColor,
       body: Column(
         children: [
+          // macOS titlebar spacer
+          if (Platform.isMacOS) const SizedBox(height: 12),
+          
           // App Header from styleguide
           AppHeader(
             showTitle: false, // Hide header text

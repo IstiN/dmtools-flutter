@@ -119,8 +119,12 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
 
       // Step 3: Check for saved local token first
       if (_authConfig!.hasLocalLogin) {
+        print('[AUTH] Checking for saved credentials...');
+        
         // First try to restore from saved token
         final savedToken = await _credentialsService.getSavedLocalToken();
+        print('[AUTH] Saved token found: ${savedToken != null}');
+        
         if (savedToken != null) {
           try {
             // Validate the token by trying to get user data
@@ -129,43 +133,42 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
             _localToken = savedToken;
             _currentUser = user;
             _setAuthenticated();
-            if (kDebugMode) {
-              print('✅ Local token restored and validated: ${user.name}');
-            }
+            print('[AUTH] ✅ Token validated, user: ${user.name}');
             return;
           } catch (tokenValidationError) {
-            if (kDebugMode) {
-              print('⚠️ Saved token validation failed: $tokenValidationError');
-              print('   Clearing invalid token and saved credentials');
-            }
-            // Clear invalid token and credentials
+            print('[AUTH] ⚠️ Token validation failed: $tokenValidationError');
+            // Clear invalid token but keep credentials for automatic re-login
             await _credentialsService.clearSavedLocalToken();
-            await _credentialsService.clearSavedCredentials();
           }
         }
 
         // If no valid token, try saved credentials
         final savedCredentials = await _credentialsService.getSavedCredentials();
+        print('[AUTH] Saved credentials found: ${savedCredentials != null ? savedCredentials.username : "none"}');
+        
         if (savedCredentials != null) {
           try {
+            print('[AUTH] Attempting auto-login with saved credentials...');
             final response = await _localAuthService.login(
               savedCredentials.username,
               savedCredentials.password,
             );
             _localToken = response.token;
             _currentUser = response.user;
+            
+            // Save the new token
+            await _credentialsService.saveLocalToken(response.token);
+            
             _setAuthenticated();
-            if (kDebugMode) {
-              print('✅ Local user authenticated with saved credentials: ${response.user.name}');
-            }
+            print('[AUTH] ✅ Auto-login successful: ${response.user.name}');
             return;
           } catch (e) {
-            if (kDebugMode) {
-              print('⚠️ Saved credentials login failed: $e');
-            }
-            // Clear invalid saved credentials
-            await _credentialsService.clearSavedCredentials();
+            print('[AUTH] ⚠️ Auto-login failed: $e');
+            // Don't clear credentials - server might be temporarily unavailable
+            // User can manually clear by unchecking "save credentials" on next login
           }
+        } else {
+          print('[AUTH] No saved credentials available');
         }
       }
 
@@ -271,22 +274,22 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
       await _credentialsService.saveLocalToken(response.token);
 
       // Save credentials if requested
+      print('[AUTH] Save credentials requested: $saveCredentials');
       if (saveCredentials) {
         await _credentialsService.saveCredentials(username, password);
+        print('[AUTH] ✅ Credentials saved for user: $username');
       } else {
         // Clear any previously saved credentials if user chose not to save
         // But keep the token for the current session
         await _credentialsService.clearSavedCredentials();
         // Re-save the token since clearSavedCredentials also clears the token
         await _credentialsService.saveLocalToken(response.token);
+        print('[AUTH] Credentials NOT saved (user choice)');
       }
 
       _setAuthenticated();
 
-      if (kDebugMode) {
-        print('🎉 Local authentication successful: ${response.user.name}');
-        print('   Credentials saved: $saveCredentials');
-      }
+      print('[AUTH] 🎉 Login successful: ${response.user.name}');
 
       return true;
     } catch (e) {

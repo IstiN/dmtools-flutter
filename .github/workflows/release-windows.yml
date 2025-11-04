@@ -1,0 +1,113 @@
+name: Release Windows
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.7.87)'
+        required: true
+        default: 'v1.7.87'
+      server_version:
+        description: 'DMTools server version (e.g., v1.7.78)'
+        required: true
+        default: 'v1.7.78'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Determine version
+        id: version
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+            echo "SERVER_VERSION=${{ github.event.inputs.server_version }}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+            echo "SERVER_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Download DMTools server bundle
+        shell: bash
+        run: |
+          echo "Downloading DMTools server ${{ steps.version.outputs.SERVER_VERSION }}"
+          
+          # Download standalone Windows bundle from dmtools-server repository
+          curl -L -o dmtools-standalone-windows-x64.zip \
+            "https://github.com/IstiN/dmtools-server/releases/download/${{ steps.version.outputs.SERVER_VERSION }}/dmtools-standalone-windows-x64-${{ steps.version.outputs.SERVER_VERSION }}.zip"
+          
+          # Verify download
+          if [ ! -f dmtools-standalone-windows-x64.zip ]; then
+            echo "❌ Failed to download server bundle"
+            exit 1
+          fi
+          
+          ls -lh dmtools-standalone-windows-x64.zip
+      
+      - name: Build Flutter app for Windows
+        run: |
+          flutter build windows --release
+          
+          # Verify build
+          if (!(Test-Path "build\windows\x64\runner\Release\dmtools.exe")) {
+            Write-Error "Flutter build failed"
+            exit 1
+          }
+        shell: powershell
+      
+      - name: Package Windows application
+        shell: bash
+        run: |
+          chmod +x scripts/pack-windows.sh
+          
+          mkdir -p dist
+          
+          ./scripts/pack-windows.sh \
+            build/windows/x64/runner/Release \
+            dmtools-standalone-windows-x64.zip \
+            dist \
+            ${{ steps.version.outputs.VERSION }}
+          
+          # Verify ZIP was created
+          ZIP_FILE="dist/DMTools-${{ steps.version.outputs.VERSION }}-windows-x64.zip"
+          if [ ! -f "$ZIP_FILE" ]; then
+            echo "❌ ZIP creation failed"
+            exit 1
+          fi
+          
+          echo "✅ Created: $ZIP_FILE"
+          ls -lh dist/
+      
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: dist/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload artifact (for workflow_dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmtools-windows-${{ steps.version.outputs.VERSION }}
+          path: dist/*.zip
+          retention-days: 7
+

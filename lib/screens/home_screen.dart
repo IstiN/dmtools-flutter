@@ -1,3 +1,4 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -33,6 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Column(
         children: [
+          // macOS title bar padding
+          if (Platform.isMacOS) const SizedBox(height: 12),
+          
           // App Header
           AppHeader(
             showTitle: false,
@@ -116,6 +120,9 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       body: Column(
         children: [
+          // macOS title bar padding
+          if (Platform.isMacOS) const SizedBox(height: 12),
+          
           // App Header
           AppHeader(
             showSearch: false,

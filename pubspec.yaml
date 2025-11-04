@@ -35,6 +35,8 @@ dependencies:
     path: ./flutter_styleguide
   # Cupertino Icons
   cupertino_icons: ^1.0.8
+  # macOS window styling
+  macos_window_utils: ^1.5.0
 
 dev_dependencies:
   flutter_test:

@@ -46,6 +46,7 @@ class CredentialsService {
 
   /// Save user credentials securely
   Future<void> saveCredentials(String username, String password) async {
+    print('[CREDENTIALS] Attempting to save credentials for: $username');
     try {
       await Future.wait([
         _secureStorage.write(key: _usernameKey, value: username),
@@ -53,27 +54,19 @@ class CredentialsService {
         _setSaveCredentialsFlag(true),
       ]);
 
-      if (kDebugMode) {
-        print('✅ Credentials saved securely');
-      }
+      print('[CREDENTIALS] ✅ Credentials saved to secure storage');
     } catch (e) {
-      if (kDebugMode) {
-        print('❌ Failed to save credentials to keychain: $e');
-        print('⚠️ Falling back to SharedPreferences');
-      }
+      print('[CREDENTIALS] ❌ Secure storage failed: $e');
+      print('[CREDENTIALS] ⚠️ Trying SharedPreferences fallback...');
       // Fallback to SharedPreferences
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(_usernameKey, username);
         await prefs.setString(_passwordKey, password);
         await prefs.setBool(_saveCredentialsKey, true);
-        if (kDebugMode) {
-          print('✅ Credentials saved to SharedPreferences (fallback)');
-        }
+        print('[CREDENTIALS] ✅ Credentials saved to SharedPreferences (fallback)');
       } catch (fallbackError) {
-        if (kDebugMode) {
-          print('❌ Fallback also failed: $fallbackError');
-        }
+        print('[CREDENTIALS] ❌ Fallback also failed: $fallbackError');
         // Don't rethrow - credentials saving is not critical
       }
     }
@@ -81,57 +74,55 @@ class CredentialsService {
 
   /// Get saved credentials
   Future<SavedCredentials?> getSavedCredentials() async {
-    try {
-      final shouldSave = await getSaveCredentialsFlag();
-      if (!shouldSave) {
-        return null;
-      }
+    print('[CREDENTIALS] Loading saved credentials...');
+    
+    // First, check the flag
+    final shouldSave = await getSaveCredentialsFlag();
+    print('[CREDENTIALS] Save credentials flag: $shouldSave');
+    if (!shouldSave) {
+      print('[CREDENTIALS] Save flag is false, returning null');
+      return null;
+    }
 
+    String? username;
+    String? password;
+
+    // Try secure storage first
+    try {
+      print('[CREDENTIALS] Trying to read from secure storage...');
       final results = await Future.wait([
         _secureStorage.read(key: _usernameKey),
         _secureStorage.read(key: _passwordKey),
       ]);
 
-      final username = results[0];
-      final password = results[1];
-
-      if (username != null && password != null && username.isNotEmpty && password.isNotEmpty) {
-        if (kDebugMode) {
-          print('✅ Retrieved saved credentials for: $username');
-        }
-        return SavedCredentials(username: username, password: password);
-      }
-
-      return null;
+      username = results[0];
+      password = results[1];
+      print('[CREDENTIALS] Secure storage result: username=${username != null ? "found" : "null"}, password=${password != null ? "found" : "null"}');
     } catch (e) {
-      if (kDebugMode) {
-        print('❌ Failed to get saved credentials from keychain: $e');
-        print('⚠️ Trying SharedPreferences fallback');
-      }
-      // Fallback to SharedPreferences
+      print('[CREDENTIALS] ❌ Secure storage read failed: $e');
+    }
+
+    // If secure storage didn't work (null or exception), try SharedPreferences fallback
+    if (username == null || password == null) {
+      print('[CREDENTIALS] Secure storage empty/failed, trying SharedPreferences fallback...');
       try {
         final prefs = await SharedPreferences.getInstance();
-        final shouldSave = prefs.getBool(_saveCredentialsKey) ?? false;
-        if (!shouldSave) {
-          return null;
-        }
-        
-        final username = prefs.getString(_usernameKey);
-        final password = prefs.getString(_passwordKey);
-        
-        if (username != null && password != null && username.isNotEmpty && password.isNotEmpty) {
-          if (kDebugMode) {
-            print('✅ Retrieved saved credentials from SharedPreferences for: $username');
-          }
-          return SavedCredentials(username: username, password: password);
-        }
+        username = prefs.getString(_usernameKey);
+        password = prefs.getString(_passwordKey);
+        print('[CREDENTIALS] SharedPreferences result: username=${username != null ? "found" : "null"}, password=${password != null ? "found" : "null"}');
       } catch (fallbackError) {
-        if (kDebugMode) {
-          print('❌ Fallback also failed: $fallbackError');
-        }
+        print('[CREDENTIALS] ❌ SharedPreferences fallback failed: $fallbackError');
       }
-      return null;
     }
+
+    // Return credentials if found
+    if (username != null && password != null && username.isNotEmpty && password.isNotEmpty) {
+      print('[CREDENTIALS] ✅ Credentials loaded successfully for: $username');
+      return SavedCredentials(username: username, password: password);
+    }
+
+    print('[CREDENTIALS] ❌ No credentials found in any storage');
+    return null;
   }
 
   /// Clear saved credentials

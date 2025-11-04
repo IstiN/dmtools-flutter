@@ -1,0 +1,338 @@
+name: Package DMTools Apps
+
+on:
+  workflow_dispatch:
+    inputs:
+      server_version:
+        description: 'DMTools Server version tag (e.g., v1.7.77)'
+        required: true
+        type: string
+      flutter_version:
+        description: 'Flutter version (leave empty for latest stable)'
+        required: false
+        type: string
+      create_release:
+        description: 'Create GitHub release'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [arm64, x64]
+    
+    steps:
+      - name: Checkout Flutter repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ github.event.inputs.flutter_version || 'stable' }}
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build macOS app (${{ matrix.arch }})
+        run: flutter build macos --release
+      
+      - name: Download server bundle
+        run: |
+          SERVER_VERSION="${{ github.event.inputs.server_version }}"
+          
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            BUNDLE_NAME="dmtools-server-api-macos-aarch64.zip"
+          else
+            BUNDLE_NAME="dmtools-server-api-macos-x64.zip"
+          fi
+          
+          echo "Downloading $BUNDLE_NAME from release $SERVER_VERSION"
+          
+          # Download from GitHub releases
+          curl -L -o "$BUNDLE_NAME" \
+            "https://github.com/IstiN/dmtools/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
+          
+          if [ ! -f "$BUNDLE_NAME" ]; then
+            echo "Failed to download server bundle"
+            exit 1
+          fi
+          
+          echo "Downloaded: $(ls -lh $BUNDLE_NAME)"
+      
+      - name: Make packing script executable
+        run: chmod +x scripts/pack-macos.sh
+      
+      - name: Package app with server
+        run: |
+          SERVER_VERSION="${{ github.event.inputs.server_version }}"
+          
+          if [ "${{ matrix.arch }}" = "arm64" ]; then
+            BUNDLE_NAME="dmtools-server-api-macos-aarch64.zip"
+          else
+            BUNDLE_NAME="dmtools-server-api-macos-x64.zip"
+          fi
+          
+          mkdir -p dist
+          
+          ./scripts/pack-macos.sh \
+            build/macos/Build/Products/Release/dmtools.app \
+            "$BUNDLE_NAME" \
+            dist \
+            "$SERVER_VERSION"
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmtools-macos-${{ matrix.arch }}
+          path: dist/*.dmg
+          retention-days: 7
+
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout Flutter repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ github.event.inputs.flutter_version || 'stable' }}
+          channel: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Build Windows app
+        run: flutter build windows --release
+      
+      - name: Download server bundle
+        shell: bash
+        run: |
+          SERVER_VERSION="${{ github.event.inputs.server_version }}"
+          BUNDLE_NAME="dmtools-server-api-windows-x64.zip"
+          
+          echo "Downloading $BUNDLE_NAME from release $SERVER_VERSION"
+          
+          # Download from GitHub releases
+          curl -L -o "$BUNDLE_NAME" \
+            "https://github.com/IstiN/dmtools/releases/download/$SERVER_VERSION/$BUNDLE_NAME"
+          
+          if [ ! -f "$BUNDLE_NAME" ]; then
+            echo "Failed to download server bundle"
+            exit 1
+          fi
+          
+          echo "Downloaded: $(ls -lh $BUNDLE_NAME)"
+      
+      - name: Package app with server
+        shell: bash
+        run: |
+          SERVER_VERSION="${{ github.event.inputs.server_version }}"
+          BUNDLE_NAME="dmtools-server-api-windows-x64.zip"
+          
+          mkdir -p dist
+          chmod +x scripts/pack-windows.sh
+          
+          ./scripts/pack-windows.sh \
+            build/windows/x64/runner/Release \
+            "$BUNDLE_NAME" \
+            dist \
+            "$SERVER_VERSION"
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmtools-windows-x64
+          path: dist/*.zip
+          retention-days: 7
+
+  create-release:
+    if: ${{ github.event.inputs.create_release == 'true' }}
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: List artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          ls -lhR artifacts/
+      
+      - name: Generate release notes
+        run: |
+          SERVER_VERSION="${{ github.event.inputs.server_version }}"
+          
+          # Get file sizes
+          MACOS_ARM_DMG=$(find artifacts/dmtools-macos-arm64 -name "*.dmg" | head -1)
+          MACOS_X64_DMG=$(find artifacts/dmtools-macos-x64 -name "*.dmg" | head -1)
+          WINDOWS_ZIP=$(find artifacts/dmtools-windows-x64 -name "*.zip" | head -1)
+          
+          MACOS_ARM_SIZE=$(du -h "$MACOS_ARM_DMG" | cut -f1)
+          MACOS_X64_SIZE=$(du -h "$MACOS_X64_DMG" | cut -f1)
+          WINDOWS_SIZE=$(du -h "$WINDOWS_ZIP" | cut -f1)
+          
+          cat > release_notes.md << EOF
+          # 🎨 DMTools Flutter App Release $SERVER_VERSION
+          
+          Complete desktop applications with embedded DMTools server - no separate installation needed!
+          
+          ## 📦 What's Included
+          
+          - **Flutter Desktop App** with modern UI
+          - **Embedded DMTools Server** (based on $SERVER_VERSION)
+          - **Embedded JRE** - no Java installation required
+          - **Automatic server management** - starts and stops with the app
+          - **Port conflict resolution** - prompts for alternative port if default is busy
+          
+          ## 🚀 Quick Start
+          
+          ### macOS
+          
+          **Apple Silicon (M1/M2/M3):**
+          1. Download \`DMTools-$SERVER_VERSION-macos-arm64.dmg\`
+          2. Open the DMG and drag DMTools to Applications
+          3. Launch DMTools from Applications
+          4. If prompted about port conflict, enter an available port
+          
+          **Intel:**
+          1. Download \`DMTools-$SERVER_VERSION-macos-x64.dmg\`
+          2. Open the DMG and drag DMTools to Applications
+          3. Launch DMTools from Applications
+          4. If prompted about port conflict, enter an available port
+          
+          ⚠️ **macOS Security Note:** On first launch, you may see "DMTools cannot be opened because it is from an unidentified developer"
+          - Go to **System Preferences → Privacy & Security**
+          - Click **"Open Anyway"** next to the DMTools message
+          - Or right-click the app and select **Open**, then click **Open** in the dialog
+          
+          ### Windows
+          
+          1. Download \`DMTools-$SERVER_VERSION-windows-x64.zip\`
+          2. Extract the ZIP file to a folder (e.g., \`C:\Program Files\DMTools\`)
+          3. Run \`launch.cmd\` to start DMTools
+          4. If port 8080 is busy, enter an alternative port when prompted
+          5. The app will launch automatically once the server is ready
+          
+          ⚠️ **Windows Security Note:** If Windows Defender SmartScreen blocks the app:
+          - Click **"More info"**
+          - Click **"Run anyway"**
+          - Or add the folder to Windows Defender exclusions
+          
+          ## 🔧 Configuration
+          
+          ### Custom Server Port
+          
+          **macOS:**
+          - On launch, if port 8080 is busy, you'll be prompted to choose another port
+          - Or set environment variable: \`export DMTOOLS_PORT=9090\` before launching
+          
+          **Windows:**
+          - On launch, if port 8080 is busy, you'll be prompted to enter another port
+          - Or set environment variable: \`set DMTOOLS_PORT=9090\` before running launch.cmd
+          
+          ### Logs
+          
+          - **macOS:** \`~/Library/Application Support/com.example.dmtools/logs\`
+          - **Windows:** \`%APPDATA%\dmtools\logs\`
+          - **Server logs:** Inside the app bundle under \`server/dmtools-server.log\`
+          
+          ## 📊 Package Information
+          
+          - **Server Version:** $SERVER_VERSION
+          - **Flutter Version:** $(flutter --version | head -1)
+          - **Build Date:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          - **Packages:**
+            - macOS Apple Silicon: $MACOS_ARM_SIZE
+            - macOS Intel: $MACOS_X64_SIZE
+            - Windows x64: $WINDOWS_SIZE
+          
+          ## 💡 Features
+          
+          - **All-in-one package** - No separate downloads or installations
+          - **Automatic server management** - Server starts automatically with the app
+          - **Port conflict handling** - Gracefully handles port conflicts
+          - **Native performance** - Built with Flutter for smooth, native UI
+          - **Cross-platform** - Same experience on macOS and Windows
+          - **Embedded JRE** - No Java installation required
+          - **Offline capable** - Works completely offline once installed
+          
+          ## 🐛 Troubleshooting
+          
+          ### Server fails to start
+          - Check if another application is using the port
+          - Try launching with a custom port
+          - Check server logs in the app bundle
+          
+          ### App won't launch (macOS)
+          - Remove quarantine attribute: \`xattr -cr /Applications/DMTools.app\`
+          - Check System Preferences → Privacy & Security
+          
+          ### App won't launch (Windows)
+          - Ensure you extracted the ZIP completely
+          - Check Windows Defender didn't block the files
+          - Run as Administrator if needed
+          
+          ### Port is always busy
+          - Use custom port: \`DMTOOLS_PORT=9090\` (macOS) or \`set DMTOOLS_PORT=9090\` (Windows)
+          - Check what's using port 8080: \`lsof -i :8080\` (macOS) or \`netstat -ano | findstr :8080\` (Windows)
+          
+          ## 📚 Documentation
+          
+          - **Main Repository:** https://github.com/IstiN/dmtools
+          - **Flutter Repository:** https://github.com/IstiN/dmtools-flutter
+          - **Server Documentation:** Check \`/swagger-ui.html\` after server starts
+          
+          ## 🔒 Security
+          
+          - Server uses local H2 database
+          - Default credentials: admin/admin (please change in production)
+          - All data stored locally on your machine
+          - No external dependencies or cloud services
+          
+          ---
+          
+          **Note:** These are complete desktop applications that include everything needed to run DMTools. Perfect for local development, demos, and small team use.
+          EOF
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: flutter-${{ github.event.inputs.server_version }}
+          name: "DMTools Flutter Apps ${{ github.event.inputs.server_version }}"
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          files: |
+            artifacts/dmtools-macos-arm64/*.dmg
+            artifacts/dmtools-macos-x64/*.dmg
+            artifacts/dmtools-windows-x64/*.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Summary
+        run: |
+          echo "## 🎉 Flutter Apps Release Created!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Server Version:** ${{ github.event.inputs.server_version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Packages Created" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS Apple Silicon (arm64)" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS Intel (x64)" >> $GITHUB_STEP_SUMMARY
+          echo "- Windows x64" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All packages include embedded server and JRE!" >> $GITHUB_STEP_SUMMARY
+

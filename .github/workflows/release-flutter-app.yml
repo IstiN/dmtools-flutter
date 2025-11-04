@@ -1,0 +1,386 @@
+name: Release Flutter App with Embedded Server
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'DMTools server version (e.g., 1.7.77). Use "latest" for latest release.'
+        required: false
+        default: 'latest'
+        type: string
+      flutter_version:
+        description: 'Flutter version to use (leave empty for stable)'
+        required: false
+        type: string
+
+jobs:
+  package-macos:
+    name: Package macOS App
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        arch: [aarch64, x64]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ github.event.inputs.flutter_version || 'stable' }}
+          channel: 'stable'
+      
+      - name: Flutter Doctor
+        run: flutter doctor -v
+      
+      - name: Make scripts executable
+        run: chmod +x scripts/package-macos.sh
+      
+      - name: Package macOS App
+        run: |
+          ./scripts/package-macos.sh ${{ github.event.inputs.version || 'latest' }} ${{ matrix.arch }}
+      
+      - name: Upload macOS Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmtools-macos-${{ matrix.arch }}
+          path: build/release/DMTools-*-macos-${{ matrix.arch }}.zip
+      
+      - name: Upload macOS SHA256
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmtools-macos-${{ matrix.arch }}-sha256
+          path: build/release/DMTools-*-macos-${{ matrix.arch }}.zip.sha256
+  
+  package-windows:
+    name: Package Windows App
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ github.event.inputs.flutter_version || 'stable' }}
+          channel: 'stable'
+      
+      - name: Flutter Doctor
+        run: flutter doctor -v
+      
+      - name: Package Windows App (PowerShell)
+        shell: pwsh
+        run: |
+          $VERSION = "${{ github.event.inputs.version }}"
+          if ([string]::IsNullOrEmpty($VERSION)) { $VERSION = "latest" }
+          
+          $ErrorActionPreference = "Stop"
+          
+          $PROJECT_ROOT = Get-Location
+          $BUILD_DIR = "$PROJECT_ROOT\build\windows-package"
+          $RELEASE_DIR = "$PROJECT_ROOT\build\release"
+          
+          Write-Host "🚀 Packaging DMTools Flutter App for Windows" -ForegroundColor Green
+          Write-Host "📦 Version: $VERSION"
+          
+          # Clean build directory
+          if (Test-Path $BUILD_DIR) { Remove-Item -Recurse -Force $BUILD_DIR }
+          New-Item -ItemType Directory -Force -Path $BUILD_DIR | Out-Null
+          New-Item -ItemType Directory -Force -Path $RELEASE_DIR | Out-Null
+          
+          # Step 1: Build Flutter Windows app
+          Write-Host "`n📱 Building Flutter Windows app..." -ForegroundColor Cyan
+          flutter clean
+          flutter pub get
+          flutter build windows --release
+          
+          Copy-Item -Recurse "$PROJECT_ROOT\build\windows\x64\runner\Release" "$BUILD_DIR\dmtools"
+          
+          # Step 2: Download server bundle
+          Write-Host "`n📥 Downloading DMTools server bundle..." -ForegroundColor Cyan
+          $SERVER_BUNDLE = "dmtools-server-api-windows-x64.zip"
+          
+          if ($VERSION -eq "latest") {
+              $DOWNLOAD_URL = "https://github.com/IstiN/dmtools/releases/latest/download/$SERVER_BUNDLE"
+          } else {
+              $DOWNLOAD_URL = "https://github.com/IstiN/dmtools/releases/download/v$VERSION/$SERVER_BUNDLE"
+          }
+          
+          Write-Host "Downloading from: $DOWNLOAD_URL"
+          Invoke-WebRequest -Uri $DOWNLOAD_URL -OutFile "$BUILD_DIR\$SERVER_BUNDLE"
+          
+          # Step 3: Extract server
+          Write-Host "`n📦 Embedding server into app..." -ForegroundColor Cyan
+          $SERVER_DIR = "$BUILD_DIR\dmtools\server"
+          New-Item -ItemType Directory -Force -Path $SERVER_DIR | Out-Null
+          Expand-Archive -Path "$BUILD_DIR\$SERVER_BUNDLE" -DestinationPath "$BUILD_DIR\temp-server" -Force
+          
+          $EXTRACTED_DIR = Get-ChildItem "$BUILD_DIR\temp-server\dmtools-server-api-windows-x64" | Select-Object -First 1
+          Move-Item "$EXTRACTED_DIR\*" $SERVER_DIR -Force
+          Remove-Item -Recurse -Force "$BUILD_DIR\temp-server"
+          Remove-Item "$BUILD_DIR\$SERVER_BUNDLE"
+          
+          # Step 4: Create launcher
+          Write-Host "`n🔧 Creating launcher script..." -ForegroundColor Cyan
+          
+          $LAUNCHER_CONTENT = @'
+@echo off
+setlocal enabledelayedexpansion
+
+set "SCRIPT_DIR=%~dp0"
+set "SERVER_DIR=%SCRIPT_DIR%server"
+set "LOG_DIR=%USERPROFILE%\.dmtools\logs"
+set "PID_FILE=%USERPROFILE%\.dmtools\server.pid"
+set "SERVER_PORT=8080"
+
+if not exist "%LOG_DIR%" mkdir "%LOG_DIR%"
+if not exist "%USERPROFILE%\.dmtools" mkdir "%USERPROFILE%\.dmtools"
+
+echo.
+echo ======================================== 
+echo   DMTools Launcher
+echo ========================================
+echo.
+
+:: Check if server is already running
+if exist "%PID_FILE%" (
+    set /p OLD_PID=<"%PID_FILE%"
+    tasklist /FI "PID eq !OLD_PID!" 2>NUL | find /I /N "java.exe">NUL
+    if "!ERRORLEVEL!"=="0" (
+        echo [INFO] Server is already running (PID: !OLD_PID!)
+        goto :LaunchUI
+    ) else (
+        del "%PID_FILE%"
+    )
+)
+
+:: Check port availability
+echo [INFO] Checking port %SERVER_PORT%...
+netstat -ano | findstr ":%SERVER_PORT% " | findstr "LISTENING" >NUL
+if "!ERRORLEVEL!"=="0" (
+    echo [WARN] Port %SERVER_PORT% is already in use
+    for %%p in (8081 8082 8083 8084 8085 8090 8888 9090) do (
+        netstat -ano | findstr ":%%p " | findstr "LISTENING" >NUL
+        if "!ERRORLEVEL!"=="1" (
+            set SERVER_PORT=%%p
+            echo [INFO] Using alternative port: !SERVER_PORT!
+            goto :StartServer
+        )
+    )
+    set /p SERVER_PORT="[INPUT] Enter custom port: "
+)
+
+:StartServer
+echo.
+echo [INFO] Starting server on port %SERVER_PORT%...
+cd /d "%SERVER_DIR%"
+start "DMTools Server" /B cmd /c "run.cmd --server.port=%SERVER_PORT% > "%LOG_DIR%\server.log" 2>&1"
+
+echo [WAIT] Waiting for server...
+set /a count=0
+:WaitLoop
+set /a count+=1
+if !count! GTR 60 (
+    echo [ERROR] Server timeout. Check: %LOG_DIR%\server.log
+    pause
+    exit /b 1
+)
+curl -s "http://localhost:%SERVER_PORT%/actuator/health" >NUL 2>&1
+if "!ERRORLEVEL!"=="0" goto :LaunchUI
+timeout /t 1 /nobreak >NUL
+goto :WaitLoop
+
+:LaunchUI
+echo [SUCCESS] Server ready!
+set "DMTOOLS_SERVER_URL=http://localhost:%SERVER_PORT%"
+cd /d "%SCRIPT_DIR%"
+start "" "dmtools.exe"
+echo.
+echo DMTools is running at http://localhost:%SERVER_PORT%
+pause
+'@
+          
+          $LAUNCHER_CONTENT | Out-File -FilePath "$BUILD_DIR\dmtools\launch-dmtools.cmd" -Encoding ASCII
+          
+          # Step 5: Create distribution package
+          Write-Host "`n📦 Creating distribution package..." -ForegroundColor Cyan
+          $APP_NAME = "DMTools-$VERSION-windows-x64"
+          $DIST_DIR = "$BUILD_DIR\$APP_NAME"
+          New-Item -ItemType Directory -Force -Path $DIST_DIR | Out-Null
+          Copy-Item -Recurse "$BUILD_DIR\dmtools\*" $DIST_DIR
+          
+          # Create README
+          @"
+DMTools for Windows
+===================
+
+Installation:
+1. Extract this ZIP to a folder (e.g., C:\Program Files\DMTools)
+2. Double-click launch-dmtools.cmd
+
+The launcher will:
+1. Start the DMTools server (port 8080 or next available)
+2. Wait for server to be ready
+3. Launch the Flutter UI
+
+Requirements:
+- Windows 10 or later
+- 2GB RAM minimum
+- No Java required (embedded JRE)
+
+Version: $VERSION
+"@ | Out-File -FilePath "$DIST_DIR\README.txt" -Encoding ASCII
+          
+          # Create ZIP
+          Write-Host "`n🗜️  Creating ZIP archive..." -ForegroundColor Cyan
+          Compress-Archive -Path "$DIST_DIR" -DestinationPath "$RELEASE_DIR\$APP_NAME.zip" -Force
+          
+          # Calculate SHA256
+          $hash = Get-FileHash "$RELEASE_DIR\$APP_NAME.zip" -Algorithm SHA256
+          "$($hash.Hash.ToLower())  $APP_NAME.zip" | Out-File -FilePath "$RELEASE_DIR\$APP_NAME.zip.sha256" -Encoding ASCII
+          
+          Write-Host "`n✅ Package created successfully!" -ForegroundColor Green
+          Write-Host "📦 $RELEASE_DIR\$APP_NAME.zip"
+      
+      - name: Upload Windows Package
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmtools-windows-x64
+          path: build/release/DMTools-*-windows-x64.zip
+      
+      - name: Upload Windows SHA256
+        uses: actions/upload-artifact@v4
+        with:
+          name: dmtools-windows-x64-sha256
+          path: build/release/DMTools-*-windows-x64.zip.sha256
+  
+  create-release:
+    name: Create GitHub Release
+    needs: [package-macos, package-windows]
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch'
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      
+      - name: List artifacts
+        run: ls -lhR artifacts/
+      
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -name "*.zip" -exec cp {} release-assets/ \;
+          find artifacts -name "*.sha256" -exec cp {} release-assets/ \;
+          ls -lh release-assets/
+      
+      - name: Generate release notes
+        run: |
+          VERSION="${{ github.event.inputs.version || 'latest' }}"
+          cat > release_notes.md << EOF
+          # 🖥️ DMTools Flutter Desktop App
+          
+          Complete desktop applications with embedded DMTools server - no separate installation needed!
+          
+          ## 📦 What's Included
+          
+          - **Embedded Server**: DMTools server with JRE (no Java installation required)
+          - **Flutter UI**: Modern, responsive desktop interface
+          - **Auto-start**: Automatically starts server and connects UI
+          - **Port Management**: Smart port selection if default is busy
+          
+          ## 🎯 Download & Install
+          
+          ### macOS
+          
+          **Apple Silicon (M1/M2/M3):**
+          - Download \`DMTools-$VERSION-macos-aarch64.zip\`
+          - Extract and copy \`dmtools.app\` to Applications
+          - First launch: Right-click → Open (bypass Gatekeeper)
+          
+          **Intel Mac:**
+          - Download \`DMTools-$VERSION-macos-x64.zip\`
+          - Extract and copy \`dmtools.app\` to Applications
+          - First launch: Right-click → Open (bypass Gatekeeper)
+          
+          ### Windows
+          
+          - Download \`DMTools-$VERSION-windows-x64.zip\`
+          - Extract to a folder (e.g., \`C:\\Program Files\\DMTools\`)
+          - Run \`launch-dmtools.cmd\`
+          - Windows Defender: Click "More info" → "Run anyway"
+          
+          ## 🚀 First Launch
+          
+          1. The launcher will check port availability
+          2. Start the server (usually on port 8080)
+          3. Wait for server to be ready (~10-30 seconds)
+          4. Launch the Flutter UI
+          5. Access at http://localhost:8080
+          6. Login: admin / admin
+          
+          ## 📋 System Requirements
+          
+          - **RAM**: 2GB minimum, 4GB recommended
+          - **Disk**: 500MB for app + data
+          - **OS**: macOS 10.15+ / Windows 10+
+          - **Java**: Not required (embedded JRE)
+          
+          ## 🔧 Configuration
+          
+          - **Custom Port**: If 8080 is busy, launcher will try alternatives or prompt
+          - **Server Logs**: \`~/.dmtools/logs/server.log\` (macOS) or \`%USERPROFILE%\\.dmtools\\logs\\server.log\` (Windows)
+          - **Stop Server**: Check PID file in \`~/.dmtools/\` or use Task Manager
+          
+          ## 📊 Build Information
+          
+          - **DMTools Version**: $VERSION
+          - **Flutter**: Stable channel
+          - **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          
+          ## 🐛 Troubleshooting
+          
+          - **Port busy**: Launcher auto-selects alternative port
+          - **Slow start**: Check server logs for startup issues
+          - **White screen**: Ensure server is running (check logs)
+          - **macOS security**: System Preferences → Privacy & Security → Allow
+          - **Windows Defender**: Add folder to exclusions for better performance
+          
+          ## 📚 Documentation
+          
+          - [DMTools Server](https://github.com/IstiN/dmtools)
+          - [Flutter App](https://github.com/IstiN/dmtools-flutter)
+          - API Docs: http://localhost:8080/swagger-ui.html (after launch)
+          EOF
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: flutter-${{ github.event.inputs.version || 'latest' }}-${{ github.run_number }}
+          name: "DMTools Flutter Desktop v${{ github.event.inputs.version || 'latest' }}"
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          files: release-assets/*
+      
+      - name: Summary
+        run: |
+          echo "## 🎉 Flutter Desktop Release Created!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**DMTools Version:** ${{ github.event.inputs.version || 'latest' }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Packages" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS Apple Silicon (aarch64)" >> $GITHUB_STEP_SUMMARY
+          echo "- macOS Intel (x64)" >> $GITHUB_STEP_SUMMARY
+          echo "- Windows x64" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All packages include embedded server with JRE!" >> $GITHUB_STEP_SUMMARY
+

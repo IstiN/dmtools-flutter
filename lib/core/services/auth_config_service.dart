@@ -49,32 +49,45 @@ class AuthConfigService {
   AuthConfigService({String? baseUrl}) : _baseUrl = baseUrl ?? AppConfig.baseUrl;
 
   /// Fetch authentication configuration from the backend
-  Future<AuthConfig> getAuthConfig() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$_baseUrl/api/auth/config'),
-        headers: {
-          'accept': '*/*',
-        },
-      );
+  Future<AuthConfig> getAuthConfig({int maxRetries = 3, Duration retryDelay = const Duration(seconds: 2)}) async {
+    int attempts = 0;
+    Exception? lastError;
 
-      if (kDebugMode) {
-        print('🔧 AuthConfigService.getAuthConfig() - Response:');
-        print('   Status: ${response.statusCode}');
-        print('   Body: ${response.body}');
-      }
+    while (attempts < maxRetries) {
+      attempts++;
+      try {
+        print('[AUTH_CONFIG] Attempt $attempts/$maxRetries to fetch config from $_baseUrl/api/auth/config');
+        
+        final response = await http.get(
+          Uri.parse('$_baseUrl/api/auth/config'),
+          headers: {
+            'accept': '*/*',
+          },
+        ).timeout(const Duration(seconds: 5));
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        return AuthConfig.fromJson(data);
-      } else {
-        throw Exception('Failed to fetch auth config: ${response.statusCode}');
+        print('[AUTH_CONFIG] Response status: ${response.statusCode}');
+        print('[AUTH_CONFIG] Response body: ${response.body}');
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = json.decode(response.body);
+          final config = AuthConfig.fromJson(data);
+          print('[AUTH_CONFIG] ✅ Config loaded: mode=${config.authenticationMode}, providers=${config.enabledProviders}');
+          return config;
+        } else {
+          lastError = Exception('Failed to fetch auth config: ${response.statusCode}');
+        }
+      } catch (e) {
+        lastError = e is Exception ? e : Exception(e.toString());
+        print('[AUTH_CONFIG] ❌ Attempt $attempts failed: $e');
+        
+        if (attempts < maxRetries) {
+          print('[AUTH_CONFIG] Retrying in ${retryDelay.inSeconds}s...');
+          await Future.delayed(retryDelay);
+        }
       }
-    } catch (e) {
-      if (kDebugMode) {
-        print('❌ AuthConfigService.getAuthConfig() failed: $e');
-      }
-      rethrow;
     }
+
+    print('[AUTH_CONFIG] ❌ All $maxRetries attempts failed');
+    throw lastError ?? Exception('Failed to fetch auth config after $maxRetries attempts');
   }
 }
