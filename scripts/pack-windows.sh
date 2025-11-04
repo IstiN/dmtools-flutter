@@ -48,6 +48,12 @@ mkdir -p "$PACKAGE_DIR"
 echo "📱 Copying Flutter build..."
 cp -R "$FLUTTER_BUILD_DIR"/* "$PACKAGE_DIR/"
 
+# Download Visual C++ Redistributable installer
+echo "📥 Downloading Visual C++ Redistributable..."
+VCREDIST_URL="https://aka.ms/vs/17/release/vc_redist.x64.exe"
+VCREDIST_PATH="$PACKAGE_DIR/vc_redist.x64.exe"
+curl -L -o "$VCREDIST_PATH" "$VCREDIST_URL" 2>/dev/null || echo "⚠️ Warning: Could not download VC++ Redistributable"
+
 # Create server directory
 mkdir -p "$PACKAGE_DIR/server"
 
@@ -55,11 +61,67 @@ mkdir -p "$PACKAGE_DIR/server"
 echo "🔧 Embedding server..."
 cp -R "$SERVER_DIR"/* "$PACKAGE_DIR/server/"
 
+# Create setup script for first-time installation
+echo "📝 Creating setup script..."
+cat > "$PACKAGE_DIR/setup.cmd" << 'EOF'
+@echo off
+echo ======================================== 
+echo   DMTools Setup
+echo ========================================
+echo.
+
+:: Check if Visual C++ Redistributable is installed
+echo [INFO] Checking for Visual C++ Redistributable...
+where /q msvcp140.dll 2>nul
+if %errorlevel% neq 0 (
+    echo [WARN] Visual C++ Redistributable not found
+    echo [INFO] Installing Visual C++ Redistributable...
+    
+    if exist "%~dp0vc_redist.x64.exe" (
+        echo Please wait while installing prerequisites...
+        "%~dp0vc_redist.x64.exe" /install /quiet /norestart
+        if %errorlevel% equ 0 (
+            echo [SUCCESS] Visual C++ Redistributable installed successfully
+        ) else (
+            echo [WARN] Installation completed with code: %errorlevel%
+            echo You may need to restart your computer
+        )
+    ) else (
+        echo [ERROR] vc_redist.x64.exe not found
+        echo Please download and install Visual C++ Redistributable manually:
+        echo https://aka.ms/vs/17/release/vc_redist.x64.exe
+        pause
+        exit /b 1
+    )
+) else (
+    echo [SUCCESS] Visual C++ Redistributable is already installed
+)
+
+echo.
+echo [SUCCESS] Setup completed! You can now run launch.cmd
+echo.
+pause
+EOF
+
 # Create launcher batch script
 echo "📝 Creating launcher script..."
 cat > "$PACKAGE_DIR/launch.cmd" << 'EOF'
 @echo off
 setlocal enabledelayedexpansion
+
+:: Check for Visual C++ Redistributable
+where /q msvcp140.dll 2>nul
+if %errorlevel% neq 0 (
+    echo ========================================
+    echo   Missing Prerequisites
+    echo ========================================
+    echo.
+    echo Visual C++ Redistributable is not installed.
+    echo Please run setup.cmd first to install prerequisites.
+    echo.
+    pause
+    exit /b 1
+)
 
 set "SERVER_DIR=%~dp0server"
 set "LOG_FILE=%SERVER_DIR%\dmtools-server.log"
@@ -140,11 +202,24 @@ cat > "$PACKAGE_DIR/README.txt" << EOF
 DMTools v$VERSION - Windows Edition
 ====================================
 
+FIRST TIME INSTALLATION:
+1. Extract the ZIP file to a folder (e.g., C:\Program Files\DMTools)
+2. Run setup.cmd as Administrator to install prerequisites
+   - This will install Visual C++ Redistributable if needed
+   - Required for Flutter applications to run
+3. After setup completes, you can use launch.cmd
+
 Quick Start:
 1. Double-click launch.cmd to start DMTools
 2. The server will start automatically on port 8080
 3. If port 8080 is busy, you'll be prompted to choose another port
 4. The app will launch once the server is ready
+
+Prerequisites:
+- Windows 10/11 (x64)
+- Visual C++ Redistributable 2015-2022 (included in setup.cmd)
+- At least 2GB RAM
+- Internet connection (for first-time setup only)
 
 Custom Port:
 You can set a custom port before launching:
@@ -152,16 +227,23 @@ You can set a custom port before launching:
   launch.cmd
 
 Files:
+- setup.cmd         : First-time setup (installs prerequisites)
 - launch.cmd        : Main launcher (starts server + app)
+- vc_redist.x64.exe : Visual C++ Redistributable installer
 - dmtools.exe       : Flutter application
 - server/           : Embedded DMTools server
 - server/run.cmd    : Server startup script
 
 Troubleshooting:
+- If you get "msvcp140.dll not found" error, run setup.cmd
 - If server fails to start, check server/dmtools-server.log
 - Ensure no firewall is blocking ports
-- You need at least 2GB RAM
 - Port must be between 1024-65535
+- Try running as Administrator if you have permission issues
+
+Manual VC++ Installation:
+If setup.cmd fails, download and install manually:
+https://aka.ms/vs/17/release/vc_redist.x64.exe
 
 For more help: https://github.com/IstiN/dmtools
 EOF
