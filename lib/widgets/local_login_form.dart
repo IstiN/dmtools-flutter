@@ -21,7 +21,7 @@ class _LocalLoginFormState extends State<LocalLoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _saveCredentials = false;
+  bool _saveCredentials = true; // Default to true for better UX
   bool _isLoading = false;
   bool _obscurePassword = true;
 

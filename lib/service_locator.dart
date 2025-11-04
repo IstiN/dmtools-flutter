@@ -17,23 +17,25 @@ import 'package:get_it/get_it.dart';
 import 'package:flutter/foundation.dart';
 
 abstract final class ServiceLocator {
-  static void init() {
+  static void init({String? serverPort}) {
+    // Construct baseUrl from server port if provided
+    final baseUrl = serverPort != null ? 'http://localhost:$serverPort' : AppConfig.baseUrl;
+    
     // Debug AppConfig values
-    if (kDebugMode) {
-      print('🔧 ServiceLocator.init() - AppConfig values:');
-      print('   enableMockData: ${AppConfig.enableMockData}');
-      print('   baseUrl: ${AppConfig.baseUrl}');
-      print('   enableLogging: ${AppConfig.enableLogging}');
-    }
+    print('[SERVICE_LOCATOR] Initializing with:');
+    print('   serverPort: $serverPort');
+    print('   baseUrl: $baseUrl');
+    print('   enableMockData: ${AppConfig.enableMockData}');
+    print('   enableLogging: ${AppConfig.enableLogging}');
 
     // Create AuthProvider first (no dependencies)
     GetIt.I.registerLazySingleton(() => AuthProvider());
 
-    // Create enhanced auth services
-    GetIt.I.registerLazySingleton<AuthConfigService>(() => AuthConfigService());
-    GetIt.I.registerLazySingleton<LocalAuthService>(() => LocalAuthService());
+    // Create enhanced auth services with custom baseUrl
+    GetIt.I.registerLazySingleton<AuthConfigService>(() => AuthConfigService(baseUrl: baseUrl));
+    GetIt.I.registerLazySingleton<LocalAuthService>(() => LocalAuthService(baseUrl: baseUrl));
     GetIt.I.registerLazySingleton<CredentialsService>(() => CredentialsService());
-    GetIt.I.registerLazySingleton<AuthApiService>(() => AuthApiService());
+    GetIt.I.registerLazySingleton<AuthApiService>(() => AuthApiService(baseUrl: baseUrl));
 
     // Create EnhancedAuthProvider with dependencies
     GetIt.I.registerLazySingleton<EnhancedAuthProvider>(
