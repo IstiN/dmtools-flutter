@@ -93,7 +93,9 @@ jobs:
 
   # Windows build temporarily disabled - Windows desktop support not yet enabled
   # Run: flutter create --platforms=windows . to enable Windows support
+  # To enable: Change "if: false" to "if: true" and rename job to "build-windows"
   build-windows-disabled:
+    if: false  # Completely skip this job
     runs-on: windows-latest
     
     steps:
