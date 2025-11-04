@@ -29,7 +29,7 @@ TEMP_DIR=$(mktemp -d)
 # Extract server bundle
 echo "🔓 Extracting server bundle..."
 unzip -q "$SERVER_BUNDLE_ZIP" -d "$TEMP_DIR"
-SERVER_DIR=$(find "$TEMP_DIR" -type d -name "dmtools-server-api-*" | head -1)
+SERVER_DIR=$(find "$TEMP_DIR" -type d \( -name "dmtools-standalone-*" -o -name "dmtools-server-api-*" \) | head -1)
 
 if [ -z "$SERVER_DIR" ]; then
     echo "❌ Error: Could not find server directory in bundle"
