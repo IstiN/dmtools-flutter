@@ -8,9 +8,10 @@ on:
         required: true
         type: string
       flutter_version:
-        description: 'Flutter version (leave empty for latest stable)'
+        description: 'Flutter version'
         required: false
         type: string
+        default: '3.35.3'
       create_release:
         description: 'Create GitHub release'
         required: false
