@@ -317,6 +317,7 @@ jobs:
           body_path: release_notes.md
           draft: false
           prerelease: false
+          make_latest: true
           files: |
             artifacts/dmtools-macos-arm64/*.dmg
             artifacts/dmtools-macos-x64/*.dmg
