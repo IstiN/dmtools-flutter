@@ -238,7 +238,17 @@ jobs:
       - name: Run Playwright integration tests
         run: |
           echo "🧪 Running Playwright integration tests..."
-          npx playwright test --config=tests/integration/playwright.config.ts --reporter=list
+          # Skip styleguide tests in CI (we're building main app, not styleguide)
+          # Run only main app tests - exclude accessibility.spec.ts (styleguide tests)
+          cd tests/integration
+          npx playwright test \
+            accessibility_tree_test.spec.ts \
+            complete_demo_flow.spec.ts \
+            enable_accessibility_test.spec.ts \
+            force_enable_accessibility.spec.ts \
+            main_app_demo.spec.ts \
+            simple_load_test.spec.ts \
+            --reporter=list
           echo "✅ Integration tests completed"
 
       - name: Stop web server
