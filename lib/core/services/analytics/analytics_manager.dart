@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode, debugPrint;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'analytics_provider.dart';
-import 'google_analytics_provider_stub.dart' if (dart.library.js) 'google_analytics_provider.dart' as web_provider;
+import 'google_analytics_provider_stub.dart' if (dart.library.js) '../../../web/google_analytics_provider.dart' as web_provider;
 import 'macos_analytics_provider.dart';
 import 'analytics_service_stub.dart';
 
@@ -30,30 +30,57 @@ class AnalyticsManager {
   Future<void> initialize() async {
     if (_initialized) return;
 
-    // Load enabled state from preferences
-    await _loadEnabledState();
+    try {
+      // Load enabled state from preferences
+      await _loadEnabledState();
 
-    // Initialize providers based on platform
-    if (kIsWeb) {
-      final googleProvider = web_provider.GoogleAnalyticsProvider();
-      await googleProvider.initialize();
-      _providers.add(googleProvider);
-    } else if (Platform.isMacOS) {
-      final macosProvider = MacOSAnalyticsProvider();
-      await macosProvider.initialize();
-      _providers.add(macosProvider);
-    } else {
-      // Use stub for other platforms
+      // Initialize providers based on platform
+      try {
+        if (kIsWeb) {
+          final googleProvider = web_provider.GoogleAnalyticsProvider();
+          await googleProvider.initialize();
+          _providers.add(googleProvider);
+        } else if (Platform.isMacOS) {
+          final macosProvider = MacOSAnalyticsProvider();
+          await macosProvider.initialize();
+          _providers.add(macosProvider);
+        } else {
+          // Use stub for other platforms (Linux, Windows, etc.)
+          final stubProvider = StubAnalyticsProvider();
+          await stubProvider.initialize();
+          _providers.add(stubProvider);
+        }
+      } catch (e) {
+        // If provider initialization fails, use stub as fallback
+        if (kDebugMode) {
+          debugPrint('⚠️ AnalyticsManager: Error initializing providers: $e');
+          debugPrint('   Falling back to stub provider');
+        }
+        final stubProvider = StubAnalyticsProvider();
+        await stubProvider.initialize();
+        _providers.clear();
+        _providers.add(stubProvider);
+      }
+
+      _initialized = true;
+      
+      if (kDebugMode) {
+        debugPrint('✅ AnalyticsManager: Initialized with ${_providers.length} provider(s)');
+        debugPrint('   Enabled: $_enabled');
+      }
+    } catch (e) {
+      // If initialization completely fails, use stub and mark as initialized
+      // This ensures the app can continue even if analytics fails
+      if (kDebugMode) {
+        debugPrint('❌ AnalyticsManager: Complete initialization failure: $e');
+        debugPrint('   Using stub provider as fallback');
+      }
       final stubProvider = StubAnalyticsProvider();
       await stubProvider.initialize();
+      _providers.clear();
       _providers.add(stubProvider);
-    }
-
-    _initialized = true;
-    
-    if (kDebugMode) {
-      debugPrint('✅ AnalyticsManager: Initialized with ${_providers.length} provider(s)');
-      debugPrint('   Enabled: $_enabled');
+      _initialized = true;
+      _enabled = true; // Default to enabled
     }
   }
 
@@ -229,10 +256,13 @@ class AnalyticsManager {
       final prefs = await SharedPreferences.getInstance();
       _enabled = prefs.getBool(_prefsKeyEnabled) ?? true; // Default to enabled
     } catch (e) {
+      // In CI/test environments, SharedPreferences might not be available
+      // Default to enabled and continue
+      _enabled = true; // Default to enabled on error
       if (kDebugMode) {
         debugPrint('⚠️ AnalyticsManager: Error loading enabled state: $e');
+        debugPrint('   Defaulting to enabled=true');
       }
-      _enabled = true; // Default to enabled on error
     }
   }
 
@@ -241,8 +271,11 @@ class AnalyticsManager {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_prefsKeyEnabled, _enabled);
     } catch (e) {
+      // In CI/test environments, SharedPreferences might not be available
+      // Silently fail - this is acceptable for tests
       if (kDebugMode) {
         debugPrint('⚠️ AnalyticsManager: Error saving enabled state: $e');
+        debugPrint('   This is acceptable in test/CI environments');
       }
     }
   }

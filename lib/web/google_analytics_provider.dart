@@ -1,7 +1,9 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
+// This file should only be imported on web platforms where dart:js is available
+// It is imported conditionally via: import 'google_analytics_provider_stub.dart' if (dart.library.js) 'google_analytics_provider.dart'
 import 'dart:js' as js;
 import 'package:flutter/foundation.dart';
-import 'analytics_provider.dart';
+import '../core/services/analytics/analytics_provider.dart';
 
 /// Google Analytics provider implementation for web platforms
 class GoogleAnalyticsProvider implements AnalyticsProvider {

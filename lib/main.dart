@@ -45,8 +45,13 @@ void main(List<String> args) async {
 
   ServiceLocator.init(serverPort: serverPort);
 
-  // Initialize analytics
-  await AnalyticsService.initialize();
+  // Initialize analytics (fail gracefully if initialization fails)
+  try {
+    await AnalyticsService.initialize();
+  } catch (e) {
+    debugPrint('⚠️ Analytics initialization failed: $e');
+    // Continue app startup even if analytics fails
+  }
 
   runApp(
     MultiProvider(
