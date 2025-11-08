@@ -136,8 +136,11 @@ class MacOSAnalyticsProvider implements AnalyticsProvider {
         await prefs.remove(_prefsKey);
       }
     } catch (e) {
+      // In CI/test environments, SharedPreferences might not be available
+      // This is acceptable - we'll just start with an empty buffer
       if (kDebugMode) {
         debugPrint('⚠️ MacOSAnalyticsProvider: Error loading stored events: $e');
+        debugPrint('   Starting with empty event buffer (acceptable in test/CI)');
       }
     }
   }

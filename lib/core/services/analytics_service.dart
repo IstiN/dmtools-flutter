@@ -3,9 +3,10 @@ import 'analytics/analytics_provider.dart';
 
 export 'analytics/analytics_manager.dart';
 export 'analytics/analytics_provider.dart';
-export 'analytics/google_analytics_provider.dart' if (dart.library.js) 'analytics/google_analytics_provider.dart';
-export 'analytics/macos_analytics_provider.dart';
-export 'analytics/analytics_service_stub.dart';
+// Don't export platform-specific providers directly - they're used internally by AnalyticsManager
+// export 'analytics/google_analytics_provider.dart' if (dart.library.js) 'analytics/google_analytics_provider.dart';
+// export 'analytics/macos_analytics_provider.dart';
+// export 'analytics/analytics_service_stub.dart';
 
 /// Convenience wrapper for AnalyticsManager
 /// 
