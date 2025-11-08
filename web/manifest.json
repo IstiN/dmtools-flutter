@@ -1,15 +1,18 @@
 {
-    "name": "DMTools",
+    "name": "DMTools - AI Agent Management Platform",
     "short_name": "DMTools",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#466af1",
+    "background_color": "#121212",
     "theme_color": "#466af1",
-    "description": "DMTools - Development and Management Tools Platform",
-    "orientation": "portrait-primary",
+    "description": "Comprehensive development and management tools for AI agents with cross-platform support. Build, manage, and deploy AI agents efficiently.",
+    "orientation": "any",
     "prefer_related_applications": false,
     "version": "__BUILD_VERSION__",
     "scope": "/",
+    "categories": ["developer", "productivity", "business"],
+    "lang": "en-US",
+    "dir": "ltr",
     "icons": [
         {
             "src": "icons/Icon-192.png",

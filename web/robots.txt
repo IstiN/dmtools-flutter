@@ -1,0 +1,16 @@
+# robots.txt for DMTools
+# Allow all search engines to crawl the site
+
+User-agent: *
+Allow: /
+
+# Disallow admin and API endpoints if they exist
+Disallow: /api/
+Disallow: /admin/
+
+# Sitemap location
+Sitemap: __CANONICAL_URL__/sitemap.xml
+
+# Crawl-delay (optional, adjust based on server capacity)
+Crawl-delay: 1
+
