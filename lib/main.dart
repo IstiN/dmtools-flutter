@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import 'package:macos_window_utils/macos_window_utils.dart';
 import 'core/routing/enhanced_app_router.dart';
+import 'core/services/analytics_service.dart';
 import 'providers/enhanced_auth_provider.dart';
 import 'providers/integration_provider.dart';
 import 'providers/mcp_provider.dart';
@@ -43,6 +44,9 @@ void main(List<String> args) async {
   }
 
   ServiceLocator.init(serverPort: serverPort);
+
+  // Initialize analytics
+  await AnalyticsService.initialize();
 
   runApp(
     MultiProvider(

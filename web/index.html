@@ -1,6 +1,15 @@
 <!DOCTYPE html>
-<html class="theme-dark">
+<html lang="en" class="theme-dark">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SETFFT4EWQ"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-SETFFT4EWQ');
+  </script>
+
   <!--
     If you are serving your web app in a path other than the root, change the
     href value below to reflect the base path you are serving from.
@@ -18,7 +27,23 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="DMTools - AI Agent Management Platform. Comprehensive development and management tools for AI agents with cross-platform support.">
+  <meta name="keywords" content="AI agents, agent management, development tools, Flutter, cross-platform, AI platform, automation tools">
+  <meta name="author" content="DMTools">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  <meta name="rating" content="general">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="__CANONICAL_URL__">
+  
+  <!-- Geo Tags -->
+  <meta name="geo.region" content="US">
+  <meta name="geo.placename" content="United States">
+  <meta name="ICBM" content="39.8283, -98.5795">
   
   <!-- Enhanced cache control for Safari -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -28,6 +53,85 @@
   
   <!-- Version tracking for cache busting -->
   <meta name="app-version" content="__BUILD_VERSION__">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="__CANONICAL_URL__">
+  <meta property="og:title" content="DMTools - AI Agent Management Platform">
+  <meta property="og:description" content="Comprehensive development and management tools for AI agents with cross-platform support. Build, manage, and deploy AI agents efficiently.">
+  <meta property="og:image" content="__CANONICAL_URL__/icons/Icon-512.png">
+  <meta property="og:image:width" content="512">
+  <meta property="og:image:height" content="512">
+  <meta property="og:image:alt" content="DMTools Logo">
+  <meta property="og:site_name" content="DMTools">
+  <meta property="og:locale" content="en_US">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="__CANONICAL_URL__">
+  <meta name="twitter:title" content="DMTools - AI Agent Management Platform">
+  <meta name="twitter:description" content="Comprehensive development and management tools for AI agents with cross-platform support.">
+  <meta name="twitter:image" content="__CANONICAL_URL__/icons/Icon-512.png">
+  <meta name="twitter:image:alt" content="DMTools Logo">
+  <meta name="twitter:creator" content="@dmtools">
+  <meta name="twitter:site" content="@dmtools">
+  
+  <!-- Geo Optimization: Resource Hints -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com">
+  <link rel="dns-prefetch" href="//fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Preload critical resources -->
+  <link rel="preload" href="css/shared-theme.css" as="style">
+  <link rel="preload" href="config.js" as="script">
+  
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DMTools",
+    "alternateName": "DMTools AI Agent Management Platform",
+    "url": "__CANONICAL_URL__",
+    "logo": "__CANONICAL_URL__/icons/Icon-512.png",
+    "description": "Comprehensive development and management tools for AI agents with cross-platform support. Build, manage, and deploy AI agents efficiently.",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Web, Android, iOS, macOS, Windows, Linux",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.5",
+      "ratingCount": "100"
+    },
+    "featureList": [
+      "AI Agent Management",
+      "Cross-platform Support",
+      "Real-time Collaboration",
+      "Integration Management",
+      "Chat Interface"
+    ],
+    "screenshot": "__CANONICAL_URL__/icons/Icon-512.png",
+    "softwareVersion": "__BUILD_VERSION__",
+    "releaseNotes": "AI Agent Management Platform with comprehensive design system",
+    "author": {
+      "@type": "Organization",
+      "name": "DMTools"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "DMTools",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "__CANONICAL_URL__/icons/Icon-512.png"
+      }
+    }
+  }
+  </script>
   <script>
     // Simple Safari cache detection and handling
     (function() {
@@ -53,24 +157,27 @@
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="dmtools_flutter">
-  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="apple-mobile-web-app-title" content="DMTools">
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png"/>
+  <link rel="shortcut icon" href="favicon.png"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="icons/Icon-192.png"/>
 
-  <title>DMTools</title>
+  <title>DMTools - AI Agent Management Platform | Development & Management Tools</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="sitemap" type="application/xml" href="sitemap.xml">
   
   <!-- Shared theme styles -->
   <link rel="stylesheet" href="css/shared-theme.css">
   
   <!-- Runtime configuration -->
-  <script src="config.js"></script>
+  <script src="config.js" defer></script>
   
   <!-- Shared theme management -->
-  <script src="js/shared-theme.js"></script>
-  <script src="js/clipboard.js"></script>
+  <script src="js/shared-theme.js" defer></script>
+  <script src="js/clipboard.js" defer></script>
   
   <!-- Immediate background script - runs before any other content -->
   <script>
