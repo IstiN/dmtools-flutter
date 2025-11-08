@@ -209,7 +209,7 @@ jobs:
       - name: Build Flutter web app
         run: |
           echo "🏗️ Building Flutter web app..."
-          flutter build web --web-renderer=canvaskit --dart-define=FLUTTER_ENV=development
+          flutter build web --dart-define=FLUTTER_ENV=development
           echo "✅ Build completed"
 
       - name: Start web server
