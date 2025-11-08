@@ -33,10 +33,10 @@ class RequiredIntegrationSelection extends StatelessWidget {
             integration: integration,
             isSelected: selectedIntegrations.contains(integration.id),
             onChanged: () {
-              print(
+              debugPrint(
                 '🔧 RequiredIntegrationSelection: Integration ${integration.id} (${integration.displayName}) changed',
               );
-              print(
+              debugPrint(
                 '🔧 RequiredIntegrationSelection: Current selection state: ${selectedIntegrations.contains(integration.id)}',
               );
               onIntegrationChanged(integration.id);
@@ -88,8 +88,8 @@ class _IntegrationItem extends StatelessWidget {
   final ThemeColorSet colors;
 
   void _handleTap() {
-    print('🔧 _IntegrationItem: Tapped on ${integration.displayName} (${integration.id})');
-    print('🔧 _IntegrationItem: Current selection state: $isSelected');
+    debugPrint('🔧 _IntegrationItem: Tapped on ${integration.displayName} (${integration.id})');
+    debugPrint('🔧 _IntegrationItem: Current selection state: $isSelected');
     onChanged();
   }
 

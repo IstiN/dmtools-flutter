@@ -51,7 +51,7 @@ class _ChatPageState extends State<ChatPage> {
   void _setupPasteListener(ChatProvider chatProvider) {
     try {
       if (kDebugMode) {
-        print('📋 Setting up paste listener...');
+        debugPrint('📋 Setting up paste listener...');
       }
 
       // Use WebPasteService which handles all JavaScript integration
@@ -60,11 +60,11 @@ class _ChatPageState extends State<ChatPage> {
       });
 
       if (kDebugMode) {
-        print('✅ Paste listener setup complete');
+        debugPrint('✅ Paste listener setup complete');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Failed to setup paste listener: $e');
+        debugPrint('⚠️ Failed to setup paste listener: $e');
       }
     }
   }
@@ -88,19 +88,19 @@ class _ChatPageState extends State<ChatPage> {
         chatProvider.addAttachments([attachment]);
 
         if (kDebugMode) {
-          print('✅ Image attachment added: ${attachment.name} (${attachment.size} bytes)');
+          debugPrint('✅ Image attachment added: ${attachment.name} (${attachment.size} bytes)');
         }
       } else if (type == 'text') {
         final text = content as String;
         _chatInterfaceKey.currentState?.insertText(text);
 
         if (kDebugMode) {
-          print('✅ Text inserted into chat input: ${text.length} characters');
+          debugPrint('✅ Text inserted into chat input: ${text.length} characters');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error processing paste data: $e');
+        debugPrint('❌ Error processing paste data: $e');
       }
     }
   }

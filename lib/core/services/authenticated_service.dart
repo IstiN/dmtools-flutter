@@ -132,11 +132,11 @@ class AuthenticatedService {
     final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
 
     if (authProvider.isAuthenticated) {
-      print('🔐 AuthenticatedService: User already authenticated');
+      debugPrint('🔐 AuthenticatedService: User already authenticated');
       return;
     }
 
-    print('🔐 AuthenticatedService: User not authenticated, waiting for auth...');
+    debugPrint('🔐 AuthenticatedService: User not authenticated, waiting for auth...');
 
     // Wait for auth to complete (this handles the automatic auth flow)
     int attempts = 0;
@@ -148,7 +148,7 @@ class AuthenticatedService {
 
       if (attempts % 4 == 0) {
         // Log every 2 seconds
-        print('🔐 AuthenticatedService: Still waiting for authentication... (${attempts * 0.5}s)');
+        debugPrint('🔐 AuthenticatedService: Still waiting for authentication... (${attempts * 0.5}s)');
       }
     }
 
@@ -156,18 +156,18 @@ class AuthenticatedService {
       throw AuthenticationTimeoutException('Authentication timeout after ${maxAttempts * 0.5} seconds');
     }
 
-    print('🔐 AuthenticatedService: Authentication completed successfully');
+    debugPrint('🔐 AuthenticatedService: Authentication completed successfully');
   }
 
   Future<void> _ensureIntegrationsLoaded() async {
     final integrationProvider = Provider.of<IntegrationProvider>(context, listen: false);
 
     if (integrationProvider.isInitialized && !integrationProvider.isLoading) {
-      print('🔧 AuthenticatedService: Integrations already loaded');
+      debugPrint('🔧 AuthenticatedService: Integrations already loaded');
       return;
     }
 
-    print('🔧 AuthenticatedService: Loading integrations...');
+    debugPrint('🔧 AuthenticatedService: Loading integrations...');
 
     if (!integrationProvider.isInitialized) {
       await integrationProvider.forceReinitialize();
@@ -175,14 +175,14 @@ class AuthenticatedService {
 
     // Always wait for loading to complete, even after forceReinitialize
     if (integrationProvider.isLoading) {
-      print('🔧 AuthenticatedService: Waiting for integration loading to complete...');
+      debugPrint('🔧 AuthenticatedService: Waiting for integration loading to complete...');
       int attempts = 0;
       const maxAttempts = 20; // 10 seconds max wait
 
       while (integrationProvider.isLoading && attempts < maxAttempts) {
         await Future.delayed(const Duration(milliseconds: 500));
         attempts++;
-        print('🔧 AuthenticatedService: Still waiting... ($attempts/20)');
+        debugPrint('🔧 AuthenticatedService: Still waiting... ($attempts/20)');
       }
 
       if (integrationProvider.isLoading) {
@@ -190,7 +190,7 @@ class AuthenticatedService {
       }
     }
 
-    print('🔧 AuthenticatedService: Integrations loaded successfully');
+    debugPrint('🔧 AuthenticatedService: Integrations loaded successfully');
   }
 }
 

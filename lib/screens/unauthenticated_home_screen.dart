@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
@@ -22,8 +23,8 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
       backgroundColor: colors.bgColor,
       body: Column(
         children: [
-          // macOS titlebar spacer
-          if (Platform.isMacOS) const SizedBox(height: 12),
+          // macOS titlebar spacer (only for native macOS, not web)
+          if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
           
           // App Header from styleguide
           AppHeader(
@@ -68,14 +69,24 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                           // Show login dialog
                           showDialog(
                             context: context,
-                            builder: (BuildContext context) {
-                              return const Dialog(
-                                backgroundColor: Colors.transparent,
-                                insetPadding: EdgeInsets.all(16),
-                                elevation: 0,
-                                child: AuthLoginWidget(
-                                  title: 'Get Started with DMTools',
-                                  subtitle: 'Sign in to access your workspace and start managing your projects',
+                            builder: (context) {
+                              return PopScope(
+                                onPopInvokedWithResult: (didPop, _) {
+                                  if (!didPop) {
+                                    Navigator.of(context).pop();
+                                  }
+                                },
+                                child: const Dialog(
+                                  backgroundColor: Colors.transparent,
+                                  insetPadding: EdgeInsets.all(16),
+                                  elevation: 0,
+                                  child: FocusScope(
+                                    autofocus: true,
+                                    child: AuthLoginWidget(
+                                      title: 'Get Started with DMTools',
+                                      subtitle: 'Sign in to access your workspace and start managing your projects',
+                                    ),
+                                  ),
                                 ),
                               );
                             },

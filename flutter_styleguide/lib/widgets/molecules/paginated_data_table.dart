@@ -113,7 +113,7 @@ class _DMPaginatedDataTableState extends State<DMPaginatedDataTable> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () {
       // ignore: avoid_print
-      print('🔍 Debounced Search Triggered: "$value"');
+      debugPrint('🔍 Debounced Search Triggered: "$value"');
       if (widget.onSearchChanged != null) {
         widget.onSearchChanged!(value.isEmpty ? null : value);
       }

@@ -87,6 +87,7 @@ class ChatInterface extends StatefulWidget {
 
 class ChatInterfaceState extends State<ChatInterface> {
   final TextEditingController _messageController = TextEditingController();
+  final FocusNode _messageFocusNode = FocusNode();
 
   /// Insert text into the message input field
   void insertText(String text) {
@@ -121,6 +122,10 @@ class ChatInterfaceState extends State<ChatInterface> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollToBottom();
+      // Focus the message input field when chat appears
+      if (mounted && _messageFocusNode.canRequestFocus) {
+        _messageFocusNode.requestFocus();
+      }
     });
   }
 
@@ -133,6 +138,14 @@ class ChatInterfaceState extends State<ChatInterface> {
         _scrollToBottom();
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _messageFocusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
   void _scrollToBottom() {
@@ -417,6 +430,8 @@ class ChatInterfaceState extends State<ChatInterface> {
                           },
                           child: TextField(
                             controller: _messageController,
+                            focusNode: _messageFocusNode,
+                            autofocus: true,
                             style: TextStyle(color: colors.textColor, fontSize: 14),
                             // Single line input - Enter sends message
                             textAlignVertical: TextAlignVertical.center,

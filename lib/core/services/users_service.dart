@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../../network/services/api_service.dart';
 import '../../network/generated/api.models.swagger.dart';
 import '../../network/generated/api.enums.swagger.dart' as enums;
@@ -122,22 +123,22 @@ class UsersService {
     String? search,
   }) async {
     try {
-      print('🔧 UsersService: Calling API with page=$page, size=$size, search=$search');
+      debugPrint('🔧 UsersService: Calling API with page=$page, size=$size, search=$search');
       final response = await _apiService.getAdminUsers(
         page: page,
         size: size,
         search: search,
       );
-      print('🔧 UsersService: Raw API response type: ${response.runtimeType}');
-      print('🔧 UsersService: Raw API response keys: ${response.keys}');
+      debugPrint('🔧 UsersService: Raw API response type: ${response.runtimeType}');
+      debugPrint('🔧 UsersService: Raw API response keys: ${response.keys}');
 
       final adminResponse = AdminUsersResponse.fromJson(response);
-      print('🔧 UsersService: Parsed response - content count: ${adminResponse.content.length}');
-      print('🔧 UsersService: Parsed response - totalElements: ${adminResponse.totalElements}');
+      debugPrint('🔧 UsersService: Parsed response - content count: ${adminResponse.content.length}');
+      debugPrint('🔧 UsersService: Parsed response - totalElements: ${adminResponse.totalElements}');
 
       return adminResponse;
     } catch (e) {
-      print('🔧 UsersService: Error loading admin users: $e');
+      debugPrint('🔧 UsersService: Error loading admin users: $e');
       throw Exception('Failed to load admin users: $e');
     }
   }

@@ -38,7 +38,7 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
 
   @override
   Future<void> loadAuthenticatedData() async {
-    // print('🔐 UsersPage: Loading authenticated data...');
+    // debugPrint('🔐 UsersPage: Loading authenticated data...');
 
     try {
       // Initialize services
@@ -50,7 +50,7 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
       // For now, we'll try to call the admin API and handle 403 errors
 
       // Load admin users directly from new API
-      print('🔐 UsersPage: Calling getAdminUsers API...');
+      debugPrint('🔐 UsersPage: Calling getAdminUsers API...');
       final adminUsersResponse = await authService.execute(() async {
         return await _usersService.getAdminUsers(
           size: 100, // Load more users for now
@@ -58,15 +58,15 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
         );
       });
 
-      print('🔐 UsersPage: API Response - content length: ${adminUsersResponse.content.length}');
-      print('🔐 UsersPage: API Response - totalElements: ${adminUsersResponse.totalElements}');
+      debugPrint('🔐 UsersPage: API Response - content length: ${adminUsersResponse.content.length}');
+      debugPrint('🔐 UsersPage: API Response - totalElements: ${adminUsersResponse.totalElements}');
 
       // Convert AdminUserDto to WorkspaceUserDto for compatibility
       final users = adminUsersResponse.content.map((adminUser) => adminUser.toWorkspaceUserDto()).toList();
 
-      print('🔐 UsersPage: Converted users count: ${users.length}');
+      debugPrint('🔐 UsersPage: Converted users count: ${users.length}');
       if (users.isNotEmpty) {
-        print('🔐 UsersPage: First user: ${users.first.email} (${users.first.role})');
+        debugPrint('🔐 UsersPage: First user: ${users.first.email} (${users.first.role})');
       }
 
       setState(() {
@@ -74,16 +74,16 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
       });
 
       if (users.isEmpty) {
-        print('🔐 UsersPage: Setting EMPTY state - no users found');
+        debugPrint('🔐 UsersPage: Setting EMPTY state - no users found');
         setEmpty();
       } else {
-        print('🔐 UsersPage: Setting LOADED state - ${users.length} users found');
+        debugPrint('🔐 UsersPage: Setting LOADED state - ${users.length} users found');
         setLoaded();
       }
 
-      // print('🔐 UsersPage: Loaded ${users.length} admin users');
+      // debugPrint('🔐 UsersPage: Loaded ${users.length} admin users');
     } catch (e) {
-      // print('🔐 UsersPage: Error loading data: $e');
+      // debugPrint('🔐 UsersPage: Error loading data: $e');
       if (e.toString().contains('403') || e.toString().contains('Forbidden')) {
         setError('Admin access required. You do not have permission to manage users.');
       } else {
@@ -159,7 +159,7 @@ class _UsersPageState extends AuthenticatedPage<UsersPage> {
         _allUsers = users;
       });
     } catch (e) {
-      // print('Error reloading users: $e');
+      // debugPrint('Error reloading users: $e');
     }
   }
 

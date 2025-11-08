@@ -111,11 +111,11 @@ class OAuthService {
       );
 
       if (kDebugMode) {
-        print('🔐 Initiating OAuth login for ${provider.name}');
-        print('📍 Client Redirect URI: $_clientRedirectUri');
-        print('🌍 Environment: ${AppConfig.environment.value}');
-        print('📤 Request to: $_baseUrl/api/oauth-proxy/initiate');
-        print('📥 Response status: ${response.statusCode}');
+        debugPrint('🔐 Initiating OAuth login for ${provider.name}');
+        debugPrint('📍 Client Redirect URI: $_clientRedirectUri');
+        debugPrint('🌍 Environment: ${AppConfig.environment.value}');
+        debugPrint('📤 Request to: $_baseUrl/api/oauth-proxy/initiate');
+        debugPrint('📥 Response status: ${response.statusCode}');
       }
 
       if (response.statusCode == 200) {
@@ -126,9 +126,9 @@ class OAuthService {
 
         if (authUrl != null) {
           if (kDebugMode) {
-            print('🔗 Auth URL received: $authUrl');
-            print('🔍 State: ${state?.substring(0, 10)}...');
-            print('⏰ Expires in: $expiresIn seconds');
+            debugPrint('🔗 Auth URL received: $authUrl');
+            debugPrint('🔍 State: ${state?.substring(0, 10)}...');
+            debugPrint('⏰ Expires in: $expiresIn seconds');
           }
 
           return {
@@ -141,13 +141,13 @@ class OAuthService {
         }
       } else {
         if (kDebugMode) {
-          print('❌ OAuth initiation failed: ${response.statusCode} ${response.body}');
+          debugPrint('❌ OAuth initiation failed: ${response.statusCode} ${response.body}');
         }
         throw Exception('Backend OAuth initiation failed: ${response.statusCode}');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ OAuth initiation failed: $e');
+        debugPrint('❌ OAuth initiation failed: $e');
       }
       return null;
     }
@@ -180,7 +180,7 @@ class OAuthService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ OAuth URL launch failed: $e');
+        debugPrint('❌ OAuth URL launch failed: $e');
       }
       return false;
     }
@@ -206,9 +206,9 @@ class OAuthService {
       }
 
       if (kDebugMode) {
-        print('🔄 Handling OAuth callback');
-        print('📝 Temp code received: ${tempCode.substring(0, 10)}...');
-        print('🔍 State received: ${state.substring(0, 10)}...');
+        debugPrint('🔄 Handling OAuth callback');
+        debugPrint('📝 Temp code received: ${tempCode.substring(0, 10)}...');
+        debugPrint('🔍 State received: ${state.substring(0, 10)}...');
       }
 
       // Step 4: Exchange temp code for JWT token
@@ -221,7 +221,7 @@ class OAuthService {
       return false;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ OAuth callback handling failed: $e');
+        debugPrint('❌ OAuth callback handling failed: $e');
       }
       return false;
     }
@@ -243,9 +243,9 @@ class OAuthService {
       );
 
       if (kDebugMode) {
-        print('🔄 Exchanging temp code for JWT token');
-        print('📤 Request to: $_baseUrl/api/oauth-proxy/exchange');
-        print('📥 Response status: ${response.statusCode}');
+        debugPrint('🔄 Exchanging temp code for JWT token');
+        debugPrint('📤 Request to: $_baseUrl/api/oauth-proxy/exchange');
+        debugPrint('📥 Response status: ${response.statusCode}');
       }
 
       if (response.statusCode == 200) {
@@ -259,7 +259,7 @@ class OAuthService {
 
         if (accessToken != null) {
           if (kDebugMode) {
-            print('✅ JWT token received successfully');
+            debugPrint('✅ JWT token received successfully');
           }
 
           return OAuthToken(
@@ -277,13 +277,13 @@ class OAuthService {
         }
       } else {
         if (kDebugMode) {
-          print('❌ Token exchange failed: ${response.statusCode} ${response.body}');
+          debugPrint('❌ Token exchange failed: ${response.statusCode} ${response.body}');
         }
         return null;
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Token exchange error: $e');
+        debugPrint('❌ Token exchange error: $e');
       }
       return null;
     }
@@ -295,7 +295,7 @@ class OAuthService {
       final token = await getCurrentToken();
       if (token == null) {
         if (kDebugMode) {
-          print('❌ No token available for user data request');
+          debugPrint('❌ No token available for user data request');
         }
         return null;
       }
@@ -310,9 +310,9 @@ class OAuthService {
       );
 
       if (kDebugMode) {
-        print('🔄 Fetching user data');
-        print('📤 Request to: $_baseUrl/api/auth/user');
-        print('📥 Response status: ${response.statusCode}');
+        debugPrint('🔄 Fetching user data');
+        debugPrint('📤 Request to: $_baseUrl/api/auth/user');
+        debugPrint('📥 Response status: ${response.statusCode}');
       }
 
       if (response.statusCode == 200) {
@@ -320,16 +320,16 @@ class OAuthService {
         final user = UserDto.fromJson(json);
 
         if (kDebugMode) {
-          print('✅ User data received successfully');
-          print('👤 User: ${user.name} (${user.email})');
-          print('🔐 Authenticated: ${user.authenticated}');
-          print('🏢 Provider: ${user.provider}');
+          debugPrint('✅ User data received successfully');
+          debugPrint('👤 User: ${user.name} (${user.email})');
+          debugPrint('🔐 Authenticated: ${user.authenticated}');
+          debugPrint('🏢 Provider: ${user.provider}');
         }
 
         // Check if user is authenticated
         if (user.authenticated != true) {
           if (kDebugMode) {
-            print('❌ User is not authenticated, clearing token');
+            debugPrint('❌ User is not authenticated, clearing token');
           }
           await _clearToken();
           return null;
@@ -338,13 +338,13 @@ class OAuthService {
         return user;
       } else {
         if (kDebugMode) {
-          print('❌ User data fetch failed: ${response.statusCode} ${response.body}');
+          debugPrint('❌ User data fetch failed: ${response.statusCode} ${response.body}');
         }
         return null;
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ User data fetch error: $e');
+        debugPrint('❌ User data fetch error: $e');
       }
       return null;
     }
@@ -375,7 +375,7 @@ class OAuthService {
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error getting current token: $e');
+        debugPrint('❌ Error getting current token: $e');
       }
       return null;
     }
@@ -409,13 +409,13 @@ class OAuthService {
         );
       } else {
         if (kDebugMode) {
-          print('❌ Token refresh failed: ${response.statusCode}');
+          debugPrint('❌ Token refresh failed: ${response.statusCode}');
         }
         return null;
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Token refresh error: $e');
+        debugPrint('❌ Token refresh error: $e');
       }
       return null;
     }
@@ -427,7 +427,7 @@ class OAuthService {
     await _secureStorage.write(key: _storageKey, value: tokenJson);
 
     if (kDebugMode) {
-      print('✅ JWT token stored securely');
+      debugPrint('✅ JWT token stored securely');
     }
   }
 
@@ -435,7 +435,7 @@ class OAuthService {
   Future<void> _clearToken() async {
     await _secureStorage.delete(key: _storageKey);
     if (kDebugMode) {
-      print('🗑️ Token cleared');
+      debugPrint('🗑️ Token cleared');
     }
   }
 
@@ -443,7 +443,7 @@ class OAuthService {
   Future<void> logout() async {
     await _clearToken();
     if (kDebugMode) {
-      print('📤 Logout completed');
+      debugPrint('📤 Logout completed');
     }
   }
 }

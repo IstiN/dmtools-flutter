@@ -221,7 +221,7 @@ class _AdvancedDataPageState extends State<AdvancedDataPage> with app_loading.Lo
           () => _loadLocalData(),
         ],
         onProgress: (completed, total) {
-          print('Loading progress: $completed/$total');
+          debugPrint('Loading progress: $completed/$total');
         },
       );
 

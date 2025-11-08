@@ -318,40 +318,40 @@ class ApiService {
     String? search,
   }) async {
     try {
-      print('🌐 ApiService: Making request to /api/admin/users with page=$page, size=$size, search=$search');
+      debugPrint('🌐 ApiService: Making request to /api/admin/users with page=$page, size=$size, search=$search');
       final response = await _latestApi.apiAdminUsersGet(
         page: page,
         size: size,
         search: search,
       );
-      print('🌐 ApiService: Response status: ${response.statusCode}');
-      print('🌐 ApiService: Response successful: ${response.isSuccessful}');
-      print('🌐 ApiService: Response body type: ${response.body?.runtimeType}');
+      debugPrint('🌐 ApiService: Response status: ${response.statusCode}');
+      debugPrint('🌐 ApiService: Response successful: ${response.isSuccessful}');
+      debugPrint('🌐 ApiService: Response body type: ${response.body?.runtimeType}');
 
       if (response.isSuccessful && response.body != null) {
         // Response is Object, so we need to parse it
         if (response.body is Map<String, dynamic>) {
           final result = response.body as Map<String, dynamic>;
-          print('🌐 ApiService: Response as Map - keys: ${result.keys}');
+          debugPrint('🌐 ApiService: Response as Map - keys: ${result.keys}');
           if (result.containsKey('content')) {
-            print('🌐 ApiService: Content array length: ${(result['content'] as List?)?.length ?? 0}');
+            debugPrint('🌐 ApiService: Content array length: ${(result['content'] as List?)?.length ?? 0}');
           }
           return result;
         } else if (response.body is String) {
-          print('🌐 ApiService: Response is String, decoding JSON...');
+          debugPrint('🌐 ApiService: Response is String, decoding JSON...');
           final result = jsonDecode(response.body as String) as Map<String, dynamic>;
-          print('🌐 ApiService: Decoded JSON keys: ${result.keys}');
+          debugPrint('🌐 ApiService: Decoded JSON keys: ${result.keys}');
           return result;
         } else {
-          print('🌐 ApiService: Unexpected response body: ${response.body}');
+          debugPrint('🌐 ApiService: Unexpected response body: ${response.body}');
           throw ApiException('Unexpected response format from /api/admin/users: ${response.body.runtimeType}');
         }
       } else {
-        print('🌐 ApiService: Request failed - status: ${response.statusCode}, body: ${response.body}');
+        debugPrint('🌐 ApiService: Request failed - status: ${response.statusCode}, body: ${response.body}');
         throw ApiException('Failed to get admin users', response.statusCode);
       }
     } catch (e) {
-      print('🌐 ApiService: Exception in getAdminUsers: $e');
+      debugPrint('🌐 ApiService: Exception in getAdminUsers: $e');
       throw _handleError(e);
     }
   }

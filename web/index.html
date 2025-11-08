@@ -193,7 +193,38 @@
         loadingIndicator.style.display = 'none';
       }
       
-            // Theme debugging and management now handled by shared-theme.js
+      // Force enable Flutter semantics for accessibility
+      // This makes the semantic tree accessible to automation tools, screen readers, and browser MCP
+      setTimeout(() => {
+        // Flutter creates an "Enable accessibility" button - click it automatically
+        // This exposes the entire semantic tree to the accessibility API
+        const enableAccessibility = () => {
+          const button = document.querySelector('flt-semantics-placeholder[aria-label="Enable accessibility"]');
+          if (button) {
+            console.log('🔘 Auto-enabling accessibility for automation tools and browser MCP...');
+            button.click();
+            
+            // Verify after a moment
+            setTimeout(() => {
+              console.log('✅ Accessibility enabled!');
+              console.log('🤖 Automation tools can now access elements via:');
+              console.log('   - page.getByRole("button", { name: "Demo" })');
+              console.log('   - page.accessibility.snapshot()');
+              console.log('   - Browser MCP can interact with all UI elements');
+            }, 1000);
+            return true;
+          }
+          return false;
+        };
+        
+        // Try immediately
+        if (!enableAccessibility()) {
+          // If not found, try again after a delay
+          setTimeout(enableAccessibility, 2000);
+        }
+      }, 1000);
+      
+      // Theme debugging and management now handled by shared-theme.js
       if (window.themeManager) {
         // Run debug after Flutter loads
         setTimeout(() => window.themeManager.debugTheme(), 1000);

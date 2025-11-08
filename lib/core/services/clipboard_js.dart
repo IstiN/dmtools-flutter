@@ -15,7 +15,7 @@ class JSClipboardService {
     try {
       if (!js.context.hasProperty('ClipboardAPI')) {
         if (kDebugMode) {
-          print('⚠️ ClipboardAPI object not found in JavaScript context');
+          debugPrint('⚠️ ClipboardAPI object not found in JavaScript context');
         }
         return false;
       }
@@ -23,7 +23,7 @@ class JSClipboardService {
       final clipboardAPI = js.context['ClipboardAPI'];
       if (clipboardAPI == null) {
         if (kDebugMode) {
-          print('⚠️ ClipboardAPI is null');
+          debugPrint('⚠️ ClipboardAPI is null');
         }
         return false;
       }
@@ -31,7 +31,7 @@ class JSClipboardService {
       final isAvailableFunc = clipboardAPI['isAvailable'];
       if (isAvailableFunc == null) {
         if (kDebugMode) {
-          print('⚠️ isAvailable function not found');
+          debugPrint('⚠️ isAvailable function not found');
         }
         return false;
       }
@@ -40,7 +40,7 @@ class JSClipboardService {
       return result == true;
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ JavaScript ClipboardAPI not available: $e');
+        debugPrint('⚠️ JavaScript ClipboardAPI not available: $e');
       }
       return false;
     }
@@ -58,7 +58,7 @@ class JSClipboardService {
 
       if (requestPermissionsFunc == null) {
         if (kDebugMode) {
-          print('⚠️ requestPermissions function not found');
+          debugPrint('⚠️ requestPermissions function not found');
         }
         return false;
       }
@@ -72,7 +72,7 @@ class JSClipboardService {
         completer.complete(result == true);
       }).catchError((error) {
         if (kDebugMode) {
-          print('⚠️ Permission request failed: $error');
+          debugPrint('⚠️ Permission request failed: $error');
         }
         completer.complete(false);
       });
@@ -80,7 +80,7 @@ class JSClipboardService {
       return await completer.future;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Permission request error: $e');
+        debugPrint('❌ Permission request error: $e');
       }
       return false;
     }
@@ -98,7 +98,7 @@ class JSClipboardService {
 
       if (readClipboardFunc == null) {
         if (kDebugMode) {
-          print('⚠️ readClipboard function not found');
+          debugPrint('⚠️ readClipboard function not found');
         }
         return null;
       }
@@ -140,7 +140,7 @@ class JSClipboardService {
           );
 
           if (kDebugMode) {
-            print('✅ JSClipboard: Created image attachment ${attachment.name}');
+            debugPrint('✅ JSClipboard: Created image attachment ${attachment.name}');
           }
 
           completer.complete(ClipboardContent.image(attachment));
@@ -148,7 +148,7 @@ class JSClipboardService {
           final text = content as String;
 
           if (kDebugMode) {
-            print('✅ JSClipboard: Found text content (${text.length} chars)');
+            debugPrint('✅ JSClipboard: Found text content (${text.length} chars)');
           }
 
           completer.complete(ClipboardContent.text(text));
@@ -157,7 +157,7 @@ class JSClipboardService {
         }
       }).catchError((error) {
         if (kDebugMode) {
-          print('❌ JSClipboard read failed: $error');
+          debugPrint('❌ JSClipboard read failed: $error');
         }
         completer.complete(null);
       });
@@ -165,7 +165,7 @@ class JSClipboardService {
       return await completer.future;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ JSClipboard error: $e');
+        debugPrint('❌ JSClipboard error: $e');
       }
       return null;
     }
@@ -179,7 +179,7 @@ class JSClipboardService {
 
     if (!isAvailable) {
       if (kDebugMode) {
-        print('⚠️ Cannot setup paste listener - JavaScript ClipboardAPI not available');
+        debugPrint('⚠️ Cannot setup paste listener - JavaScript ClipboardAPI not available');
       }
       return const Stream.empty();
     }
@@ -224,37 +224,37 @@ class JSClipboardService {
                   );
 
                   if (kDebugMode) {
-                    print('🖼️ Paste event: Image ${attachment.name} (${attachment.size} bytes)');
+                    debugPrint('🖼️ Paste event: Image ${attachment.name} (${attachment.size} bytes)');
                   }
 
                   _pasteController?.add(ClipboardContent.image(attachment));
                 } else {
                   if (kDebugMode) {
-                    print('⚠️ No bytes found in image data');
+                    debugPrint('⚠️ No bytes found in image data');
                   }
                 }
               } else {
                 if (kDebugMode) {
-                  print('⚠️ No bytes array found in content');
+                  debugPrint('⚠️ No bytes array found in content');
                 }
               }
             } catch (imageProcessingError) {
               if (kDebugMode) {
-                print('❌ Image processing error: $imageProcessingError');
+                debugPrint('❌ Image processing error: $imageProcessingError');
               }
             }
           } else if (type == 'text') {
             final text = content as String;
 
             if (kDebugMode) {
-              print('📝 Paste event: Text (${text.length} chars)');
+              debugPrint('📝 Paste event: Text (${text.length} chars)');
             }
 
             _pasteController?.add(ClipboardContent.text(text));
           }
         } catch (e) {
           if (kDebugMode) {
-            print('❌ Paste callback error: $e');
+            debugPrint('❌ Paste callback error: $e');
           }
         }
       });
@@ -267,18 +267,18 @@ class JSClipboardService {
         setupPasteListenerFunc.apply([js.context['dartPasteCallback']]);
       } else {
         if (kDebugMode) {
-          print('⚠️ setupPasteListener function not found');
+          debugPrint('⚠️ setupPasteListener function not found');
         }
       }
 
       _listenerSetup = true;
 
       if (kDebugMode) {
-        print('✅ JavaScript paste listener setup complete');
+        debugPrint('✅ JavaScript paste listener setup complete');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to setup paste listener: $e');
+        debugPrint('❌ Failed to setup paste listener: $e');
       }
       _pasteController?.close();
       _pasteController = null;
@@ -298,11 +298,11 @@ class JSClipboardService {
       _listenerSetup = false;
 
       if (kDebugMode) {
-        print('🧹 JavaScript clipboard cleanup complete');
+        debugPrint('🧹 JavaScript clipboard cleanup complete');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Clipboard cleanup error: $e');
+        debugPrint('⚠️ Clipboard cleanup error: $e');
       }
     }
   }

@@ -22,9 +22,9 @@ class AuthApiService {
       );
 
       if (kDebugMode) {
-        print('🔧 AuthApiService.getAuthConfig() - Response:');
-        print('   Status: ${response.statusCode}');
-        print('   Body: ${response.body}');
+        debugPrint('🔧 AuthApiService.getAuthConfig() - Response:');
+        debugPrint('   Status: ${response.statusCode}');
+        debugPrint('   Body: ${response.body}');
       }
 
       if (response.statusCode == 200) {
@@ -35,7 +35,7 @@ class AuthApiService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ AuthApiService.getAuthConfig() failed: $e');
+        debugPrint('❌ AuthApiService.getAuthConfig() failed: $e');
       }
       rethrow;
     }
@@ -59,9 +59,9 @@ class AuthApiService {
       );
 
       if (kDebugMode) {
-        print('🔐 AuthApiService.loginWithCredentials() - Response:');
-        print('   Status: ${response.statusCode}');
-        print('   Body: ${response.body}');
+        debugPrint('🔐 AuthApiService.loginWithCredentials() - Response:');
+        debugPrint('   Status: ${response.statusCode}');
+        debugPrint('   Body: ${response.body}');
       }
 
       if (response.statusCode == 200) {
@@ -74,7 +74,7 @@ class AuthApiService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ AuthApiService.loginWithCredentials() failed: $e');
+        debugPrint('❌ AuthApiService.loginWithCredentials() failed: $e');
       }
       rethrow;
     }
@@ -92,9 +92,9 @@ class AuthApiService {
       );
 
       if (kDebugMode) {
-        print('👤 AuthApiService.getCurrentUser() - Response:');
-        print('   Status: ${response.statusCode}');
-        print('   Body: ${response.body}');
+        debugPrint('👤 AuthApiService.getCurrentUser() - Response:');
+        debugPrint('   Status: ${response.statusCode}');
+        debugPrint('   Body: ${response.body}');
       }
 
       if (response.statusCode == 200) {
@@ -104,16 +104,16 @@ class AuthApiService {
         // Validate that the user is actually authenticated
         if (user.authenticated != true) {
           if (kDebugMode) {
-            print('❌ AuthApiService: User is not authenticated (authenticated: ${user.authenticated})');
+            debugPrint('❌ AuthApiService: User is not authenticated (authenticated: ${user.authenticated})');
           }
           throw Exception('User authentication validation failed: authenticated field is false');
         }
         
         if (kDebugMode) {
-          print('✅ AuthApiService: User authenticated successfully');
-          print('   Name: ${user.name}');
-          print('   Email: ${user.email}');
-          print('   Authenticated: ${user.authenticated}');
+          debugPrint('✅ AuthApiService: User authenticated successfully');
+          debugPrint('   Name: ${user.name}');
+          debugPrint('   Email: ${user.email}');
+          debugPrint('   Authenticated: ${user.authenticated}');
         }
         
         return user;
@@ -124,7 +124,7 @@ class AuthApiService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ AuthApiService.getCurrentUser() failed: $e');
+        debugPrint('❌ AuthApiService.getCurrentUser() failed: $e');
       }
       rethrow;
     }

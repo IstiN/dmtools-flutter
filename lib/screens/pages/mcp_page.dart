@@ -31,7 +31,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
 
   @override
   Future<void> loadAuthenticatedData() async {
-    print('🔧 McpPage: Loading MCP configurations...');
+    debugPrint('🔧 McpPage: Loading MCP configurations...');
 
     final configurations = await authService.executeWithIntegrations(() async {
       final mcpProvider = context.read<McpProvider>();
@@ -39,7 +39,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
       return mcpProvider.configurations;
     });
 
-    print('🔧 McpPage: Loaded ${configurations.length} configurations');
+    debugPrint('🔧 McpPage: Loaded ${configurations.length} configurations');
 
     // Always set loaded - let the McpManagement component handle empty states internally
     setLoaded();
@@ -50,7 +50,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
 
     if (!authProvider.isAuthenticated) {
       // Demo mode - return demo integrations only
-      print('🔧 McpPage: Demo mode - returning demo integrations');
+      debugPrint('🔧 McpPage: Demo mode - returning demo integrations');
       return [
         const IntegrationOption(
           id: 'demo_jira_1',
@@ -71,13 +71,13 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
 
     // Check if integrations are properly loaded
     if (!integrationProvider.isInitialized || integrationProvider.isLoading) {
-      print(
+      debugPrint(
           '🔧 McpPage: Integration provider not ready - initialized: ${integrationProvider.isInitialized}, loading: ${integrationProvider.isLoading}');
 
       // If we have MCP configurations with integration IDs but integrations aren't loaded yet,
       // create placeholder integrations based on the MCP configuration data
       if (mcpProvider.configurations.isNotEmpty) {
-        print('🔧 McpPage: Creating placeholder integrations from MCP configuration IDs');
+        debugPrint('🔧 McpPage: Creating placeholder integrations from MCP configuration IDs');
         final placeholderIntegrations = <IntegrationOption>[];
         final usedIds = <String>{};
 
@@ -95,7 +95,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
         }
 
         if (placeholderIntegrations.isNotEmpty) {
-          print('🔧 McpPage: Created ${placeholderIntegrations.length} placeholder integrations');
+          debugPrint('🔧 McpPage: Created ${placeholderIntegrations.length} placeholder integrations');
           return placeholderIntegrations;
         }
       }
@@ -105,9 +105,9 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
 
     final mcpReadyIntegrations = integrationProvider.service.mcpReadyIntegrations;
 
-    print('🔧 McpPage: Available MCP-ready integrations: ${mcpReadyIntegrations.length}');
+    debugPrint('🔧 McpPage: Available MCP-ready integrations: ${mcpReadyIntegrations.length}');
     for (final integration in mcpReadyIntegrations) {
-      print('🔧 McpPage: - ${integration.name} (${integration.type}) [${integration.id}]');
+      debugPrint('🔧 McpPage: - ${integration.name} (${integration.type}) [${integration.id}]');
     }
 
     // If we have real MCP configurations, we should make sure we have integrations for their IDs
@@ -129,7 +129,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
     final existingIds = result.map((i) => i.id).toSet();
     for (final requiredId in allRequiredIds) {
       if (!existingIds.contains(requiredId)) {
-        print('🔧 McpPage: Adding missing integration for ID: $requiredId');
+        debugPrint('🔧 McpPage: Adding missing integration for ID: $requiredId');
         result.add(IntegrationOption(
           id: requiredId,
           displayName: _getIntegrationDisplayName(requiredId),
@@ -138,7 +138,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
       }
     }
 
-    print('🔧 McpPage: Returning ${result.length} available integrations');
+    debugPrint('🔧 McpPage: Returning ${result.length} available integrations');
     return result;
   }
 
@@ -168,7 +168,7 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
   Widget buildAuthenticatedContent(BuildContext context) {
     return Consumer2<McpProvider, EnhancedAuthProvider>(
       builder: (context, mcpProvider, authProvider, child) {
-        print('🔧 McpPage: Building authenticated content with ${mcpProvider.configurations.length} configurations');
+        debugPrint('🔧 McpPage: Building authenticated content with ${mcpProvider.configurations.length} configurations');
 
         return _buildLoadedState(mcpProvider, authProvider);
       },
@@ -209,50 +209,50 @@ class _McpPageState extends AuthenticatedPage<McpPage> {
       onCreateConfiguration: (name, integrations) async {
         if (!authProvider.isAuthenticated) {
           // Demo mode - simulate success
-          print('🔧 McpPage: Demo mode - simulating configuration creation');
+          debugPrint('🔧 McpPage: Demo mode - simulating configuration creation');
           return true;
         }
 
-        print('🔧 McpPage: onCreateConfiguration called with name: $name, integrations: $integrations');
+        debugPrint('🔧 McpPage: onCreateConfiguration called with name: $name, integrations: $integrations');
         try {
           final success = await mcpProvider.createConfiguration(
             name: name,
             integrationIds: integrations,
           );
-          print('🔧 McpPage: createConfiguration result: $success');
+          debugPrint('🔧 McpPage: createConfiguration result: $success');
           return success;
         } catch (e, stackTrace) {
-          print('🔧 McpPage: Error in createConfiguration: $e');
-          print('🔧 McpPage: Stack trace: $stackTrace');
+          debugPrint('🔧 McpPage: Error in createConfiguration: $e');
+          debugPrint('🔧 McpPage: Stack trace: $stackTrace');
           return false;
         }
       },
       onUpdateConfiguration: (id, name, integrations) async {
         if (!authProvider.isAuthenticated) {
           // Demo mode - simulate success
-          print('🔧 McpPage: Demo mode - simulating configuration update');
+          debugPrint('🔧 McpPage: Demo mode - simulating configuration update');
           return true;
         }
 
-        print('🔧 McpPage: onUpdateConfiguration called with id: $id, name: $name, integrations: $integrations');
+        debugPrint('🔧 McpPage: onUpdateConfiguration called with id: $id, name: $name, integrations: $integrations');
         try {
           final success = await mcpProvider.updateConfiguration(
             id: id,
             name: name,
             integrationIds: integrations,
           );
-          print('🔧 McpPage: updateConfiguration result: $success');
+          debugPrint('🔧 McpPage: updateConfiguration result: $success');
           return success;
         } catch (e, stackTrace) {
-          print('🔧 McpPage: Error in updateConfiguration: $e');
-          print('🔧 McpPage: Stack trace: $stackTrace');
+          debugPrint('🔧 McpPage: Error in updateConfiguration: $e');
+          debugPrint('🔧 McpPage: Stack trace: $stackTrace');
           return false;
         }
       },
       onDeleteConfiguration: (id) async {
         if (!authProvider.isAuthenticated) {
           // Demo mode - simulate success
-          print('🔧 McpPage: Demo mode - simulating configuration deletion');
+          debugPrint('🔧 McpPage: Demo mode - simulating configuration deletion');
           return true;
         }
         return await mcpProvider.deleteConfiguration(id);

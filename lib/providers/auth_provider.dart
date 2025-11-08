@@ -54,14 +54,14 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
             _currentUser = user;
             _setAuthenticated();
             if (kDebugMode) {
-              print('✅ User authenticated successfully: ${user.name}');
-              print('📧 User email: ${user.email}');
-              print('🔐 Authenticated: ${user.authenticated}');
+              debugPrint('✅ User authenticated successfully: ${user.name}');
+              debugPrint('📧 User email: ${user.email}');
+              debugPrint('🔐 Authenticated: ${user.authenticated}');
             }
           } else {
             // User data indicates not authenticated, clear token and logout
             if (kDebugMode) {
-              print('❌ User authentication validation failed - clearing token');
+              debugPrint('❌ User authentication validation failed - clearing token');
             }
             await _oauthService.logout();
             _currentToken = null;
@@ -71,8 +71,8 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
           // User data fetch failed (network error, server down, etc.)
           // but we have a valid token, so stay authenticated with limited user info
           if (kDebugMode) {
-            print('⚠️ User data fetch failed but token is valid: $userDataError');
-            print('   Staying authenticated with limited token-based info');
+            debugPrint('⚠️ User data fetch failed but token is valid: $userDataError');
+            debugPrint('   Staying authenticated with limited token-based info');
           }
 
           // Create basic user info from token if possible
@@ -87,16 +87,16 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
       } else {
         if (kDebugMode) {
           if (token != null && token.isExpired) {
-            print('🔄 Token expired, logging out');
+            debugPrint('🔄 Token expired, logging out');
           } else {
-            print('🔄 No token found, setting unauthenticated');
+            debugPrint('🔄 No token found, setting unauthenticated');
           }
         }
         _setUnauthenticated();
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Authentication initialization failed: $e');
+        debugPrint('❌ Authentication initialization failed: $e');
       }
       _setError('Failed to initialize authentication: $e');
     }
@@ -158,10 +158,10 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
             _currentUser = user;
             _setAuthenticated();
             if (kDebugMode) {
-              print('🎉 OAuth authentication successful');
-              print('👤 User: ${user.name} (${user.email})');
-              print('🔐 Authenticated: ${user.authenticated}');
-              print('🏢 Provider: ${user.provider}');
+              debugPrint('🎉 OAuth authentication successful');
+              debugPrint('👤 User: ${user.name} (${user.email})');
+              debugPrint('🔐 Authenticated: ${user.authenticated}');
+              debugPrint('🏢 Provider: ${user.provider}');
             }
             return true;
           } else {
@@ -210,7 +210,7 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
         }
       } catch (e) {
         if (kDebugMode) {
-          print('❌ Token refresh failed: $e');
+          debugPrint('❌ Token refresh failed: $e');
         }
         await logout();
         return false;
@@ -233,8 +233,8 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
     _currentUser = user;
     _forceResetDemoMode(); // Force reset demo mode when real user data is loaded
     if (kDebugMode) {
-      print('✅ User info set externally: ${_currentUser?.name}');
-      print('📧 User email: ${_currentUser?.email}');
+      debugPrint('✅ User info set externally: ${_currentUser?.name}');
+      debugPrint('📧 User email: ${_currentUser?.email}');
     }
     notifyListeners();
   }
@@ -243,7 +243,7 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
   void toggleDemoMode() {
     _isDemoMode = !_isDemoMode;
     if (kDebugMode) {
-      print('🔄 Demo mode toggled: $_isDemoMode');
+      debugPrint('🔄 Demo mode toggled: $_isDemoMode');
     }
     notifyListeners();
   }
@@ -253,7 +253,7 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
     if (_isDemoMode) {
       _isDemoMode = false;
       if (kDebugMode) {
-        print('🔄 Demo mode force reset to false');
+        debugPrint('🔄 Demo mode force reset to false');
       }
     }
   }
@@ -278,7 +278,7 @@ class AuthProvider with ChangeNotifier implements AuthTokenProvider {
     _setAuthenticated();
 
     if (kDebugMode) {
-      print('✅ Demo mode enabled');
+      debugPrint('✅ Demo mode enabled');
     }
   }
 

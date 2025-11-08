@@ -51,9 +51,9 @@ class LocalAuthService {
       );
 
       if (kDebugMode) {
-        print('🔐 LocalAuthService.login() - Response:');
-        print('   Status: ${response.statusCode}');
-        print('   Body: ${response.body}');
+        debugPrint('🔐 LocalAuthService.login() - Response:');
+        debugPrint('   Status: ${response.statusCode}');
+        debugPrint('   Body: ${response.body}');
       }
 
       if (response.statusCode == 200) {
@@ -66,7 +66,7 @@ class LocalAuthService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ LocalAuthService.login() failed: $e');
+        debugPrint('❌ LocalAuthService.login() failed: $e');
       }
       rethrow;
     }

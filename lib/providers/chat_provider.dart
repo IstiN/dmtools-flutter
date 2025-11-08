@@ -105,19 +105,19 @@ class ChatProvider with ChangeNotifier {
       if (_availableAiIntegrations.isNotEmpty && _selectedAiIntegration == null) {
         _selectedAiIntegration = _availableAiIntegrations.first;
         if (kDebugMode) {
-          print('🤖 Auto-selected AI integration: ${_selectedAiIntegration?.displayName}');
+          debugPrint('🤖 Auto-selected AI integration: ${_selectedAiIntegration?.displayName}');
         }
       }
 
       _setState(_messages.isEmpty ? ChatState.initial : ChatState.success);
 
       if (kDebugMode) {
-        print('✅ Loaded ${_availableAiIntegrations.length} AI integrations');
+        debugPrint('✅ Loaded ${_availableAiIntegrations.length} AI integrations');
       }
     } catch (e) {
       _setError('Failed to load AI integrations: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ Error loading AI integrations: $e');
+        debugPrint('❌ Error loading AI integrations: $e');
       }
     }
   }
@@ -165,22 +165,22 @@ class ChatProvider with ChangeNotifier {
       api.ChatResponse? response;
 
       if (kDebugMode) {
-        print('🔍 Sending message - attachments count: ${_attachments.length}');
+        debugPrint('🔍 Sending message - attachments count: ${_attachments.length}');
         for (int i = 0; i < _attachments.length; i++) {
-          print('📎 Attachment [$i]: ${_attachments[i].name} (${_attachments[i].size} bytes)');
+          debugPrint('📎 Attachment [$i]: ${_attachments[i].name} (${_attachments[i].size} bytes)');
         }
       }
 
       if (_attachments.isNotEmpty) {
         // Send message with files if attachments exist
         if (kDebugMode) {
-          print('🔄 Using completions-with-files endpoint');
+          debugPrint('🔄 Using completions-with-files endpoint');
         }
         response = await _sendMessageWithFiles(message);
       } else {
         // Send chat completion with full conversation history
         if (kDebugMode) {
-          print('🔄 Using regular completions endpoint');
+          debugPrint('🔄 Using regular completions endpoint');
         }
         response = await _sendChatCompletion(message);
       }
@@ -200,7 +200,7 @@ class ChatProvider with ChangeNotifier {
         _setState(ChatState.success);
 
         if (kDebugMode) {
-          print('✅ Message sent successfully: ${response.success}');
+          debugPrint('✅ Message sent successfully: ${response.success}');
         }
       } else {
         // Remove user message if API call failed
@@ -216,7 +216,7 @@ class ChatProvider with ChangeNotifier {
       }
       _setError('Failed to send message: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ Error sending message: $e');
+        debugPrint('❌ Error sending message: $e');
       }
     }
   }
@@ -301,7 +301,7 @@ class ChatProvider with ChangeNotifier {
       _clearError();
 
       if (kDebugMode) {
-        print('🔄 AI integration changed to: ${integration?.displayName ?? 'None'}');
+        debugPrint('🔄 AI integration changed to: ${integration?.displayName ?? 'None'}');
       }
 
       notifyListeners();
@@ -315,7 +315,7 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     if (kDebugMode) {
-      print('📎 Added ${newAttachments.length} attachments, total: ${_attachments.length}');
+      debugPrint('📎 Added ${newAttachments.length} attachments, total: ${_attachments.length}');
     }
   }
 
@@ -326,7 +326,7 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     if (kDebugMode) {
-      print('📎 Updated attachments: ${_attachments.length}');
+      debugPrint('📎 Updated attachments: ${_attachments.length}');
     }
   }
 
@@ -337,7 +337,7 @@ class ChatProvider with ChangeNotifier {
       notifyListeners();
 
       if (kDebugMode) {
-        print('🗑️ Removed attachment: ${removed.name}');
+        debugPrint('🗑️ Removed attachment: ${removed.name}');
       }
     }
   }
@@ -348,7 +348,7 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     if (kDebugMode) {
-      print('🗑️ Cleared all attachments');
+      debugPrint('🗑️ Cleared all attachments');
     }
   }
 
@@ -356,7 +356,7 @@ class ChatProvider with ChangeNotifier {
   void editMessage(int messageIndex, String newContent) {
     if (messageIndex < 0 || messageIndex >= _messages.length) {
       if (kDebugMode) {
-        print('❌ Invalid message index: $messageIndex');
+        debugPrint('❌ Invalid message index: $messageIndex');
       }
       return;
     }
@@ -364,9 +364,9 @@ class ChatProvider with ChangeNotifier {
     final message = _messages[messageIndex];
 
     if (kDebugMode) {
-      print('✏️ Editing message at index $messageIndex');
-      print('📝 Original: ${message.message}');
-      print('📝 New: $newContent');
+      debugPrint('✏️ Editing message at index $messageIndex');
+      debugPrint('📝 Original: ${message.message}');
+      debugPrint('📝 New: $newContent');
     }
 
     // Update the message content
@@ -384,7 +384,7 @@ class ChatProvider with ChangeNotifier {
       if (messagesToRemove > 0) {
         _messages.removeRange(messageIndex + 1, _messages.length);
         if (kDebugMode) {
-          print('🗑️ Removed $messagesToRemove messages after edited user message');
+          debugPrint('🗑️ Removed $messagesToRemove messages after edited user message');
         }
       }
 
@@ -402,8 +402,8 @@ class ChatProvider with ChangeNotifier {
     }
 
     if (kDebugMode) {
-      print('🔄 Resending conversation after edit...');
-      print('📨 Current conversation length: ${_messages.length}');
+      debugPrint('🔄 Resending conversation after edit...');
+      debugPrint('📨 Current conversation length: ${_messages.length}');
     }
 
     // Set loading state
@@ -418,7 +418,7 @@ class ChatProvider with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error resending conversation: $e');
+        debugPrint('❌ Error resending conversation: $e');
       }
       _setError('Failed to get AI response after editing message');
     }
@@ -435,7 +435,7 @@ class ChatProvider with ChangeNotifier {
         .toList();
 
     if (kDebugMode) {
-      print('🔄 Resending chat completion with ${apiMessages.length} messages');
+      debugPrint('🔄 Resending chat completion with ${apiMessages.length} messages');
     }
 
     final response = await _chatService.sendChatCompletion(
@@ -455,7 +455,7 @@ class ChatProvider with ChangeNotifier {
       _setState(ChatState.success);
 
       if (kDebugMode) {
-        print('✅ AI response received and added after edit');
+        debugPrint('✅ AI response received and added after edit');
       }
     } else {
       throw Exception('Invalid response from AI service');
@@ -473,7 +473,7 @@ class ChatProvider with ChangeNotifier {
         .toList();
 
     if (kDebugMode) {
-      print('🔄 Resending with files: ${_attachments.length} attachments, ${apiMessages.length} messages');
+      debugPrint('🔄 Resending with files: ${_attachments.length} attachments, ${apiMessages.length} messages');
     }
 
     final response = await _chatService.sendChatWithFiles(
@@ -495,7 +495,7 @@ class ChatProvider with ChangeNotifier {
       _setState(ChatState.success);
 
       if (kDebugMode) {
-        print('✅ AI response with files received and added after edit');
+        debugPrint('✅ AI response with files received and added after edit');
       }
     } else {
       throw Exception('Invalid response from AI service');
@@ -515,7 +515,7 @@ class ChatProvider with ChangeNotifier {
     _setState(ChatState.initial);
 
     if (kDebugMode) {
-      print('🧹 Cleared conversation history');
+      debugPrint('🧹 Cleared conversation history');
     }
   }
 
@@ -541,7 +541,7 @@ class ChatProvider with ChangeNotifier {
     _setState(ChatState.initial);
 
     if (kDebugMode) {
-      print('🔄 Reset ChatProvider to initial state');
+      debugPrint('🔄 Reset ChatProvider to initial state');
     }
   }
 
@@ -552,17 +552,17 @@ class ChatProvider with ChangeNotifier {
       if (integrationId != null) {
         await prefs.setString(_selectedAiIntegrationKey, integrationId);
         if (kDebugMode) {
-          print('💾 Saved AI integration preference: $integrationId');
+          debugPrint('💾 Saved AI integration preference: $integrationId');
         }
       } else {
         await prefs.remove(_selectedAiIntegrationKey);
         if (kDebugMode) {
-          print('🗑️ Cleared AI integration preference');
+          debugPrint('🗑️ Cleared AI integration preference');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to save AI integration preference: $e');
+        debugPrint('❌ Failed to save AI integration preference: $e');
       }
     }
   }
@@ -584,19 +584,19 @@ class ChatProvider with ChangeNotifier {
           _selectedAiIntegration = savedIntegration;
 
           if (kDebugMode) {
-            print('📥 Loaded saved AI integration: ${savedIntegration.displayName}');
+            debugPrint('📥 Loaded saved AI integration: ${savedIntegration.displayName}');
           }
         } else {
           // Fallback to first available if saved one not found
           _selectedAiIntegration = _availableAiIntegrations.first;
           if (kDebugMode) {
-            print('⚠️ Saved integration not found, using: ${_selectedAiIntegration?.displayName}');
+            debugPrint('⚠️ Saved integration not found, using: ${_selectedAiIntegration?.displayName}');
           }
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to load AI integration preference: $e');
+        debugPrint('❌ Failed to load AI integration preference: $e');
       }
     }
   }
@@ -606,7 +606,7 @@ class ChatProvider with ChangeNotifier {
     final authProvider = _integrationService.authProvider;
     if (authProvider?.isAuthenticated == true && _availableAiIntegrations.isEmpty) {
       if (kDebugMode) {
-        print('🔄 User authenticated, reloading AI integrations...');
+        debugPrint('🔄 User authenticated, reloading AI integrations...');
       }
       // Reload integrations when user becomes authenticated
       _initializeAiIntegrations();
@@ -624,11 +624,11 @@ class ChatProvider with ChangeNotifier {
       await _loadSelectedMcpConfiguration();
 
       if (kDebugMode) {
-        print('✅ Loaded ${_availableMcpConfigurations.length} MCP configurations');
+        debugPrint('✅ Loaded ${_availableMcpConfigurations.length} MCP configurations');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error loading MCP configurations: $e');
+        debugPrint('❌ Error loading MCP configurations: $e');
       }
     }
   }
@@ -660,7 +660,7 @@ class ChatProvider with ChangeNotifier {
     notifyListeners();
 
     if (kDebugMode) {
-      print('🔧 Selected MCP configuration: ${configuration?.name ?? "None"}');
+      debugPrint('🔧 Selected MCP configuration: ${configuration?.name ?? "None"}');
     }
   }
 
@@ -671,17 +671,17 @@ class ChatProvider with ChangeNotifier {
       if (configurationId != null && configurationId.isNotEmpty) {
         await prefs.setString(_selectedMcpConfigurationKey, configurationId);
         if (kDebugMode) {
-          print('💾 Saved MCP configuration preference: $configurationId');
+          debugPrint('💾 Saved MCP configuration preference: $configurationId');
         }
       } else {
         await prefs.remove(_selectedMcpConfigurationKey);
         if (kDebugMode) {
-          print('🗑️ Cleared MCP configuration preference');
+          debugPrint('🗑️ Cleared MCP configuration preference');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to save MCP configuration preference: $e');
+        debugPrint('❌ Failed to save MCP configuration preference: $e');
       }
     }
   }
@@ -699,13 +699,13 @@ class ChatProvider with ChangeNotifier {
         if (savedConfiguration != null) {
           _selectedMcpConfiguration = savedConfiguration;
           if (kDebugMode) {
-            print('📥 Loaded saved MCP configuration: ${savedConfiguration.name}');
+            debugPrint('📥 Loaded saved MCP configuration: ${savedConfiguration.name}');
           }
         } else {
           // Default to "None" if saved configuration not found
           _selectedMcpConfiguration = const McpConfigOption.none();
           if (kDebugMode) {
-            print('⚠️ Saved MCP configuration not found, defaulting to None');
+            debugPrint('⚠️ Saved MCP configuration not found, defaulting to None');
           }
         }
       } else {
@@ -714,7 +714,7 @@ class ChatProvider with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to load MCP configuration preference: $e');
+        debugPrint('❌ Failed to load MCP configuration preference: $e');
       }
       // Default to "None" on error
       _selectedMcpConfiguration = const McpConfigOption.none();

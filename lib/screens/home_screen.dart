@@ -1,4 +1,5 @@
 import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -35,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           // macOS title bar padding
-          if (Platform.isMacOS) const SizedBox(height: 12),
+          if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
           
           // App Header
           AppHeader(
@@ -121,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           // macOS title bar padding
-          if (Platform.isMacOS) const SizedBox(height: 12),
+          if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
           
           // App Header
           AppHeader(

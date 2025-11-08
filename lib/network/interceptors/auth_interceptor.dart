@@ -25,8 +25,8 @@ class AuthInterceptor implements Interceptor {
 
     if (accessToken != null) {
       if (kDebugMode) {
-        print('🔑 AuthInterceptor: Adding Authorization header for ${chain.request.url}');
-        print('🔑 AuthInterceptor: Token: ${accessToken.substring(0, 20)}...');
+        debugPrint('🔑 AuthInterceptor: Adding Authorization header for ${chain.request.url}');
+        debugPrint('🔑 AuthInterceptor: Token: ${accessToken.substring(0, 20)}...');
       }
       final request = applyHeaders(
         chain.request,
@@ -35,7 +35,7 @@ class AuthInterceptor implements Interceptor {
       response = await chain.proceed(request);
     } else {
       if (kDebugMode) {
-        print('❌ AuthInterceptor: No access token available for ${chain.request.url}');
+        debugPrint('❌ AuthInterceptor: No access token available for ${chain.request.url}');
       }
       // No valid token, proceed without auth header
       // The API will return 401 if authentication is required
@@ -45,8 +45,8 @@ class AuthInterceptor implements Interceptor {
     // Check response for authentication failures
     if (response.statusCode == 401) {
       if (kDebugMode) {
-        print('❌ AuthInterceptor: 401 Unauthorized response detected');
-        print('   Triggering authentication failure callback');
+        debugPrint('❌ AuthInterceptor: 401 Unauthorized response detected');
+        debugPrint('   Triggering authentication failure callback');
       }
       onAuthenticationFailed?.call();
     } else if (response.statusCode == 200 && response.body != null) {
@@ -63,8 +63,8 @@ class AuthInterceptor implements Interceptor {
           final authenticated = bodyData['authenticated'];
           if (authenticated == false) {
             if (kDebugMode) {
-              print('❌ AuthInterceptor: Response indicates authenticated: false');
-              print('   Triggering authentication failure callback');
+              debugPrint('❌ AuthInterceptor: Response indicates authenticated: false');
+              debugPrint('   Triggering authentication failure callback');
             }
             onAuthenticationFailed?.call();
           }
@@ -72,7 +72,7 @@ class AuthInterceptor implements Interceptor {
       } catch (e) {
         // Ignore parsing errors - not all responses will be JSON maps
         if (kDebugMode) {
-          print('⚠️ AuthInterceptor: Could not parse response body for auth check: $e');
+          debugPrint('⚠️ AuthInterceptor: Could not parse response body for auth check: $e');
         }
       }
     }

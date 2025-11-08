@@ -75,14 +75,14 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
         _authConfig = await _authConfigService.getAuthConfig();
 
         if (kDebugMode) {
-          print('✅ Auth config loaded:');
-          print('   Mode: ${_authConfig!.authenticationMode}');
-          print('   Providers: ${_authConfig!.enabledProviders}');
-          print('   Has local auth: ${_authConfig!.hasLocalLogin}');
+          debugPrint('✅ Auth config loaded:');
+          debugPrint('   Mode: ${_authConfig!.authenticationMode}');
+          debugPrint('   Providers: ${_authConfig!.enabledProviders}');
+          debugPrint('   Has local auth: ${_authConfig!.hasLocalLogin}');
         }
       } catch (configError) {
         if (kDebugMode) {
-          print('⚠️ Auth config endpoint unavailable, using OAuth-only fallback: $configError');
+          debugPrint('⚠️ Auth config endpoint unavailable, using OAuth-only fallback: $configError');
         }
         // Fallback: Assume OAuth authentication is available
         _authConfig = const AuthConfig(
@@ -104,13 +104,13 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
               _currentUser = user;
               _setAuthenticated();
               if (kDebugMode) {
-                print('✅ OAuth user authenticated: ${user.name}');
+                debugPrint('✅ OAuth user authenticated: ${user.name}');
               }
               return;
             }
           } catch (userDataError) {
             if (kDebugMode) {
-              print('⚠️ OAuth user data fetch failed: $userDataError');
+              debugPrint('⚠️ OAuth user data fetch failed: $userDataError');
             }
             // Continue to check local auth
           }
@@ -119,11 +119,11 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
 
       // Step 3: Check for saved local token first
       if (_authConfig!.hasLocalLogin) {
-        print('[AUTH] Checking for saved credentials...');
+        debugPrint('[AUTH] Checking for saved credentials...');
         
         // First try to restore from saved token
         final savedToken = await _credentialsService.getSavedLocalToken();
-        print('[AUTH] Saved token found: ${savedToken != null}');
+        debugPrint('[AUTH] Saved token found: ${savedToken != null}');
         
         if (savedToken != null) {
           try {
@@ -133,10 +133,10 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
             _localToken = savedToken;
             _currentUser = user;
             _setAuthenticated();
-            print('[AUTH] ✅ Token validated, user: ${user.name}');
+            debugPrint('[AUTH] ✅ Token validated, user: ${user.name}');
             return;
           } catch (tokenValidationError) {
-            print('[AUTH] ⚠️ Token validation failed: $tokenValidationError');
+            debugPrint('[AUTH] ⚠️ Token validation failed: $tokenValidationError');
             // Clear invalid token but keep credentials for automatic re-login
             await _credentialsService.clearSavedLocalToken();
           }
@@ -144,11 +144,11 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
 
         // If no valid token, try saved credentials
         final savedCredentials = await _credentialsService.getSavedCredentials();
-        print('[AUTH] Saved credentials found: ${savedCredentials != null ? savedCredentials.username : "none"}');
+        debugPrint('[AUTH] Saved credentials found: ${savedCredentials != null ? savedCredentials.username : "none"}');
         
         if (savedCredentials != null) {
           try {
-            print('[AUTH] Attempting auto-login with saved credentials...');
+            debugPrint('[AUTH] Attempting auto-login with saved credentials...');
             final response = await _localAuthService.login(
               savedCredentials.username,
               savedCredentials.password,
@@ -160,15 +160,15 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
             await _credentialsService.saveLocalToken(response.token);
             
             _setAuthenticated();
-            print('[AUTH] ✅ Auto-login successful: ${response.user.name}');
+            debugPrint('[AUTH] ✅ Auto-login successful: ${response.user.name}');
             return;
           } catch (e) {
-            print('[AUTH] ⚠️ Auto-login failed: $e');
+            debugPrint('[AUTH] ⚠️ Auto-login failed: $e');
             // Don't clear credentials - server might be temporarily unavailable
             // User can manually clear by unchecking "save credentials" on next login
           }
         } else {
-          print('[AUTH] No saved credentials available');
+          debugPrint('[AUTH] No saved credentials available');
         }
       }
 
@@ -176,7 +176,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
       _setUnauthenticated();
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Auth initialization failed: $e');
+        debugPrint('❌ Auth initialization failed: $e');
       }
       _setError('Failed to initialize authentication: $e');
     }
@@ -234,7 +234,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
             _currentUser = user;
             _setAuthenticated();
             if (kDebugMode) {
-              print('🎉 OAuth authentication successful: ${user.name}');
+              debugPrint('🎉 OAuth authentication successful: ${user.name}');
             }
             return true;
           }
@@ -260,7 +260,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
       // Validate that the user is authenticated
       if (response.user.authenticated != true) {
         if (kDebugMode) {
-          print('❌ Login failed: User is not authenticated');
+          debugPrint('❌ Login failed: User is not authenticated');
         }
         _setError('Authentication validation failed');
         return false;
@@ -274,22 +274,22 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
       await _credentialsService.saveLocalToken(response.token);
 
       // Save credentials if requested
-      print('[AUTH] Save credentials requested: $saveCredentials');
+      debugPrint('[AUTH] Save credentials requested: $saveCredentials');
       if (saveCredentials) {
         await _credentialsService.saveCredentials(username, password);
-        print('[AUTH] ✅ Credentials saved for user: $username');
+        debugPrint('[AUTH] ✅ Credentials saved for user: $username');
       } else {
         // Clear any previously saved credentials if user chose not to save
         // But keep the token for the current session
         await _credentialsService.clearSavedCredentials();
         // Re-save the token since clearSavedCredentials also clears the token
         await _credentialsService.saveLocalToken(response.token);
-        print('[AUTH] Credentials NOT saved (user choice)');
+        debugPrint('[AUTH] Credentials NOT saved (user choice)');
       }
 
       _setAuthenticated();
 
-      print('[AUTH] 🎉 Login successful: ${response.user.name}');
+      debugPrint('[AUTH] 🎉 Login successful: ${response.user.name}');
 
       return true;
     } catch (e) {
@@ -334,7 +334,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
       await _credentialsService.clearSavedCredentials();
 
       if (kDebugMode) {
-        print('🔓 Logout: Cleared token and saved credentials');
+        debugPrint('🔓 Logout: Cleared token and saved credentials');
       }
 
       _setUnauthenticated();
@@ -347,16 +347,16 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
   @override
   Future<String?> getAccessToken() async {
     if (kDebugMode) {
-      print('🔐 EnhancedAuthProvider.getAccessToken() called');
-      print('   - Local token: ${_localToken != null ? '${_localToken!.substring(0, 20)}...' : 'null'}');
-      print(
+      debugPrint('🔐 EnhancedAuthProvider.getAccessToken() called');
+      debugPrint('   - Local token: ${_localToken != null ? '${_localToken!.substring(0, 20)}...' : 'null'}');
+      debugPrint(
           '   - OAuth token: ${_currentToken?.accessToken != null ? '${_currentToken!.accessToken.substring(0, 20)}...' : 'null'}');
     }
 
     // For local auth, return the local token
     if (_localToken != null) {
       if (kDebugMode) {
-        print('✅ EnhancedAuthProvider: Returning local token');
+        debugPrint('✅ EnhancedAuthProvider: Returning local token');
       }
       return _localToken;
     }
@@ -377,7 +377,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
           }
         } catch (e) {
           if (kDebugMode) {
-            print('❌ Token refresh failed: $e');
+            debugPrint('❌ Token refresh failed: $e');
           }
           await logout();
           return null;
@@ -394,7 +394,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
     _currentUser = user;
     _forceResetDemoMode();
     if (kDebugMode) {
-      print('✅ User info updated: ${user.name}');
+      debugPrint('✅ User info updated: ${user.name}');
     }
     notifyListeners();
   }
@@ -403,7 +403,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
   void toggleDemoMode() {
     _isDemoMode = !_isDemoMode;
     if (kDebugMode) {
-      print('🔄 Demo mode toggled: $_isDemoMode');
+      debugPrint('🔄 Demo mode toggled: $_isDemoMode');
     }
     notifyListeners();
   }
@@ -423,7 +423,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
     _setAuthenticated();
 
     if (kDebugMode) {
-      print('✅ Demo mode enabled');
+      debugPrint('✅ Demo mode enabled');
     }
   }
 
@@ -443,7 +443,7 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
     if (_isDemoMode) {
       _isDemoMode = false;
       if (kDebugMode) {
-        print('🔄 Demo mode force reset');
+        debugPrint('🔄 Demo mode force reset');
       }
     }
   }
@@ -460,14 +460,14 @@ class EnhancedAuthProvider with ChangeNotifier implements AuthTokenProvider {
   /// Handle authentication failure from API interceptor
   Future<void> handleAuthenticationFailure() async {
     if (kDebugMode) {
-      print('🚨 EnhancedAuthProvider: Authentication failure detected');
-      print('   Logging out user and clearing session');
+      debugPrint('🚨 EnhancedAuthProvider: Authentication failure detected');
+      debugPrint('   Logging out user and clearing session');
     }
     
     // Prevent multiple simultaneous logout calls
     if (_authState == AuthState.loading) {
       if (kDebugMode) {
-        print('⚠️ EnhancedAuthProvider: Logout already in progress, skipping');
+        debugPrint('⚠️ EnhancedAuthProvider: Logout already in progress, skipping');
       }
       return;
     }

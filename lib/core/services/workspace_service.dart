@@ -150,10 +150,10 @@ class WorkspaceService with ChangeNotifier {
     try {
       // Log configuration information
       if (kDebugMode) {
-        print('🔄 Loading workspaces...');
-        print('📍 Base URL: ${AppConfig.baseUrl}');
-        print('🔧 Environment: ${AppConfig.environment.name}');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🔄 Loading workspaces...');
+        debugPrint('📍 Base URL: ${AppConfig.baseUrl}');
+        debugPrint('🔧 Environment: ${AppConfig.environment.name}');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -161,13 +161,13 @@ class WorkspaceService with ChangeNotifier {
         await Future.delayed(const Duration(milliseconds: 800));
         // Mock data is already initialized
         if (kDebugMode) {
-          print('✅ Using mock workspaces (${_workspaces.length})');
+          debugPrint('✅ Using mock workspaces (${_workspaces.length})');
         }
       } else {
         // Check if user is authenticated before making API calls
         if (_authProvider?.isAuthenticated != true) {
           if (kDebugMode) {
-            print('⏳ User not authenticated yet, waiting for authentication...');
+            debugPrint('⏳ User not authenticated yet, waiting for authentication...');
           }
           throw Exception('User not authenticated');
         }
@@ -175,12 +175,12 @@ class WorkspaceService with ChangeNotifier {
         // Use real API service
         if (_apiService != null) {
           if (kDebugMode) {
-            print('🌐 Making real API call to get workspaces');
+            debugPrint('🌐 Making real API call to get workspaces');
           }
-          final apiWorkspaces = await _apiService!.getWorkspaces();
+          final apiWorkspaces = await _apiService.getWorkspaces();
           _workspaces = apiWorkspaces.map(_convertApiWorkspaceToLocal).toList();
           if (kDebugMode) {
-            print('✅ Loaded ${_workspaces.length} workspaces from API');
+            debugPrint('✅ Loaded ${_workspaces.length} workspaces from API');
           }
         } else {
           throw Exception('ApiService not available for real data');
@@ -278,8 +278,8 @@ class WorkspaceService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🆕 Creating workspace: ${request.name}');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🆕 Creating workspace: ${request.name}');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -316,15 +316,15 @@ class WorkspaceService with ChangeNotifier {
         _workspaces.add(newWorkspace);
         notifyListeners();
         if (kDebugMode) {
-          print('✅ Created mock workspace: ${newWorkspace.id}');
+          debugPrint('✅ Created mock workspace: ${newWorkspace.id}');
         }
       } else {
         // Use real API service
         if (_apiService != null) {
           if (kDebugMode) {
-            print('🌐 Making real API call to create workspace');
+            debugPrint('🌐 Making real API call to create workspace');
           }
-          final apiWorkspace = await _apiService!.createWorkspace(
+          final apiWorkspace = await _apiService.createWorkspace(
             name: request.name,
             description: request.description,
           );
@@ -332,7 +332,7 @@ class WorkspaceService with ChangeNotifier {
           _workspaces.add(newWorkspace);
           notifyListeners();
           if (kDebugMode) {
-            print('✅ Created workspace via API: ${newWorkspace.id}');
+            debugPrint('✅ Created workspace via API: ${newWorkspace.id}');
           }
         } else {
           throw Exception('ApiService not available for real data');
@@ -356,10 +356,10 @@ class WorkspaceService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('✏️ Updating workspace: $workspaceId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('✏️ Updating workspace: $workspaceId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
         if (!_shouldUseMockData) {
-          print('⚠️ Update workspace API not available - using mock behavior');
+          debugPrint('⚠️ Update workspace API not available - using mock behavior');
         }
       }
 
@@ -397,8 +397,8 @@ class WorkspaceService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🗑️ Deleting workspace: $workspaceId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🗑️ Deleting workspace: $workspaceId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -413,15 +413,15 @@ class WorkspaceService with ChangeNotifier {
         _workspaces.removeAt(index);
         notifyListeners();
         if (kDebugMode) {
-          print('✅ Deleted mock workspace: $workspaceId');
+          debugPrint('✅ Deleted mock workspace: $workspaceId');
         }
       } else {
         // Use real API service
         if (_apiService != null) {
           if (kDebugMode) {
-            print('🌐 Making real API call to delete workspace');
+            debugPrint('🌐 Making real API call to delete workspace');
           }
-          await _apiService!.deleteWorkspace(workspaceId);
+          await _apiService.deleteWorkspace(workspaceId);
 
           // Remove from local list after successful API call
           final index = _workspaces.indexWhere((ws) => ws.id == workspaceId);
@@ -430,7 +430,7 @@ class WorkspaceService with ChangeNotifier {
             notifyListeners();
           }
           if (kDebugMode) {
-            print('✅ Deleted workspace via API: $workspaceId');
+            debugPrint('✅ Deleted workspace via API: $workspaceId');
           }
         } else {
           throw Exception('ApiService not available for real data');
@@ -453,8 +453,8 @@ class WorkspaceService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🤝 Sharing workspace $workspaceId with ${request.email}');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🤝 Sharing workspace $workspaceId with ${request.email}');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -503,15 +503,15 @@ class WorkspaceService with ChangeNotifier {
         _workspaces[index] = updatedWorkspace;
         notifyListeners();
         if (kDebugMode) {
-          print('✅ Shared mock workspace with ${request.email}');
+          debugPrint('✅ Shared mock workspace with ${request.email}');
         }
       } else {
         // Use real API service
         if (_apiService != null) {
           if (kDebugMode) {
-            print('🌐 Making real API call to share workspace');
+            debugPrint('🌐 Making real API call to share workspace');
           }
-          await _apiService!.shareWorkspace(
+          await _apiService.shareWorkspace(
             workspaceId: workspaceId,
             userEmail: request.email,
             role: request.role,
@@ -520,7 +520,7 @@ class WorkspaceService with ChangeNotifier {
           // Reload workspaces to get updated data after successful share
           await loadWorkspaces();
           if (kDebugMode) {
-            print('✅ Shared workspace via API with ${request.email}');
+            debugPrint('✅ Shared workspace via API with ${request.email}');
           }
         } else {
           throw Exception('ApiService not available for real data');
@@ -543,8 +543,8 @@ class WorkspaceService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('👋 Removing user $userId from workspace $workspaceId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('👋 Removing user $userId from workspace $workspaceId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -568,15 +568,15 @@ class WorkspaceService with ChangeNotifier {
         _workspaces[index] = updatedWorkspace;
         notifyListeners();
         if (kDebugMode) {
-          print('✅ Removed user from mock workspace');
+          debugPrint('✅ Removed user from mock workspace');
         }
       } else {
         // Use real API service
         if (_apiService != null) {
           if (kDebugMode) {
-            print('🌐 Making real API call to remove user from workspace');
+            debugPrint('🌐 Making real API call to remove user from workspace');
           }
-          await _apiService!.removeUserFromWorkspace(
+          await _apiService.removeUserFromWorkspace(
             workspaceId: workspaceId,
             targetUserId: userId,
           );
@@ -584,7 +584,7 @@ class WorkspaceService with ChangeNotifier {
           // Reload workspaces to get updated data after successful removal
           await loadWorkspaces();
           if (kDebugMode) {
-            print('✅ Removed user from workspace via API');
+            debugPrint('✅ Removed user from workspace via API');
           }
         } else {
           throw Exception('ApiService not available for real data');
@@ -626,7 +626,7 @@ class WorkspaceService with ChangeNotifier {
     _error = error;
     _isLoading = false;
     if (kDebugMode) {
-      print('❌ WorkspaceService Error: $error');
+      debugPrint('❌ WorkspaceService Error: $error');
     }
     notifyListeners();
   }

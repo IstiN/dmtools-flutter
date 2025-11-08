@@ -100,7 +100,7 @@ abstract class LoadingStateProvider extends ChangeNotifier {
       final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
       setError(message);
       if (kDebugMode) {
-        print('LoadingStateProvider: Error in executeWithLoadingState: $e');
+        debugPrint('LoadingStateProvider: Error in executeWithLoadingState: $e');
       }
     }
   }
@@ -139,7 +139,7 @@ abstract class LoadingStateProvider extends ChangeNotifier {
       final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
       setError(message);
       if (kDebugMode) {
-        print('LoadingStateProvider: Error in executeWithLoadingStateAndData: $e');
+        debugPrint('LoadingStateProvider: Error in executeWithLoadingStateAndData: $e');
       }
       return null;
     }

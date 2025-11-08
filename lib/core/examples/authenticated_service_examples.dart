@@ -17,9 +17,9 @@ class AuthenticatedServiceExamples {
         return mcpProvider.configurations;
       });
 
-      print('✅ Loaded ${configurations.length} MCP configurations');
+      debugPrint('✅ Loaded ${configurations.length} MCP configurations');
     } catch (e) {
-      print('❌ Failed to load MCP configurations: $e');
+      debugPrint('❌ Failed to load MCP configurations: $e');
     }
   }
 
@@ -41,9 +41,9 @@ class AuthenticatedServiceExamples {
         },
       ], requireIntegrations: true);
 
-      print('✅ Loaded data in parallel: ${results[0]} configs, ${results[1]}');
+      debugPrint('✅ Loaded data in parallel: ${results[0]} configs, ${results[1]}');
     } catch (e) {
-      print('❌ Failed to load data in parallel: $e');
+      debugPrint('❌ Failed to load data in parallel: $e');
     }
   }
 
@@ -54,22 +54,22 @@ class AuthenticatedServiceExamples {
     try {
       final results = await authService.executeSequential([
         () async {
-          print('📊 Step 1: Loading configurations...');
+          debugPrint('📊 Step 1: Loading configurations...');
           final mcpProvider = context.read<McpProvider>();
           await mcpProvider.loadConfigurations();
           return mcpProvider.configurations;
         },
         () async {
-          print('📊 Step 2: Processing configurations...');
+          debugPrint('📊 Step 2: Processing configurations...');
           // Process the loaded configurations
           await Future.delayed(const Duration(milliseconds: 300));
           return 'Processed data';
         },
       ], requireIntegrations: true);
 
-      print('✅ Sequential loading completed: ${results.length} steps');
+      debugPrint('✅ Sequential loading completed: ${results.length} steps');
     } catch (e) {
-      print('❌ Sequential loading failed: $e');
+      debugPrint('❌ Sequential loading failed: $e');
     }
   }
 
@@ -83,9 +83,9 @@ class AuthenticatedServiceExamples {
         return 'User-specific data';
       });
 
-      print('✅ Simple operation result: $result');
+      debugPrint('✅ Simple operation result: $result');
     } catch (e) {
-      print('❌ Simple operation failed: $e');
+      debugPrint('❌ Simple operation failed: $e');
     }
   }
 
@@ -102,9 +102,9 @@ class AuthenticatedServiceExamples {
         return 'Success after potential retries';
       }, retries: 3);
 
-      print('✅ Operation with retries result: $result');
+      debugPrint('✅ Operation with retries result: $result');
     } catch (e) {
-      print('❌ Operation failed after retries: $e');
+      debugPrint('❌ Operation failed after retries: $e');
     }
   }
 
@@ -113,10 +113,10 @@ class AuthenticatedServiceExamples {
     final authService = context.authenticatedService;
     final status = authService.authStatus;
 
-    print('📊 Auth Status: $status');
-    print('   - Ready for operations: ${status.isReady}');
-    print('   - Fully ready (with integrations): ${status.isFullyReady}');
-    print('   - User: ${status.user?.email ?? 'Not available'}');
+    debugPrint('📊 Auth Status: $status');
+    debugPrint('   - Ready for operations: ${status.isReady}');
+    debugPrint('   - Fully ready (with integrations): ${status.isFullyReady}');
+    debugPrint('   - User: ${status.user?.email ?? 'Not available'}');
   }
 }
 

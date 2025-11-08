@@ -26,7 +26,7 @@ class AsyncDataLoader {
     } catch (e) {
       final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
       if (kDebugMode) {
-        print('AsyncDataLoader.loadMultiple error: $message');
+        debugPrint('AsyncDataLoader.loadMultiple error: $message');
       }
       rethrow;
     }
@@ -57,7 +57,7 @@ class AsyncDataLoader {
     } catch (e) {
       final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
       if (kDebugMode) {
-        print('AsyncDataLoader.loadSequential error: $message');
+        debugPrint('AsyncDataLoader.loadSequential error: $message');
       }
       rethrow;
     }
@@ -90,13 +90,13 @@ class AsyncDataLoader {
         if (attempts >= maxRetries) {
           final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
           if (kDebugMode) {
-            print('AsyncDataLoader.loadWithRetry failed after $maxRetries attempts: $message');
+            debugPrint('AsyncDataLoader.loadWithRetry failed after $maxRetries attempts: $message');
           }
           rethrow;
         }
 
         if (kDebugMode) {
-          print('AsyncDataLoader.loadWithRetry attempt $attempts failed, retrying in ${retryDelay.inSeconds}s: $e');
+          debugPrint('AsyncDataLoader.loadWithRetry attempt $attempts failed, retrying in ${retryDelay.inSeconds}s: $e');
         }
 
         await Future.delayed(retryDelay);
@@ -125,7 +125,7 @@ class AsyncDataLoader {
     } catch (e) {
       final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
       if (kDebugMode) {
-        print('AsyncDataLoader.loadWithTimeout error: $message');
+        debugPrint('AsyncDataLoader.loadWithTimeout error: $message');
       }
       rethrow;
     }
@@ -168,7 +168,7 @@ class AsyncDataLoader {
   ///     () => apiService.getNotifications(),
   ///   ],
   ///   onProgress: (completed, total) {
-  ///     print('Progress: $completed/$total');
+  ///     debugPrint('Progress: $completed/$total');
   ///   },
   /// );
   /// ```
@@ -192,7 +192,7 @@ class AsyncDataLoader {
     } catch (e) {
       final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
       if (kDebugMode) {
-        print('AsyncDataLoader.loadWithProgress error: $message');
+        debugPrint('AsyncDataLoader.loadWithProgress error: $message');
       }
       rethrow;
     }
@@ -222,14 +222,14 @@ class AsyncDataLoader {
     // Check if we have valid cached data
     if (cacheEntry != null && !cacheEntry.isExpired) {
       if (kDebugMode) {
-        print('AsyncDataLoader.loadWithCache: Using cached data for key: $key');
+        debugPrint('AsyncDataLoader.loadWithCache: Using cached data for key: $key');
       }
       return cacheEntry.data as T;
     }
 
     try {
       if (kDebugMode) {
-        print('AsyncDataLoader.loadWithCache: Loading fresh data for key: $key');
+        debugPrint('AsyncDataLoader.loadWithCache: Loading fresh data for key: $key');
       }
 
       final result = await operation();
@@ -244,7 +244,7 @@ class AsyncDataLoader {
     } catch (e) {
       final message = errorPrefix != null ? '$errorPrefix: $e' : e.toString();
       if (kDebugMode) {
-        print('AsyncDataLoader.loadWithCache error for key $key: $message');
+        debugPrint('AsyncDataLoader.loadWithCache error for key $key: $message');
       }
       rethrow;
     }
@@ -254,7 +254,7 @@ class AsyncDataLoader {
   static void clearCache() {
     _cache.clear();
     if (kDebugMode) {
-      print('AsyncDataLoader: Cache cleared');
+      debugPrint('AsyncDataLoader: Cache cleared');
     }
   }
 
@@ -262,7 +262,7 @@ class AsyncDataLoader {
   static void clearCacheEntry(String key) {
     _cache.remove(key);
     if (kDebugMode) {
-      print('AsyncDataLoader: Cache entry cleared for key: $key');
+      debugPrint('AsyncDataLoader: Cache entry cleared for key: $key');
     }
   }
 }

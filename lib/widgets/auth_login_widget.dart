@@ -20,6 +20,24 @@ class AuthLoginWidget extends StatefulWidget {
 
 class _AuthLoginWidgetState extends State<AuthLoginWidget> {
   bool _showLocalLogin = false;
+  final _firstButtonFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    // Focus first button after dialog is shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _firstButtonFocusNode.canRequestFocus) {
+        _firstButtonFocusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _firstButtonFocusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,17 +109,25 @@ class _AuthLoginWidgetState extends State<AuthLoginWidget> {
               ],
 
               // OAuth provider buttons - dynamically generated based on enabled providers
-              ...authProvider.enabledProviders.map((providerName) {
+              ...authProvider.enabledProviders.asMap().entries.map((entry) {
+                final index = entry.key;
+                final providerName = entry.value;
                 final provider = _getOAuthProviderFromString(providerName);
                 if (provider == null) return const SizedBox.shrink();
 
+                // Focus first button
+                final isFirstButton = index == 0 && !authProvider.hasLocalAuth && !_showLocalLogin;
+
                 return Column(
                   children: [
-                    _OAuthProviderButton(
-                      provider: provider,
-                      text: _getProviderDisplayText(provider),
-                      onPressed: authProvider.isLoading ? null : () => _handleLogin(context, provider),
-                      isLoading: authProvider.isLoading,
+                    Focus(
+                      focusNode: isFirstButton ? _firstButtonFocusNode : null,
+                      child: _OAuthProviderButton(
+                        provider: provider,
+                        text: _getProviderDisplayText(provider),
+                        onPressed: authProvider.isLoading ? null : () => _handleLogin(context, provider),
+                        isLoading: authProvider.isLoading,
+                      ),
                     ),
                     const SizedBox(height: 16),
                   ],
@@ -133,15 +159,18 @@ class _AuthLoginWidgetState extends State<AuthLoginWidget> {
                   )
                 else
                   // Show button only in mixed mode (OAuth + local)
-                  _LocalLoginButton(
-                    isLoading: authProvider.isLoading,
-                    onPressed: authProvider.isLoading
-                        ? null
-                        : () {
-                            setState(() {
-                              _showLocalLogin = true;
-                            });
-                          },
+                  Focus(
+                    focusNode: authProvider.enabledProviders.isEmpty ? _firstButtonFocusNode : null,
+                    child: _LocalLoginButton(
+                      isLoading: authProvider.isLoading,
+                      onPressed: authProvider.isLoading
+                          ? null
+                          : () {
+                              setState(() {
+                                _showLocalLogin = true;
+                              });
+                            },
+                    ),
                   ),
               ],
             ],

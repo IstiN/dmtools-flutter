@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import '../../../theme/app_theme.dart'; // Unused
 import '../../../theme/app_colors.dart';
+import '../../../utils/accessibility_utils.dart';
 
 enum OAuthProvider {
   google,
@@ -20,6 +21,8 @@ class OAuthProviderButton extends StatefulWidget {
   final bool isFullWidth;
   final bool isLoading;
   final bool isDisabled;
+  final String? semanticLabel;
+  final String? testId;
 
   const OAuthProviderButton({
     required this.provider,
@@ -28,6 +31,8 @@ class OAuthProviderButton extends StatefulWidget {
     this.isFullWidth = true,
     this.isLoading = false,
     this.isDisabled = false,
+    this.semanticLabel,
+    this.testId,
     super.key,
   });
 
@@ -56,7 +61,7 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
       await launchUrl(url, webOnlyWindowName: '_self');
     } else {
       // ignore: avoid_print
-      print('Could not launch $url');
+      debugPrint('Could not launch $url');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Could not launch login URL for $providerName')),
@@ -138,10 +143,20 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
 
     final bool showLoading = widget.isLoading || _isLoading;
 
-    return SizedBox(
-      width: widget.isFullWidth ? double.infinity : null,
-      height: AppDimensions.oauthButtonHeight,
-      child: Material(
+    final providerNameForId = widget.provider.toString().split('.').last;
+    final generatedTestId = widget.testId ?? generateTestId('button', {'provider': providerNameForId});
+    final generatedLabel = widget.semanticLabel ?? generateSemanticLabel('button', widget.text);
+
+    return Semantics(
+      label: generatedLabel,
+      button: true,
+      enabled: !widget.isDisabled && !showLoading,
+      focusable: true,
+      child: SizedBox(
+        key: ValueKey(generatedTestId),
+        width: widget.isFullWidth ? double.infinity : null,
+        height: AppDimensions.oauthButtonHeight,
+        child: Material(
         color: widget.isDisabled ? (isDark ? colors.disabledDarkBg : colors.disabledLightBg) : materialColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppDimensions.radiusM),
@@ -191,6 +206,7 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
           ),
         ),
       ),
+    ),
     );
   }
 }

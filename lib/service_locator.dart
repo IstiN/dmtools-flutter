@@ -22,11 +22,11 @@ abstract final class ServiceLocator {
     final baseUrl = serverPort != null ? 'http://localhost:$serverPort' : AppConfig.baseUrl;
     
     // Debug AppConfig values
-    print('[SERVICE_LOCATOR] Initializing with:');
-    print('   serverPort: $serverPort');
-    print('   baseUrl: $baseUrl');
-    print('   enableMockData: ${AppConfig.enableMockData}');
-    print('   enableLogging: ${AppConfig.enableLogging}');
+    debugPrint('[SERVICE_LOCATOR] Initializing with:');
+    debugPrint('   serverPort: $serverPort');
+    debugPrint('   baseUrl: $baseUrl');
+    debugPrint('   enableMockData: ${AppConfig.enableMockData}');
+    debugPrint('   enableLogging: ${AppConfig.enableLogging}');
 
     // Create AuthProvider first (no dependencies)
     GetIt.I.registerLazySingleton(() => AuthProvider());
@@ -122,8 +122,8 @@ abstract final class ServiceLocator {
       if (authProvider.isAuthenticated) {
         final currentUser = authProvider.currentUser;
         if (kDebugMode) {
-          print('🔄 Loading full user profile from API...');
-          print('   Current user: ${currentUser?.name} (${currentUser?.email})');
+          debugPrint('🔄 Loading full user profile from API...');
+          debugPrint('   Current user: ${currentUser?.name} (${currentUser?.email})');
         }
 
         // Try to get full user profile from API
@@ -131,17 +131,17 @@ abstract final class ServiceLocator {
         authProvider.setUserInfo(user);
 
         if (kDebugMode) {
-          print('✅ Full user profile loaded from API: ${user.name} (${user.email})');
+          debugPrint('✅ Full user profile loaded from API: ${user.name} (${user.email})');
         }
       } else {
         if (kDebugMode) {
-          print('⚠️ User not authenticated, skipping user info initialization');
+          debugPrint('⚠️ User not authenticated, skipping user info initialization');
         }
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ User info loading failed: $e');
-        print('   Continuing with existing user data');
+        debugPrint('❌ User info loading failed: $e');
+        debugPrint('   Continuing with existing user data');
       }
       // User info loading failed, but auth is still valid
       // This is non-critical - we can continue with limited user info

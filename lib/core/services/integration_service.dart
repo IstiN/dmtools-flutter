@@ -228,10 +228,10 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🔄 Loading integrations...');
-        print('📍 Base URL: ${AppConfig.baseUrl}');
-        print('🔧 Environment: ${AppConfig.environment.name}');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🔄 Loading integrations...');
+        debugPrint('📍 Base URL: ${AppConfig.baseUrl}');
+        debugPrint('🔧 Environment: ${AppConfig.environment.name}');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -239,32 +239,32 @@ class IntegrationService with ChangeNotifier {
         await Future.delayed(const Duration(milliseconds: 800));
         // Mock data is already initialized
         if (kDebugMode) {
-          print('✅ Using mock integrations (${_integrations.length})');
-          print('✅ MCP-ready integrations: ${mcpReadyIntegrations.length}');
+          debugPrint('✅ Using mock integrations (${_integrations.length})');
+          debugPrint('✅ MCP-ready integrations: ${mcpReadyIntegrations.length}');
           for (final integration in mcpReadyIntegrations) {
-            print('   - ${integration.name} (${integration.type}) [${integration.id}]');
+            debugPrint('   - ${integration.name} (${integration.type}) [${integration.id}]');
           }
         }
       } else {
         // Check if user is authenticated before making API calls
         if (_authProvider?.isAuthenticated != true) {
           if (kDebugMode) {
-            print('⏳ User not authenticated yet, waiting for authentication...');
+            debugPrint('⏳ User not authenticated yet, waiting for authentication...');
           }
           throw Exception('User not authenticated');
         }
 
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to get integrations');
+          debugPrint('🌐 Making real API call to get integrations');
         }
         final apiIntegrations = await _apiService.getIntegrations();
         _integrations = apiIntegrations.map(_convertApiIntegrationToLocal).toList();
         if (kDebugMode) {
-          print('✅ Loaded ${_integrations.length} integrations from API');
-          print('✅ MCP-ready integrations: ${mcpReadyIntegrations.length}');
+          debugPrint('✅ Loaded ${_integrations.length} integrations from API');
+          debugPrint('✅ MCP-ready integrations: ${mcpReadyIntegrations.length}');
           for (final integration in mcpReadyIntegrations) {
-            print('   - ${integration.name} (${integration.type}) [${integration.id}]');
+            debugPrint('   - ${integration.name} (${integration.type}) [${integration.id}]');
           }
         }
       }
@@ -273,7 +273,7 @@ class IntegrationService with ChangeNotifier {
     } catch (e) {
       _setError('Failed to load integrations: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ Error loading integrations: $e');
+        debugPrint('❌ Error loading integrations: $e');
       }
       _setLoading(false);
     }
@@ -286,8 +286,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🔄 Loading integration types...');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🔄 Loading integration types...');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -295,32 +295,32 @@ class IntegrationService with ChangeNotifier {
         await Future.delayed(const Duration(milliseconds: 500));
         // Mock data is already initialized
         if (kDebugMode) {
-          print('✅ Using mock integration types (${_availableTypes.length})');
-          print('✅ MCP-supported types: ${_availableTypes.where((type) => type.supportsMcp).length}');
+          debugPrint('✅ Using mock integration types (${_availableTypes.length})');
+          debugPrint('✅ MCP-supported types: ${_availableTypes.where((type) => type.supportsMcp).length}');
           for (final type in _availableTypes.where((type) => type.supportsMcp)) {
-            print('   - ${type.displayName} (${type.type})');
+            debugPrint('   - ${type.displayName} (${type.type})');
           }
         }
       } else {
         // Check if user is authenticated before making API calls
         if (_authProvider?.isAuthenticated != true) {
           if (kDebugMode) {
-            print('⏳ User not authenticated yet, waiting for authentication...');
+            debugPrint('⏳ User not authenticated yet, waiting for authentication...');
           }
           throw Exception('User not authenticated');
         }
 
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to get integration types');
+          debugPrint('🌐 Making real API call to get integration types');
         }
         final apiTypes = await _apiService.getIntegrationTypes();
         _availableTypes = apiTypes.map(_convertApiIntegrationTypeToLocal).toList();
         if (kDebugMode) {
-          print('✅ Loaded ${_availableTypes.length} integration types from API');
-          print('✅ MCP-supported types: ${_availableTypes.where((type) => type.supportsMcp).length}');
+          debugPrint('✅ Loaded ${_availableTypes.length} integration types from API');
+          debugPrint('✅ MCP-supported types: ${_availableTypes.where((type) => type.supportsMcp).length}');
           for (final type in _availableTypes.where((type) => type.supportsMcp)) {
-            print('   - ${type.displayName} (${type.type})');
+            debugPrint('   - ${type.displayName} (${type.type})');
           }
         }
       }
@@ -329,7 +329,7 @@ class IntegrationService with ChangeNotifier {
     } catch (e) {
       _setError('Failed to load integration types: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ Error loading integration types: $e');
+        debugPrint('❌ Error loading integration types: $e');
       }
       _setLoading(false);
     }
@@ -383,8 +383,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🔄 Creating integration: ${request.name}');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🔄 Creating integration: ${request.name}');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -418,7 +418,7 @@ class IntegrationService with ChangeNotifier {
         notifyListeners();
 
         if (kDebugMode) {
-          print('✅ Created mock integration: ${newIntegration.id}');
+          debugPrint('✅ Created mock integration: ${newIntegration.id}');
         }
 
         _setLoading(false);
@@ -426,7 +426,7 @@ class IntegrationService with ChangeNotifier {
       } else {
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to create integration');
+          debugPrint('🌐 Making real API call to create integration');
         }
 
         // Convert raw config params to ConfigParam objects
@@ -443,7 +443,7 @@ class IntegrationService with ChangeNotifier {
         _integrations.add(newIntegration);
         notifyListeners();
         if (kDebugMode) {
-          print('✅ Created integration via API: ${newIntegration.id}');
+          debugPrint('✅ Created integration via API: ${newIntegration.id}');
         }
 
         _setLoading(false);
@@ -463,8 +463,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🔄 Updating integration: $integrationId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🔄 Updating integration: $integrationId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -502,7 +502,7 @@ class IntegrationService with ChangeNotifier {
         _integrations[index] = updatedIntegration;
         notifyListeners();
         if (kDebugMode) {
-          print('✅ Updated mock integration: $integrationId');
+          debugPrint('✅ Updated mock integration: $integrationId');
         }
 
         _setLoading(false);
@@ -510,7 +510,7 @@ class IntegrationService with ChangeNotifier {
       } else {
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to update integration');
+          debugPrint('🌐 Making real API call to update integration');
         }
 
         // Get the integration type to determine sensitive parameters
@@ -531,7 +531,7 @@ class IntegrationService with ChangeNotifier {
         // Reload integrations to get updated data
         await loadIntegrations();
         if (kDebugMode) {
-          print('✅ Updated integration via API: $integrationId');
+          debugPrint('✅ Updated integration via API: $integrationId');
         }
 
         _setLoading(false);
@@ -551,8 +551,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🗑️ Deleting integration: $integrationId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🗑️ Deleting integration: $integrationId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -567,12 +567,12 @@ class IntegrationService with ChangeNotifier {
         _integrations.removeAt(index);
         notifyListeners();
         if (kDebugMode) {
-          print('✅ Deleted mock integration: $integrationId');
+          debugPrint('✅ Deleted mock integration: $integrationId');
         }
       } else {
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to delete integration');
+          debugPrint('🌐 Making real API call to delete integration');
         }
         await _apiService.deleteIntegration(integrationId);
 
@@ -583,7 +583,7 @@ class IntegrationService with ChangeNotifier {
           notifyListeners();
         }
         if (kDebugMode) {
-          print('✅ Deleted integration via API: $integrationId');
+          debugPrint('✅ Deleted integration via API: $integrationId');
         }
       }
 
@@ -603,8 +603,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('✅ Enabling integration: $integrationId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('✅ Enabling integration: $integrationId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -632,17 +632,17 @@ class IntegrationService with ChangeNotifier {
           notifyListeners();
         }
         if (kDebugMode) {
-          print('✅ Enabled mock integration: $integrationId');
+          debugPrint('✅ Enabled mock integration: $integrationId');
         }
       } else {
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to enable integration');
+          debugPrint('🌐 Making real API call to enable integration');
         }
         await _apiService.enableIntegration(integrationId);
         await loadIntegrations();
         if (kDebugMode) {
-          print('✅ Enabled integration via API: $integrationId');
+          debugPrint('✅ Enabled integration via API: $integrationId');
         }
       }
 
@@ -662,8 +662,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('❌ Disabling integration: $integrationId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('❌ Disabling integration: $integrationId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -691,17 +691,17 @@ class IntegrationService with ChangeNotifier {
           notifyListeners();
         }
         if (kDebugMode) {
-          print('✅ Disabled mock integration: $integrationId');
+          debugPrint('✅ Disabled mock integration: $integrationId');
         }
       } else {
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to disable integration');
+          debugPrint('🌐 Making real API call to disable integration');
         }
         await _apiService.disableIntegration(integrationId);
         await loadIntegrations();
         if (kDebugMode) {
-          print('✅ Disabled integration via API: $integrationId');
+          debugPrint('✅ Disabled integration via API: $integrationId');
         }
       }
 
@@ -721,8 +721,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🔧 Testing integration connection: ${request.type}');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🔧 Testing integration connection: ${request.type}');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -738,7 +738,7 @@ class IntegrationService with ChangeNotifier {
         };
 
         if (kDebugMode) {
-          print('✅ Mock integration test successful');
+          debugPrint('✅ Mock integration test successful');
         }
 
         _setLoading(false);
@@ -746,7 +746,7 @@ class IntegrationService with ChangeNotifier {
       } else {
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to test integration');
+          debugPrint('🌐 Making real API call to test integration');
         }
 
         // For test integration, the API expects raw string values according to the swagger schema
@@ -757,7 +757,7 @@ class IntegrationService with ChangeNotifier {
         );
         final testResult = await _apiService.testIntegration(testRequest);
         if (kDebugMode) {
-          print('✅ Integration test completed via API');
+          debugPrint('✅ Integration test completed via API');
         }
 
         _setLoading(false);
@@ -801,8 +801,8 @@ class IntegrationService with ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🔄 Fetching integration details: $integrationId');
-        print('📊 Using mock data: $_shouldUseMockData');
+        debugPrint('🔄 Fetching integration details: $integrationId');
+        debugPrint('📊 Using mock data: $_shouldUseMockData');
       }
 
       if (_shouldUseMockData) {
@@ -815,7 +815,7 @@ class IntegrationService with ChangeNotifier {
         );
 
         if (kDebugMode) {
-          print('✅ Found mock integration: ${integration.name}');
+          debugPrint('✅ Found mock integration: ${integration.name}');
         }
 
         _setLoading(false);
@@ -823,7 +823,7 @@ class IntegrationService with ChangeNotifier {
       } else {
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to get integration details');
+          debugPrint('🌐 Making real API call to get integration details');
         }
         final apiIntegration = await _apiService.getIntegration(integrationId, includeSensitive: includeSensitive);
         final integration = _convertApiIntegrationToLocal(apiIntegration);
@@ -836,7 +836,7 @@ class IntegrationService with ChangeNotifier {
         }
 
         if (kDebugMode) {
-          print('✅ Fetched integration details via API: ${integration.name}');
+          debugPrint('✅ Fetched integration details via API: ${integration.name}');
         }
 
         _setLoading(false);
@@ -861,7 +861,7 @@ class IntegrationService with ChangeNotifier {
   /// Helper methods
   void _setLoading(bool loading) {
     if (kDebugMode) {
-      print('🔍 IntegrationService._setLoading: $_isLoading -> $loading');
+      debugPrint('🔍 IntegrationService._setLoading: $_isLoading -> $loading');
     }
     _isLoading = loading;
     notifyListeners();

@@ -10,8 +10,8 @@ Map<String, String>? getOAuthParamsFromWindow() {
     final jsParams = js.context['oauthParams'];
 
     if (kDebugMode) {
-      print('🔍 OAuth ready flag: $oauthReady');
-      print('🔍 OAuth params object: ${jsParams != null ? 'present' : 'null'}');
+      debugPrint('🔍 OAuth ready flag: $oauthReady');
+      debugPrint('🔍 OAuth params object: ${jsParams != null ? 'present' : 'null'}');
     }
 
     if (jsParams == null) return null;
@@ -32,13 +32,13 @@ Map<String, String>? getOAuthParamsFromWindow() {
     }
 
     if (kDebugMode) {
-      print('🔍 OAuth params from window: $params');
+      debugPrint('🔍 OAuth params from window: $params');
     }
 
     return params.isNotEmpty ? params : null;
   } catch (e) {
     if (kDebugMode) {
-      print('❌ Error reading OAuth params from window: $e');
+      debugPrint('❌ Error reading OAuth params from window: $e');
     }
     return null;
   }
@@ -49,11 +49,11 @@ void clearOAuthParamsFromWindow() {
   try {
     js.context.deleteProperty('oauthParams');
     if (kDebugMode) {
-      print('🧹 Cleared OAuth params from window');
+      debugPrint('🧹 Cleared OAuth params from window');
     }
   } catch (e) {
     if (kDebugMode) {
-      print('❌ Error clearing OAuth params: $e');
+      debugPrint('❌ Error clearing OAuth params: $e');
     }
   }
 }
@@ -65,6 +65,6 @@ void cleanupOAuthUrl() {
   // The JavaScript in index.html already handles URL cleanup
 
   if (kDebugMode) {
-    print('🔧 OAuth URL cleanup completed by JavaScript in index.html');
+    debugPrint('🔧 OAuth URL cleanup completed by JavaScript in index.html');
   }
 }

@@ -26,7 +26,7 @@ class ChatService with ChangeNotifier {
   bool get _shouldUseMockData {
     final shouldUseMock = _authProvider?.shouldUseMockData ?? true;
     if (kDebugMode) {
-      print('🔧 ChatService mock mode: $shouldUseMock');
+      debugPrint('🔧 ChatService mock mode: $shouldUseMock');
     }
     return shouldUseMock;
   }
@@ -64,7 +64,7 @@ class ChatService with ChangeNotifier {
       if (_shouldUseMockData) {
         // Mock response for development
         if (kDebugMode) {
-          print('🤖 Mock ChatService: sendSimpleMessage($message, $model)');
+          debugPrint('🤖 Mock ChatService: sendSimpleMessage($message, $model)');
         }
         await Future.delayed(const Duration(milliseconds: 800));
 
@@ -79,14 +79,14 @@ class ChatService with ChangeNotifier {
         // Check if user is authenticated before making API calls
         if (_authProvider?.isAuthenticated != true) {
           if (kDebugMode) {
-            print('⏳ User not authenticated yet, waiting for authentication...');
+            debugPrint('⏳ User not authenticated yet, waiting for authentication...');
           }
           throw Exception('User not authenticated');
         }
 
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to send simple message');
+          debugPrint('🌐 Making real API call to send simple message');
         }
 
         final response = await _apiService.apiClient.apiV1ChatSimplePost(
@@ -97,7 +97,7 @@ class ChatService with ChangeNotifier {
 
         if (response.isSuccessful && response.body != null) {
           if (kDebugMode) {
-            print('✅ Chat response received: ${response.body?.content?.length} chars');
+            debugPrint('✅ Chat response received: ${response.body?.content?.length} chars');
           }
           _setLoading(false);
           return response.body;
@@ -108,7 +108,7 @@ class ChatService with ChangeNotifier {
     } catch (e) {
       _setError('Failed to send message: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ Error sending simple message: $e');
+        debugPrint('❌ Error sending simple message: $e');
       }
       _setLoading(false);
       return null;
@@ -134,11 +134,11 @@ class ChatService with ChangeNotifier {
       if (_shouldUseMockData) {
         // Mock response for development
         if (kDebugMode) {
-          print('🤖 Mock ChatService: sendChatCompletion(${messages.length} messages, AI: $aiIntegrationId)');
+          debugPrint('🤖 Mock ChatService: sendChatCompletion(${messages.length} messages, AI: $aiIntegrationId)');
         }
         await Future.delayed(const Duration(milliseconds: 1000));
 
-        final lastMessage = messages.last.content ?? '';
+        final lastMessage = messages.last.content;
         final mockResponse = api.ChatResponse(
           content: 'This is a mock completion response to: "$lastMessage"',
           success: true,
@@ -150,14 +150,14 @@ class ChatService with ChangeNotifier {
         // Check if user is authenticated before making API calls
         if (_authProvider?.isAuthenticated != true) {
           if (kDebugMode) {
-            print('⏳ User not authenticated yet, waiting for authentication...');
+            debugPrint('⏳ User not authenticated yet, waiting for authentication...');
           }
           throw Exception('User not authenticated');
         }
 
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to send chat completion');
+          debugPrint('🌐 Making real API call to send chat completion');
         }
 
         final chatRequest = api.ChatRequest(
@@ -172,7 +172,7 @@ class ChatService with ChangeNotifier {
 
         if (response.isSuccessful && response.body != null) {
           if (kDebugMode) {
-            print('✅ Chat completion response received: ${response.body?.content?.length} chars');
+            debugPrint('✅ Chat completion response received: ${response.body?.content?.length} chars');
           }
           _setLoading(false);
           return response.body;
@@ -183,7 +183,7 @@ class ChatService with ChangeNotifier {
     } catch (e) {
       _setError('Failed to send chat completion: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ Error sending chat completion: $e');
+        debugPrint('❌ Error sending chat completion: $e');
       }
       _setLoading(false);
       return null;
@@ -214,12 +214,12 @@ class ChatService with ChangeNotifier {
       if (_shouldUseMockData) {
         // Mock response for development
         if (kDebugMode) {
-          print(
+          debugPrint(
               '🤖 Mock ChatService: sendChatWithFiles(${messages.length} messages, ${files.length} files, AI: $aiIntegrationId)');
         }
         await Future.delayed(const Duration(milliseconds: 1500));
 
-        final lastMessage = messages.last.content ?? '';
+        final lastMessage = messages.last.content;
         final mockResponse = api.ChatResponse(
           content: 'This is a mock response with ${files.length} file(s) to: "$lastMessage"',
           success: true,
@@ -231,14 +231,14 @@ class ChatService with ChangeNotifier {
         // Check if user is authenticated before making API calls
         if (_authProvider?.isAuthenticated != true) {
           if (kDebugMode) {
-            print('⏳ User not authenticated yet, waiting for authentication...');
+            debugPrint('⏳ User not authenticated yet, waiting for authentication...');
           }
           throw Exception('User not authenticated');
         }
 
         // Use real API service
         if (kDebugMode) {
-          print('🌐 Making real API call to send chat with files');
+          debugPrint('🌐 Making real API call to send chat with files');
         }
 
         final chatRequest = api.ChatRequest(
@@ -260,7 +260,7 @@ class ChatService with ChangeNotifier {
 
           if (response.isSuccessful && response.body != null) {
             if (kDebugMode) {
-              print('✅ Chat with files response received: ${response.body?.content?.length} chars');
+              debugPrint('✅ Chat with files response received: ${response.body?.content?.length} chars');
             }
             _setLoading(false);
             return response.body;
@@ -269,8 +269,8 @@ class ChatService with ChangeNotifier {
           }
         } catch (apiError) {
           if (kDebugMode) {
-            print('❌ Generated API failed: $apiError');
-            print('🔄 Attempting manual HTTP request...');
+            debugPrint('❌ Generated API failed: $apiError');
+            debugPrint('🔄 Attempting manual HTTP request...');
           }
 
           // Fallback: Use manual HTTP request
@@ -287,7 +287,7 @@ class ChatService with ChangeNotifier {
     } catch (e) {
       _setError('Failed to send chat with files: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ Error sending chat with files: $e');
+        debugPrint('❌ Error sending chat with files: $e');
       }
       _setLoading(false);
       return null;
@@ -329,8 +329,8 @@ class ChatService with ChangeNotifier {
       }
 
       if (kDebugMode) {
-        print('🌐 Making manual HTTP multipart request to $uri');
-        print('📎 Uploading ${files.length} files');
+        debugPrint('🌐 Making manual HTTP multipart request to $uri');
+        debugPrint('📎 Uploading ${files.length} files');
       }
 
       final streamedResponse = await request.send();
@@ -341,7 +341,7 @@ class ChatService with ChangeNotifier {
         final chatResponse = api.ChatResponse.fromJson(jsonResponse);
 
         if (kDebugMode) {
-          print('✅ Manual HTTP request successful: ${chatResponse.content?.length} chars');
+          debugPrint('✅ Manual HTTP request successful: ${chatResponse.content?.length} chars');
         }
 
         return chatResponse;
@@ -350,7 +350,7 @@ class ChatService with ChangeNotifier {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Manual HTTP request failed: $e');
+        debugPrint('❌ Manual HTTP request failed: $e');
       }
       rethrow;
     }

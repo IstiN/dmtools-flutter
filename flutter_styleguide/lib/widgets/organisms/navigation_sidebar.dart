@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../theme/app_colors.dart';
+import '../../utils/accessibility_utils.dart';
 import '../atoms/logos/logos.dart';
 
 /// Navigation item model for the sidebar
@@ -135,41 +136,53 @@ class _NavigationItem extends StatelessWidget {
     const Color selectedBgColor = AppColors.selectedBgColor;
     final Color hoverBgColor = isDarkMode ? AppColors.darkHoverBgColor : AppColors.lightHoverBgColor;
 
-    return Container(
-      margin: EdgeInsets.zero,
-      decoration: BoxDecoration(
-        color: isSelected ? selectedBgColor : Colors.transparent,
-        borderRadius: BorderRadius.zero,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+    // Generate test ID based on menu item label
+    final testId = generateTestId('menu-item', {'label': item.label.toLowerCase().replaceAll(' ', '-')});
+    final semanticLabel = '${item.label} navigation item${isSelected ? ', selected' : ''}';
+
+    return Semantics(
+      label: semanticLabel,
+      button: true,
+      enabled: true,
+      selected: isSelected,
+      onTap: onTap,
+      child: Container(
+        key: ValueKey(testId),
+        margin: EdgeInsets.zero,
+        decoration: BoxDecoration(
+          color: isSelected ? selectedBgColor : Colors.transparent,
           borderRadius: BorderRadius.zero,
-          hoverColor: isSelected ? Colors.transparent : hoverBgColor,
-          onTap: onTap,
-          child: Container(
-            height: 50,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Icon(
-                  item.icon,
-                  color: isSelected ? selectedTextColor : textColor,
-                  size: 20,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Text(
-                    item.label,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: isSelected ? selectedTextColor : textColor,
-                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                      fontSize: 14,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.zero,
+            hoverColor: isSelected ? Colors.transparent : hoverBgColor,
+            onTap: onTap,
+            child: Container(
+              height: 50,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: [
+                  Icon(
+                    item.icon,
+                    color: isSelected ? selectedTextColor : textColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      item.label,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: isSelected ? selectedTextColor : textColor,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
