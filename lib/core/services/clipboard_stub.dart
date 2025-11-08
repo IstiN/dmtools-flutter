@@ -7,14 +7,14 @@ class WebClipboard {
 
   static Future<bool> requestPermissions() async {
     if (kDebugMode) {
-      print('🔧 WebClipboard: Not available on this platform');
+      debugPrint('🔧 WebClipboard: Not available on this platform');
     }
     return false;
   }
 
   static Future<ClipboardContent?> readClipboard() async {
     if (kDebugMode) {
-      print('🔧 WebClipboard: Not available on this platform');
+      debugPrint('🔧 WebClipboard: Not available on this platform');
     }
     return null;
   }

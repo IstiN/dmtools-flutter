@@ -21,7 +21,7 @@ class WebClipboard {
         final permission = await permissions.query({'name': 'clipboard-read'});
 
         if (kDebugMode) {
-          print('🔐 Clipboard permission state: ${permission.state}');
+          debugPrint('🔐 Clipboard permission state: ${permission.state}');
         }
         return permission.state == 'granted' || permission.state == 'prompt';
       }
@@ -29,7 +29,7 @@ class WebClipboard {
       return true; // If permissions API not available, assume it's OK
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Clipboard permission check failed: $e');
+        debugPrint('⚠️ Clipboard permission check failed: $e');
       }
       return true; // Fallback to trying anyway
     }
@@ -40,14 +40,14 @@ class WebClipboard {
   static Future<ClipboardContent?> readClipboard() async {
     if (!isAvailable) {
       if (kDebugMode) {
-        print('❌ Clipboard API not available');
+        debugPrint('❌ Clipboard API not available');
       }
       return null;
     }
 
     try {
       if (kDebugMode) {
-        print('🔧 Reading clipboard content...');
+        debugPrint('🔧 Reading clipboard content...');
       }
 
       // Try to read text first (most reliable)
@@ -55,13 +55,13 @@ class WebClipboard {
         final text = await html.window.navigator.clipboard!.readText();
         if (text.isNotEmpty) {
           if (kDebugMode) {
-            print('📝 Found text content: ${text.length} chars');
+            debugPrint('📝 Found text content: ${text.length} chars');
           }
           return ClipboardContent.text(text);
         }
       } catch (textError) {
         if (kDebugMode) {
-          print('⚠️ Text clipboard read failed: $textError');
+          debugPrint('⚠️ Text clipboard read failed: $textError');
         }
       }
 
@@ -69,18 +69,18 @@ class WebClipboard {
       // The dart:html API doesn't fully expose the modern Clipboard API
       // For now, we'll focus on text-only clipboard support
       if (kDebugMode) {
-        print('💡 Image clipboard reading not supported in current Dart web implementation');
-        print('💡 Consider using file picker for image uploads');
+        debugPrint('💡 Image clipboard reading not supported in current Dart web implementation');
+        debugPrint('💡 Consider using file picker for image uploads');
       }
 
       if (kDebugMode) {
-        print('🔍 No valid content found in clipboard');
+        debugPrint('🔍 No valid content found in clipboard');
       }
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Failed to read clipboard: $e');
-        print('💡 User may need to grant clipboard permissions or use Ctrl+V during focus');
+        debugPrint('❌ Failed to read clipboard: $e');
+        debugPrint('💡 User may need to grant clipboard permissions or use Ctrl+V during focus');
       }
       return null;
     }

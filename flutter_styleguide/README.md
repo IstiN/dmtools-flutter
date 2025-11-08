@@ -308,8 +308,10 @@ flutter test --update-goldens
 ### **Accessibility**
 - WCAG 2.1 AA compliance
 - Proper contrast ratios
-- Keyboard navigation support
-- Screen reader compatibility
+- Full keyboard navigation support (Enter/Space, Tab, Arrow keys)
+- Screen reader compatibility with semantic labels
+- Automation testing support with test identifiers
+- See [ACCESSIBILITY.md](ACCESSIBILITY.md) for detailed guide
 
 ### **Performance**
 - Minimal widget rebuilds

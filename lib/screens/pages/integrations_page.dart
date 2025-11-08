@@ -30,7 +30,7 @@ class _IntegrationsPageState extends AuthenticatedPage<IntegrationsPage> {
 
   @override
   Future<void> loadAuthenticatedData() async {
-    print('🔧 IntegrationsPage: Loading integrations...');
+    debugPrint('🔧 IntegrationsPage: Loading integrations...');
 
     final integrations = await authService.executeWithIntegrations(() async {
       final integrationProvider = context.read<IntegrationProvider>();
@@ -38,7 +38,7 @@ class _IntegrationsPageState extends AuthenticatedPage<IntegrationsPage> {
       return integrationProvider.integrations;
     });
 
-    print('🔧 IntegrationsPage: Loaded ${integrations.length} integrations');
+    debugPrint('🔧 IntegrationsPage: Loaded ${integrations.length} integrations');
 
     // Always set loaded - let the IntegrationManagement component handle empty states internally
     setLoaded();
@@ -48,7 +48,7 @@ class _IntegrationsPageState extends AuthenticatedPage<IntegrationsPage> {
   Widget buildAuthenticatedContent(BuildContext context) {
     return Consumer<IntegrationProvider>(
       builder: (context, integrationProvider, child) {
-        print(
+        debugPrint(
             '🔧 IntegrationsPage: Building authenticated content with ${integrationProvider.integrations.length} integrations');
 
         // Convert models for styleguide compatibility

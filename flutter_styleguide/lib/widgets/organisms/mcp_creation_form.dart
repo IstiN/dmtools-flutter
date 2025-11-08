@@ -87,8 +87,8 @@ class _McpCreationFormState extends State<McpCreationForm> {
   }
 
   void _onIntegrationChanged(String integration, bool selected) {
-    print('🔧 McpCreationForm: _onIntegrationChanged called with integration: $integration, selected: $selected');
-    print('🔧 McpCreationForm: Before change: $_selectedIntegrations');
+    debugPrint('🔧 McpCreationForm: _onIntegrationChanged called with integration: $integration, selected: $selected');
+    debugPrint('🔧 McpCreationForm: Before change: $_selectedIntegrations');
 
     setState(() {
       if (selected) {
@@ -96,7 +96,7 @@ class _McpCreationFormState extends State<McpCreationForm> {
       } else {
         _selectedIntegrations.remove(integration);
       }
-      print('🔧 McpCreationForm: After change: $_selectedIntegrations');
+      debugPrint('🔧 McpCreationForm: After change: $_selectedIntegrations');
     });
 
     if (_hasValidated) {
@@ -151,34 +151,34 @@ class _McpCreationFormState extends State<McpCreationForm> {
   }
 
   Future<void> _handleSubmit() async {
-    print('🔧 McpCreationForm: _handleSubmit called');
-    print('🔧 McpCreationForm: Running validation');
+    debugPrint('🔧 McpCreationForm: _handleSubmit called');
+    debugPrint('🔧 McpCreationForm: Running validation');
     final isValid = _validateForm();
-    print('🔧 McpCreationForm: Form valid? $isValid');
-    print('🔧 McpCreationForm: widget.onSubmit != null = ${widget.onSubmit != null}');
-    print('🔧 McpCreationForm: name = "${_nameController.text.trim()}"');
-    print('🔧 McpCreationForm: selectedIntegrations = $_selectedIntegrations');
+    debugPrint('🔧 McpCreationForm: Form valid? $isValid');
+    debugPrint('🔧 McpCreationForm: widget.onSubmit != null = ${widget.onSubmit != null}');
+    debugPrint('🔧 McpCreationForm: name = "${_nameController.text.trim()}"');
+    debugPrint('🔧 McpCreationForm: selectedIntegrations = $_selectedIntegrations');
 
     if (isValid && widget.onSubmit != null) {
-      print('🔧 McpCreationForm: Calling widget.onSubmit');
+      debugPrint('🔧 McpCreationForm: Calling widget.onSubmit');
       try {
         // Force a small delay to ensure UI updates properly
         await Future.delayed(const Duration(milliseconds: 100));
 
         await widget.onSubmit!(_nameController.text.trim(), _selectedIntegrations);
-        print('🔧 McpCreationForm: widget.onSubmit completed');
+        debugPrint('🔧 McpCreationForm: widget.onSubmit completed');
       } catch (e) {
-        print('🔧 McpCreationForm: Error in widget.onSubmit: $e');
+        debugPrint('🔧 McpCreationForm: Error in widget.onSubmit: $e');
       }
     } else {
-      print('🔧 McpCreationForm: Submit conditions not met');
+      debugPrint('🔧 McpCreationForm: Submit conditions not met');
       if (!isValid) {
-        print('🔧 McpCreationForm: Form validation failed');
-        print('🔧 McpCreationForm: Name error: $_nameError');
-        print('🔧 McpCreationForm: Integration error: $_integrationError');
+        debugPrint('🔧 McpCreationForm: Form validation failed');
+        debugPrint('🔧 McpCreationForm: Name error: $_nameError');
+        debugPrint('🔧 McpCreationForm: Integration error: $_integrationError');
       }
       if (widget.onSubmit == null) {
-        print('🔧 McpCreationForm: No onSubmit callback provided');
+        debugPrint('🔧 McpCreationForm: No onSubmit callback provided');
       }
     }
   }
@@ -240,11 +240,11 @@ class _McpCreationFormState extends State<McpCreationForm> {
           _ActionSection(
             onSubmit: canSubmit
                 ? () {
-                    print('🔧 McpCreationForm: _ActionSection.onSubmit callback triggered');
-                    print('🔧 McpCreationForm: canSubmit = $canSubmit');
-                    print('🔧 McpCreationForm: Calling _handleSubmit()');
+                    debugPrint('🔧 McpCreationForm: _ActionSection.onSubmit callback triggered');
+                    debugPrint('🔧 McpCreationForm: canSubmit = $canSubmit');
+                    debugPrint('🔧 McpCreationForm: Calling _handleSubmit()');
                     _handleSubmit();
-                    print('🔧 McpCreationForm: _handleSubmit() called');
+                    debugPrint('🔧 McpCreationForm: _handleSubmit() called');
                   }
                 : null,
             onCancel: widget.onCancel,
@@ -503,14 +503,14 @@ class _ActionSection extends StatelessWidget {
                     onPressed: submissionState == McpFormSubmissionState.submitting
                         ? null
                         : () {
-                            print('🔧 _ActionSection: Create MCP Configuration button clicked');
-                            print('🔧 _ActionSection: onSubmit is null? ${onSubmit == null}');
+                            debugPrint('🔧 _ActionSection: Create MCP Configuration button clicked');
+                            debugPrint('🔧 _ActionSection: onSubmit is null? ${onSubmit == null}');
                             if (onSubmit != null) {
-                              print('🔧 _ActionSection: Calling onSubmit callback');
+                              debugPrint('🔧 _ActionSection: Calling onSubmit callback');
                               onSubmit!();
-                              print('🔧 _ActionSection: onSubmit callback completed');
+                              debugPrint('🔧 _ActionSection: onSubmit callback completed');
                             } else {
-                              print('🔧 _ActionSection: No onSubmit callback provided');
+                              debugPrint('🔧 _ActionSection: No onSubmit callback provided');
                             }
                           },
                   ),

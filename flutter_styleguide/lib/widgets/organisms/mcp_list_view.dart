@@ -456,7 +456,7 @@ class _EmptyState extends StatelessWidget {
               AppButton(
                 text: 'Create Your First MCP',
                 onPressed: () {
-                  print('🔧 McpListView: Create Your First MCP button pressed');
+                  debugPrint('🔧 McpListView: Create Your First MCP button pressed');
                   onCreateNew!();
                 },
               ),

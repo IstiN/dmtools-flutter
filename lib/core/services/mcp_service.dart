@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:chopper/chopper.dart';
 import '../models/mcp_configuration.dart';
 import '../../network/generated/api.swagger.dart';
@@ -18,19 +19,19 @@ class McpService {
 
   /// Get all MCP configurations for the current user
   Future<List<McpConfiguration>> getMcpConfigurations() async {
-    print('🔧 McpService: Getting MCP configurations via manual request...');
+    debugPrint('🔧 McpService: Getting MCP configurations via manual request...');
     try {
       // Manually create and send the request to get the raw response
       final request = Request('GET', Uri.parse('/api/mcp/configurations'), _client.baseUrl);
       final response = await _client.send<dynamic, dynamic>(request);
 
-      print('🔧 McpService: Manual API response received, successful: ${response.isSuccessful}');
-      print('🔧 McpService: Manual API response status code: ${response.statusCode}');
+      debugPrint('🔧 McpService: Manual API response received, successful: ${response.isSuccessful}');
+      debugPrint('🔧 McpService: Manual API response status code: ${response.statusCode}');
 
       if (response.isSuccessful) {
         // Use bodyString to get the raw JSON and parse it manually
         final rawJsonString = response.bodyString;
-        print('🔧 McpService: Raw JSON response: $rawJsonString');
+        debugPrint('🔧 McpService: Raw JSON response: $rawJsonString');
         final decodedJson = jsonDecode(rawJsonString);
 
         if (decodedJson is List) {
@@ -39,25 +40,25 @@ class McpService {
                 try {
                   return _mapJsonToModel(json as Map<String, dynamic>);
                 } catch (e) {
-                  print('🔧 McpService: Error parsing single configuration from JSON: $e');
+                  debugPrint('🔧 McpService: Error parsing single configuration from JSON: $e');
                   return null;
                 }
               })
               .whereType<McpConfiguration>()
               .toList();
 
-          print('🔧 McpService: Manually mapped ${configs.length} configurations');
+          debugPrint('🔧 McpService: Manually mapped ${configs.length} configurations');
           return configs;
         } else {
-          print('🔧 McpService: Decoded JSON is not a List.');
+          debugPrint('🔧 McpService: Decoded JSON is not a List.');
           return [];
         }
       } else {
-        print('🔧 McpService: Manual API error: ${response.error}');
+        debugPrint('🔧 McpService: Manual API error: ${response.error}');
         throw Exception('Failed to fetch MCP configurations: ${response.error}');
       }
     } catch (e) {
-      print('🔧 McpService: Exception in getMcpConfigurations: $e');
+      debugPrint('🔧 McpService: Exception in getMcpConfigurations: $e');
       throw Exception('Error fetching MCP configurations: $e');
     }
   }
@@ -65,9 +66,9 @@ class McpService {
   /// Get a specific MCP configuration by ID
   Future<McpConfiguration> getMcpConfiguration(String id) async {
     try {
-      print('🔧 McpService: Getting MCP configuration with ID: $id');
+      debugPrint('🔧 McpService: Getting MCP configuration with ID: $id');
       final response = await _apiService.apiMcpConfigurationsConfigIdGet(configId: id);
-      print('🔧 McpService: API response received, successful: ${response.isSuccessful}');
+      debugPrint('🔧 McpService: API response received, successful: ${response.isSuccessful}');
 
       if (response.isSuccessful) {
         final rawJsonString = response.bodyString;
@@ -79,11 +80,11 @@ class McpService {
           throw Exception('Invalid response format: Expected a JSON object');
         }
       } else {
-        print('🔧 McpService: API error: ${response.error}');
+        debugPrint('🔧 McpService: API error: ${response.error}');
         throw Exception('Failed to fetch MCP configuration: ${response.error}');
       }
     } catch (e) {
-      print('🔧 McpService: Exception in getMcpConfiguration: $e');
+      debugPrint('🔧 McpService: Exception in getMcpConfiguration: $e');
       throw Exception('Error fetching MCP configuration: $e');
     }
   }
@@ -95,23 +96,19 @@ class McpService {
     String? description, // Note: API doesn't support description yet
   }) async {
     try {
-      print('🔧 McpService: Creating MCP with integrationIds: $integrationIds');
-      print('🔧 McpService: _apiService is null? ${_apiService == null}');
-      print(
-        '🔧 McpService: _apiService.apiMcpConfigurationsPost exists? ${_apiService.apiMcpConfigurationsPost != null}',
-      );
+      debugPrint('🔧 McpService: Creating MCP with integrationIds: $integrationIds');
 
       final request = api.CreateMcpConfigurationRequest(name: name, integrationIds: integrationIds);
 
-      print('🔧 McpService: Request created: $request');
-      print('🔧 McpService: Request JSON: ${request.toJson()}');
-      print('🔧 McpService: About to call API');
+      debugPrint('🔧 McpService: Request created: $request');
+      debugPrint('🔧 McpService: Request JSON: ${request.toJson()}');
+      debugPrint('🔧 McpService: About to call API');
 
       final response = await _apiService.apiMcpConfigurationsPost(body: request);
 
-      print('🔧 McpService: API response received');
-      print('🔧 McpService: Response successful: ${response.isSuccessful}');
-      print('🔧 McpService: Response status code: ${response.statusCode}');
+      debugPrint('🔧 McpService: API response received');
+      debugPrint('🔧 McpService: Response successful: ${response.isSuccessful}');
+      debugPrint('🔧 McpService: Response status code: ${response.statusCode}');
 
       if (response.isSuccessful) {
         final rawJsonString = response.bodyString;
@@ -119,19 +116,19 @@ class McpService {
 
         if (decodedJson is Map<String, dynamic>) {
           final model = _mapJsonToModel(decodedJson);
-          print('🔧 McpService: Model created from manual parse: $model');
+          debugPrint('🔧 McpService: Model created from manual parse: $model');
           return model;
         } else {
           throw Exception('Failed to create MCP configuration: Invalid response format');
         }
       } else {
-        print('🔧 McpService: API error: ${response.error}');
-        print('🔧 McpService: Response body: ${response.bodyString}');
+        debugPrint('🔧 McpService: API error: ${response.error}');
+        debugPrint('🔧 McpService: Response body: ${response.bodyString}');
         throw Exception('Failed to create MCP configuration: ${response.error}');
       }
     } catch (e, stackTrace) {
-      print('🔧 McpService: Exception in createMcpConfiguration: $e');
-      print('🔧 McpService: Stack trace: $stackTrace');
+      debugPrint('🔧 McpService: Exception in createMcpConfiguration: $e');
+      debugPrint('🔧 McpService: Stack trace: $stackTrace');
       throw Exception('Error creating MCP configuration: $e');
     }
   }
@@ -144,20 +141,19 @@ class McpService {
     String? description, // Note: API doesn't support description yet
   }) async {
     try {
-      print('🔧 McpService: Updating MCP configuration $id with name: $name, integrationIds: $integrationIds');
-      print('🔧 McpService: _apiService is null? ${_apiService == null}');
+      debugPrint('🔧 McpService: Updating MCP configuration $id with name: $name, integrationIds: $integrationIds');
 
       final request = api.CreateMcpConfigurationRequest(name: name, integrationIds: integrationIds);
 
-      print('🔧 McpService: Update request created: $request');
-      print('🔧 McpService: Update request JSON: ${request.toJson()}');
-      print('🔧 McpService: About to call update API');
+      debugPrint('🔧 McpService: Update request created: $request');
+      debugPrint('🔧 McpService: Update request JSON: ${request.toJson()}');
+      debugPrint('🔧 McpService: About to call update API');
 
       final response = await _apiService.apiMcpConfigurationsConfigIdPut(configId: id, body: request);
 
-      print('🔧 McpService: Update API response received');
-      print('🔧 McpService: Update response successful: ${response.isSuccessful}');
-      print('🔧 McpService: Update response status code: ${response.statusCode}');
+      debugPrint('🔧 McpService: Update API response received');
+      debugPrint('🔧 McpService: Update response successful: ${response.isSuccessful}');
+      debugPrint('🔧 McpService: Update response status code: ${response.statusCode}');
 
       if (response.isSuccessful) {
         final rawJsonString = response.bodyString;
@@ -165,19 +161,19 @@ class McpService {
 
         if (decodedJson is Map<String, dynamic>) {
           final model = _mapJsonToModel(decodedJson);
-          print('🔧 McpService: Updated model created from manual parse: $model');
+          debugPrint('🔧 McpService: Updated model created from manual parse: $model');
           return model;
         } else {
           throw Exception('Failed to update MCP configuration: Invalid response format');
         }
       } else {
-        print('🔧 McpService: Update API error: ${response.error}');
-        print('🔧 McpService: Update response body: ${response.bodyString}');
+        debugPrint('🔧 McpService: Update API error: ${response.error}');
+        debugPrint('🔧 McpService: Update response body: ${response.bodyString}');
         throw Exception('Failed to update MCP configuration: ${response.error}');
       }
     } catch (e, stackTrace) {
-      print('🔧 McpService: Exception in updateMcpConfiguration: $e');
-      print('🔧 McpService: Stack trace: $stackTrace');
+      debugPrint('🔧 McpService: Exception in updateMcpConfiguration: $e');
+      debugPrint('🔧 McpService: Stack trace: $stackTrace');
       throw Exception('Error updating MCP configuration: $e');
     }
   }
@@ -197,7 +193,7 @@ class McpService {
 
   /// Generate configuration code for an MCP configuration
   Future<String> generateMcpConfigurationCode(String id, {String format = 'json'}) async {
-    print('🔧 McpService: Generating code for config $id with format $format');
+    debugPrint('🔧 McpService: Generating code for config $id with format $format');
     try {
       final response = await _apiService.apiMcpConfigurationsConfigIdAccessCodeGet(
         configId: id,
@@ -210,25 +206,25 @@ class McpService {
 
         if (decodedJson is Map<String, dynamic> && decodedJson.containsKey('code')) {
           final code = decodedJson['code'] as String;
-          print('🔧 McpService: Successfully generated code for format: $format');
+          debugPrint('🔧 McpService: Successfully generated code for format: $format');
           return code;
         } else {
-          print('🔧 McpService: Invalid code response format');
+          debugPrint('🔧 McpService: Invalid code response format');
           return 'Error: Invalid response format from server.';
         }
       } else {
-        print('🔧 McpService: API error generating code: ${response.error}');
+        debugPrint('🔧 McpService: API error generating code: ${response.error}');
         throw Exception('Failed to generate MCP configuration code: ${response.error}');
       }
     } catch (e) {
-      print('🔧 McpService: Exception in generateMcpConfigurationCode: $e');
+      debugPrint('🔧 McpService: Exception in generateMcpConfigurationCode: $e');
       throw Exception('Error generating MCP configuration code: $e');
     }
   }
 
   /// Maps raw JSON to local model, bypassing the generated DTO
   McpConfiguration _mapJsonToModel(Map<String, dynamic> json) {
-    print('🔧 McpService: Mapping JSON: $json');
+    debugPrint('🔧 McpService: Mapping JSON: $json');
 
     // Safely parse integration IDs
     List<String> integrationIds = [];
@@ -240,7 +236,7 @@ class McpService {
           integrationIds = [json['integrationIds'].toString()];
         }
       } catch (e) {
-        print('🔧 McpService: Error parsing integrationIds from JSON: $e');
+        debugPrint('🔧 McpService: Error parsing integrationIds from JSON: $e');
       }
     }
 
@@ -259,13 +255,13 @@ class McpService {
             );
           }
         } catch (e) {
-          print('🔧 McpService: Error parsing date list: $e');
+          debugPrint('🔧 McpService: Error parsing date list: $e');
         }
       } else if (dateValue is String) {
         try {
           return DateTime.parse(dateValue);
         } catch (e) {
-          print('🔧 McpService: Error parsing date string: $e');
+          debugPrint('🔧 McpService: Error parsing date string: $e');
         }
       }
       return null;

@@ -21,7 +21,7 @@ class FileService {
   }) async {
     try {
       if (kDebugMode) {
-        print('🔧 FileService: Starting file picker...');
+        debugPrint('🔧 FileService: Starting file picker...');
       }
 
       final result = await FilePicker.platform.pickFiles(
@@ -33,7 +33,7 @@ class FileService {
 
       if (result == null || result.files.isEmpty) {
         if (kDebugMode) {
-          print('🔧 FileService: No files selected');
+          debugPrint('🔧 FileService: No files selected');
         }
         return null;
       }
@@ -43,7 +43,7 @@ class FileService {
       for (final file in result.files) {
         if (file.bytes == null) {
           if (kDebugMode) {
-            print('⚠️ FileService: File ${file.name} has no bytes, skipping');
+            debugPrint('⚠️ FileService: File ${file.name} has no bytes, skipping');
           }
           continue;
         }
@@ -51,7 +51,7 @@ class FileService {
         // Validate file size
         if (file.size > maxFileSize) {
           if (kDebugMode) {
-            print('⚠️ FileService: File ${file.name} exceeds max size (${file.size} > $maxFileSize)');
+            debugPrint('⚠️ FileService: File ${file.name} exceeds max size (${file.size} > $maxFileSize)');
           }
           throw Exception('File ${file.name} is too large. Maximum size is ${_formatFileSize(maxFileSize)}');
         }
@@ -70,7 +70,7 @@ class FileService {
         attachments.add(attachment);
 
         if (kDebugMode) {
-          print('✅ FileService: Added file ${file.name} (${_formatFileSize(file.size)})');
+          debugPrint('✅ FileService: Added file ${file.name} (${_formatFileSize(file.size)})');
         }
       }
 
@@ -79,13 +79,13 @@ class FileService {
       }
 
       if (kDebugMode) {
-        print('✅ FileService: Successfully picked ${attachments.length} files');
+        debugPrint('✅ FileService: Successfully picked ${attachments.length} files');
       }
 
       return attachments;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ FileService: Error picking files: $e');
+        debugPrint('❌ FileService: Error picking files: $e');
       }
       rethrow;
     }
@@ -111,7 +111,7 @@ class FileService {
   Future<FileAttachment?> getClipboardImage() async {
     try {
       if (kDebugMode) {
-        print('🔧 FileService: Checking clipboard for images...');
+        debugPrint('🔧 FileService: Checking clipboard for images...');
       }
 
       // Try to get image from clipboard using pasteboard
@@ -124,7 +124,7 @@ class FileService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ FileService: Error getting clipboard image: $e');
+        debugPrint('❌ FileService: Error getting clipboard image: $e');
       }
       return null;
     }
@@ -135,15 +135,15 @@ class FileService {
   Future<Map<String, dynamic>?> handlePasteEvent() async {
     try {
       if (kDebugMode) {
-        print('🔧 FileService: Handling paste event...');
+        debugPrint('🔧 FileService: Handling paste event...');
       }
 
       // For web, we DON'T manually read clipboard - we rely on paste events only!
       // The JavaScript paste listener handles everything automatically
       if (kIsWeb) {
         if (kDebugMode) {
-          print('🔧 FileService: Web platform detected - paste events handled by JavaScript listener');
-          print('💡 FileService: No manual clipboard reading needed - paste events work automatically');
+          debugPrint('🔧 FileService: Web platform detected - paste events handled by JavaScript listener');
+          debugPrint('💡 FileService: No manual clipboard reading needed - paste events work automatically');
         }
         // Return null here - paste events are handled by the automatic listener
         return null;
@@ -156,7 +156,7 @@ class FileService {
           final text = clipboardData!.text!;
 
           if (kDebugMode) {
-            print('✅ FileService: Found text in native clipboard (${text.length} chars)');
+            debugPrint('✅ FileService: Found text in native clipboard (${text.length} chars)');
           }
 
           return {
@@ -166,7 +166,7 @@ class FileService {
         }
       } catch (nativeError) {
         if (kDebugMode) {
-          print('⚠️ FileService: Native clipboard failed: $nativeError');
+          debugPrint('⚠️ FileService: Native clipboard failed: $nativeError');
         }
       }
 
@@ -176,7 +176,7 @@ class FileService {
           final clipboardImage = await getClipboardImage();
           if (clipboardImage != null) {
             if (kDebugMode) {
-              print('✅ FileService: Successfully pasted image from clipboard');
+              debugPrint('✅ FileService: Successfully pasted image from clipboard');
             }
             return {
               'type': 'file',
@@ -185,23 +185,23 @@ class FileService {
           }
         } catch (imageError) {
           if (kDebugMode) {
-            print('⚠️ FileService: Image clipboard failed: $imageError');
+            debugPrint('⚠️ FileService: Image clipboard failed: $imageError');
           }
         }
       }
 
       if (kDebugMode) {
-        print('🔧 FileService: No valid content found in clipboard');
+        debugPrint('🔧 FileService: No valid content found in clipboard');
         if (kIsWeb) {
-          print('💡 FileService: Web clipboard access is limited by browser security');
-          print('💡 FileService: Try copying content and immediately pressing Ctrl+V');
-          print('💡 FileService: For images, use the file picker button instead');
+          debugPrint('💡 FileService: Web clipboard access is limited by browser security');
+          debugPrint('💡 FileService: Try copying content and immediately pressing Ctrl+V');
+          debugPrint('💡 FileService: For images, use the file picker button instead');
         }
       }
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ FileService: Error handling paste event: $e');
+        debugPrint('❌ FileService: Error handling paste event: $e');
       }
       return null;
     }
@@ -224,7 +224,7 @@ class FileService {
       );
 
       if (kDebugMode) {
-        print('✅ FileService: Found clipboard image (${_formatFileSize(imageBytes.length)})');
+        debugPrint('✅ FileService: Found clipboard image (${_formatFileSize(imageBytes.length)})');
       }
 
       return attachment;
@@ -239,9 +239,9 @@ class FileService {
   Future<FileAttachment?> _getClipboardImageWeb() async {
     try {
       if (kDebugMode) {
-        print('🔧 FileService: Attempting to read clipboard on web...');
-        print('⚠️ FileService: Web clipboard image access is limited by browser security');
-        print('💡 FileService: Consider using file picker instead for images');
+        debugPrint('🔧 FileService: Attempting to read clipboard on web...');
+        debugPrint('⚠️ FileService: Web clipboard image access is limited by browser security');
+        debugPrint('💡 FileService: Consider using file picker instead for images');
       }
 
       // For web, the Clipboard API for images requires user permission and
@@ -254,8 +254,8 @@ class FileService {
         final text = clipboardData!.text!;
 
         if (kDebugMode) {
-          print('🔧 FileService: Found text in clipboard (${text.length} chars)');
-          print('📝 FileService: Creating text file (image clipboard not available on web)');
+          debugPrint('🔧 FileService: Found text in clipboard (${text.length} chars)');
+          debugPrint('📝 FileService: Creating text file (image clipboard not available on web)');
         }
 
         // Create a text file from clipboard content
@@ -270,20 +270,20 @@ class FileService {
         );
 
         if (kDebugMode) {
-          print('✅ FileService: Created text attachment from clipboard');
+          debugPrint('✅ FileService: Created text attachment from clipboard');
         }
 
         return attachment;
       }
 
       if (kDebugMode) {
-        print('🔧 FileService: No content found in clipboard');
+        debugPrint('🔧 FileService: No content found in clipboard');
       }
 
       return null;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ FileService: Error reading web clipboard: $e');
+        debugPrint('❌ FileService: Error reading web clipboard: $e');
       }
       return null;
     }

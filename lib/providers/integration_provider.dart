@@ -30,7 +30,7 @@ class IntegrationProvider extends ChangeNotifier {
     final result = providerLoading || serviceLoading;
     
     if (kDebugMode && result) {
-      print('🔍 IntegrationProvider.isLoading: provider=$providerLoading, service=$serviceLoading, result=$result');
+      debugPrint('🔍 IntegrationProvider.isLoading: provider=$providerLoading, service=$serviceLoading, result=$result');
     }
     
     return result;
@@ -49,7 +49,7 @@ class IntegrationProvider extends ChangeNotifier {
 
     try {
       if (kDebugMode) {
-        print('🔄 IntegrationProvider: Initializing...');
+        debugPrint('🔄 IntegrationProvider: Initializing...');
       }
 
       // Load integration types and integrations in parallel
@@ -61,15 +61,15 @@ class IntegrationProvider extends ChangeNotifier {
       _isInitialized = true;
 
       if (kDebugMode) {
-        print('✅ IntegrationProvider: Initialized successfully');
-        print('   - Available types: ${availableTypes.length}');
-        print('   - Current integrations: ${integrations.length}');
-        print('   - MCP-ready integrations: ${service.mcpReadyIntegrations.length}');
+        debugPrint('✅ IntegrationProvider: Initialized successfully');
+        debugPrint('   - Available types: ${availableTypes.length}');
+        debugPrint('   - Current integrations: ${integrations.length}');
+        debugPrint('   - MCP-ready integrations: ${service.mcpReadyIntegrations.length}');
       }
     } catch (e) {
       _setError('Failed to initialize integrations: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ IntegrationProvider: Initialization failed - $e');
+        debugPrint('❌ IntegrationProvider: Initialization failed - $e');
       }
       // Reset initialization flag on error so we can retry
       _isInitialized = false;
@@ -81,19 +81,19 @@ class IntegrationProvider extends ChangeNotifier {
   /// Refresh all integration data
   Future<void> refresh() async {
     if (kDebugMode) {
-      print('🔄 IntegrationProvider: Refresh called - initialized: $_isInitialized, loading: $_isLoading');
+      debugPrint('🔄 IntegrationProvider: Refresh called - initialized: $_isInitialized, loading: $_isLoading');
     }
 
     if (!_isInitialized) {
       if (kDebugMode) {
-        print('🔄 IntegrationProvider: Not initialized, calling _initialize()');
+        debugPrint('🔄 IntegrationProvider: Not initialized, calling _initialize()');
       }
       await _initialize();
       return;
     }
 
     if (kDebugMode) {
-      print('🔄 IntegrationProvider: Already initialized, refreshing data...');
+      debugPrint('🔄 IntegrationProvider: Already initialized, refreshing data...');
     }
 
     _setLoading(true);
@@ -106,15 +106,15 @@ class IntegrationProvider extends ChangeNotifier {
       ]);
 
       if (kDebugMode) {
-        print('✅ IntegrationProvider: Refreshed successfully');
-        print('   - Available types: ${availableTypes.length}');
-        print('   - Current integrations: ${integrations.length}');
-        print('   - MCP-ready integrations: ${service.mcpReadyIntegrations.length}');
+        debugPrint('✅ IntegrationProvider: Refreshed successfully');
+        debugPrint('   - Available types: ${availableTypes.length}');
+        debugPrint('   - Current integrations: ${integrations.length}');
+        debugPrint('   - MCP-ready integrations: ${service.mcpReadyIntegrations.length}');
       }
     } catch (e) {
       _setError('Failed to refresh integrations: ${e.toString()}');
       if (kDebugMode) {
-        print('❌ IntegrationProvider: Refresh failed - $e');
+        debugPrint('❌ IntegrationProvider: Refresh failed - $e');
       }
     } finally {
       _setLoading(false);
@@ -157,7 +157,7 @@ class IntegrationProvider extends ChangeNotifier {
     bool? enabled,
   }) async {
     if (kDebugMode) {
-      print('🔄 IntegrationProvider: Updating integration - $integrationId');
+      debugPrint('🔄 IntegrationProvider: Updating integration - $integrationId');
     }
 
     final request = UpdateIntegrationRequest(
@@ -179,7 +179,7 @@ class IntegrationProvider extends ChangeNotifier {
   /// Delete an integration
   Future<bool> deleteIntegration(String integrationId) async {
     if (kDebugMode) {
-      print('🗑️ IntegrationProvider: Deleting integration - $integrationId');
+      debugPrint('🗑️ IntegrationProvider: Deleting integration - $integrationId');
     }
 
     final result = await _integrationService.deleteIntegration(integrationId);
@@ -194,7 +194,7 @@ class IntegrationProvider extends ChangeNotifier {
   /// Enable an integration
   Future<bool> enableIntegration(String integrationId) async {
     if (kDebugMode) {
-      print('✅ IntegrationProvider: Enabling integration - $integrationId');
+      debugPrint('✅ IntegrationProvider: Enabling integration - $integrationId');
     }
 
     final result = await _integrationService.enableIntegration(integrationId);
@@ -209,13 +209,13 @@ class IntegrationProvider extends ChangeNotifier {
   /// Disable an integration
   Future<bool> disableIntegration(String integrationId) async {
     if (kDebugMode) {
-      print('❌ IntegrationProvider: Disabling integration - $integrationId');
+      debugPrint('❌ IntegrationProvider: Disabling integration - $integrationId');
     }
 
     final result = await _integrationService.disableIntegration(integrationId);
 
     if (result && kDebugMode) {
-      print('✅ IntegrationProvider: Integration disabled successfully');
+      debugPrint('✅ IntegrationProvider: Integration disabled successfully');
     }
 
     return result;
@@ -227,7 +227,7 @@ class IntegrationProvider extends ChangeNotifier {
     required Map<String, dynamic> configParams,
   }) async {
     if (kDebugMode) {
-      print('🔧 IntegrationProvider: Testing integration - $type');
+      debugPrint('🔧 IntegrationProvider: Testing integration - $type');
     }
 
     final request = TestIntegrationRequest(
@@ -239,7 +239,7 @@ class IntegrationProvider extends ChangeNotifier {
 
     if (result != null && kDebugMode) {
       final success = result['success'] ?? false;
-      print('${success ? '✅' : '❌'} IntegrationProvider: Integration test ${success ? 'passed' : 'failed'}');
+      debugPrint('${success ? '✅' : '❌'} IntegrationProvider: Integration test ${success ? 'passed' : 'failed'}');
     }
 
     return result;
@@ -253,13 +253,13 @@ class IntegrationProvider extends ChangeNotifier {
   /// Get integration details by ID with full config parameters from API
   Future<IntegrationModel?> getIntegrationById(String integrationId, {bool includeSensitive = true}) async {
     if (kDebugMode) {
-      print('🔄 IntegrationProvider: Fetching integration details - $integrationId');
+      debugPrint('🔄 IntegrationProvider: Fetching integration details - $integrationId');
     }
 
     final result = await _integrationService.getIntegrationById(integrationId, includeSensitive: includeSensitive);
 
     if (result != null && kDebugMode) {
-      print('✅ IntegrationProvider: Integration details fetched successfully');
+      debugPrint('✅ IntegrationProvider: Integration details fetched successfully');
     }
 
     return result;
@@ -352,12 +352,12 @@ class IntegrationProvider extends ChangeNotifier {
   /// Force reinitialize (useful for testing or after auth changes)
   Future<void> forceReinitialize() async {
     if (kDebugMode) {
-      print('🔄 IntegrationProvider: Force reinitialize called - current state: initialized: $_isInitialized, loading: $_isLoading');
+      debugPrint('🔄 IntegrationProvider: Force reinitialize called - current state: initialized: $_isInitialized, loading: $_isLoading');
     }
     _isInitialized = false;
     await _initialize();
     if (kDebugMode) {
-      print('🔄 IntegrationProvider: Force reinitialize completed - new state: initialized: $_isInitialized, loading: $_isLoading');
+      debugPrint('🔄 IntegrationProvider: Force reinitialize completed - new state: initialized: $_isInitialized, loading: $_isLoading');
     }
   }
 

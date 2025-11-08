@@ -21,6 +21,7 @@ class _LocalLoginFormState extends State<LocalLoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _usernameFocusNode = FocusNode();
   bool _saveCredentials = true; // Default to true for better UX
   bool _isLoading = false;
   bool _obscurePassword = true;
@@ -29,12 +30,17 @@ class _LocalLoginFormState extends State<LocalLoginForm> {
   void initState() {
     super.initState();
     _loadSavedCredentials();
+    // Focus username field after dialog is shown
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _usernameFocusNode.requestFocus();
+    });
   }
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
+    _usernameFocusNode.dispose();
     super.dispose();
   }
 
@@ -135,6 +141,8 @@ class _LocalLoginFormState extends State<LocalLoginForm> {
                 // Username field
                 TextFormField(
                   controller: _usernameController,
+                  focusNode: _usernameFocusNode,
+                  autofocus: true,
                   decoration: InputDecoration(
                     labelText: 'Username',
                     hintText: 'Enter your username',

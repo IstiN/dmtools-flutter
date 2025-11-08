@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 import 'package:dmtools/service_locator.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -14,19 +15,27 @@ import 'network/services/api_service.dart';
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Force enable semantics for web to expose elements to automation tools and browser MCP
+  // This is critical for accessibility and automation testing
+  if (kIsWeb) {
+    // Force semantics to be always enabled
+    WidgetsBinding.instance.ensureSemantics();
+    debugPrint('[MAIN] ✅ Semantics enabled for web - automation tools can access elements');
+  }
 
   // Parse command line arguments
   String? serverPort;
   for (var i = 0; i < args.length; i++) {
     if (args[i].startsWith('--server-port=')) {
       serverPort = args[i].substring('--server-port='.length);
-      print('[MAIN] Server port from args: $serverPort');
+      debugPrint('[MAIN] Server port from args: $serverPort');
       break;
     }
   }
 
-  // Configure macOS window appearance
-  if (Platform.isMacOS) {
+  // Configure macOS window appearance (only for native macOS, not web)
+  if (!kIsWeb && Platform.isMacOS) {
     await WindowManipulator.initialize(enableWindowDelegate: true);
     WindowManipulator.makeTitlebarTransparent();
     WindowManipulator.enableFullSizeContentView();
@@ -117,7 +126,7 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
   }
 
   void _updateMacOSWindowAppearance(bool isDark) {
-    if (Platform.isMacOS) {
+    if (!kIsWeb && Platform.isMacOS) {
       // The title bar will automatically adapt to the Material theme
       // No additional configuration needed
     }

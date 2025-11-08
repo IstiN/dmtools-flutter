@@ -32,7 +32,7 @@ class IntegrationCheckbox extends StatelessWidget {
     return GestureDetector(
       onTap: isInteractive
           ? () {
-              print('🔧 IntegrationCheckbox: Tapped on "$label", changing from $value to ${!value}');
+              debugPrint('🔧 IntegrationCheckbox: Tapped on "$label", changing from $value to ${!value}');
               onChanged!(!value);
             }
           : null,

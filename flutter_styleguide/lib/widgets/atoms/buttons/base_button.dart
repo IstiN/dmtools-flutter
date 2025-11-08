@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_dimensions.dart';
+import '../../../utils/accessibility_utils.dart';
 
 /// Base class for all button components
 /// This provides common functionality and properties for all button variants
@@ -16,6 +18,11 @@ abstract class BaseButton extends StatefulWidget {
   final bool isDisabled;
   final bool isTestMode;
   final bool testDarkMode;
+  
+  // Accessibility properties
+  final String? semanticLabel;
+  final String? testId;
+  final String? semanticHint;
 
   const BaseButton({
     required this.text,
@@ -27,6 +34,9 @@ abstract class BaseButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    this.semanticLabel,
+    this.testId,
+    this.semanticHint,
     super.key,
   });
 }
@@ -35,6 +45,14 @@ abstract class BaseButton extends StatefulWidget {
 abstract class BaseButtonState<T extends BaseButton> extends State<T> {
   bool _isHovering = false;
   bool _isPressed = false;
+  bool _isFocused = false;
+  final FocusNode _focusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   /// Get the background color for the button
   Color getBackgroundColor(ThemeColorSet colors, bool isDarkMode);
@@ -163,40 +181,93 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
       );
     }
 
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovering = true),
-      onExit: (_) => setState(() => _isHovering = false),
-      cursor: SystemMouseCursors.click,
-      child: GestureDetector(
-        onTapDown: (_) => setState(() => _isPressed = true),
-        onTapUp: (_) => setState(() => _isPressed = false),
-        onTapCancel: () => setState(() => _isPressed = false),
-        onTap: effectiveOnPressed,
-        child: TweenAnimationBuilder<double>(
-          tween: Tween(begin: 0.0, end: isHovering ? 1.0 : 0.0),
-          duration: AppDimensions.animationDurationFast,
-          builder: (context, value, child) {
-            final currentTransform = isCurrentlyPressed
-                ? Matrix4.translationValues(0, -1, 0) // Less of a lift when pressed
-                : Matrix4.translationValues(0, -2 * value, 0); // Hover lift
+    // Generate test ID and semantic label
+    final generatedTestId = widget.testId ?? generateTestId('button', {'action': widget.text});
+    final generatedLabel = widget.semanticLabel ?? generateSemanticLabel('button', widget.text);
+    final generatedHint = widget.semanticHint;
+    
+    // Determine state for semantics
+    final semanticHint = widget.isLoading 
+        ? 'Loading' 
+        : generatedHint;
 
-            return Transform(
-              transform: currentTransform,
-              child: Container(
-                width: widget.isFullWidth ? double.infinity : null,
-                padding: paddings[widget.size],
-                decoration: BoxDecoration(
-                  color: Color.lerp(bgColor, hoverBgColor, value),
-                  borderRadius: getBorderRadius(),
-                  border: Border.fromBorderSide(BorderSide.lerp(borderSide, hoverBorderSide, value)),
-                  boxShadow: BoxShadow.lerpList(shadows, hoverShadows, value),
-                ),
-                alignment: Alignment.center,
-                child: child,
+    return Semantics(
+      label: generatedLabel,
+      hint: semanticHint,
+      button: true,
+      enabled: effectiveOnPressed != null && !widget.isLoading,
+      focusable: true,
+      onTap: effectiveOnPressed,
+      child: Focus(
+        focusNode: _focusNode,
+        onFocusChange: (focused) {
+          setState(() => _isFocused = focused);
+        },
+        onKeyEvent: (node, event) {
+          if (effectiveOnPressed != null && 
+              (event.logicalKey == LogicalKeyboardKey.enter || 
+               event.logicalKey == LogicalKeyboardKey.space) &&
+              event is KeyDownEvent) {
+            effectiveOnPressed();
+            return KeyEventResult.handled;
+          }
+          return KeyEventResult.ignored;
+        },
+        child: MouseRegion(
+          onEnter: (_) => setState(() => _isHovering = true),
+          onExit: (_) => setState(() => _isHovering = false),
+          cursor: effectiveOnPressed != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+          child: GestureDetector(
+            onTapDown: (_) => setState(() => _isPressed = true),
+            onTapUp: (_) => setState(() => _isPressed = false),
+            onTapCancel: () => setState(() => _isPressed = false),
+            onTap: effectiveOnPressed,
+            child: Container(
+              key: ValueKey(generatedTestId),
+              child: TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: isHovering ? 1.0 : 0.0),
+                duration: AppDimensions.animationDurationFast,
+                builder: (context, value, child) {
+                  final currentTransform = isCurrentlyPressed
+                      ? Matrix4.translationValues(0, -1, 0) // Less of a lift when pressed
+                      : Matrix4.translationValues(0, -2 * value, 0); // Hover lift
+
+                  // Build button with focus indicator using box shadow outline
+                  // This prevents size changes that cause "jumping"
+                  final effectiveBorder = Border.fromBorderSide(BorderSide.lerp(borderSide, hoverBorderSide, value));
+                  
+                  // Add focus outline using box shadow (doesn't change button size)
+                  final baseShadows = BoxShadow.lerpList(shadows, hoverShadows, value) ?? [];
+                  final effectiveShadows = _isFocused && !widget.isDisabled
+                      ? [
+                          ...baseShadows,
+                          BoxShadow(
+                            color: colors.accentColor.withValues(alpha: 0.8),
+                            spreadRadius: 2.0, // Creates outline effect
+                          ),
+                        ]
+                      : baseShadows;
+
+                  return Transform(
+                    transform: currentTransform,
+                    child: Container(
+                      width: widget.isFullWidth ? double.infinity : null,
+                      padding: paddings[widget.size],
+                      decoration: BoxDecoration(
+                        color: Color.lerp(bgColor, hoverBgColor, value),
+                        borderRadius: getBorderRadius(),
+                        border: effectiveBorder,
+                        boxShadow: effectiveShadows,
+                      ),
+                      alignment: Alignment.center,
+                      child: child,
+                    ),
+                  );
+                },
+                child: content,
               ),
-            );
-          },
-          child: content,
+            ),
+          ),
         ),
       ),
     );

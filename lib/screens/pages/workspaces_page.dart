@@ -59,7 +59,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
 
   @override
   Future<void> loadAuthenticatedData() async {
-    print('🔧 WorkspacesPage: Loading workspaces...');
+    debugPrint('🔧 WorkspacesPage: Loading workspaces...');
 
     final workspaces = await authService.execute(() async {
       // Set authProvider now that we're authenticated
@@ -73,7 +73,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
       return _workspaceService.workspaces;
     });
 
-    print('🔧 WorkspacesPage: Loaded ${workspaces.length} workspaces');
+    debugPrint('🔧 WorkspacesPage: Loaded ${workspaces.length} workspaces');
 
     // Always set loaded - let the custom _buildWorkspacesList handle empty states internally
     setLoaded();

@@ -29,55 +29,55 @@ class IconsLogosPage extends StatelessWidget {
           title: '🔍 READABILITY COMPARISON - Larger ai Badge',
           child: Column(
             children: [
-              const ComponentItem(
+              ComponentItem(
                 title: 'V1: Current Version (ai badge 80x50, font-size 32)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm.svg',
                   description: '⚠️ ai badge too small - hard to read at icon sizes',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
-              const ComponentItem(
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
                 title: 'V2: Improved Version (ai badge 110x70, font-size 48)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm-v2.svg',
                   description: '🔸 Larger badge in bottom-right corner',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
-              const ComponentItem(
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
                 title: 'V3: Extra Large Version (ai badge 140x90, font-size 64)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm-v3.svg',
                   description: '🔸 Extra large badge in bottom-right corner',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
-              const ComponentItem(
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
                 title: 'V4: Maximum Size (ai badge 182x142, font-size 80)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm-v4.svg',
                   description: '🔸 Badge fills all available space to bottom and right edges',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
-              const ComponentItem(
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
                 title: 'V5: V3 Base + Larger Text (badge 125x90, font-size 72)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm-v5.svg',
                   description: '🔸 Narrower badge with larger "ai" text for better readability',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
-              const ComponentItem(
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
                 title: 'V6: Maximum Text Size (badge 115x90, font-size 78) - Cyan Badge',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm-v6.svg',
                   description: '🔸 Cyan badge (115px) + large text (78px)',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
-              const ComponentItem(
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
                 title: 'V7: BLACK Badge with ".ai" (badge 115x90, font-size 78)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm-v7.svg',
@@ -92,15 +92,15 @@ class IconsLogosPage extends StatelessWidget {
           title: '⭐ FINAL SELECTED ICONS - Ready for Deployment',
           child: Column(
             children: [
-              const ComponentItem(
+              ComponentItem(
                 title: 'DM.ai Icon V1 (Based on Variant 2 + DM5 pill element)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-dm.svg',
                   description: 'Dark slate gradient • Pill icon with DNA dots • Cyan ai badge bottom-aligned',
                 ),
               ),
-              const SizedBox(height: AppDimensions.spacingL),
-              const ComponentItem(
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
                 title: 'AI.n Icon (Based on Variant 5 with closer spacing)',
                 child: _FinalIconPreview(
                   assetPath: 'assets/img/dmtools-icon-final-selected-ain.svg',

@@ -25,16 +25,16 @@ class McpProvider extends ChangeNotifier {
 
   /// Load all MCP configurations
   Future<void> loadConfigurations() async {
-    print('🔧 McpProvider: Loading configurations...');
+    debugPrint('🔧 McpProvider: Loading configurations...');
     _setLoading(true);
     _clearError();
 
     try {
       _configurations = await _mcpService.getMcpConfigurations();
-      print('🔧 McpProvider: Loaded ${_configurations.length} configurations');
+      debugPrint('🔧 McpProvider: Loaded ${_configurations.length} configurations');
       notifyListeners();
     } catch (e) {
-      print('🔧 McpProvider: Error loading configurations: $e');
+      debugPrint('🔧 McpProvider: Error loading configurations: $e');
       _setError('Failed to load MCP configurations: ${e.toString()}');
     } finally {
       _setLoading(false);
@@ -62,17 +62,15 @@ class McpProvider extends ChangeNotifier {
     required List<String> integrationIds,
     String? description,
   }) async {
-    print('🔧 McpProvider: Creating configuration with name: $name, integrationIds: $integrationIds');
-    print('🔧 McpProvider: _mcpService is null? ${_mcpService == null}');
-    print('🔧 McpProvider: _mcpService.createMcpConfiguration exists? ${_mcpService.createMcpConfiguration != null}');
-    print('🔧 McpProvider: _mcpService type: ${_mcpService.runtimeType}');
+    debugPrint('🔧 McpProvider: Creating configuration with name: $name, integrationIds: $integrationIds');
+    debugPrint('🔧 McpProvider: _mcpService type: ${_mcpService.runtimeType}');
 
     _setLoading(true);
     _clearError();
 
     try {
-      print('🔧 McpProvider: Calling API with integrationIds: $integrationIds');
-      print('🔧 McpProvider: Before API call');
+      debugPrint('🔧 McpProvider: Calling API with integrationIds: $integrationIds');
+      debugPrint('🔧 McpProvider: Before API call');
 
       final newConfig = await _mcpService.createMcpConfiguration(
         name: name,
@@ -80,14 +78,14 @@ class McpProvider extends ChangeNotifier {
         integrationIds: integrationIds,
       );
 
-      print('🔧 McpProvider: After API call');
-      print('🔧 McpProvider: Configuration created successfully: ${newConfig.id}');
+      debugPrint('🔧 McpProvider: After API call');
+      debugPrint('🔧 McpProvider: Configuration created successfully: ${newConfig.id}');
       _configurations.add(newConfig);
       notifyListeners();
       return true;
     } catch (e, stackTrace) {
-      print('🔧 McpProvider: Error creating configuration: $e');
-      print('🔧 McpProvider: Stack trace: $stackTrace');
+      debugPrint('🔧 McpProvider: Error creating configuration: $e');
+      debugPrint('🔧 McpProvider: Stack trace: $stackTrace');
       _setError('Failed to create MCP configuration: ${e.toString()}');
       return false;
     } finally {
@@ -102,15 +100,14 @@ class McpProvider extends ChangeNotifier {
     required List<String> integrationIds,
     String? description,
   }) async {
-    print('🔧 McpProvider: Updating configuration $id with name: $name, integrationIds: $integrationIds');
-    print('🔧 McpProvider: _mcpService is null? ${_mcpService == null}');
+    debugPrint('🔧 McpProvider: Updating configuration $id with name: $name, integrationIds: $integrationIds');
 
     _setLoading(true);
     _clearError();
 
     try {
-      print('🔧 McpProvider: Calling update API with integrationIds: $integrationIds');
-      print('🔧 McpProvider: Before update API call');
+      debugPrint('🔧 McpProvider: Calling update API with integrationIds: $integrationIds');
+      debugPrint('🔧 McpProvider: Before update API call');
 
       final updatedConfig = await _mcpService.updateMcpConfiguration(
         id: id,
@@ -119,8 +116,8 @@ class McpProvider extends ChangeNotifier {
         integrationIds: integrationIds,
       );
 
-      print('🔧 McpProvider: After update API call');
-      print('🔧 McpProvider: Configuration updated successfully: ${updatedConfig.id}');
+      debugPrint('🔧 McpProvider: After update API call');
+      debugPrint('🔧 McpProvider: Configuration updated successfully: ${updatedConfig.id}');
 
       // Update the configuration in the list
       final index = _configurations.indexWhere((config) => config.id == id);
@@ -139,8 +136,8 @@ class McpProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e, stackTrace) {
-      print('🔧 McpProvider: Error updating configuration: $e');
-      print('🔧 McpProvider: Stack trace: $stackTrace');
+      debugPrint('🔧 McpProvider: Error updating configuration: $e');
+      debugPrint('🔧 McpProvider: Stack trace: $stackTrace');
       _setError('Failed to update MCP configuration: ${e.toString()}');
       return false;
     } finally {
@@ -177,7 +174,7 @@ class McpProvider extends ChangeNotifier {
     try {
       return await _mcpService.generateMcpConfigurationCode(configId, format: format);
     } catch (e) {
-      print('🔧 McpProvider: Error generating configuration code: $e');
+      debugPrint('🔧 McpProvider: Error generating configuration code: $e');
       return 'Error: Failed to generate configuration code.';
     }
   }

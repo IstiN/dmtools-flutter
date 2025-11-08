@@ -29,8 +29,8 @@ class IntegrationSelectionGroup extends StatelessWidget {
 
   // Debug the integration selection change
   void _debugOnIntegrationChanged(String integrationId) {
-    print('🔧 IntegrationSelectionGroup: Integration selection changed: $integrationId');
-    print('🔧 IntegrationSelectionGroup: Current selections: $selectedIntegrations');
+    debugPrint('🔧 IntegrationSelectionGroup: Integration selection changed: $integrationId');
+    debugPrint('🔧 IntegrationSelectionGroup: Current selections: $selectedIntegrations');
     onIntegrationChanged(integrationId);
   }
 
@@ -172,11 +172,11 @@ class _IntegrationList extends StatelessWidget {
   final IntegrationCheckboxSize checkboxSize;
 
   void _debugOnIntegrationChanged(String integrationId) {
-    print('🔧 _IntegrationList: Integration selection changed: $integrationId');
-    print('🔧 _IntegrationList: Current selections before: $selectedIntegrations');
+    debugPrint('🔧 _IntegrationList: Integration selection changed: $integrationId');
+    debugPrint('🔧 _IntegrationList: Current selections before: $selectedIntegrations');
     onIntegrationChanged(integrationId);
     // We can't see the updated selections here since they're updated in the parent
-    print('🔧 _IntegrationList: Called onIntegrationChanged');
+    debugPrint('🔧 _IntegrationList: Called onIntegrationChanged');
   }
 
   @override
@@ -234,7 +234,7 @@ class _VerticalLayout extends StatelessWidget {
             size: checkboxSize,
             onChanged: integration.enabled
                 ? (value) {
-                    print(
+                    debugPrint(
                       '🔧 _VerticalLayout: Checkbox changed for ${integration.displayName} (${integration.id}) to $value',
                     );
                     onIntegrationChanged(integration.id);
@@ -282,7 +282,7 @@ class _GridLayout extends StatelessWidget {
           size: checkboxSize,
           onChanged: integration.enabled
               ? (value) {
-                  print(
+                  debugPrint(
                     '🔧 _GridLayout: Checkbox changed for ${integration.displayName} (${integration.id}) to $value',
                   );
                   onIntegrationChanged(integration.id);
@@ -326,7 +326,7 @@ class _HorizontalLayout extends StatelessWidget {
                 size: checkboxSize,
                 onChanged: integration.enabled
                     ? (value) {
-                        print(
+                        debugPrint(
                           '🔧 _HorizontalLayout: Checkbox changed for ${integration.displayName} (${integration.id}) to $value',
                         );
                         onIntegrationChanged(integration.id);

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_dimensions.dart';
+import '../../utils/accessibility_utils.dart';
 import '../atoms/buttons/app_buttons.dart';
 
 class WelcomeBanner extends StatelessWidget {
@@ -150,6 +151,8 @@ class WelcomeBanner extends StatelessWidget {
                       PrimaryButton(
                         text: primaryActionText,
                         onPressed: onPrimaryAction,
+                        testId: generateTestId('button', {'action': primaryActionText.toLowerCase().replaceAll(' ', '-')}),
+                        semanticLabel: '$primaryActionText button',
                         isTestMode: isTestMode,
                         testDarkMode: testDarkMode,
                       ),
@@ -157,6 +160,8 @@ class WelcomeBanner extends StatelessWidget {
                       WhiteOutlineButton(
                         text: secondaryActionText,
                         onPressed: onSecondaryAction,
+                        testId: generateTestId('button', {'action': secondaryActionText.toLowerCase().replaceAll(' ', '-')}),
+                        semanticLabel: '$secondaryActionText button',
                         isTestMode: isTestMode,
                         testDarkMode: testDarkMode,
                       ),

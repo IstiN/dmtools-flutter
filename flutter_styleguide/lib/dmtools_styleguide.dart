@@ -14,6 +14,10 @@ export 'core/services/auth_service.dart';
 
 // Mixins
 export 'core/mixins/loading_state_mixin.dart';
+export 'mixins/accessibility_mixin.dart';
+
+// Utilities
+export 'utils/accessibility_utils.dart';
 
 // Theme - use main theme files only
 export 'theme/app_colors.dart';

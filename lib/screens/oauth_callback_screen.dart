@@ -50,8 +50,8 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
     final tempCode = widget.callbackUri.queryParameters['code'];
 
     if (kDebugMode) {
-      print('🔄 OAuth Callback Screen handling URI: ${widget.callbackUri}');
-      print('📋 Query parameters: ${widget.callbackUri.queryParameters}');
+      debugPrint('🔄 OAuth Callback Screen handling URI: ${widget.callbackUri}');
+      debugPrint('📋 Query parameters: ${widget.callbackUri.queryParameters}');
     }
 
     _updateStep('Checking authentication status...');
@@ -59,7 +59,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
     // Don't process callback if already authenticated
     if (authProvider.isAuthenticated) {
       if (kDebugMode) {
-        print('✅ Already authenticated, navigating to dashboard');
+        debugPrint('✅ Already authenticated, navigating to dashboard');
       }
       if (mounted) {
         // Clear OAuth parameters from window (web only)
@@ -75,7 +75,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
     // Don't process the same callback code twice
     if (tempCode != null && OAuthCallbackScreen._processedCallbackCode == tempCode) {
       if (kDebugMode) {
-        print('⚠️ Callback code already processed, skipping');
+        debugPrint('⚠️ Callback code already processed, skipping');
       }
       if (mounted) {
         // Clean up OAuth callback URL parameters (web only)
@@ -105,7 +105,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
         const Duration(seconds: 30),
         onTimeout: () {
           if (kDebugMode) {
-            print('⏰ OAuth callback timed out after 30 seconds');
+            debugPrint('⏰ OAuth callback timed out after 30 seconds');
           }
           return false;
         },
@@ -116,13 +116,13 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
           _updateStep('Authentication successful! Redirecting...');
 
           if (kDebugMode) {
-            print('✅ OAuth callback successful, navigating to dashboard');
+            debugPrint('✅ OAuth callback successful, navigating to dashboard');
           }
           // Clear the processed callback code on success
           OAuthCallbackScreen._processedCallbackCode = null;
 
           if (kDebugMode) {
-            print('🎉 OAuth authentication successful, cleaning up URL and redirecting');
+            debugPrint('🎉 OAuth authentication successful, cleaning up URL and redirecting');
           }
 
           // Clean up OAuth callback URL parameters first (web only)
@@ -149,7 +149,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
           }
         } else {
           if (kDebugMode) {
-            print('❌ OAuth callback failed: ${authProvider.error}');
+            debugPrint('❌ OAuth callback failed: ${authProvider.error}');
           }
           // Clear the processed callback code on failure so user can retry
           OAuthCallbackScreen._processedCallbackCode = null;
@@ -167,7 +167,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ OAuth callback exception: $e');
+        debugPrint('❌ OAuth callback exception: $e');
       }
       if (mounted) {
         // Clear the processed callback code on exception so user can retry

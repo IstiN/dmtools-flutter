@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
+import '../../utils/accessibility_utils.dart';
 
 /// Form Group wrapper that provides consistent styling for form elements
 class FormGroup extends StatelessWidget {
@@ -58,6 +59,8 @@ class TextInput extends StatelessWidget {
   final bool isDisabled;
   final bool? isTestMode;
   final bool? testDarkMode;
+  final String? semanticLabel;
+  final String? testId;
 
   const TextInput({
     this.placeholder,
@@ -66,19 +69,29 @@ class TextInput extends StatelessWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    this.semanticLabel,
+    this.testId,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
+    
+    final generatedTestId = testId ?? generateTestId('input', {'field': placeholder ?? 'text'});
+    final generatedLabel = semanticLabel ?? (placeholder ?? 'Text input');
 
-    return TextField(
-      controller: controller,
-      onChanged: onChanged,
+    return Semantics(
+      label: generatedLabel,
+      textField: true,
       enabled: !isDisabled,
-      style: TextStyle(color: colors.textColor),
-      decoration: InputDecoration(
+      child: TextField(
+        key: ValueKey(generatedTestId),
+        controller: controller,
+        onChanged: onChanged,
+        enabled: !isDisabled,
+        style: TextStyle(color: colors.textColor),
+        decoration: InputDecoration(
         hintText: placeholder,
         hintStyle: TextStyle(color: colors.textMuted),
         filled: true,
@@ -103,6 +116,7 @@ class TextInput extends StatelessWidget {
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
+    ),
     );
   }
 }

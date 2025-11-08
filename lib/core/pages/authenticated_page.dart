@@ -105,11 +105,11 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
     final currentAuthState = authProvider.isAuthenticated;
 
     if (currentAuthState != _lastAuthState) {
-      print('🔐 AuthenticatedPage: Auth state changed from $_lastAuthState to $currentAuthState');
+      debugPrint('🔐 AuthenticatedPage: Auth state changed from $_lastAuthState to $currentAuthState');
       _lastAuthState = currentAuthState;
 
       if (currentAuthState) {
-        print('🔐 AuthenticatedPage: User became authenticated, reloading data...');
+        debugPrint('🔐 AuthenticatedPage: User became authenticated, reloading data...');
         retry(); // Reload data with new auth state
       }
     }
@@ -117,23 +117,23 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
 
   @override
   Future<void> loadData() async {
-    print('🔐 AuthenticatedPage: Starting authenticated data load...');
+    debugPrint('🔐 AuthenticatedPage: Starting authenticated data load...');
 
     try {
       final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
 
       if (!authProvider.isAuthenticated) {
-        print('🔐 AuthenticatedPage: User not authenticated, waiting for auth...');
+        debugPrint('🔐 AuthenticatedPage: User not authenticated, waiting for auth...');
         // For unauthenticated users, show loading state until auth completes
         // The auth listener will trigger reload when authentication happens
         return;
       }
 
-      print('🔐 AuthenticatedPage: User authenticated, loading page data...');
+      debugPrint('🔐 AuthenticatedPage: User authenticated, loading page data...');
 
       // Ensure auth service is initialized
       if (_authService == null) {
-        print('🔐 AuthenticatedPage: Auth service not ready, delaying...');
+        debugPrint('🔐 AuthenticatedPage: Auth service not ready, delaying...');
         await Future.delayed(const Duration(milliseconds: 100));
         if (!mounted) return;
 
@@ -146,7 +146,7 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
       // User is authenticated, load page-specific data
       await loadAuthenticatedData();
     } catch (e) {
-      print('🔐 AuthenticatedPage: Error loading authenticated data: $e');
+      debugPrint('🔐 AuthenticatedPage: Error loading authenticated data: $e');
       setError(e.toString());
     }
   }
@@ -155,7 +155,7 @@ abstract class AuthenticatedPage<T extends StatefulWidget> extends State<T> with
   Widget build(BuildContext context) {
     return Consumer<EnhancedAuthProvider>(
       builder: (context, authProvider, child) {
-        print('🔐 AuthenticatedPage: Building with auth: ${authProvider.isAuthenticated}, state: $loadingState');
+        debugPrint('🔐 AuthenticatedPage: Building with auth: ${authProvider.isAuthenticated}, state: $loadingState');
 
         // Handle unauthenticated state
         if (!authProvider.isAuthenticated) {

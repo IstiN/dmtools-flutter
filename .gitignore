@@ -118,3 +118,12 @@ app.*.symbols
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
 .aider*
+
+# Node.js / Playwright
+node_modules/
+test-results/
+playwright-report/
+playwright/.cache/
+
+# Golden test failures (temporary)
+flutter_styleguide/test/golden/failures/

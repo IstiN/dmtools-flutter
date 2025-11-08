@@ -36,12 +36,12 @@ class EnhancedAppRouter {
         final matchedLocation = state.matchedLocation;
 
         if (kDebugMode) {
-          print('🔄 Enhanced Router redirect check:');
-          print('   📍 Full URI: $currentPath');
-          print('   📍 Location: $location');
-          print('   📍 Matched Location: $matchedLocation');
-          print('   🔐 Auth state: $authState, isAuthenticated: $isAuthenticated, isLoading: $isLoading');
-          print('   🛡️ Is protected route: ${_isProtectedRoute(currentPath)}');
+          debugPrint('🔄 Enhanced Router redirect check:');
+          debugPrint('   📍 Full URI: $currentPath');
+          debugPrint('   📍 Location: $location');
+          debugPrint('   📍 Matched Location: $matchedLocation');
+          debugPrint('   🔐 Auth state: $authState, isAuthenticated: $isAuthenticated, isLoading: $isLoading');
+          debugPrint('   🛡️ Is protected route: ${_isProtectedRoute(currentPath)}');
         }
 
         // Check for OAuth parameters on any route - only if not authenticated
@@ -49,14 +49,14 @@ class EnhancedAppRouter {
           final oauthParams = getOAuthParamsFromWindow();
 
           if (kDebugMode) {
-            print('🔍 OAuth params object: $oauthParams');
-            print('🔍 Checking OAuth params on path: $currentPath');
-            print('🔍 OAuth params from window: $oauthParams');
+            debugPrint('🔍 OAuth params object: $oauthParams');
+            debugPrint('🔍 Checking OAuth params on path: $currentPath');
+            debugPrint('🔍 OAuth params from window: $oauthParams');
           }
 
           if (oauthParams != null && oauthParams.containsKey('code')) {
             if (kDebugMode) {
-              print('🚫 OAuth callback detected - processing callback');
+              debugPrint('🚫 OAuth callback detected - processing callback');
             }
             _oauthCallbackProcessed = true;
             return '/oauth-processing';
@@ -86,7 +86,7 @@ class EnhancedAppRouter {
 
         // If not authenticated and trying to access protected routes, redirect to auth
         if (!isAuthenticated && _isProtectedRoute(currentPath)) {
-          if (kDebugMode) print('🚫 Redirecting to auth: not authenticated on protected route');
+          if (kDebugMode) debugPrint('🚫 Redirecting to auth: not authenticated on protected route');
           return '/auth';
         }
 
@@ -95,25 +95,25 @@ class EnhancedAppRouter {
           final user = authProvider.currentUser;
           final isAdmin = user?.role == 'ADMIN';
           if (!isAdmin) {
-            if (kDebugMode) print('🚫 Redirecting to ai-jobs: non-admin user trying to access admin route');
+            if (kDebugMode) debugPrint('🚫 Redirecting to ai-jobs: non-admin user trying to access admin route');
             return '/ai-jobs';
           }
         }
 
         // If authenticated and on auth page, redirect to ai-jobs (first available page)
         if (isAuthenticated && currentPath == '/auth') {
-          if (kDebugMode) print('🏠 Redirecting to ai-jobs: authenticated on auth page');
+          if (kDebugMode) debugPrint('🏠 Redirecting to ai-jobs: authenticated on auth page');
           return '/ai-jobs';
         }
 
         // If authenticated and on root path, redirect to ai-jobs (first available page)
         if (isAuthenticated && (currentPath == '/' || currentPath == '')) {
-          if (kDebugMode) print('🏠 Redirecting to ai-jobs: authenticated on root path ($currentPath)');
+          if (kDebugMode) debugPrint('🏠 Redirecting to ai-jobs: authenticated on root path ($currentPath)');
           return '/ai-jobs';
         }
 
         if (kDebugMode) {
-          print('✅ No redirect needed');
+          debugPrint('✅ No redirect needed');
         }
         return null; // No redirect needed
       },
@@ -123,7 +123,7 @@ class EnhancedAppRouter {
           path: '/',
           redirect: (context, state) {
             // Always redirect to auth, let main redirect logic handle auth
-            if (kDebugMode) print('🔄 Root route redirect: / → /auth');
+            if (kDebugMode) debugPrint('🔄 Root route redirect: / → /auth');
             return '/auth';
           },
         ),

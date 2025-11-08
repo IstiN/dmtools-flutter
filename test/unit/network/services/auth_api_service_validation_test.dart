@@ -38,7 +38,6 @@ void main() {
           id: 'user123',
           name: 'Test User',
           email: 'test@example.com',
-          authenticated: null,
         );
 
         // Act & Assert
@@ -103,7 +102,6 @@ void main() {
           id: 'user123',
           name: 'Test User',
           email: 'test@example.com',
-          authenticated: null,
         );
 
         // Act
@@ -134,7 +132,7 @@ void main() {
         
         // Arrange - various "falsy" values
         const userFalse = UserDto(authenticated: false);
-        const userNull = UserDto(authenticated: null);
+        const userNull = UserDto();
         
         // Act & Assert - all should fail strict equality check
         expect(userFalse.authenticated == true, false);

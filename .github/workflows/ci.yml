@@ -173,6 +173,115 @@ jobs:
             echo "- User profile data not loading correctly" >> $GITHUB_STEP_SUMMARY
           fi
 
+  integration-tests:
+    name: Integration Tests (Playwright)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [test]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.35.x"
+          channel: "stable"
+          cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Flutter dependencies
+        run: |
+          flutter pub get
+          cd flutter_styleguide && flutter pub get && cd ..
+
+      - name: Install Playwright dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Build Flutter web app
+        run: |
+          echo "🏗️ Building Flutter web app..."
+          flutter build web --web-renderer=canvaskit --dart-define=FLUTTER_ENV=development
+          echo "✅ Build completed"
+
+      - name: Start web server
+        run: |
+          echo "🚀 Starting web server on port 8080..."
+          cd build/web
+          python3 -m http.server 8080 > /tmp/server.log 2>&1 &
+          echo $! > /tmp/server.pid
+          # Wait for server to be ready
+          echo "⏳ Waiting for server to start..."
+          for i in {1..30}; do
+            if curl -f http://localhost:8080 > /dev/null 2>&1; then
+              echo "✅ Server is ready!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "❌ Server failed to start"
+              cat /tmp/server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          sleep 2
+          echo "✅ Web server started successfully"
+
+      - name: Run Playwright integration tests
+        run: |
+          echo "🧪 Running Playwright integration tests..."
+          npx playwright test --config=tests/integration/playwright.config.ts --reporter=list
+          echo "✅ Integration tests completed"
+
+      - name: Stop web server
+        if: always()
+        run: |
+          if [ -f /tmp/server.pid ]; then
+            kill $(cat /tmp/server.pid) || true
+            rm /tmp/server.pid
+          fi
+          pkill -f "http.server" || true
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Integration Test Summary
+        if: always()
+        run: |
+          echo "## 🧪 Integration Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "✅ **All integration tests passed!**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### ✅ Verified Features:" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Landing page accessibility" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Demo mode navigation flow" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Menu item navigation" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Theme toggle accessibility" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Browser MCP compatibility" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "🎉 **Integration tests confirm the app works correctly!**" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Integration tests failed**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Please review the failed integration tests and fix any issues before merging." >> $GITHUB_STEP_SUMMARY
+          fi
+
   build-check:
     name: Build Verification
     runs-on: ubuntu-latest

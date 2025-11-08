@@ -30,7 +30,7 @@ class _SimpleMcpPageState extends AuthenticatedPage<SimpleMcpPage> {
 
   @override
   Future<void> loadAuthenticatedData() async {
-    print('📊 SimpleMcpPage: Loading MCP configurations...');
+    debugPrint('📊 SimpleMcpPage: Loading MCP configurations...');
 
     // Use the authenticated service to load data with automatic integration handling
     final configurations = await authService.executeWithIntegrations(() async {
@@ -39,7 +39,7 @@ class _SimpleMcpPageState extends AuthenticatedPage<SimpleMcpPage> {
       return mcpProvider.configurations;
     });
 
-    print('📊 SimpleMcpPage: Loaded ${configurations.length} configurations');
+    debugPrint('📊 SimpleMcpPage: Loaded ${configurations.length} configurations');
 
     if (configurations.isEmpty) {
       setEmpty();
@@ -106,7 +106,7 @@ class _ComplexDataPageState extends AuthenticatedPage<ComplexDataPage> {
 
   @override
   Future<void> loadAuthenticatedData() async {
-    print('📊 ComplexDataPage: Loading multiple data sources...');
+    debugPrint('📊 ComplexDataPage: Loading multiple data sources...');
 
     try {
       // Load multiple data sources in parallel using authenticated service
@@ -127,7 +127,7 @@ class _ComplexDataPageState extends AuthenticatedPage<ComplexDataPage> {
       _userData = results[0];
       _integrationData = results[1];
 
-      print('📊 ComplexDataPage: Loaded ${_userData.length} user items, ${_integrationData.length} integrations');
+      debugPrint('📊 ComplexDataPage: Loaded ${_userData.length} user items, ${_integrationData.length} integrations');
 
       if (_userData.isEmpty && _integrationData.isEmpty) {
         setEmpty();
@@ -135,7 +135,7 @@ class _ComplexDataPageState extends AuthenticatedPage<ComplexDataPage> {
         setLoaded();
       }
     } catch (e) {
-      print('📊 ComplexDataPage: Error loading data: $e');
+      debugPrint('📊 ComplexDataPage: Error loading data: $e');
       setError('Failed to load dashboard data: ${e.toString()}');
     }
   }
@@ -220,7 +220,7 @@ class _UserProfilePageState extends AuthenticatedPage<UserProfilePage> {
 
   @override
   Future<void> loadAuthenticatedData() async {
-    print('📊 UserProfilePage: Loading user profile...');
+    debugPrint('📊 UserProfilePage: Loading user profile...');
 
     // Simple authenticated operation without integrations
     final profile = await authService.execute(() async {

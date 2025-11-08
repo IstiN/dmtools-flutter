@@ -16,6 +16,9 @@ class RunButton extends BaseButton {
     super.isDisabled,
     super.isTestMode,
     super.testDarkMode,
+    super.semanticLabel,
+    super.testId,
+    super.semanticHint,
     super.key,
   });
 

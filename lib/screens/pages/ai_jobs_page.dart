@@ -359,6 +359,7 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
       // If no integrations loaded, only create fallback integrations in demo/mock mode
       if (availableIntegrations.isEmpty) {
         // Check if we should create fallback integrations (only in development/demo mode)
+        if (!mounted) return;
         final authProvider = context.read<EnhancedAuthProvider>();
         final shouldCreateFallbacks = authProvider.isDemoMode || authProvider.shouldUseMockData;
 
@@ -411,6 +412,7 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
       debugPrint('💥 Critical error in _loadIntegrations: $e');
 
       // Only create fallback integrations on error if in demo/mock mode
+      if (!mounted) return;
       final authProvider = context.read<EnhancedAuthProvider>();
       final shouldCreateFallbacks = authProvider.isDemoMode || authProvider.shouldUseMockData;
 

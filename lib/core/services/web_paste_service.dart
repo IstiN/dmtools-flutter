@@ -58,11 +58,11 @@ class WebPasteService {
       });
 
       if (kDebugMode) {
-        print('✅ JavaScript paste polling setup complete');
+        debugPrint('✅ JavaScript paste polling setup complete');
       }
     } catch (e) {
       if (kDebugMode) {
-        print('⚠️ Failed to setup JavaScript paste listener: $e');
+        debugPrint('⚠️ Failed to setup JavaScript paste listener: $e');
       }
     }
 
@@ -114,7 +114,7 @@ class WebPasteService {
       }
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Error extracting paste data: $e');
+        debugPrint('❌ Error extracting paste data: $e');
       }
     }
 

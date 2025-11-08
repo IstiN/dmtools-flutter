@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import '../config/app_config.dart';
 
 enum AuthMode {
@@ -56,7 +56,7 @@ class AuthConfigService {
     while (attempts < maxRetries) {
       attempts++;
       try {
-        print('[AUTH_CONFIG] Attempt $attempts/$maxRetries to fetch config from $_baseUrl/api/auth/config');
+        debugPrint('[AUTH_CONFIG] Attempt $attempts/$maxRetries to fetch config from $_baseUrl/api/auth/config');
         
         final response = await http.get(
           Uri.parse('$_baseUrl/api/auth/config'),
@@ -65,29 +65,29 @@ class AuthConfigService {
           },
         ).timeout(const Duration(seconds: 5));
 
-        print('[AUTH_CONFIG] Response status: ${response.statusCode}');
-        print('[AUTH_CONFIG] Response body: ${response.body}');
+        debugPrint('[AUTH_CONFIG] Response status: ${response.statusCode}');
+        debugPrint('[AUTH_CONFIG] Response body: ${response.body}');
 
         if (response.statusCode == 200) {
           final Map<String, dynamic> data = json.decode(response.body);
           final config = AuthConfig.fromJson(data);
-          print('[AUTH_CONFIG] ✅ Config loaded: mode=${config.authenticationMode}, providers=${config.enabledProviders}');
+          debugPrint('[AUTH_CONFIG] ✅ Config loaded: mode=${config.authenticationMode}, providers=${config.enabledProviders}');
           return config;
         } else {
           lastError = Exception('Failed to fetch auth config: ${response.statusCode}');
         }
       } catch (e) {
         lastError = e is Exception ? e : Exception(e.toString());
-        print('[AUTH_CONFIG] ❌ Attempt $attempts failed: $e');
+        debugPrint('[AUTH_CONFIG] ❌ Attempt $attempts failed: $e');
         
         if (attempts < maxRetries) {
-          print('[AUTH_CONFIG] Retrying in ${retryDelay.inSeconds}s...');
+          debugPrint('[AUTH_CONFIG] Retrying in ${retryDelay.inSeconds}s...');
           await Future.delayed(retryDelay);
         }
       }
     }
 
-    print('[AUTH_CONFIG] ❌ All $maxRetries attempts failed');
+    debugPrint('[AUTH_CONFIG] ❌ All $maxRetries attempts failed');
     throw lastError ?? Exception('Failed to fetch auth config after $maxRetries attempts');
   }
 }
