@@ -19,8 +19,8 @@ class ChatService with ChangeNotifier {
   AuthTokenProvider? get authProvider => _authProvider;
 
   ChatService({required ApiService apiService, AuthTokenProvider? authProvider})
-      : _apiService = apiService,
-        _authProvider = authProvider;
+    : _apiService = apiService,
+      _authProvider = authProvider;
 
   // Check if we should use mock data based on demo mode
   bool get _shouldUseMockData {
@@ -48,11 +48,7 @@ class ChatService with ChangeNotifier {
 
   /// Send a simple text message to chat endpoint
   /// Uses the /api/v1/chat/simple endpoint for basic text-only messages
-  Future<api.ChatResponse?> sendSimpleMessage({
-    required String message,
-    String? model,
-    String? aiIntegrationId,
-  }) async {
+  Future<api.ChatResponse?> sendSimpleMessage({required String message, String? model, String? aiIntegrationId}) async {
     if (message.trim().isEmpty) {
       throw ArgumentError('Message cannot be empty');
     }
@@ -68,10 +64,7 @@ class ChatService with ChangeNotifier {
         }
         await Future.delayed(const Duration(milliseconds: 800));
 
-        final mockResponse = api.ChatResponse(
-          content: 'This is a mock response to: "$message"',
-          success: true,
-        );
+        final mockResponse = api.ChatResponse(content: 'This is a mock response to: "$message"', success: true);
 
         _setLoading(false);
         return mockResponse;
@@ -160,15 +153,9 @@ class ChatService with ChangeNotifier {
           debugPrint('🌐 Making real API call to send chat completion');
         }
 
-        final chatRequest = api.ChatRequest(
-          messages: messages,
-          ai: aiIntegrationId,
-          mcpConfigId: mcpConfigurationId,
-        );
+        final chatRequest = api.ChatRequest(messages: messages, ai: aiIntegrationId, mcpConfigId: mcpConfigurationId);
 
-        final response = await _apiService.apiClient.apiV1ChatCompletionsPost(
-          body: chatRequest,
-        );
+        final response = await _apiService.apiClient.apiV1ChatCompletionsPost(body: chatRequest);
 
         if (response.isSuccessful && response.body != null) {
           if (kDebugMode) {
@@ -215,7 +202,8 @@ class ChatService with ChangeNotifier {
         // Mock response for development
         if (kDebugMode) {
           debugPrint(
-              '🤖 Mock ChatService: sendChatWithFiles(${messages.length} messages, ${files.length} files, AI: $aiIntegrationId)');
+            '🤖 Mock ChatService: sendChatWithFiles(${messages.length} messages, ${files.length} files, AI: $aiIntegrationId)',
+          );
         }
         await Future.delayed(const Duration(milliseconds: 1500));
 
@@ -241,11 +229,7 @@ class ChatService with ChangeNotifier {
           debugPrint('🌐 Making real API call to send chat with files');
         }
 
-        final chatRequest = api.ChatRequest(
-          messages: messages,
-          ai: aiIntegrationId,
-          mcpConfigId: mcpConfigurationId,
-        );
+        final chatRequest = api.ChatRequest(messages: messages, ai: aiIntegrationId, mcpConfigId: mcpConfigurationId);
 
         // Convert ChatRequest to JSON string for multipart upload
         final chatRequestJson = jsonEncode(chatRequest.toJson());
@@ -319,13 +303,7 @@ class ChatService with ChangeNotifier {
         final fileBytes = files[i];
         final fileName = i < fileNames.length ? fileNames[i] : 'file_$i.bin';
 
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'files',
-            fileBytes,
-            filename: fileName,
-          ),
-        );
+        request.files.add(http.MultipartFile.fromBytes('files', fileBytes, filename: fileName));
       }
 
       if (kDebugMode) {
