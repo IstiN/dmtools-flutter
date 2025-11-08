@@ -29,8 +29,26 @@ class IntegrationTypeIcon extends StatelessWidget {
   }
 
   Widget _buildIcon(ThemeColorSet colors) {
-    // Always use the default icon fallback approach for now
-    // This prevents SVG loading errors from crashing the app
+    // If iconUrl is provided, try to load it as a network image
+    if (iconUrl != null && iconUrl!.isNotEmpty) {
+      return Image.network(
+        iconUrl!,
+        width: size,
+        height: size,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          // If image fails to load, fall back to default icon
+          return _getDefaultIcon(colors);
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          // Show default icon while loading
+          return _getDefaultIcon(colors);
+        },
+      );
+    }
+    
+    // If no iconUrl, use the default icon fallback
     return _getDefaultIcon(colors);
   }
 
@@ -131,6 +149,19 @@ class IntegrationTypeIcon extends StatelessWidget {
         break;
       case 'openai':
         iconData = Icons.psychology;
+        iconColor = colors.textColor;
+        break;
+      case 'ollama':
+        iconData = Icons.memory; // Ollama - local LLM
+        iconColor = colors.textColor;
+        break;
+      case 'dial':
+        iconData = Icons.chat_bubble_outline; // Dial - AI proxy
+        iconColor = colors.textColor;
+        break;
+      case 'claude':
+      case 'anthropic':
+        iconData = Icons.smart_toy; // Claude/Anthropic
         iconColor = colors.textColor;
         break;
       default:
