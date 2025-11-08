@@ -38,71 +38,65 @@ test.describe('Main App - Demo Mode Navigation', () => {
   });
 
   test('should load the landing page successfully', async ({ page }) => {
-    // Check that the landing page title is visible
-    await expect(page.locator('text=Welcome to DMTools')).toBeVisible({ timeout: 10000 });
+    // Wait for Flutter to initialize
+    await page.waitForTimeout(3000);
     
-    // Check that primary action button is visible
-    const getStartedButton = page.locator('[data-testid="button-get-started"]').or(
-      page.locator('text="Get Started"')
-    );
+    // Check that the landing page title is visible via accessibility tree
+    // Use getByText for text content (text is not a role in accessibility tree)
+    const welcomeText = page.getByText(/Welcome to DMTools/i);
+    await expect(welcomeText.first()).toBeVisible({ timeout: 10000 });
+    
+    // Check that primary action button is visible via accessibility tree
+    const getStartedButton = page.getByRole('button', { name: /get started/i });
     await expect(getStartedButton.first()).toBeVisible();
     
-    // Check that demo button is visible
-    const demoButton = page.locator('[data-testid="button-demo"]').or(
-      page.locator('text="Demo"')
-    );
+    // Check that demo button is visible via accessibility tree
+    const demoButton = page.getByRole('button', { name: /demo/i });
     await expect(demoButton.first()).toBeVisible();
   });
 
   test('should enter demo mode when clicking Demo button', async ({ page }) => {
-    // Find and click the Demo button
-    const demoButton = page.locator('[data-testid="button-demo"]').or(
-      page.locator('text="Demo"')
-    ).first();
+    // Wait for Flutter to initialize
+    await page.waitForTimeout(3000);
+    
+    // Find and click the Demo button via accessibility tree
+    const demoButton = page.getByRole('button', { name: /demo/i }).first();
     
     await expect(demoButton).toBeVisible({ timeout: 10000 });
     await demoButton.click();
     
     // Wait for navigation to complete and home screen to load
     await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(2000);
     
-    // Wait for the navigation sidebar to appear
-    await page.waitForTimeout(2000); // Give Flutter time to render
-    
-    // Check that at least one navigation item is visible
-    const firstMenuItem = page.locator('[data-testid="menu-item-ai-jobs"]').or(
-      page.locator('text="AI Jobs"')
-    ).first();
-    
-    await expect(firstMenuItem).toBeVisible({ timeout: 10000 });
+    // Check that at least one navigation item is visible via accessibility tree
+    const firstMenuItem = page.getByRole('button', { name: /ai jobs/i });
+    await expect(firstMenuItem.first()).toBeVisible({ timeout: 10000 });
   });
 
   test('should display all navigation menu items in demo mode', async ({ page }) => {
-    // Enter demo mode
-    const demoButton = page.locator('[data-testid="button-demo"]').or(
-      page.locator('text="Demo"')
-    ).first();
+    // Wait for Flutter to initialize
+    await page.waitForTimeout(3000);
     
+    // Enter demo mode via accessibility tree
+    const demoButton = page.getByRole('button', { name: /demo/i }).first();
     await demoButton.click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
     
-    // Check that each navigation item is visible
+    // Check that each navigation item is visible via accessibility tree
     for (const item of menuItems) {
-      const menuItem = page.locator(`[data-testid="${item.testId}"]`).or(
-        page.locator(`text="${item.label}"`)
-      ).first();
-      
-      await expect(menuItem).toBeVisible({ timeout: 5000 });
+      const menuItem = page.getByRole('button', { name: new RegExp(item.label, 'i') });
+      await expect(menuItem.first()).toBeVisible({ timeout: 5000 });
     }
   });
 
   test('should navigate through all menu items', async ({ page }) => {
-    // Enter demo mode
-    const demoButton = page.locator('[data-testid="button-demo"]').or(
-      page.locator('text="Demo"')
-    ).first();
+    // Wait for Flutter to initialize
+    await page.waitForTimeout(3000);
     
+    // Enter demo mode via accessibility tree
+    const demoButton = page.getByRole('button', { name: /demo/i }).first();
     await demoButton.click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
@@ -111,10 +105,8 @@ test.describe('Main App - Demo Mode Navigation', () => {
     for (const item of menuItems) {
       console.log(`Testing navigation to: ${item.label}`);
       
-      // Find and click the menu item
-      const menuItem = page.locator(`[data-testid="${item.testId}"]`).or(
-        page.locator(`text="${item.label}"`)
-      ).first();
+      // Find and click the menu item via accessibility tree
+      const menuItem = page.getByRole('button', { name: new RegExp(item.label, 'i') }).first();
       
       await expect(menuItem).toBeVisible({ timeout: 5000 });
       await menuItem.click();
@@ -123,54 +115,51 @@ test.describe('Main App - Demo Mode Navigation', () => {
       await page.waitForLoadState('networkidle');
       await page.waitForTimeout(1000);
       
-      // Verify that the menu item is now selected/active
-      // This could be done by checking for a specific CSS class or aria-selected attribute
-      const selectedMenuItem = page.locator(`[data-testid="${item.testId}"]`).first();
-      
-      // Check if the element is still visible (indicating successful navigation)
-      await expect(selectedMenuItem).toBeVisible();
+      // Verify URL changed (indicates successful navigation)
+      const expectedPath = item.label.toLowerCase().replace(' ', '-');
+      await expect(page).toHaveURL(new RegExp(`/${expectedPath}`, 'i'), { timeout: 5000 });
       
       console.log(`Successfully navigated to: ${item.label}`);
     }
   });
 
   test('should maintain accessibility labels on menu items', async ({ page }) => {
-    // Enter demo mode
-    const demoButton = page.locator('[data-testid="button-demo"]').or(
-      page.locator('text="Demo"')
-    ).first();
+    // Wait for Flutter to initialize
+    await page.waitForTimeout(3000);
     
+    // Enter demo mode via accessibility tree
+    const demoButton = page.getByRole('button', { name: /demo/i }).first();
     await demoButton.click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
     
-    // Check semantic labels for each menu item
+    // Check semantic labels for each menu item via accessibility tree
     for (const item of menuItems) {
-      const menuItem = page.locator(`[data-testid="${item.testId}"]`).first();
+      const menuItem = page.getByRole('button', { name: new RegExp(item.label, 'i') }).first();
       
-      // Menu items should be keyboard accessible
+      // Menu items should be visible and accessible
       await expect(menuItem).toBeVisible({ timeout: 5000 });
       
-      // Try to get aria-label if available (Flutter semantic labels might be exposed as aria-label)
-      const ariaLabel = await menuItem.getAttribute('aria-label');
-      console.log(`${item.label} aria-label:`, ariaLabel || 'Not set');
+      // Verify the button has accessible name (via accessibility tree)
+      const name = await menuItem.textContent();
+      expect(name?.toLowerCase()).toContain(item.label.toLowerCase());
+      
+      console.log(`${item.label} is accessible with name: ${name}`);
     }
   });
 
   test('should handle keyboard navigation on menu items', async ({ page }) => {
-    // Enter demo mode
-    const demoButton = page.locator('[data-testid="button-demo"]').or(
-      page.locator('text="Demo"')
-    ).first();
+    // Wait for Flutter to initialize
+    await page.waitForTimeout(3000);
     
+    // Enter demo mode via accessibility tree
+    const demoButton = page.getByRole('button', { name: /demo/i }).first();
     await demoButton.click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
     
-    // Focus on the first menu item
-    const firstMenuItem = page.locator(`[data-testid="${menuItems[0].testId}"]`).or(
-      page.locator(`text="${menuItems[0].label}"`)
-    ).first();
+    // Focus on the first menu item via accessibility tree
+    const firstMenuItem = page.getByRole('button', { name: new RegExp(menuItems[0].label, 'i') }).first();
     
     await expect(firstMenuItem).toBeVisible({ timeout: 5000 });
     
@@ -182,30 +171,28 @@ test.describe('Main App - Demo Mode Navigation', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(500);
     
-    // Verify we're still on the page (navigation worked)
-    await expect(firstMenuItem).toBeVisible();
+    // Verify URL changed (indicates successful navigation)
+    const expectedPath = menuItems[0].label.toLowerCase().replace(' ', '-');
+    await expect(page).toHaveURL(new RegExp(`/${expectedPath}`, 'i'));
     
     console.log('Keyboard navigation test passed');
   });
 
   test('should display theme toggle in header', async ({ page }) => {
-    // Enter demo mode
-    const demoButton = page.locator('[data-testid="button-demo"]').or(
-      page.locator('text="Demo"')
-    ).first();
+    // Wait for Flutter to initialize
+    await page.waitForTimeout(3000);
     
+    // Enter demo mode via accessibility tree
+    const demoButton = page.getByRole('button', { name: /demo/i }).first();
     await demoButton.click();
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(2000);
     
-    // Look for theme toggle button (usually an icon button)
-    const themeToggle = page.locator('[data-testid="button-theme-toggle"]').or(
-      page.locator('button').filter({ hasText: /theme/i })
-    );
+    // Look for theme toggle button via accessibility tree
+    const themeToggle = page.getByRole('button', { name: /toggle theme|switch to.*mode/i });
     
     // The theme toggle should be visible
-    const themeToggleCount = await themeToggle.count();
-    expect(themeToggleCount).toBeGreaterThan(0);
+    await expect(themeToggle.first()).toBeVisible({ timeout: 5000 });
     
     console.log('Theme toggle found');
   });
