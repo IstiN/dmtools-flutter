@@ -91,14 +91,20 @@ class ChatProvider with ChangeNotifier {
       final integrations = _integrationService.integrations;
 
       // Convert IntegrationModel to AiIntegration for chat interface
+      // Filter by categories - only integrations with "AI" category
       _availableAiIntegrations = integrations
-          .where((integration) => _isAiCapable(integration.type) && integration.enabled)
-          .map((integration) => AiIntegration(
-                id: integration.id,
-                type: integration.type,
-                displayName: integration.name,
-                isActive: integration.enabled,
-              ))
+          .where((integration) => integration.categories.contains('AI') && integration.enabled)
+          .map((integration) {
+            // Get icon URL from integration type
+            final integrationType = _integrationService.getIntegrationType(integration.type);
+            return AiIntegration(
+              id: integration.id,
+              type: integration.type,
+              displayName: integration.name,
+              iconUrl: integrationType?.iconUrl,
+              isActive: integration.enabled,
+            );
+          })
           .toList();
 
       // Auto-select first available AI integration (only if no saved preference)
@@ -120,20 +126,6 @@ class ChatProvider with ChangeNotifier {
         debugPrint('❌ Error loading AI integrations: $e');
       }
     }
-  }
-
-  /// Check if integration type supports AI chat functionality
-  bool _isAiCapable(String integrationType) {
-    const aiCapableTypes = {
-      'openai',
-      'gemini',
-      'claude',
-      'anthropic',
-      'azure-openai',
-      'huggingface',
-      'dial', // Add dial support for Dial Claude
-    };
-    return aiCapableTypes.contains(integrationType.toLowerCase());
   }
 
   /// Send a chat message
@@ -187,11 +179,7 @@ class ChatProvider with ChangeNotifier {
 
       if (response != null && response.success == true && response.content != null) {
         // Add AI response to conversation
-        final aiMessage = ChatMessage(
-          message: response.content!,
-          isUser: false,
-          timestamp: DateTime.now(),
-        );
+        final aiMessage = ChatMessage(message: response.content!, isUser: false, timestamp: DateTime.now());
         _messages.add(aiMessage);
 
         // Clear attachments after successful send
@@ -225,10 +213,12 @@ class ChatProvider with ChangeNotifier {
   Future<api.ChatResponse?> _sendChatCompletion(String message) async {
     // Convert local ChatMessage list to API ChatMessage format
     final apiMessages = _messages
-        .map((msg) => api.ChatMessage(
-              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
-              content: msg.message,
-            ))
+        .map(
+          (msg) => api.ChatMessage(
+            role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
+            content: msg.message,
+          ),
+        )
         .toList();
 
     return await _chatService.sendChatCompletion(
@@ -247,10 +237,12 @@ class ChatProvider with ChangeNotifier {
 
       // Convert full conversation history to API format, including current message with files
       final apiMessages = _messages
-          .map((msg) => api.ChatMessage(
-                role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
-                content: msg.message,
-              ))
+          .map(
+            (msg) => api.ChatMessage(
+              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
+              content: msg.message,
+            ),
+          )
           .toList();
 
       // Add file names to the last user message (current message)
@@ -428,10 +420,12 @@ class ChatProvider with ChangeNotifier {
   Future<void> _resendChatCompletion() async {
     // Convert existing messages to API format
     final apiMessages = _messages
-        .map((msg) => api.ChatMessage(
-              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
-              content: msg.message,
-            ))
+        .map(
+          (msg) => api.ChatMessage(
+            role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
+            content: msg.message,
+          ),
+        )
         .toList();
 
     if (kDebugMode) {
@@ -446,10 +440,7 @@ class ChatProvider with ChangeNotifier {
 
     if (response?.success == true && response?.content != null) {
       // Add AI response to conversation
-      final aiMessage = ChatMessage(
-        message: response!.content!,
-        isUser: false,
-      );
+      final aiMessage = ChatMessage(message: response!.content!, isUser: false);
 
       _messages.add(aiMessage);
       _setState(ChatState.success);
@@ -466,10 +457,12 @@ class ChatProvider with ChangeNotifier {
   Future<void> _resendWithFiles() async {
     // Convert existing messages to API format
     final apiMessages = _messages
-        .map((msg) => api.ChatMessage(
-              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
-              content: msg.message,
-            ))
+        .map(
+          (msg) => api.ChatMessage(
+            role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
+            content: msg.message,
+          ),
+        )
         .toList();
 
     if (kDebugMode) {
@@ -486,10 +479,7 @@ class ChatProvider with ChangeNotifier {
 
     if (response?.success == true && response?.content != null) {
       // Add AI response to conversation
-      final aiMessage = ChatMessage(
-        message: response!.content!,
-        isUser: false,
-      );
+      final aiMessage = ChatMessage(message: response!.content!, isUser: false);
 
       _messages.add(aiMessage);
       _setState(ChatState.success);
@@ -575,9 +565,7 @@ class ChatProvider with ChangeNotifier {
 
       if (savedIntegrationId != null && _availableAiIntegrations.isNotEmpty) {
         final savedIntegration = _availableAiIntegrations
-            .where(
-              (integration) => integration.id == savedIntegrationId,
-            )
+            .where((integration) => integration.id == savedIntegrationId)
             .firstOrNull;
 
         if (savedIntegration != null) {
@@ -635,16 +623,14 @@ class ChatProvider with ChangeNotifier {
 
   /// Convert main app McpConfiguration to styleguide McpConfigOption
   McpConfigOption _convertMcpConfiguration(main_app.McpConfiguration config) {
-    return McpConfigOption.fromConfig(
-      id: config.id ?? '',
-      name: config.name,
-    );
+    return McpConfigOption.fromConfig(id: config.id ?? '', name: config.name);
   }
 
   /// Update MCP configurations from provider
   void _updateMcpConfigurationsFromProvider() {
-    _availableMcpConfigurations =
-        _mcpProvider.configurations.map((config) => _convertMcpConfiguration(config)).toList();
+    _availableMcpConfigurations = _mcpProvider.configurations
+        .map((config) => _convertMcpConfiguration(config))
+        .toList();
     notifyListeners();
   }
 
@@ -693,8 +679,9 @@ class ChatProvider with ChangeNotifier {
       final savedConfigurationId = prefs.getString(_selectedMcpConfigurationKey);
 
       if (savedConfigurationId != null && _availableMcpConfigurations.isNotEmpty) {
-        final savedConfiguration =
-            _availableMcpConfigurations.where((config) => config.id == savedConfigurationId).firstOrNull;
+        final savedConfiguration = _availableMcpConfigurations
+            .where((config) => config.id == savedConfigurationId)
+            .firstOrNull;
 
         if (savedConfiguration != null) {
           _selectedMcpConfiguration = savedConfiguration;

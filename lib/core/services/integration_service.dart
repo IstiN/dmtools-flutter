@@ -15,6 +15,7 @@ class IntegrationModel {
   final String? createdByName;
   final String? createdByEmail;
   final int usageCount;
+  final List<String> categories;
   final DateTime? createdAt;
   final DateTime? updatedAt;
   final DateTime? lastUsedAt;
@@ -32,6 +33,7 @@ class IntegrationModel {
     required this.configParams,
     required this.workspaces,
     required this.users,
+    this.categories = const [],
     this.createdById,
     this.createdByName,
     this.createdByEmail,
@@ -901,6 +903,7 @@ class IntegrationService with ChangeNotifier {
       type: apiIntegration.type ?? 'unknown',
       enabled: apiIntegration.enabled ?? false,
       usageCount: apiIntegration.usageCount ?? 0,
+      categories: apiIntegration.categories ?? [],
       createdAt: apiIntegration.createdAt ?? DateTime.now(),
       updatedAt: apiIntegration.updatedAt ?? DateTime.now(),
       lastUsedAt: apiIntegration.lastUsedAt,
