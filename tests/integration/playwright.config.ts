@@ -47,7 +47,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests (only in local development) */
   webServer: process.env.CI ? undefined : {
-    command: 'flutter run -d chrome --web-port=8080 --web-renderer=canvaskit',
+    command: 'flutter run -d chrome --web-port=8080',
     url: 'http://localhost:8080',
     reuseExistingServer: true,
     timeout: 120 * 1000,
