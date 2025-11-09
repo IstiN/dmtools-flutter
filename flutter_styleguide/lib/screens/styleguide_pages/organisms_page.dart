@@ -4,6 +4,7 @@ import 'organisms/page_header_page.dart';
 import 'organisms/welcome_banner_page.dart';
 import 'organisms/panel_base_page.dart';
 import 'organisms/chat_module_page.dart';
+import 'organisms/chat_theme_config_page.dart';
 import 'organisms/workspace_management_page.dart';
 import 'organisms/integration_management_page.dart';
 import 'organisms/navigation_sidebar_page.dart';
@@ -60,6 +61,13 @@ class OrganismsPage extends StatelessWidget {
         description: 'Interactive chat component with message display and input area.',
         pageBuilder: (context) => const ChatModulePage(),
         icon: Icons.chat,
+      ),
+      OrganismCard(
+        title: 'Chat Theme Config',
+        code: '.chat-theme-config',
+        description: 'Chat theme configuration interface with live preview, theme selection, and customization options.',
+        pageBuilder: (context) => const ChatThemeConfigPage(),
+        icon: Icons.palette,
       ),
       OrganismCard(
         title: 'Navigation Sidebar',

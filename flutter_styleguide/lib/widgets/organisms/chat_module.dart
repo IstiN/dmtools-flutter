@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 class ChatMessage {
@@ -61,6 +62,13 @@ class CleanChatInterface extends StatefulWidget {
   final bool? isTestMode;
   final bool? testDarkMode;
 
+  /// Chat theme configuration
+  final ChatTheme? chatTheme;
+  final Color? userMessageColorOverride;
+  final Color? aiMessageColorOverride;
+  final Color? userMessageTextColorOverride;
+  final Color? aiMessageTextColorOverride;
+
   const CleanChatInterface({
     required this.messages,
     required this.onSendMessage,
@@ -84,6 +92,11 @@ class CleanChatInterface extends StatefulWidget {
     this.onMessageResend,
     this.isTestMode,
     this.testDarkMode,
+    this.chatTheme,
+    this.userMessageColorOverride,
+    this.aiMessageColorOverride,
+    this.userMessageTextColorOverride,
+    this.aiMessageTextColorOverride,
   });
 
   @override
@@ -283,11 +296,16 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
+    final isDarkMode = context.isDarkMode;
+    final theme = widget.chatTheme ?? ChatTheme.day();
+    // Use theme backgroundColor based on current theme mode, otherwise transparent
+    final backgroundColor = theme.getBackgroundColor(isDarkMode) ?? Colors.transparent;
 
-    // Clean layout without Container wrapper - just messages and input
-    return SizedBox(
+    // Clean layout with background color from theme
+    return Container(
       height: 400,
       width: double.infinity,
+      color: backgroundColor,
       child: Column(
         children: [
           // Messages area
@@ -468,111 +486,251 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
     );
   }
 
+  /// Get TextStyle with font family from theme, using GoogleFonts for non-local fonts
+  TextStyle? _getFontTextStyle(String? fontFamilyName, {double? fontSize, Color? color}) {
+    if (fontFamilyName == null) return null;
+
+    // Inter is loaded locally, use it directly
+    if (fontFamilyName == 'Inter') {
+      return TextStyle(fontFamily: 'Inter', fontSize: fontSize, color: color);
+    }
+
+    // For other fonts, use GoogleFonts directly
+    try {
+      TextStyle? baseStyle;
+      switch (fontFamilyName) {
+        case 'Roboto':
+          baseStyle = GoogleFonts.roboto();
+          break;
+        case 'Open Sans':
+          baseStyle = GoogleFonts.openSans();
+          break;
+        case 'Lato':
+          baseStyle = GoogleFonts.lato();
+          break;
+        case 'Montserrat':
+          baseStyle = GoogleFonts.montserrat();
+          break;
+        case 'Poppins':
+          baseStyle = GoogleFonts.poppins();
+          break;
+        case 'Nunito':
+          baseStyle = GoogleFonts.nunito();
+          break;
+        case 'Raleway':
+          baseStyle = GoogleFonts.raleway();
+          break;
+        case 'Source Sans 3':
+          baseStyle = GoogleFonts.sourceSans3();
+          break;
+        case 'Source Sans Pro':
+          baseStyle = GoogleFonts.sourceSans3(); // Fallback to Source Sans 3
+          break;
+        case 'Ubuntu':
+          baseStyle = GoogleFonts.ubuntu();
+          break;
+        case 'Noto Sans':
+          baseStyle = GoogleFonts.notoSans();
+          break;
+        case 'Work Sans':
+          baseStyle = GoogleFonts.workSans();
+          break;
+        case 'Playfair Display':
+          baseStyle = GoogleFonts.playfairDisplay();
+          break;
+        case 'Merriweather':
+          baseStyle = GoogleFonts.merriweather();
+          break;
+        case 'Oswald':
+          baseStyle = GoogleFonts.oswald();
+          break;
+        case 'Roboto Condensed':
+          baseStyle = GoogleFonts.robotoCondensed();
+          break;
+        default:
+          return TextStyle(fontFamily: fontFamilyName, fontSize: fontSize, color: color);
+      }
+      // Merge with custom fontSize and color if provided
+      // Explicitly preserve fontFamily from baseStyle
+      return baseStyle.copyWith(
+        fontSize: fontSize,
+        color: color,
+        fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+      );
+    } catch (e) {
+      // If GoogleFonts fails, return null to use system default
+      return null;
+    }
+  }
+
   Widget _buildMessageBubble(ChatMessage message, dynamic colors, int index) {
+    // Get theme colors with override priority: override > theme > default
+    final theme = widget.chatTheme ?? ChatTheme.day();
+    final userMessageColor = widget.userMessageColorOverride ?? theme.userMessageColor;
+    final aiMessageColor = widget.aiMessageColorOverride ?? theme.aiMessageColor;
+    final userMessageTextColor = widget.userMessageTextColorOverride ?? theme.userMessageTextColor;
+    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? theme.aiMessageTextColor;
+    final textSize = theme.textSize;
+    final showAgentName = theme.showAgentName;
+
+    final messageColor = message.isUser ? userMessageColor : aiMessageColor;
+    final messageTextColor = message.isUser ? userMessageTextColor : aiMessageTextColor;
+
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: message.isUser ? colors.secondaryColor : colors.bgColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 2))],
-        ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * ResponsiveBreakpoints.chatMaxWidthBreakpoint,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: SelectionArea(
-                    child: message.enableMarkdown
-                        ? MarkdownRenderer(
-                            data: message.message,
-                            shrinkWrap: true,
-                            selectable: false,
-                            styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
-                          )
-                        : Text(
-                            message.message,
-                            style: TextStyle(color: message.isUser ? Colors.white : colors.textColor),
-                          ),
-                  ),
+            // Show agent name for AI messages if enabled
+            if (!message.isUser && showAgentName) ...[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4, left: 16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 3,
+                      height: 16,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(color: theme.nameColor, borderRadius: BorderRadius.circular(2)),
+                    ),
+                    Text(
+                      theme.agentName,
+                      style: () {
+                        final baseStyle = _getFontTextStyle(
+                          theme.fontFamily,
+                          fontSize: 14 * textSize,
+                          color: theme.nameColor,
+                        );
+                        return baseStyle?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+                            ) ??
+                            TextStyle(fontSize: 14 * textSize, fontWeight: FontWeight.w500, color: theme.nameColor);
+                      }(),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    size: 16,
-                    color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
-                  ),
-                  tooltip: 'Message actions',
-                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context) {
-                    final items = <PopupMenuItem<String>>[
-                      const PopupMenuItem<String>(
-                        value: 'copy',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
-                        ),
-                      ),
-                    ];
-
-                    if (message.isUser) {
-                      items.add(
-                        const PopupMenuItem<String>(
-                          value: 'resend',
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [Icon(Icons.refresh, size: 16), SizedBox(width: 8), Text('Re-send')],
-                          ),
-                        ),
-                      );
-                    }
-
-                    items.addAll([
-                      const PopupMenuItem<String>(
-                        value: 'edit',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
-                        ),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'delete',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [Icon(Icons.delete, size: 16), SizedBox(width: 8), Text('Delete')],
-                        ),
-                      ),
-                    ]);
-
-                    return items;
-                  },
-                  onSelected: (value) => _handleMessageAction(value, index, message),
-                ),
-              ],
-            ),
-            if (message.attachments.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: message.attachments.map((attachment) => _buildFileTag(attachment, colors)).toList(),
               ),
             ],
-            const SizedBox(height: 4),
-            Text(
-              _formatTime(message.timestamp),
-              style: TextStyle(
-                fontSize: 10,
-                color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: messageColor == Colors.transparent ? null : messageColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SelectionArea(
+                          child: message.enableMarkdown
+                              ? MarkdownRenderer(
+                                  data: message.message,
+                                  shrinkWrap: true,
+                                  selectable: false,
+                                  styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
+                                )
+                              : Text(
+                                  message.message,
+                                  style:
+                                      _getFontTextStyle(
+                                        theme.fontFamily,
+                                        fontSize: 14 * textSize,
+                                        color: messageTextColor,
+                                      ) ??
+                                      TextStyle(color: messageTextColor, fontSize: 14 * textSize),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      PopupMenuButton<String>(
+                        icon: Icon(
+                          Icons.more_vert,
+                          size: 16,
+                          color: message.isUser ? messageTextColor.withValues(alpha: 0.7) : colors.textSecondary,
+                        ),
+                        tooltip: 'Message actions',
+                        constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context) {
+                          final items = <PopupMenuItem<String>>[
+                            const PopupMenuItem<String>(
+                              value: 'copy',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
+                              ),
+                            ),
+                          ];
+
+                          if (message.isUser) {
+                            items.add(
+                              const PopupMenuItem<String>(
+                                value: 'resend',
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [Icon(Icons.refresh, size: 16), SizedBox(width: 8), Text('Re-send')],
+                                ),
+                              ),
+                            );
+                          }
+
+                          items.addAll([
+                            const PopupMenuItem<String>(
+                              value: 'edit',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
+                              ),
+                            ),
+                            const PopupMenuItem<String>(
+                              value: 'delete',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [Icon(Icons.delete, size: 16), SizedBox(width: 8), Text('Delete')],
+                              ),
+                            ),
+                          ]);
+
+                          return items;
+                        },
+                        onSelected: (value) => _handleMessageAction(value, index, message),
+                      ),
+                    ],
+                  ),
+                  if (message.attachments.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: message.attachments.map((attachment) => _buildFileTag(attachment, colors)).toList(),
+                    ),
+                  ],
+                  const SizedBox(height: 4),
+                  Text(
+                    _formatTime(message.timestamp),
+                    style:
+                        _getFontTextStyle(
+                          theme.fontFamily,
+                          fontSize: 10 * textSize,
+                          color: message.isUser
+                              ? const Color(0xFFE0F2FE) // Light cyan/blue for better visibility on cyan background
+                              : theme.dateTextColor, // Use theme date color for AI messages
+                        ) ??
+                        TextStyle(
+                          fontSize: 10 * textSize,
+                          color: message.isUser ? const Color(0xFFE0F2FE) : theme.dateTextColor,
+                        ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -739,34 +897,172 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
 
   MarkdownStyleSheet _buildMessageMarkdownStyleSheet(BuildContext context, bool isUser, dynamic colors) {
     final theme = Theme.of(context);
-    final textColor = isUser ? Colors.white : colors.textColor;
+    final chatTheme = widget.chatTheme ?? ChatTheme.day();
+    final userMessageTextColor = widget.userMessageTextColorOverride ?? chatTheme.userMessageTextColor;
+    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? chatTheme.aiMessageTextColor;
+    final textSize = chatTheme.textSize;
+    final textColor = isUser ? userMessageTextColor : aiMessageTextColor;
+    final userMessageColor = widget.userMessageColorOverride ?? chatTheme.userMessageColor;
 
     return MarkdownStyleSheet.fromTheme(theme).copyWith(
-      p: theme.textTheme.bodyLarge?.copyWith(color: textColor),
-      h1: theme.textTheme.headlineLarge?.copyWith(color: textColor, fontWeight: FontWeight.bold),
-      h2: theme.textTheme.headlineMedium?.copyWith(color: textColor, fontWeight: FontWeight.bold),
-      h3: theme.textTheme.headlineSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
-      h4: theme.textTheme.titleLarge?.copyWith(color: textColor, fontWeight: FontWeight.w600),
-      h5: theme.textTheme.titleMedium?.copyWith(color: textColor, fontWeight: FontWeight.w600),
-      h6: theme.textTheme.titleSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      p:
+          _getFontTextStyle(
+            chatTheme.fontFamily,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            color: textColor,
+          ) ??
+          theme.textTheme.bodyLarge?.copyWith(
+            color: textColor,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          ),
+      h1: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.headlineLarge?.fontSize ?? 32) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.headlineLarge?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: (theme.textTheme.headlineLarge?.fontSize ?? 32) * textSize,
+            );
+      }(),
+      h2: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.headlineMedium?.fontSize ?? 28) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.headlineMedium?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: (theme.textTheme.headlineMedium?.fontSize ?? 28) * textSize,
+            );
+      }(),
+      h3: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.headlineSmall?.fontSize ?? 24) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.headlineSmall?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.headlineSmall?.fontSize ?? 24) * textSize,
+            );
+      }(),
+      h4: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.titleLarge?.fontSize ?? 22) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.titleLarge?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.titleLarge?.fontSize ?? 22) * textSize,
+            );
+      }(),
+      h5: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.titleMedium?.fontSize ?? 20) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.titleMedium?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.titleMedium?.fontSize ?? 20) * textSize,
+            );
+      }(),
+      h6: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.titleSmall?.fontSize ?? 18) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.titleSmall?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.titleSmall?.fontSize ?? 18) * textSize,
+            );
+      }(),
       code: theme.textTheme.bodyMedium?.copyWith(
         color: textColor,
         fontFamily: 'monospace',
         backgroundColor: Colors.transparent,
+        fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * textSize,
       ),
       codeblockDecoration: BoxDecoration(
-        color: isUser ? Colors.black.withValues(alpha: 0.2) : colors.inputBg,
+        color: isUser ? userMessageColor.withValues(alpha: 0.2) : colors.inputBg,
         borderRadius: BorderRadius.circular(4),
       ),
-      blockquote: theme.textTheme.bodyLarge?.copyWith(
-        color: textColor.withValues(alpha: 0.8),
-        fontStyle: FontStyle.italic,
-      ),
-      listBullet: theme.textTheme.bodyLarge?.copyWith(color: textColor),
-      a: theme.textTheme.bodyLarge?.copyWith(
-        color: isUser ? Colors.white : colors.accentColor,
-        decoration: TextDecoration.underline,
-      ),
+      blockquote: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          color: textColor.withValues(alpha: 0.8),
+        );
+        return baseStyle?.copyWith(
+              fontStyle: FontStyle.italic,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.bodyLarge?.copyWith(
+              color: textColor.withValues(alpha: 0.8),
+              fontStyle: FontStyle.italic,
+              fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            );
+      }(),
+      listBullet:
+          _getFontTextStyle(
+            chatTheme.fontFamily,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            color: textColor,
+          ) ??
+          theme.textTheme.bodyLarge?.copyWith(
+            color: textColor,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          ),
+      a: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          color: isUser ? userMessageTextColor : colors.accentColor,
+        );
+        return baseStyle?.copyWith(
+              decoration: TextDecoration.underline,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.bodyLarge?.copyWith(
+              color: isUser ? userMessageTextColor : colors.accentColor,
+              decoration: TextDecoration.underline,
+              fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            );
+      }(),
     );
   }
 }
@@ -816,6 +1112,13 @@ class ChatInterface extends StatefulWidget {
   /// Theme to use when isTestMode is true
   final bool? testDarkMode;
 
+  /// Chat theme configuration
+  final ChatTheme? chatTheme;
+  final Color? userMessageColorOverride;
+  final Color? aiMessageColorOverride;
+  final Color? userMessageTextColorOverride;
+  final Color? aiMessageTextColorOverride;
+
   const ChatInterface({
     required this.messages,
     required this.onSendMessage,
@@ -841,6 +1144,11 @@ class ChatInterface extends StatefulWidget {
     this.onMessageResend,
     this.isTestMode,
     this.testDarkMode,
+    this.chatTheme,
+    this.userMessageColorOverride,
+    this.aiMessageColorOverride,
+    this.userMessageTextColorOverride,
+    this.aiMessageTextColorOverride,
   });
 
   @override
@@ -1048,12 +1356,16 @@ class ChatInterfaceState extends State<ChatInterface> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
+    final isDarkMode = context.isDarkMode;
+    final theme = widget.chatTheme ?? ChatTheme.day();
+    // Use theme backgroundColor based on current theme mode, otherwise transparent
+    final backgroundColor = theme.getBackgroundColor(isDarkMode) ?? Colors.transparent;
 
     return Container(
       height: 400,
       width: double.infinity,
       decoration: BoxDecoration(
-        color: colors.cardBg,
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(8),
         boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 2))],
       ),
@@ -1265,114 +1577,254 @@ class ChatInterfaceState extends State<ChatInterface> {
     );
   }
 
+  /// Get TextStyle with font family from theme, using GoogleFonts for non-local fonts
+  TextStyle? _getFontTextStyle(String? fontFamilyName, {double? fontSize, Color? color}) {
+    if (fontFamilyName == null) return null;
+
+    // Inter is loaded locally, use it directly
+    if (fontFamilyName == 'Inter') {
+      return TextStyle(fontFamily: 'Inter', fontSize: fontSize, color: color);
+    }
+
+    // For other fonts, use GoogleFonts directly
+    try {
+      TextStyle? baseStyle;
+      switch (fontFamilyName) {
+        case 'Roboto':
+          baseStyle = GoogleFonts.roboto();
+          break;
+        case 'Open Sans':
+          baseStyle = GoogleFonts.openSans();
+          break;
+        case 'Lato':
+          baseStyle = GoogleFonts.lato();
+          break;
+        case 'Montserrat':
+          baseStyle = GoogleFonts.montserrat();
+          break;
+        case 'Poppins':
+          baseStyle = GoogleFonts.poppins();
+          break;
+        case 'Nunito':
+          baseStyle = GoogleFonts.nunito();
+          break;
+        case 'Raleway':
+          baseStyle = GoogleFonts.raleway();
+          break;
+        case 'Source Sans 3':
+          baseStyle = GoogleFonts.sourceSans3();
+          break;
+        case 'Source Sans Pro':
+          baseStyle = GoogleFonts.sourceSans3(); // Fallback to Source Sans 3
+          break;
+        case 'Ubuntu':
+          baseStyle = GoogleFonts.ubuntu();
+          break;
+        case 'Noto Sans':
+          baseStyle = GoogleFonts.notoSans();
+          break;
+        case 'Work Sans':
+          baseStyle = GoogleFonts.workSans();
+          break;
+        case 'Playfair Display':
+          baseStyle = GoogleFonts.playfairDisplay();
+          break;
+        case 'Merriweather':
+          baseStyle = GoogleFonts.merriweather();
+          break;
+        case 'Oswald':
+          baseStyle = GoogleFonts.oswald();
+          break;
+        case 'Roboto Condensed':
+          baseStyle = GoogleFonts.robotoCondensed();
+          break;
+        default:
+          return TextStyle(fontFamily: fontFamilyName, fontSize: fontSize, color: color);
+      }
+      // Merge with custom fontSize and color if provided
+      // Explicitly preserve fontFamily from baseStyle
+      return baseStyle.copyWith(
+        fontSize: fontSize,
+        color: color,
+        fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+      );
+    } catch (e) {
+      // If GoogleFonts fails, return null to use system default
+      return null;
+    }
+  }
+
   Widget _buildMessageBubble(ChatMessage message, dynamic colors, int index) {
+    // Get theme colors with override priority: override > theme > default
+    final theme = widget.chatTheme ?? ChatTheme.day();
+    final userMessageColor = widget.userMessageColorOverride ?? theme.userMessageColor;
+    final aiMessageColor = widget.aiMessageColorOverride ?? theme.aiMessageColor;
+    final userMessageTextColor = widget.userMessageTextColorOverride ?? theme.userMessageTextColor;
+    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? theme.aiMessageTextColor;
+    final textSize = theme.textSize;
+    final showAgentName = theme.showAgentName;
+
+    final messageColor = message.isUser ? userMessageColor : aiMessageColor;
+    final messageTextColor = message.isUser ? userMessageTextColor : aiMessageTextColor;
+
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: message.isUser ? colors.secondaryColor : colors.bgColor,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 2))],
-        ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width * ResponsiveBreakpoints.chatMaxWidthBreakpoint,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: message.isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
-            // Message content with copy button
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: SelectionArea(
-                    child: message.enableMarkdown
-                        ? MarkdownRenderer(
-                            data: message.message,
-                            shrinkWrap: true,
-                            selectable: false,
-                            styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
-                          )
-                        : Text(
-                            message.message,
-                            style: TextStyle(color: message.isUser ? Colors.white : colors.textColor),
-                          ),
-                  ),
+            // Show agent name for AI messages if enabled
+            if (!message.isUser && showAgentName) ...[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4, left: 16),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 3,
+                      height: 16,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(color: theme.nameColor, borderRadius: BorderRadius.circular(2)),
+                    ),
+                    Text(
+                      theme.agentName,
+                      style: () {
+                        final baseStyle = _getFontTextStyle(
+                          theme.fontFamily,
+                          fontSize: 14 * textSize,
+                          color: theme.nameColor,
+                        );
+                        return baseStyle?.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+                            ) ??
+                            TextStyle(fontSize: 14 * textSize, fontWeight: FontWeight.w500, color: theme.nameColor);
+                      }(),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 8),
-                // Message actions menu
-                PopupMenuButton<String>(
-                  icon: Icon(
-                    Icons.more_vert,
-                    size: 16,
-                    color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
-                  ),
-                  tooltip: 'Message actions',
-                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
-                  padding: EdgeInsets.zero,
-                  itemBuilder: (context) {
-                    final items = <PopupMenuItem<String>>[
-                      const PopupMenuItem<String>(
-                        value: 'copy',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
-                        ),
-                      ),
-                    ];
-
-                    if (message.isUser) {
-                      items.add(
-                        const PopupMenuItem<String>(
-                          value: 'resend',
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [Icon(Icons.refresh, size: 16), SizedBox(width: 8), Text('Re-send')],
-                          ),
-                        ),
-                      );
-                    }
-
-                    items.addAll([
-                      const PopupMenuItem<String>(
-                        value: 'edit',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
-                        ),
-                      ),
-                      const PopupMenuItem<String>(
-                        value: 'delete',
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [Icon(Icons.delete, size: 16), SizedBox(width: 8), Text('Delete')],
-                        ),
-                      ),
-                    ]);
-
-                    return items;
-                  },
-                  onSelected: (value) => _handleMessageAction(value, index, message),
-                ),
-              ],
-            ),
-            // Show file attachments if any
-            if (message.attachments.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                runSpacing: 4,
-                children: message.attachments.map((attachment) => _buildFileTag(attachment, colors)).toList(),
               ),
             ],
-            const SizedBox(height: 4),
-            Text(
-              _formatTime(message.timestamp),
-              style: TextStyle(
-                fontSize: 10,
-                color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: messageColor == Colors.transparent ? null : messageColor,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Message content with copy button
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: SelectionArea(
+                          child: message.enableMarkdown
+                              ? MarkdownRenderer(
+                                  data: message.message,
+                                  shrinkWrap: true,
+                                  selectable: false,
+                                  styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
+                                )
+                              : Text(
+                                  message.message,
+                                  style:
+                                      _getFontTextStyle(
+                                        theme.fontFamily,
+                                        fontSize: 14 * textSize,
+                                        color: messageTextColor,
+                                      ) ??
+                                      TextStyle(color: messageTextColor, fontSize: 14 * textSize),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Message actions menu
+                      PopupMenuButton<String>(
+                        icon: Icon(
+                          Icons.more_vert,
+                          size: 16,
+                          color: message.isUser ? messageTextColor.withValues(alpha: 0.7) : colors.textSecondary,
+                        ),
+                        tooltip: 'Message actions',
+                        constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                        padding: EdgeInsets.zero,
+                        itemBuilder: (context) {
+                          final items = <PopupMenuItem<String>>[
+                            const PopupMenuItem<String>(
+                              value: 'copy',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
+                              ),
+                            ),
+                          ];
+
+                          if (message.isUser) {
+                            items.add(
+                              const PopupMenuItem<String>(
+                                value: 'resend',
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [Icon(Icons.refresh, size: 16), SizedBox(width: 8), Text('Re-send')],
+                                ),
+                              ),
+                            );
+                          }
+
+                          items.addAll([
+                            const PopupMenuItem<String>(
+                              value: 'edit',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
+                              ),
+                            ),
+                            const PopupMenuItem<String>(
+                              value: 'delete',
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [Icon(Icons.delete, size: 16), SizedBox(width: 8), Text('Delete')],
+                              ),
+                            ),
+                          ]);
+
+                          return items;
+                        },
+                        onSelected: (value) => _handleMessageAction(value, index, message),
+                      ),
+                    ],
+                  ),
+                  // Show file attachments if any
+                  if (message.attachments.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 4,
+                      children: message.attachments.map((attachment) => _buildFileTag(attachment, colors)).toList(),
+                    ),
+                  ],
+                  const SizedBox(height: 4),
+                  Text(
+                    _formatTime(message.timestamp),
+                    style:
+                        _getFontTextStyle(
+                          theme.fontFamily,
+                          fontSize: 10 * textSize,
+                          color: message.isUser
+                              ? const Color(0xFFE0F2FE) // Light cyan/blue for better visibility on cyan background
+                              : theme.dateTextColor, // Use theme date color for AI messages
+                        ) ??
+                        TextStyle(
+                          fontSize: 10 * textSize,
+                          color: message.isUser ? const Color(0xFFE0F2FE) : theme.dateTextColor,
+                        ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -1551,34 +2003,172 @@ class ChatInterfaceState extends State<ChatInterface> {
 
   MarkdownStyleSheet _buildMessageMarkdownStyleSheet(BuildContext context, bool isUser, dynamic colors) {
     final theme = Theme.of(context);
-    final textColor = isUser ? Colors.white : colors.textColor;
+    final chatTheme = widget.chatTheme ?? ChatTheme.day();
+    final userMessageTextColor = widget.userMessageTextColorOverride ?? chatTheme.userMessageTextColor;
+    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? chatTheme.aiMessageTextColor;
+    final textSize = chatTheme.textSize;
+    final textColor = isUser ? userMessageTextColor : aiMessageTextColor;
+    final userMessageColor = widget.userMessageColorOverride ?? chatTheme.userMessageColor;
 
     return MarkdownStyleSheet.fromTheme(theme).copyWith(
-      p: theme.textTheme.bodyLarge?.copyWith(color: textColor),
-      h1: theme.textTheme.headlineLarge?.copyWith(color: textColor, fontWeight: FontWeight.bold),
-      h2: theme.textTheme.headlineMedium?.copyWith(color: textColor, fontWeight: FontWeight.bold),
-      h3: theme.textTheme.headlineSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
-      h4: theme.textTheme.titleLarge?.copyWith(color: textColor, fontWeight: FontWeight.w600),
-      h5: theme.textTheme.titleMedium?.copyWith(color: textColor, fontWeight: FontWeight.w600),
-      h6: theme.textTheme.titleSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      p:
+          _getFontTextStyle(
+            chatTheme.fontFamily,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            color: textColor,
+          ) ??
+          theme.textTheme.bodyLarge?.copyWith(
+            color: textColor,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          ),
+      h1: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.headlineLarge?.fontSize ?? 32) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.headlineLarge?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: (theme.textTheme.headlineLarge?.fontSize ?? 32) * textSize,
+            );
+      }(),
+      h2: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.headlineMedium?.fontSize ?? 28) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.bold,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.headlineMedium?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: (theme.textTheme.headlineMedium?.fontSize ?? 28) * textSize,
+            );
+      }(),
+      h3: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.headlineSmall?.fontSize ?? 24) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.headlineSmall?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.headlineSmall?.fontSize ?? 24) * textSize,
+            );
+      }(),
+      h4: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.titleLarge?.fontSize ?? 22) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.titleLarge?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.titleLarge?.fontSize ?? 22) * textSize,
+            );
+      }(),
+      h5: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.titleMedium?.fontSize ?? 20) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.titleMedium?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.titleMedium?.fontSize ?? 20) * textSize,
+            );
+      }(),
+      h6: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.titleSmall?.fontSize ?? 18) * textSize,
+          color: textColor,
+        );
+        return baseStyle?.copyWith(
+              fontWeight: FontWeight.w600,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.titleSmall?.copyWith(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+              fontSize: (theme.textTheme.titleSmall?.fontSize ?? 18) * textSize,
+            );
+      }(),
       code: theme.textTheme.bodyMedium?.copyWith(
         color: textColor,
         fontFamily: 'monospace',
         backgroundColor: Colors.transparent,
+        fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * textSize,
       ),
       codeblockDecoration: BoxDecoration(
-        color: isUser ? Colors.black.withValues(alpha: 0.2) : colors.inputBg,
+        color: isUser ? userMessageColor.withValues(alpha: 0.2) : colors.inputBg,
         borderRadius: BorderRadius.circular(4),
       ),
-      blockquote: theme.textTheme.bodyLarge?.copyWith(
-        color: textColor.withValues(alpha: 0.8),
-        fontStyle: FontStyle.italic,
-      ),
-      listBullet: theme.textTheme.bodyLarge?.copyWith(color: textColor),
-      a: theme.textTheme.bodyLarge?.copyWith(
-        color: isUser ? Colors.white : colors.accentColor,
-        decoration: TextDecoration.underline,
-      ),
+      blockquote: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          color: textColor.withValues(alpha: 0.8),
+        );
+        return baseStyle?.copyWith(
+              fontStyle: FontStyle.italic,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.bodyLarge?.copyWith(
+              color: textColor.withValues(alpha: 0.8),
+              fontStyle: FontStyle.italic,
+              fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            );
+      }(),
+      listBullet:
+          _getFontTextStyle(
+            chatTheme.fontFamily,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            color: textColor,
+          ) ??
+          theme.textTheme.bodyLarge?.copyWith(
+            color: textColor,
+            fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          ),
+      a: () {
+        final baseStyle = _getFontTextStyle(
+          chatTheme.fontFamily,
+          fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+          color: isUser ? userMessageTextColor : colors.accentColor,
+        );
+        return baseStyle?.copyWith(
+              decoration: TextDecoration.underline,
+              fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
+            ) ??
+            theme.textTheme.bodyLarge?.copyWith(
+              color: isUser ? userMessageTextColor : colors.accentColor,
+              decoration: TextDecoration.underline,
+              fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
+            );
+      }(),
     );
   }
 }

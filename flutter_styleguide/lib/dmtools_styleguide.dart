@@ -98,6 +98,9 @@ export 'widgets/organisms/webhook_management_section.dart';
 
 // Widgets - Organisms
 export 'widgets/organisms/chat_module.dart';
+export 'widgets/organisms/chat_theme.dart';
+export 'widgets/organisms/chat_theme_config.dart';
+export 'widgets/organisms/color_picker_widget.dart';
 export 'widgets/organisms/page_header.dart';
 export 'widgets/organisms/panel_base.dart';
 export 'widgets/organisms/welcome_banner.dart';
