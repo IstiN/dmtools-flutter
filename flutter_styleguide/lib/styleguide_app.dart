@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/theme/app_theme.dart';
 import 'core/routing/styleguide_router.dart';
@@ -12,11 +13,16 @@ class StyleguideApp extends StatefulWidget {
 
 class _StyleguideAppState extends State<StyleguideApp> with WidgetsBindingObserver {
   late ThemeProvider _themeProvider;
+  late final GoRouter router;
   bool _isThemeInitialized = false;
 
   @override
   void initState() {
     super.initState();
+    debugPrint('📱 StyleguideApp: initState called');
+    // Create router IMMEDIATELY before anything else
+    router = StyleguideRouter.createRouter();
+    debugPrint('📱 StyleguideApp: Router created in initState');
     WidgetsBinding.instance.addObserver(this);
     _themeProvider = ThemeProvider();
     // Initialize theme asynchronously
@@ -30,15 +36,18 @@ class _StyleguideAppState extends State<StyleguideApp> with WidgetsBindingObserv
   }
 
   Future<void> _initializeTheme() async {
+    debugPrint('📱 StyleguideApp: Starting theme initialization...');
     try {
       await _themeProvider.initializeTheme();
+      debugPrint('📱 StyleguideApp: Theme initialized successfully');
       if (mounted) {
         setState(() {
+          debugPrint('📱 StyleguideApp: Calling setState to show router');
           _isThemeInitialized = true;
         });
       }
     } catch (e) {
-      debugPrint('StyleguideApp: Error initializing theme: $e');
+      debugPrint('📱 StyleguideApp: Error initializing theme: $e');
       if (mounted) {
         setState(() {
           _isThemeInitialized = true;
@@ -76,12 +85,13 @@ class _StyleguideAppState extends State<StyleguideApp> with WidgetsBindingObserv
             );
           }
 
+          debugPrint('📱 StyleguideApp: Building MaterialApp.router with theme initialized');
           return MaterialApp.router(
             title: 'DMTools Styleguide',
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.currentThemeMode,
-            routerConfig: StyleguideRouter.router,
+            routerConfig: router,
             debugShowCheckedModeBanner: false,
           );
         },
