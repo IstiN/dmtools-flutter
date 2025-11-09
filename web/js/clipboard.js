@@ -141,7 +141,9 @@ window.ClipboardAPI = {
             if (item.type.startsWith('text/') && item.kind === 'string') {
               console.log('📝 Text found in paste event:', item.type);
               
-              // Don't prevent default for text - let it paste normally
+              // Prevent default paste behavior for text - we'll handle it programmatically
+              event.preventDefault();
+              
               item.getAsString((text) => {
                 if (text && text.trim().length > 0) {
                   console.log('✅ Text processed:', text.length, 'chars');

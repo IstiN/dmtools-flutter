@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/services/chat_service.dart';
 import '../core/services/integration_service.dart';
@@ -17,6 +18,20 @@ enum ChatState {
   aiSelecting, // User is selecting AI integration
 }
 
+/// State for individual chat tab
+class ChatTabState {
+  final String id;
+  final List<ChatMessage> messages = [];
+  final List<FileAttachment> attachments = [];
+  AiIntegration? selectedAiIntegration;
+  McpConfigOption? selectedMcpConfiguration;
+  bool isLoading = false;
+  bool isUploadingFiles = false;
+  double? uploadProgress;
+
+  ChatTabState({required this.id});
+}
+
 /// Provider for managing chat state and operations
 class ChatProvider with ChangeNotifier {
   static const String _selectedAiIntegrationKey = 'selected_ai_integration_id';
@@ -32,10 +47,17 @@ class ChatProvider with ChangeNotifier {
   AiIntegration? _selectedAiIntegration;
   List<McpConfigOption> _availableMcpConfigurations = [];
   McpConfigOption? _selectedMcpConfiguration;
+  bool _mcpInitialized = false;
   List<FileAttachment> _attachments = [];
   bool _isUploadingFiles = false;
   double? _uploadProgress;
   String? _error;
+
+  // Tab management
+  final List<HeaderTab> _tabs = [];
+  String? _selectedTabId;
+  int _tabCounter = 1;
+  final Map<String, ChatTabState> _tabStates = {};
 
   ChatProvider(this._chatService, this._integrationService, this._mcpProvider) {
     _initializeAiIntegrations();
@@ -47,6 +69,11 @@ class ChatProvider with ChangeNotifier {
 
     // Listen to MCP configurations changes
     _mcpProvider.addListener(_onMcpConfigurationsChanged);
+
+    // Initialize first tab if none exists
+    if (_tabs.isEmpty) {
+      _addNewTab();
+    }
   }
 
   // Getters
@@ -56,6 +83,7 @@ class ChatProvider with ChangeNotifier {
   AiIntegration? get selectedAiIntegration => _selectedAiIntegration;
   List<McpConfigOption> get availableMcpConfigurations => List.unmodifiable(_availableMcpConfigurations);
   McpConfigOption? get selectedMcpConfiguration => _selectedMcpConfiguration;
+  bool get isMcpInitialized => _mcpInitialized;
   List<FileAttachment> get attachments => List.unmodifiable(_attachments);
   bool get isUploadingFiles => _isUploadingFiles;
   double? get uploadProgress => _uploadProgress;
@@ -63,6 +91,12 @@ class ChatProvider with ChangeNotifier {
   bool get isLoading => _currentState == ChatState.loading;
   bool get hasError => _currentState == ChatState.error;
   bool get isEmpty => _messages.isEmpty;
+
+  // Tab management getters
+  List<HeaderTab> get tabs => List.unmodifiable(_tabs);
+  String? get selectedTabId => _selectedTabId;
+  ChatTabState? getSelectedTabState() => _selectedTabId != null ? _tabStates[_selectedTabId] : null;
+  ChatTabState? getTabState(String tabId) => _tabStates[tabId];
 
   void _setState(ChatState state) {
     _currentState = state;
@@ -592,29 +626,68 @@ class ChatProvider with ChangeNotifier {
   /// Handle authentication state changes
   void _onAuthChanged() {
     final authProvider = _integrationService.authProvider;
-    if (authProvider?.isAuthenticated == true && _availableAiIntegrations.isEmpty) {
+    if (authProvider?.isAuthenticated == true) {
       if (kDebugMode) {
-        debugPrint('🔄 User authenticated, reloading AI integrations...');
+        debugPrint('🔄 User authenticated, reloading AI integrations and MCP configurations...');
       }
       // Reload integrations when user becomes authenticated
-      _initializeAiIntegrations();
+      if (_availableAiIntegrations.isEmpty) {
+        _initializeAiIntegrations();
+      }
+      // Always reload MCP configurations when authenticated (they might have failed before auth)
+      _initializeMcpConfigurations();
     }
   }
 
   /// Initialize available MCP configurations from McpProvider
   Future<void> _initializeMcpConfigurations() async {
     try {
-      // Load MCP configurations from McpProvider
-      await _mcpProvider.loadConfigurations();
-      _updateMcpConfigurationsFromProvider();
+      if (kDebugMode) {
+        debugPrint('🔄 ChatProvider._initializeMcpConfigurations() called');
+        debugPrint('🔄 McpProvider.configurations.length: ${_mcpProvider.configurations.length}');
+        debugPrint('🔄 McpProvider.configurations.isEmpty: ${_mcpProvider.configurations.isEmpty}');
+      }
+
+      // Check if McpProvider already has configurations loaded (e.g., from MCP page)
+      if (_mcpProvider.configurations.isNotEmpty) {
+        if (kDebugMode) {
+          debugPrint('🔄 MCP configurations already loaded in McpProvider, syncing...');
+          debugPrint('🔄 McpProvider has ${_mcpProvider.configurations.length} configurations');
+          for (var config in _mcpProvider.configurations) {
+            debugPrint('🔄   - ${config.name} (${config.id})');
+          }
+        }
+        // Sync immediately without reloading
+        _updateMcpConfigurationsFromProvider();
+      } else {
+        if (kDebugMode) {
+          debugPrint('🔄 Loading MCP configurations from McpProvider...');
+        }
+        // Load MCP configurations from McpProvider
+        await _mcpProvider.loadConfigurations();
+        if (kDebugMode) {
+          debugPrint(
+            '🔄 After loadConfigurations(), McpProvider has ${_mcpProvider.configurations.length} configurations',
+          );
+        }
+        _updateMcpConfigurationsFromProvider();
+      }
 
       // Load saved preference for selected MCP configuration
       await _loadSelectedMcpConfiguration();
 
+      _mcpInitialized = true;
+      notifyListeners();
+
       if (kDebugMode) {
-        debugPrint('✅ Loaded ${_availableMcpConfigurations.length} MCP configurations');
+        debugPrint('✅ ChatProvider loaded ${_availableMcpConfigurations.length} MCP configurations');
+        for (var config in _availableMcpConfigurations) {
+          debugPrint('✅   - ${config.name} (${config.id})');
+        }
       }
     } catch (e) {
+      _mcpInitialized = true; // Mark as initialized even on error
+      notifyListeners();
       if (kDebugMode) {
         debugPrint('❌ Error loading MCP configurations: $e');
       }
@@ -628,15 +701,31 @@ class ChatProvider with ChangeNotifier {
 
   /// Update MCP configurations from provider
   void _updateMcpConfigurationsFromProvider() {
+    if (kDebugMode) {
+      debugPrint('🔄 ChatProvider._updateMcpConfigurationsFromProvider() called');
+      debugPrint('🔄 McpProvider.configurations.length: ${_mcpProvider.configurations.length}');
+    }
     _availableMcpConfigurations = _mcpProvider.configurations
         .map((config) => _convertMcpConfiguration(config))
         .toList();
+    if (kDebugMode) {
+      debugPrint('🔄 ChatProvider._availableMcpConfigurations.length: ${_availableMcpConfigurations.length}');
+    }
     notifyListeners();
   }
 
   /// Handle MCP configurations changes
   void _onMcpConfigurationsChanged() {
+    if (kDebugMode) {
+      debugPrint('🔄 ChatProvider._onMcpConfigurationsChanged() called');
+      debugPrint('🔄 McpProvider.configurations.length: ${_mcpProvider.configurations.length}');
+    }
     _updateMcpConfigurationsFromProvider();
+    if (kDebugMode) {
+      debugPrint(
+        '🔄 ChatProvider._availableMcpConfigurations.length after update: ${_availableMcpConfigurations.length}',
+      );
+    }
   }
 
   /// Select MCP configuration
@@ -706,6 +795,411 @@ class ChatProvider with ChangeNotifier {
       // Default to "None" on error
       _selectedMcpConfiguration = const McpConfigOption.none();
     }
+  }
+
+  /// Add a new chat tab
+  void addTab() {
+    final tabId = 'chat_$_tabCounter';
+    _tabs.add(
+      HeaderTab(
+        id: tabId,
+        title: 'Chat $_tabCounter',
+        icon: Icons.chat,
+        closeable: _tabs.isNotEmpty, // First tab is not closeable
+      ),
+    );
+    _selectedTabId = tabId;
+    _tabStates[tabId] = ChatTabState(id: tabId);
+    _tabCounter++;
+    notifyListeners();
+
+    if (kDebugMode) {
+      debugPrint('➕ Added new tab: $tabId');
+    }
+  }
+
+  /// Close a chat tab
+  void closeTab(String tabId) {
+    if (_tabs.length <= 1) return; // Don't close last tab
+
+    final index = _tabs.indexWhere((tab) => tab.id == tabId);
+    if (index == -1) return;
+
+    _tabs.removeWhere((tab) => tab.id == tabId);
+    _tabStates.remove(tabId);
+
+    // Select previous or next tab
+    if (_selectedTabId == tabId) {
+      if (index > 0) {
+        _selectedTabId = _tabs[index - 1].id;
+      } else if (_tabs.isNotEmpty) {
+        _selectedTabId = _tabs[0].id;
+      } else {
+        _selectedTabId = null;
+      }
+    }
+
+    notifyListeners();
+
+    if (kDebugMode) {
+      debugPrint('❌ Closed tab: $tabId');
+    }
+  }
+
+  /// Select a chat tab
+  void selectTab(String tabId) {
+    if (_tabs.any((tab) => tab.id == tabId)) {
+      _selectedTabId = tabId;
+      notifyListeners();
+
+      if (kDebugMode) {
+        debugPrint('🔍 Selected tab: $tabId');
+      }
+    }
+  }
+
+  /// Send message for a specific tab
+  Future<void> sendMessageForTab(String tabId, String message) async {
+    final tabState = _tabStates[tabId];
+    if (tabState == null) return;
+
+    if (message.trim().isEmpty) {
+      return;
+    }
+
+    final selectedAiIntegration = tabState.selectedAiIntegration ?? _selectedAiIntegration;
+    if (selectedAiIntegration == null) {
+      if (kDebugMode) {
+        debugPrint('❌ No AI integration selected for tab $tabId');
+      }
+      return;
+    }
+
+    try {
+      tabState.isLoading = true;
+      notifyListeners();
+
+      // Add user message to tab
+      tabState.messages.add(
+        ChatMessage(
+          message: message,
+          isUser: true,
+          timestamp: DateTime.now(),
+          attachments: List.from(tabState.attachments),
+        ),
+      );
+      notifyListeners();
+
+      // Convert tab messages to API format
+      final apiMessages = tabState.messages
+          .map(
+            (msg) => api.ChatMessage(
+              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
+              content: msg.message,
+            ),
+          )
+          .toList();
+
+      api.ChatResponse? response;
+
+      if (tabState.attachments.isNotEmpty) {
+        // Send message with files
+        tabState.isUploadingFiles = true;
+        tabState.uploadProgress = 0.0;
+        notifyListeners();
+
+        // Simulate upload progress
+        for (int i = 0; i <= 100; i += 20) {
+          tabState.uploadProgress = i / 100.0;
+          notifyListeners();
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+
+        response = await _chatService.sendChatWithFiles(
+          messages: apiMessages,
+          files: tabState.attachments.map((a) => a.bytes).toList(),
+          fileNames: tabState.attachments.map((a) => a.name).toList(),
+          aiIntegrationId: selectedAiIntegration.id,
+          mcpConfigurationId: tabState.selectedMcpConfiguration?.id ?? _selectedMcpConfiguration?.id,
+        );
+
+        tabState.isUploadingFiles = false;
+        tabState.uploadProgress = null;
+      } else {
+        // Send regular chat completion
+        response = await _chatService.sendChatCompletion(
+          messages: apiMessages,
+          aiIntegrationId: selectedAiIntegration.id,
+          mcpConfigurationId: tabState.selectedMcpConfiguration?.id ?? _selectedMcpConfiguration?.id,
+        );
+      }
+
+      if (response != null && response.success == true && response.content != null) {
+        // Add AI response to tab's messages
+        tabState.messages.add(ChatMessage(message: response.content!, isUser: false, timestamp: DateTime.now()));
+        tabState.attachments.clear(); // Clear attachments after successful send
+        tabState.isLoading = false;
+        notifyListeners();
+
+        if (kDebugMode) {
+          debugPrint('✅ Message sent successfully for tab $tabId');
+        }
+      } else {
+        // Remove user message if API call failed
+        if (tabState.messages.isNotEmpty && tabState.messages.last.isUser) {
+          tabState.messages.removeLast();
+        }
+        tabState.isLoading = false;
+        notifyListeners();
+
+        if (kDebugMode) {
+          debugPrint('❌ Failed to send message for tab $tabId');
+        }
+      }
+    } catch (e) {
+      // Remove user message if error occurred
+      if (tabState.messages.isNotEmpty && tabState.messages.last.isUser) {
+        tabState.messages.removeLast();
+      }
+      tabState.isLoading = false;
+      tabState.isUploadingFiles = false;
+      tabState.uploadProgress = null;
+      notifyListeners();
+
+      if (kDebugMode) {
+        debugPrint('❌ Error sending message for tab $tabId: $e');
+      }
+    }
+  }
+
+  /// Add attachments to a specific tab
+  void addAttachmentsToTab(String tabId, List<FileAttachment> attachments) {
+    final tabState = _tabStates[tabId];
+    if (tabState != null) {
+      tabState.attachments.addAll(attachments);
+      notifyListeners();
+
+      if (kDebugMode) {
+        debugPrint('📎 Added ${attachments.length} attachments to tab $tabId');
+      }
+    }
+  }
+
+  /// Update attachments for a specific tab
+  void updateAttachmentsForTab(String tabId, List<FileAttachment> attachments) {
+    final tabState = _tabStates[tabId];
+    if (tabState != null) {
+      tabState.attachments.clear();
+      tabState.attachments.addAll(attachments);
+      notifyListeners();
+
+      if (kDebugMode) {
+        debugPrint('📎 Updated attachments for tab $tabId: ${attachments.length}');
+      }
+    }
+  }
+
+  /// Select AI integration for a specific tab
+  void selectAiIntegrationForTab(String tabId, AiIntegration? integration) {
+    final tabState = _tabStates[tabId];
+    if (tabState != null) {
+      tabState.selectedAiIntegration = integration;
+      // Also update global selection
+      selectAiIntegration(integration);
+      notifyListeners();
+
+      if (kDebugMode) {
+        debugPrint('🤖 Selected AI integration for tab $tabId: ${integration?.displayName ?? 'None'}');
+      }
+    }
+  }
+
+  /// Select MCP configuration for a specific tab
+  void selectMcpConfigurationForTab(String tabId, McpConfigOption? configuration) {
+    final tabState = _tabStates[tabId];
+    if (tabState != null) {
+      tabState.selectedMcpConfiguration = configuration;
+      // Also update global selection
+      selectMcpConfiguration(configuration);
+      notifyListeners();
+
+      if (kDebugMode) {
+        debugPrint('🔧 Selected MCP configuration for tab $tabId: ${configuration?.name ?? 'None'}');
+      }
+    }
+  }
+
+  /// Delete message from a specific tab
+  void deleteMessageForTab(String tabId, int messageIndex) {
+    final tabState = _tabStates[tabId];
+    if (tabState == null) return;
+
+    if (messageIndex < 0 || messageIndex >= tabState.messages.length) {
+      if (kDebugMode) {
+        debugPrint('❌ Invalid message index: $messageIndex');
+      }
+      return;
+    }
+
+    tabState.messages.removeAt(messageIndex);
+    notifyListeners();
+
+    if (kDebugMode) {
+      debugPrint('🗑️ Deleted message at index $messageIndex from tab $tabId');
+    }
+  }
+
+  /// Resend message from a specific tab
+  /// Removes all messages after the selected message and resends the conversation
+  Future<void> resendMessageForTab(String tabId, int messageIndex) async {
+    final tabState = _tabStates[tabId];
+    if (tabState == null) return;
+
+    if (messageIndex < 0 || messageIndex >= tabState.messages.length) {
+      if (kDebugMode) {
+        debugPrint('❌ Invalid message index: $messageIndex');
+      }
+      return;
+    }
+
+    final message = tabState.messages[messageIndex];
+
+    // Only allow resend on user messages
+    if (!message.isUser) {
+      if (kDebugMode) {
+        debugPrint('❌ Can only resend user messages');
+      }
+      return;
+    }
+
+    final selectedAiIntegration = tabState.selectedAiIntegration ?? _selectedAiIntegration;
+    if (selectedAiIntegration == null) {
+      if (kDebugMode) {
+        debugPrint('❌ No AI integration selected for tab $tabId');
+      }
+      return;
+    }
+
+    if (kDebugMode) {
+      debugPrint('🔄 Resending message at index $messageIndex from tab $tabId');
+    }
+
+    // Remove all messages after the selected message
+    final messagesToRemove = tabState.messages.length - messageIndex - 1;
+    if (messagesToRemove > 0) {
+      tabState.messages.removeRange(messageIndex + 1, tabState.messages.length);
+      if (kDebugMode) {
+        debugPrint('🗑️ Removed $messagesToRemove messages after message at index $messageIndex');
+      }
+    }
+
+    // Preserve attachments from the message being re-sent
+    final messageAttachments = message.attachments.isNotEmpty
+        ? List<FileAttachment>.from(message.attachments)
+        : <FileAttachment>[];
+
+    // Set loading state
+    tabState.isLoading = true;
+    notifyListeners();
+
+    try {
+      // Convert remaining messages to API format
+      final apiMessages = tabState.messages
+          .map(
+            (msg) => api.ChatMessage(
+              role: msg.isUser ? enums.ChatMessageRole.user : enums.ChatMessageRole.assistant,
+              content: msg.message,
+            ),
+          )
+          .toList();
+
+      api.ChatResponse? response;
+
+      if (messageAttachments.isNotEmpty) {
+        // Send message with files
+        tabState.isUploadingFiles = true;
+        tabState.uploadProgress = 0.0;
+        notifyListeners();
+
+        // Simulate upload progress
+        for (int i = 0; i <= 100; i += 20) {
+          tabState.uploadProgress = i / 100.0;
+          notifyListeners();
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
+
+        // Add file names to the last user message (the one being re-sent)
+        if (apiMessages.isNotEmpty && apiMessages.last.role == enums.ChatMessageRole.user) {
+          final lastMessage = apiMessages.last;
+          apiMessages[apiMessages.length - 1] = api.ChatMessage(
+            role: lastMessage.role,
+            content: lastMessage.content,
+            fileNames: messageAttachments.map((attachment) => attachment.name).toList(),
+          );
+        }
+
+        response = await _chatService.sendChatWithFiles(
+          messages: apiMessages,
+          files: messageAttachments.map((a) => a.bytes).toList(),
+          fileNames: messageAttachments.map((a) => a.name).toList(),
+          aiIntegrationId: selectedAiIntegration.id,
+          mcpConfigurationId: tabState.selectedMcpConfiguration?.id ?? _selectedMcpConfiguration?.id,
+        );
+
+        tabState.isUploadingFiles = false;
+        tabState.uploadProgress = null;
+      } else {
+        // Send regular chat completion
+        response = await _chatService.sendChatCompletion(
+          messages: apiMessages,
+          aiIntegrationId: selectedAiIntegration.id,
+          mcpConfigurationId: tabState.selectedMcpConfiguration?.id ?? _selectedMcpConfiguration?.id,
+        );
+      }
+
+      if (response != null && response.success == true && response.content != null) {
+        // Add AI response to tab's messages
+        tabState.messages.add(ChatMessage(message: response.content!, isUser: false, timestamp: DateTime.now()));
+        tabState.isLoading = false;
+        notifyListeners();
+
+        if (kDebugMode) {
+          debugPrint('✅ Message re-sent successfully for tab $tabId');
+        }
+      } else {
+        tabState.isLoading = false;
+        notifyListeners();
+
+        if (kDebugMode) {
+          debugPrint('❌ Failed to re-send message for tab $tabId');
+        }
+      }
+    } catch (e) {
+      tabState.isLoading = false;
+      tabState.isUploadingFiles = false;
+      tabState.uploadProgress = null;
+      notifyListeners();
+
+      if (kDebugMode) {
+        debugPrint('❌ Error re-sending message for tab $tabId: $e');
+      }
+    }
+  }
+
+  /// Initialize first tab (private method)
+  void _addNewTab() {
+    final tabId = 'chat_$_tabCounter';
+    _tabs.add(
+      HeaderTab(
+        id: tabId,
+        title: 'Chat $_tabCounter',
+        icon: Icons.chat,
+        closeable: false, // First tab is not closeable
+      ),
+    );
+    _selectedTabId = tabId;
+    _tabStates[tabId] = ChatTabState(id: tabId);
+    _tabCounter++;
   }
 
   @override

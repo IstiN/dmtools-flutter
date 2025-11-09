@@ -115,46 +115,50 @@ class _TabbedHeaderState extends State<TabbedHeader> {
         ),
         child: Padding(
           padding: const EdgeInsets.only(
-            left: AppDimensions.spacingM,
+            left: AppDimensions.spacingS,
             right: AppDimensions.spacingM,
             top: AppDimensions.spacingS,
             bottom: AppDimensions.spacingXs,
           ),
-          child: Row(
-            children: [
-              // Tabs section
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (var i = 0; i < widget.tabs.length; i++) ...[
-                        if (i > 0) const SizedBox(width: AppDimensions.spacingXs),
-                        _buildTab(widget.tabs[i], colors),
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Tabs section
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        for (var i = 0; i < widget.tabs.length; i++) ...[
+                          if (i > 0) const SizedBox(width: AppDimensions.spacingXs),
+                          _buildTab(widget.tabs[i], colors),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
                 ),
-              ),
 
-              // Add tab button (right side with other actions)
-              if (widget.showAddButton && _canAddMoreTabs) ...[
-                const SizedBox(width: AppDimensions.spacingM),
-                _buildAddButton(colors),
-              ],
+                // Add tab button (right side with other actions)
+                if (widget.showAddButton && _canAddMoreTabs) ...[
+                  const SizedBox(width: AppDimensions.spacingM),
+                  _buildAddButton(colors),
+                ],
 
-              // Leading widget (optional) - now on the right after + button
-              if (widget.leading != null) ...[
-                const SizedBox(width: AppDimensions.spacingS),
-                widget.leading!,
-              ],
+                // Leading widget (optional) - now on the right after + button
+                if (widget.leading != null) ...[
+                  const SizedBox(width: AppDimensions.spacingS),
+                  widget.leading!,
+                ],
 
-              // Trailing actions (optional)
-              if (widget.actions != null && widget.actions!.isNotEmpty) ...[
-                const SizedBox(width: AppDimensions.spacingS),
-                ...widget.actions!,
+                // Trailing actions (optional)
+                if (widget.actions != null && widget.actions!.isNotEmpty) ...[
+                  const SizedBox(width: AppDimensions.spacingS),
+                  ...widget.actions!,
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -168,20 +172,24 @@ class _TabbedHeaderState extends State<TabbedHeader> {
 
   Widget _buildTab(HeaderTab tab, dynamic colors) {
     final isSelected = tab.id == widget.selectedTabId;
+    final textTheme = Theme.of(context).textTheme;
 
     return MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: () => widget.onTabSelected?.call(tab.id),
+        behavior: HitTestBehavior.opaque,
         child: Padding(
           padding: EdgeInsets.only(
-            left: AppDimensions.spacingM,
+            left: AppDimensions.spacingS,
             right: tab.closeable ? AppDimensions.spacingS : AppDimensions.spacingM,
             top: AppDimensions.spacingXs,
             bottom: AppDimensions.spacingXs,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Tab icon (optional) with color animation
               if (tab.icon != null) ...[
@@ -197,12 +205,11 @@ class _TabbedHeaderState extends State<TabbedHeader> {
                 const SizedBox(width: AppDimensions.spacingXs),
               ],
 
-              // Tab title with smooth style transitions
+              // Tab title with smooth style transitions using Heading 5
               AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeInOut,
-                style: TextStyle(
-                  fontSize: 13.6,
+                style: textTheme.headlineMedium!.copyWith(
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   color: isSelected ? colors.accentColor : colors.textColor,
                   letterSpacing: 0.0,
@@ -250,13 +257,29 @@ class _TabbedHeaderState extends State<TabbedHeader> {
   }
 
   Widget _buildAddButton(dynamic colors) {
-    return IconButton(
-      icon: const Icon(Icons.add, size: 20),
-      onPressed: widget.onAddTab,
-      tooltip: 'Add new tab',
-      iconSize: 20,
-      padding: EdgeInsets.zero,
-      constraints: const BoxConstraints(),
+    return Theme(
+      data: Theme.of(context).copyWith(
+        tooltipTheme: TooltipThemeData(
+          decoration: BoxDecoration(
+            color: colors.cardBg,
+            borderRadius: BorderRadius.circular(4),
+          ),
+          textStyle: TextStyle(
+            color: colors.textColor,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        ),
+      ),
+      child: IconButton(
+        icon: Icon(Icons.add, size: 20, color: colors.textColor),
+        onPressed: widget.onAddTab,
+        tooltip: 'Add new tab',
+        iconSize: 20,
+        padding: EdgeInsets.zero,
+        constraints: const BoxConstraints(),
+      ),
     );
   }
 }

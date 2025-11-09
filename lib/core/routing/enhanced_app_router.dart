@@ -17,7 +17,6 @@ import '../../screens/pages/settings_page.dart';
 import '../../screens/pages/api_demo_page.dart';
 import '../../screens/pages/mcp_page.dart';
 import '../../screens/pages/chat_page.dart';
-import '../../screens/pages/components_demo_page.dart';
 
 // Conditional import for web-specific OAuth handling
 import '../../screens/oauth_callback_web.dart' if (dart.library.io) '../../screens/oauth_callback_stub.dart';
@@ -265,14 +264,6 @@ class EnhancedAppRouter {
           ),
         ),
 
-        // Components Demo route
-        GoRoute(
-          path: '/components-demo',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: ComponentsDemoPage()),
-          ),
-        ),
       ],
       errorBuilder: (context, state) => Scaffold(
         body: Center(
@@ -307,7 +298,6 @@ class EnhancedAppRouter {
       '/api-demo',
       '/mcp',
       '/chat',
-      '/components-demo',
     ];
     return protectedRoutes.contains(path);
   }
@@ -358,9 +348,6 @@ const List<NavigationItem> navigationItems = [
   
   // Admin-only pages (filtered by role in home_screen.dart)
   NavigationItem(icon: Icons.people_outline, label: 'Users', route: '/users'),
-  
-  // Demo/Examples pages
-  NavigationItem(icon: Icons.widgets_outlined, label: 'Components', route: '/components-demo'),
   
   // Temporarily hidden pages (not needed for now)
   // NavigationItem(icon: Icons.workspaces_outlined, label: 'Workspaces', route: '/workspaces'),

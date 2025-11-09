@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -19,6 +20,757 @@ class ChatMessage {
   }) : timestamp = timestamp ?? DateTime.now();
 }
 
+/// Clean chat interface without header, background, or borders.
+/// Provides a minimal chat experience suitable for embedding in other components.
+class CleanChatInterface extends StatefulWidget {
+  final List<ChatMessage> messages;
+  final Function(String) onSendMessage;
+  final VoidCallback? onAttachmentPressed;
+  final bool isLoading;
+
+  /// AI integration selection
+  final List<AiIntegration> aiIntegrations;
+  final AiIntegration? selectedAiIntegration;
+  final ValueChanged<AiIntegration?>? onAiIntegrationChanged;
+
+  /// MCP Configuration selection
+  final List<McpConfigOption> mcpConfigurations;
+  final McpConfigOption? selectedMcpConfiguration;
+  final ValueChanged<McpConfigOption?>? onMcpConfigurationChanged;
+  final bool isMcpInitialized;
+
+  /// File attachment support
+  final List<FileAttachment> attachments;
+  final ValueChanged<List<FileAttachment>>? onAttachmentsChanged;
+  final bool isUploadingFiles;
+  final double? uploadProgress;
+
+  /// Text insertion callback
+  final ValueChanged<String>? onTextInsert;
+
+  /// Message editing callbacks
+  final Function(int messageIndex, String newContent)? onMessageEdit;
+
+  /// Message deletion callbacks
+  final Function(int messageIndex)? onMessageDelete;
+
+  /// Message resend callbacks
+  final Function(int messageIndex)? onMessageResend;
+
+  /// Test mode flags
+  final bool? isTestMode;
+  final bool? testDarkMode;
+
+  const CleanChatInterface({
+    required this.messages,
+    required this.onSendMessage,
+    super.key,
+    this.onAttachmentPressed,
+    this.isLoading = false,
+    this.aiIntegrations = const [],
+    this.selectedAiIntegration,
+    this.onAiIntegrationChanged,
+    this.mcpConfigurations = const [],
+    this.selectedMcpConfiguration,
+    this.onMcpConfigurationChanged,
+    this.isMcpInitialized = false,
+    this.attachments = const [],
+    this.onAttachmentsChanged,
+    this.isUploadingFiles = false,
+    this.uploadProgress,
+    this.onTextInsert,
+    this.onMessageEdit,
+    this.onMessageDelete,
+    this.onMessageResend,
+    this.isTestMode,
+    this.testDarkMode,
+  });
+
+  @override
+  CleanChatInterfaceState createState() => CleanChatInterfaceState();
+}
+
+class CleanChatInterfaceState extends State<CleanChatInterface> {
+  final TextEditingController _messageController = TextEditingController();
+  final FocusNode _messageFocusNode = FocusNode();
+  final ScrollController _scrollController = ScrollController();
+  bool _isLoading = false;
+
+  void insertText(String text) {
+    final currentText = _messageController.text;
+    final currentSelection = _messageController.selection;
+
+    String newText;
+    int newCursorPosition;
+
+    if (currentSelection.isValid) {
+      newText = currentText.replaceRange(currentSelection.start, currentSelection.end, text);
+      newCursorPosition = currentSelection.start + text.length;
+    } else {
+      newText = currentText + text;
+      newCursorPosition = newText.length;
+    }
+
+    _messageController.text = newText;
+    _messageController.selection = TextSelection.collapsed(offset: newCursorPosition);
+    widget.onTextInsert?.call(text);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToBottom();
+      if (mounted && _messageFocusNode.canRequestFocus) {
+        _messageFocusNode.requestFocus();
+      }
+    });
+  }
+
+  @override
+  void didUpdateWidget(CleanChatInterface oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.messages.length > oldWidget.messages.length || widget.isLoading != oldWidget.isLoading) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _messageFocusNode.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+  }
+
+  void _sendMessage() {
+    final message = _messageController.text.trim();
+    if (message.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+      });
+      widget.onSendMessage(message);
+      _messageController.clear();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showAiIntegrationMenu(BuildContext buttonContext) {
+    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+    final RenderBox overlay = Navigator.of(buttonContext).overlay!.context.findRenderObject() as RenderBox;
+
+    final Offset buttonPosition = button.localToGlobal(Offset.zero, ancestor: overlay);
+    final Size buttonSize = button.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      buttonPosition.dx,
+      buttonPosition.dy + buttonSize.height + 4,
+      buttonPosition.dx + 200,
+      buttonPosition.dy + buttonSize.height + 300,
+    );
+
+    showMenu<AiIntegration>(
+      context: buttonContext,
+      position: position,
+      items: widget.aiIntegrations.map((integration) {
+        return PopupMenuItem<AiIntegration>(
+          value: integration,
+          child: Row(
+            children: [
+              IntegrationTypeIcon(
+                integrationType: integration.type,
+                size: 16,
+                isTestMode: widget.isTestMode,
+                testDarkMode: widget.testDarkMode,
+              ),
+              const SizedBox(width: 8),
+              Text(integration.displayName),
+              if (widget.selectedAiIntegration?.id == integration.id) ...[
+                const Spacer(),
+                Icon(Icons.check, size: 16, color: context.colorsListening.accentColor),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
+    ).then((selectedIntegration) {
+      if (selectedIntegration != null) {
+        widget.onAiIntegrationChanged?.call(selectedIntegration);
+      }
+    });
+  }
+
+  void _showMcpConfigurationMenu(BuildContext buttonContext) {
+    if (kDebugMode) {
+      debugPrint('🔄 CleanChatInterface._showMcpConfigurationMenu() called');
+      debugPrint('🔄 widget.mcpConfigurations.length: ${widget.mcpConfigurations.length}');
+      debugPrint('🔄 widget.isMcpInitialized: ${widget.isMcpInitialized}');
+      for (var config in widget.mcpConfigurations) {
+        debugPrint('🔄   - ${config.name} (${config.id})');
+      }
+    }
+
+    final RenderBox button = buttonContext.findRenderObject() as RenderBox;
+    final RenderBox overlay = Navigator.of(buttonContext).overlay!.context.findRenderObject() as RenderBox;
+
+    final Offset buttonPosition = button.localToGlobal(Offset.zero, ancestor: overlay);
+    final Size buttonSize = button.size;
+
+    final RelativeRect position = RelativeRect.fromLTRB(
+      buttonPosition.dx,
+      buttonPosition.dy + buttonSize.height + 4,
+      buttonPosition.dx + 220,
+      buttonPosition.dy + buttonSize.height + 300,
+    );
+
+    final noneOption = const McpConfigOption.none();
+    final allConfigurations = [noneOption, ...widget.mcpConfigurations];
+
+    if (kDebugMode) {
+      debugPrint('🔄 CleanChatInterface allConfigurations.length: ${allConfigurations.length}');
+      for (var config in allConfigurations) {
+        debugPrint('🔄   - ${config.name} (${config.id})');
+      }
+    }
+
+    showMenu<McpConfigOption>(
+      context: buttonContext,
+      position: position,
+      items: allConfigurations.map((config) {
+        return PopupMenuItem<McpConfigOption>(
+          value: config,
+          child: Row(
+            children: [
+              Icon(
+                config.isNone ? Icons.block : Icons.cable_outlined,
+                size: 16,
+                color: config.isNone ? context.colorsListening.textMuted : context.colorsListening.accentColor,
+              ),
+              const SizedBox(width: 8),
+              Expanded(child: Text(config.name)),
+              if (widget.selectedMcpConfiguration == config) ...[
+                const Spacer(),
+                Icon(Icons.check, size: 16, color: context.colorsListening.accentColor),
+              ],
+            ],
+          ),
+        );
+      }).toList(),
+    ).then((selectedConfig) {
+      if (selectedConfig != null) {
+        widget.onMcpConfigurationChanged?.call(selectedConfig);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colorsListening;
+
+    // Clean layout without Container wrapper - just messages and input
+    return SizedBox(
+      height: 400,
+      width: double.infinity,
+      child: Column(
+        children: [
+          // Messages area
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(16),
+              itemCount: widget.messages.length + (widget.isLoading ? 1 : 0),
+              itemBuilder: (context, index) {
+                if (index < widget.messages.length) {
+                  final message = widget.messages[index];
+                  return _buildMessageBubble(message, colors, index);
+                } else {
+                  return _buildLoadingBubble(colors);
+                }
+              },
+            ),
+          ),
+
+          // Divider before input area
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: colors.textMuted.withValues(alpha: AppDimensions.headerBorderOpacity),
+          ),
+
+          // Input area - clean design without top border
+          Padding(
+            padding: const EdgeInsets.only(
+              left: AppDimensions.spacingXs,
+              right: AppDimensions.spacingXs,
+              top: AppDimensions.spacingM,
+              bottom: AppDimensions.spacingM,
+            ),
+            child: Column(
+              children: [
+                // Attachments display
+                FileAttachmentPicker(
+                  attachments: widget.attachments,
+                  onAttachmentsChanged: widget.onAttachmentsChanged,
+                  onAttachmentPressed: widget.onAttachmentPressed,
+                  isLoading: widget.isUploadingFiles,
+                  uploadProgress: widget.uploadProgress,
+                  isTestMode: widget.isTestMode,
+                  testDarkMode: widget.testDarkMode,
+                ),
+
+                // Input row
+                Row(
+                  children: [
+                    // AI integration selector
+                    if (widget.aiIntegrations.isNotEmpty || widget.selectedAiIntegration != null) ...[
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: Builder(
+                          builder: (context) => IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: widget.selectedAiIntegration != null
+                                  ? IntegrationTypeIcon(
+                                      integrationType: widget.selectedAiIntegration!.type,
+                                      size: 20,
+                                      isTestMode: widget.isTestMode,
+                                      testDarkMode: widget.testDarkMode,
+                                    )
+                                  : Icon(Icons.smart_toy_outlined, color: colors.textSecondary, size: 20),
+                            ),
+                            onPressed: () => _showAiIntegrationMenu(context),
+                            tooltip: widget.selectedAiIntegration?.displayName ?? 'Select AI Integration',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+
+                    // MCP Configuration selector (only show after MCP is initialized)
+                    if (widget.isMcpInitialized) ...[
+                      SizedBox(
+                        height: 40,
+                        width: 40,
+                        child: Builder(
+                          builder: (context) {
+                            final bool hasActiveSelection =
+                                widget.selectedMcpConfiguration != null && !widget.selectedMcpConfiguration!.isNone;
+                            final iconColor = hasActiveSelection ? colors.accentColor : colors.textSecondary;
+
+                            return IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(Icons.cable_outlined, color: iconColor, size: 20),
+                              onPressed: () => _showMcpConfigurationMenu(context),
+                              tooltip: widget.selectedMcpConfiguration?.name ?? 'Select MCP Configuration',
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+
+                    // File attachment button
+                    SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: Icon(Icons.attach_file, color: colors.textSecondary, size: 20),
+                        onPressed: widget.onAttachmentPressed,
+                        tooltip: 'Attach files',
+                      ),
+                    ),
+
+                    const SizedBox(width: 12),
+
+                    // Message input field
+                    Expanded(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minHeight: 40, maxHeight: 120),
+                        child: CallbackShortcuts(
+                          bindings: <ShortcutActivator, VoidCallback>{
+                            const SingleActivator(LogicalKeyboardKey.enter): () {
+                              _sendMessage();
+                            },
+                          },
+                          child: TextField(
+                            controller: _messageController,
+                            focusNode: _messageFocusNode,
+                            autofocus: true,
+                            style: TextStyle(color: colors.textColor, fontSize: 14),
+                            textAlignVertical: TextAlignVertical.center,
+                            textInputAction: TextInputAction.send,
+                            onSubmitted: (value) {
+                              _sendMessage();
+                            },
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            decoration: InputDecoration(
+                              hintText: 'Type a message...',
+                              hintStyle: TextStyle(color: colors.textMuted, fontSize: 14),
+                              filled: true,
+                              fillColor: colors.inputBg,
+                              focusColor: Colors.transparent,
+                              hoverColor: Colors.transparent,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                                borderSide: BorderSide(color: colors.borderColor),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                                borderSide: BorderSide(color: colors.borderColor),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+                                borderSide: BorderSide(color: colors.inputFocusBorder, width: 2),
+                              ),
+                              suffixIcon: _messageController.text.trim().isNotEmpty
+                                  ? IconButton(
+                                      icon: Icon(Icons.send, color: colors.accentColor, size: 20),
+                                      onPressed: (_isLoading || widget.isLoading) ? null : _sendMessage,
+                                      tooltip: 'Send message',
+                                    )
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessageBubble(ChatMessage message, dynamic colors, int index) {
+    return Align(
+      alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: message.isUser ? colors.secondaryColor : colors.bgColor,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 2))],
+        ),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * ResponsiveBreakpoints.chatMaxWidthBreakpoint,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: SelectionArea(
+                    child: message.enableMarkdown
+                        ? MarkdownRenderer(
+                            data: message.message,
+                            shrinkWrap: true,
+                            selectable: false,
+                            styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
+                          )
+                        : Text(
+                            message.message,
+                            style: TextStyle(color: message.isUser ? Colors.white : colors.textColor),
+                          ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    size: 16,
+                    color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
+                  ),
+                  tooltip: 'Message actions',
+                  constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
+                  padding: EdgeInsets.zero,
+                  itemBuilder: (context) {
+                    final items = <PopupMenuItem<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'copy',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
+                        ),
+                      ),
+                    ];
+
+                    if (message.isUser) {
+                      items.add(
+                        const PopupMenuItem<String>(
+                          value: 'resend',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [Icon(Icons.refresh, size: 16), SizedBox(width: 8), Text('Re-send')],
+                          ),
+                        ),
+                      );
+                    }
+
+                    items.addAll([
+                      const PopupMenuItem<String>(
+                        value: 'edit',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
+                        ),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [Icon(Icons.delete, size: 16), SizedBox(width: 8), Text('Delete')],
+                        ),
+                      ),
+                    ]);
+
+                    return items;
+                  },
+                  onSelected: (value) => _handleMessageAction(value, index, message),
+                ),
+              ],
+            ),
+            if (message.attachments.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: message.attachments.map((attachment) => _buildFileTag(attachment, colors)).toList(),
+              ),
+            ],
+            const SizedBox(height: 4),
+            Text(
+              _formatTime(message.timestamp),
+              style: TextStyle(
+                fontSize: 10,
+                color: message.isUser ? Colors.white.withValues(alpha: 0.7) : colors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLoadingBubble(dynamic colors) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: colors.cardBg,
+          borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+          border: Border.all(color: colors.borderColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BouncingDotsIndicator(size: 8.0),
+            const SizedBox(width: 8.0),
+            Text(
+              'AI is thinking...',
+              style: TextStyle(color: colors.textSecondary, fontSize: 14, fontStyle: FontStyle.italic),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _copyMessageToClipboard(String message) {
+    Clipboard.setData(ClipboardData(text: message));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Message copied to clipboard'),
+        duration: const Duration(seconds: 2),
+        backgroundColor: context.colorsListening.accentColor,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
+  void _handleMessageAction(String action, int messageIndex, ChatMessage message) {
+    switch (action) {
+      case 'copy':
+        _copyMessageToClipboard(message.message);
+        break;
+      case 'resend':
+        widget.onMessageResend?.call(messageIndex);
+        break;
+      case 'edit':
+        _showEditMessageDialog(messageIndex, message);
+        break;
+      case 'delete':
+        _showDeleteMessageConfirmation(messageIndex, message);
+        break;
+    }
+  }
+
+  void _showEditMessageDialog(int messageIndex, ChatMessage message) {
+    showDialog(
+      context: context,
+      builder: (context) => _MessageEditDialog(
+        message: message,
+        onSave: (newContent) {
+          widget.onMessageEdit?.call(messageIndex, newContent);
+        },
+      ),
+    );
+  }
+
+  void _showDeleteMessageConfirmation(int messageIndex, ChatMessage message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Message'),
+        content: const Text('Are you sure you want to delete this message?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onMessageDelete?.call(messageIndex);
+            },
+            style: TextButton.styleFrom(foregroundColor: context.colorsListening.dangerColor),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFileTag(FileAttachment attachment, dynamic colors) {
+    Color tagColor;
+    IconData icon;
+
+    if (attachment.type.startsWith('image/')) {
+      tagColor = const Color(0xFF9333EA);
+      icon = Icons.image_outlined;
+    } else if (attachment.type.contains('pdf')) {
+      tagColor = const Color(0xFFDC2626);
+      icon = Icons.picture_as_pdf_outlined;
+    } else if (attachment.type.contains('text') ||
+        attachment.type.contains('json') ||
+        attachment.type.contains('code')) {
+      tagColor = const Color(0xFF2563EB);
+      icon = Icons.code_outlined;
+    } else if (attachment.type.contains('zip') || attachment.type.contains('archive')) {
+      tagColor = const Color(0xFFEA580C);
+      icon = Icons.folder_zip_outlined;
+    } else if (attachment.type.contains('video')) {
+      tagColor = const Color(0xFFDB2777);
+      icon = Icons.videocam_outlined;
+    } else if (attachment.type.contains('audio')) {
+      tagColor = const Color(0xFF0891B2);
+      icon = Icons.audiotrack_outlined;
+    } else {
+      tagColor = const Color(0xFF475569);
+      icon = Icons.insert_drive_file_outlined;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(color: tagColor, borderRadius: BorderRadius.circular(12)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: Colors.white),
+          const SizedBox(width: 6),
+          Text(
+            _truncateFileName(attachment.name),
+            style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _truncateFileName(String fileName) {
+    if (fileName.length <= 20) return fileName;
+
+    final parts = fileName.split('.');
+    if (parts.length > 1) {
+      final name = parts.sublist(0, parts.length - 1).join('.');
+      final extension = parts.last;
+
+      if (name.length > 15) {
+        return '${name.substring(0, 12)}....$extension';
+      }
+    }
+
+    return fileName.length > 20 ? '${fileName.substring(0, 17)}...' : fileName;
+  }
+
+  String _formatTime(DateTime time) {
+    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  MarkdownStyleSheet _buildMessageMarkdownStyleSheet(BuildContext context, bool isUser, dynamic colors) {
+    final theme = Theme.of(context);
+    final textColor = isUser ? Colors.white : colors.textColor;
+
+    return MarkdownStyleSheet.fromTheme(theme).copyWith(
+      p: theme.textTheme.bodyLarge?.copyWith(color: textColor),
+      h1: theme.textTheme.headlineLarge?.copyWith(color: textColor, fontWeight: FontWeight.bold),
+      h2: theme.textTheme.headlineMedium?.copyWith(color: textColor, fontWeight: FontWeight.bold),
+      h3: theme.textTheme.headlineSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      h4: theme.textTheme.titleLarge?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      h5: theme.textTheme.titleMedium?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      h6: theme.textTheme.titleSmall?.copyWith(color: textColor, fontWeight: FontWeight.w600),
+      code: theme.textTheme.bodyMedium?.copyWith(
+        color: textColor,
+        fontFamily: 'monospace',
+        backgroundColor: Colors.transparent,
+      ),
+      codeblockDecoration: BoxDecoration(
+        color: isUser ? Colors.black.withValues(alpha: 0.2) : colors.inputBg,
+        borderRadius: BorderRadius.circular(4),
+      ),
+      blockquote: theme.textTheme.bodyLarge?.copyWith(
+        color: textColor.withValues(alpha: 0.8),
+        fontStyle: FontStyle.italic,
+      ),
+      listBullet: theme.textTheme.bodyLarge?.copyWith(color: textColor),
+      a: theme.textTheme.bodyLarge?.copyWith(
+        color: isUser ? Colors.white : colors.accentColor,
+        decoration: TextDecoration.underline,
+      ),
+    );
+  }
+}
+
 /// Interactive chat interface widget with message display and input functionality.
 /// Provides a complete chat experience with message bubbles, input field, AI integration selection, and optional header.
 class ChatInterface extends StatefulWidget {
@@ -38,6 +790,7 @@ class ChatInterface extends StatefulWidget {
   final List<McpConfigOption> mcpConfigurations;
   final McpConfigOption? selectedMcpConfiguration;
   final ValueChanged<McpConfigOption?>? onMcpConfigurationChanged;
+  final bool isMcpInitialized;
 
   /// File attachment support
   final List<FileAttachment> attachments;
@@ -50,6 +803,12 @@ class ChatInterface extends StatefulWidget {
 
   /// Message editing callbacks
   final Function(int messageIndex, String newContent)? onMessageEdit;
+
+  /// Message deletion callbacks
+  final Function(int messageIndex)? onMessageDelete;
+
+  /// Message resend callbacks
+  final Function(int messageIndex)? onMessageResend;
 
   /// Used in tests to override theme detection for predictable rendering
   final bool? isTestMode;
@@ -71,12 +830,15 @@ class ChatInterface extends StatefulWidget {
     this.mcpConfigurations = const [],
     this.selectedMcpConfiguration,
     this.onMcpConfigurationChanged,
+    this.isMcpInitialized = false,
     this.attachments = const [],
     this.onAttachmentsChanged,
     this.isUploadingFiles = false,
     this.uploadProgress,
     this.onTextInsert,
     this.onMessageEdit,
+    this.onMessageDelete,
+    this.onMessageResend,
     this.isTestMode,
     this.testDarkMode,
   });
@@ -221,6 +983,15 @@ class ChatInterfaceState extends State<ChatInterface> {
   }
 
   void _showMcpConfigurationMenu(BuildContext buttonContext) {
+    if (kDebugMode) {
+      debugPrint('🔄 ChatInterface._showMcpConfigurationMenu() called');
+      debugPrint('🔄 widget.mcpConfigurations.length: ${widget.mcpConfigurations.length}');
+      debugPrint('🔄 widget.isMcpInitialized: ${widget.isMcpInitialized}');
+      for (var config in widget.mcpConfigurations) {
+        debugPrint('🔄   - ${config.name} (${config.id})');
+      }
+    }
+
     final RenderBox button = buttonContext.findRenderObject() as RenderBox;
     final RenderBox overlay = Navigator.of(buttonContext).overlay!.context.findRenderObject() as RenderBox;
 
@@ -228,15 +999,21 @@ class ChatInterfaceState extends State<ChatInterface> {
     final Size buttonSize = button.size;
 
     final RelativeRect position = RelativeRect.fromLTRB(
-      buttonPosition.dx, // Left edge aligned with button
-      buttonPosition.dy + buttonSize.height + 4, // Below button with small gap
-      buttonPosition.dx + 220, // Right edge 220px from left (menu width)
-      buttonPosition.dy + buttonSize.height + 300, // Bottom edge (max menu height)
+      buttonPosition.dx,
+      buttonPosition.dy + buttonSize.height + 4,
+      buttonPosition.dx + 220,
+      buttonPosition.dy + buttonSize.height + 300,
     );
 
-    // Always include "None" option as first item
     final noneOption = const McpConfigOption.none();
     final allConfigurations = [noneOption, ...widget.mcpConfigurations];
+
+    if (kDebugMode) {
+      debugPrint('🔄 ChatInterface allConfigurations.length: ${allConfigurations.length}');
+      for (var config in allConfigurations) {
+        debugPrint('🔄   - ${config.name} (${config.id})');
+      }
+    }
 
     showMenu<McpConfigOption>(
       context: buttonContext,
@@ -252,12 +1029,7 @@ class ChatInterfaceState extends State<ChatInterface> {
                 color: config.isNone ? context.colorsListening.textMuted : context.colorsListening.accentColor,
               ),
               const SizedBox(width: 8),
-              Text(
-                config.name,
-                style: TextStyle(
-                  color: config.isNone ? context.colorsListening.textMuted : context.colorsListening.textColor,
-                ),
-              ),
+              Expanded(child: Text(config.name)),
               if (widget.selectedMcpConfiguration == config) ...[
                 const Spacer(),
                 Icon(Icons.check, size: 16, color: context.colorsListening.accentColor),
@@ -325,13 +1097,22 @@ class ChatInterfaceState extends State<ChatInterface> {
             ),
           ),
 
+          // Divider before input area
+          Divider(
+            height: 1,
+            thickness: 1,
+            color: colors.textMuted.withValues(alpha: AppDimensions.headerBorderOpacity),
+          ),
+
           // Input area
           Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: colors.cardBg,
-              border: Border(top: BorderSide(color: colors.borderColor)),
+            padding: const EdgeInsets.only(
+              left: AppDimensions.spacingXs,
+              right: AppDimensions.spacingXs,
+              top: AppDimensions.spacingM,
+              bottom: AppDimensions.spacingM,
             ),
+            decoration: BoxDecoration(color: colors.cardBg),
             child: Column(
               children: [
                 // Attachments display (only shows when there are attachments or uploading)
@@ -376,29 +1157,27 @@ class ChatInterfaceState extends State<ChatInterface> {
                       const SizedBox(width: 8),
                     ],
 
-                    // MCP Configuration selector icon (second)
-                    if (widget.mcpConfigurations.isNotEmpty) ...[
-                      SizedBox(
-                        height: 40,
-                        width: 40,
-                        child: Builder(
-                          builder: (context) {
-                            // Determine icon color based on selection
-                            final bool hasActiveSelection =
-                                widget.selectedMcpConfiguration != null && !widget.selectedMcpConfiguration!.isNone;
-                            final iconColor = hasActiveSelection ? colors.accentColor : colors.textSecondary;
+                    // MCP Configuration selector icon (always visible, menu includes "None" option)
+                    SizedBox(
+                      height: 40,
+                      width: 40,
+                      child: Builder(
+                        builder: (context) {
+                          // Determine icon color based on selection
+                          final bool hasActiveSelection =
+                              widget.selectedMcpConfiguration != null && !widget.selectedMcpConfiguration!.isNone;
+                          final iconColor = hasActiveSelection ? colors.accentColor : colors.textSecondary;
 
-                            return IconButton(
-                              padding: EdgeInsets.zero,
-                              icon: Icon(Icons.cable_outlined, color: iconColor, size: 20),
-                              onPressed: () => _showMcpConfigurationMenu(context),
-                              tooltip: widget.selectedMcpConfiguration?.name ?? 'Select MCP Configuration',
-                            );
-                          },
-                        ),
+                          return IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: Icon(Icons.cable_outlined, color: iconColor, size: 20),
+                            onPressed: () => _showMcpConfigurationMenu(context),
+                            tooltip: widget.selectedMcpConfiguration?.name ?? 'Select MCP Configuration',
+                          );
+                        },
                       ),
-                      const SizedBox(width: 8),
-                    ],
+                    ),
+                    const SizedBox(width: 8),
 
                     // File attachment button (third)
                     SizedBox(
@@ -508,17 +1287,19 @@ class ChatInterfaceState extends State<ChatInterface> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: message.enableMarkdown
-                      ? MarkdownRenderer(
-                          data: message.message,
-                          shrinkWrap: true,
-                          selectable: false,
-                          styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
-                        )
-                      : Text(
-                          message.message,
-                          style: TextStyle(color: message.isUser ? Colors.white : colors.textColor),
-                        ),
+                  child: SelectionArea(
+                    child: message.enableMarkdown
+                        ? MarkdownRenderer(
+                            data: message.message,
+                            shrinkWrap: true,
+                            selectable: false,
+                            styleSheet: _buildMessageMarkdownStyleSheet(context, message.isUser, colors),
+                          )
+                        : Text(
+                            message.message,
+                            style: TextStyle(color: message.isUser ? Colors.white : colors.textColor),
+                          ),
+                  ),
                 ),
                 const SizedBox(width: 8),
                 // Message actions menu
@@ -531,22 +1312,48 @@ class ChatInterfaceState extends State<ChatInterface> {
                   tooltip: 'Message actions',
                   constraints: const BoxConstraints(minWidth: 24, minHeight: 24),
                   padding: EdgeInsets.zero,
-                  itemBuilder: (context) => [
-                    const PopupMenuItem<String>(
-                      value: 'copy',
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
+                  itemBuilder: (context) {
+                    final items = <PopupMenuItem<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'copy',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [Icon(Icons.copy, size: 16), SizedBox(width: 8), Text('Copy')],
+                        ),
                       ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'edit',
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
+                    ];
+
+                    if (message.isUser) {
+                      items.add(
+                        const PopupMenuItem<String>(
+                          value: 'resend',
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [Icon(Icons.refresh, size: 16), SizedBox(width: 8), Text('Re-send')],
+                          ),
+                        ),
+                      );
+                    }
+
+                    items.addAll([
+                      const PopupMenuItem<String>(
+                        value: 'edit',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [Icon(Icons.edit, size: 16), SizedBox(width: 8), Text('Edit')],
+                        ),
                       ),
-                    ),
-                  ],
+                      const PopupMenuItem<String>(
+                        value: 'delete',
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [Icon(Icons.delete, size: 16), SizedBox(width: 8), Text('Delete')],
+                        ),
+                      ),
+                    ]);
+
+                    return items;
+                  },
                   onSelected: (value) => _handleMessageAction(value, index, message),
                 ),
               ],
@@ -696,8 +1503,14 @@ class ChatInterfaceState extends State<ChatInterface> {
       case 'copy':
         _copyMessageToClipboard(message.message);
         break;
+      case 'resend':
+        widget.onMessageResend?.call(messageIndex);
+        break;
       case 'edit':
         _showEditMessageDialog(messageIndex, message);
+        break;
+      case 'delete':
+        _showDeleteMessageConfirmation(messageIndex, message);
         break;
     }
   }
@@ -711,6 +1524,27 @@ class ChatInterfaceState extends State<ChatInterface> {
         onSave: (newContent) {
           widget.onMessageEdit?.call(messageIndex, newContent);
         },
+      ),
+    );
+  }
+
+  void _showDeleteMessageConfirmation(int messageIndex, ChatMessage message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Message'),
+        content: const Text('Are you sure you want to delete this message?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.onMessageDelete?.call(messageIndex);
+            },
+            style: TextButton.styleFrom(foregroundColor: context.colorsListening.dangerColor),
+            child: const Text('Delete'),
+          ),
+        ],
       ),
     );
   }
