@@ -281,6 +281,55 @@ Feel free to reach out if you need help with anything else! 😊''',
               ),
             ),
             const SizedBox(height: 48),
+            ComponentDisplay(
+              title: 'Clean Chat Interface',
+              description: 'Minimal chat interface without header, background, or borders. Perfect for embedding in other components.',
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: AppDimensions.spacingM),
+                  CleanChatInterface(
+                    messages: [
+                      ChatMessage(message: 'Hello! How can I help you today?', isUser: false),
+                      ChatMessage(
+                        message: 'I need help with setting up a new agent. Here are my config files.',
+                        isUser: true,
+                        attachments: [
+                          FileAttachment(
+                            name: 'config.json',
+                            type: 'application/json',
+                            size: 1024,
+                            bytes: [],
+                            uploadedAt: DateTime.now(),
+                          ),
+                          FileAttachment(
+                            name: 'screenshot.png',
+                            type: 'image/png',
+                            size: 2048,
+                            bytes: [],
+                            uploadedAt: DateTime.now(),
+                          ),
+                        ],
+                      ),
+                      ChatMessage(
+                        message:
+                            'Sure, I can guide you through the process. What type of agent would you like to create?',
+                        isUser: false,
+                      ),
+                    ],
+                    onSendMessage: (message) {
+                      // Handle sending message
+                    },
+                    onAttachmentPressed: () {
+                      // Handle attachment
+                    },
+                    isTestMode: true,
+                    testDarkMode: isDarkMode,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 48),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
