@@ -171,6 +171,16 @@ class _ChatPageState extends State<ChatPage> {
                     tooltip: 'More options',
                     itemBuilder: (context) => [
                       const PopupMenuItem<String>(
+                        value: 'theme',
+                        child: Row(
+                          children: [
+                            Icon(Icons.palette, size: 16),
+                            SizedBox(width: 8),
+                            Text('Chat Theme'),
+                          ],
+                        ),
+                      ),
+                      const PopupMenuItem<String>(
                         value: 'settings',
                         child: Row(
                           children: [
@@ -192,10 +202,14 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ],
                     onSelected: (value) {
-                      // TODO: Menu actions
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('$value coming soon')),
-                      );
+                      if (value == 'theme') {
+                        _showChatThemeConfig(context, chatProvider);
+                      } else {
+                        // TODO: Other menu actions
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('$value coming soon')),
+                        );
+                      }
                     },
                   ),
                 ],
@@ -229,6 +243,7 @@ class _ChatPageState extends State<ChatPage> {
       onAttachmentPressed: () => _handleAttachmentPressedForTab(tabId, chatProvider),
       
       isLoading: tabState.isLoading,
+      chatTheme: chatProvider.chatTheme,
       
       // AI Integration support
       aiIntegrations: chatProvider.availableAiIntegrations,
@@ -275,6 +290,29 @@ class _ChatPageState extends State<ChatPage> {
       onMessageResend: (messageIndex) {
         chatProvider.resendMessageForTab(tabId, messageIndex);
       },
+    );
+  }
+
+  void _showChatThemeConfig(BuildContext context, ChatProvider chatProvider) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        child: Container(
+          width: 1200,
+          height: 800,
+          padding: const EdgeInsets.all(16.0),
+          child: ChatThemeConfig(
+            initialTheme: chatProvider.chatTheme,
+            onThemeChanged: (theme) {
+              chatProvider.updateChatTheme(theme);
+            },
+            onDarkModeChanged: (_) {},
+            onBubbleModeChanged: (_) {},
+            onTextSizeChanged: (_) {},
+            onNameColorChanged: (_) {},
+          ),
+        ),
+      ),
     );
   }
 

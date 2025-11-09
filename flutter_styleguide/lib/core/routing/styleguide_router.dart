@@ -19,6 +19,7 @@ import '../../screens/styleguide_pages/loading_states_page.dart';
 import '../../screens/styleguide_pages/mcp_page.dart';
 import '../../screens/styleguide_pages/organisms/webhook_page.dart';
 import '../../screens/styleguide_pages/markdown_renderer_page.dart';
+import '../../screens/styleguide_pages/fonts_page.dart';
 
 // App route paths
 class AppRoutes {
@@ -38,6 +39,7 @@ class AppRoutes {
   static const String MCP_COMPONENTS = '/mcp';
   static const String WEBHOOK_COMPONENTS = '/webhook';
   static const String MARKDOWN_RENDERER = '/markdown-renderer';
+  static const String FONTS = '/fonts';
 }
 
 class StyleguideRouter {
@@ -169,6 +171,10 @@ class StyleguideRouter {
             path: AppRoutes.MARKDOWN_RENDERER,
             pageBuilder: (context, state) => const NoTransitionPage(child: MarkdownRendererPage()),
           ),
+          GoRoute(
+            path: AppRoutes.FONTS,
+            pageBuilder: (context, state) => const NoTransitionPage(child: FontsPage()),
+          ),
       ],
     ),
   ],
@@ -224,6 +230,11 @@ const List<StyleguideNavigationItem> styleguideNavigationItems = [
     icon: Icons.description_outlined,
     label: 'Markdown Renderer',
     route: AppRoutes.MARKDOWN_RENDERER,
+  ),
+  StyleguideNavigationItem(
+    icon: Icons.text_fields_outlined,
+    label: 'Fonts',
+    route: AppRoutes.FONTS,
   ),
 ];
 

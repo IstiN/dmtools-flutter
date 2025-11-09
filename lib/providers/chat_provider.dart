@@ -36,6 +36,19 @@ class ChatTabState {
 class ChatProvider with ChangeNotifier {
   static const String _selectedAiIntegrationKey = 'selected_ai_integration_id';
   static const String _selectedMcpConfigurationKey = 'selected_mcp_configuration_id';
+  static const String _chatThemeTypeKey = 'chat_theme_type';
+  static const String _chatThemeUserColorKey = 'chat_theme_user_color';
+  static const String _chatThemeAiColorKey = 'chat_theme_ai_color';
+  static const String _chatThemeUserTextColorKey = 'chat_theme_user_text_color';
+  static const String _chatThemeAiTextColorKey = 'chat_theme_ai_text_color';
+  static const String _chatThemeNameColorKey = 'chat_theme_name_color';
+  static const String _chatThemeDateColorKey = 'chat_theme_date_color';
+  static const String _chatThemeBubbleModeKey = 'chat_theme_bubble_mode';
+  static const String _chatThemeTextSizeKey = 'chat_theme_text_size';
+  static const String _chatThemeShowAgentNameKey = 'chat_theme_show_agent_name';
+  static const String _chatThemeFontFamilyKey = 'chat_theme_font_family';
+  static const String _chatThemeBackgroundColorLightKey = 'chat_theme_background_color_light';
+  static const String _chatThemeBackgroundColorDarkKey = 'chat_theme_background_color_dark';
 
   final ChatService _chatService;
   final IntegrationService _integrationService;
@@ -53,6 +66,9 @@ class ChatProvider with ChangeNotifier {
   double? _uploadProgress;
   String? _error;
 
+  // Chat theme
+  ChatTheme _chatTheme = ChatTheme.defaultTheme();
+
   // Tab management
   final List<HeaderTab> _tabs = [];
   String? _selectedTabId;
@@ -62,6 +78,7 @@ class ChatProvider with ChangeNotifier {
   ChatProvider(this._chatService, this._integrationService, this._mcpProvider) {
     _initializeAiIntegrations();
     _initializeMcpConfigurations();
+    _loadChatTheme();
 
     // Listen to auth changes to reload integrations when user becomes authenticated
     final authProvider = _integrationService.authProvider;
@@ -97,6 +114,9 @@ class ChatProvider with ChangeNotifier {
   String? get selectedTabId => _selectedTabId;
   ChatTabState? getSelectedTabState() => _selectedTabId != null ? _tabStates[_selectedTabId] : null;
   ChatTabState? getTabState(String tabId) => _tabStates[tabId];
+
+  // Chat theme getter
+  ChatTheme get chatTheme => _chatTheme;
 
   void _setState(ChatState state) {
     _currentState = state;
@@ -795,6 +815,150 @@ class ChatProvider with ChangeNotifier {
       // Default to "None" on error
       _selectedMcpConfiguration = const McpConfigOption.none();
     }
+  }
+
+  /// Load chat theme from preferences
+  Future<void> _loadChatTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final themeTypeStr = prefs.getString(_chatThemeTypeKey);
+
+      // Load theme type
+      ChatThemeType? themeType;
+      if (themeTypeStr != null) {
+        themeType = ChatThemeType.values.firstWhere(
+          (e) => e.toString() == themeTypeStr,
+          orElse: () => ChatThemeType.defaultTheme,
+        );
+      }
+
+      // Load custom colors if saved
+      final userColorStr = prefs.getString(_chatThemeUserColorKey);
+      final aiColorStr = prefs.getString(_chatThemeAiColorKey);
+      final userTextColorStr = prefs.getString(_chatThemeUserTextColorKey);
+      final aiTextColorStr = prefs.getString(_chatThemeAiTextColorKey);
+      final nameColorStr = prefs.getString(_chatThemeNameColorKey);
+      final dateColorStr = prefs.getString(_chatThemeDateColorKey);
+      final bubbleMode = prefs.getBool(_chatThemeBubbleModeKey) ?? true;
+      final textSize = prefs.getDouble(_chatThemeTextSizeKey) ?? 1.0;
+      final showAgentName = prefs.getBool(_chatThemeShowAgentNameKey) ?? true;
+      final fontFamily = prefs.getString(_chatThemeFontFamilyKey);
+      final backgroundColorLightStr = prefs.getString(_chatThemeBackgroundColorLightKey);
+      final backgroundColorDarkStr = prefs.getString(_chatThemeBackgroundColorDarkKey);
+
+      // Start with base theme
+      _chatTheme = themeType?.toTheme() ?? ChatTheme.defaultTheme();
+
+      // Apply custom colors if saved
+      if (userColorStr != null) {
+        _chatTheme = _chatTheme.copyWith(userMessageColor: Color(int.parse(userColorStr)));
+      }
+      if (aiColorStr != null) {
+        _chatTheme = _chatTheme.copyWith(aiMessageColor: Color(int.parse(aiColorStr)));
+      }
+      if (userTextColorStr != null) {
+        _chatTheme = _chatTheme.copyWith(userMessageTextColor: Color(int.parse(userTextColorStr)));
+      }
+      if (aiTextColorStr != null) {
+        _chatTheme = _chatTheme.copyWith(aiMessageTextColor: Color(int.parse(aiTextColorStr)));
+      }
+      if (nameColorStr != null) {
+        _chatTheme = _chatTheme.copyWith(nameColor: Color(int.parse(nameColorStr)));
+      }
+      if (dateColorStr != null) {
+        _chatTheme = _chatTheme.copyWith(dateTextColor: Color(int.parse(dateColorStr)));
+      }
+
+      // Apply bubble mode, text size, showAgentName, fontFamily, and background colors
+      _chatTheme = _chatTheme.copyWith(
+        bubbleMode: bubbleMode,
+        textSize: textSize,
+        showAgentName: showAgentName,
+        fontFamily: fontFamily,
+        backgroundColorLight: backgroundColorLightStr != null ? Color(int.parse(backgroundColorLightStr)) : null,
+        backgroundColorDark: backgroundColorDarkStr != null ? Color(int.parse(backgroundColorDarkStr)) : null,
+      );
+
+      if (kDebugMode) {
+        debugPrint('📥 Loaded chat theme: ${themeType ?? ChatThemeType.defaultTheme}');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to load chat theme: $e');
+      }
+      // Default to default theme on error
+      _chatTheme = ChatTheme.defaultTheme();
+    }
+  }
+
+  /// Save chat theme to preferences
+  Future<void> _saveChatTheme() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      // Save theme type (try to detect from current theme)
+      ChatThemeType? detectedType;
+      if (_chatTheme.userMessageColor.value == ChatTheme.defaultTheme().userMessageColor.value &&
+          _chatTheme.aiMessageColor.value == ChatTheme.defaultTheme().aiMessageColor.value) {
+        detectedType = ChatThemeType.defaultTheme;
+      } else if (_chatTheme.userMessageColor.value == ChatTheme.day().userMessageColor.value &&
+          _chatTheme.aiMessageColor.value == ChatTheme.day().aiMessageColor.value) {
+        detectedType = ChatThemeType.day;
+      } else if (_chatTheme.userMessageColor.value == ChatTheme.nightAccent().userMessageColor.value) {
+        detectedType = ChatThemeType.nightAccent;
+      } else if (_chatTheme.userMessageColor.value == ChatTheme.dayClassic().userMessageColor.value) {
+        detectedType = ChatThemeType.dayClassic;
+      } else if (_chatTheme.userMessageColor.value == ChatTheme.system().userMessageColor.value) {
+        detectedType = ChatThemeType.system;
+      }
+
+      if (detectedType != null) {
+        await prefs.setString(_chatThemeTypeKey, detectedType.toString());
+      }
+
+      // Save all colors
+      await prefs.setString(_chatThemeUserColorKey, _chatTheme.userMessageColor.value.toString());
+      await prefs.setString(_chatThemeAiColorKey, _chatTheme.aiMessageColor.value.toString());
+      await prefs.setString(_chatThemeUserTextColorKey, _chatTheme.userMessageTextColor.value.toString());
+      await prefs.setString(_chatThemeAiTextColorKey, _chatTheme.aiMessageTextColor.value.toString());
+      await prefs.setString(_chatThemeNameColorKey, _chatTheme.nameColor.value.toString());
+      await prefs.setString(_chatThemeDateColorKey, _chatTheme.dateTextColor.value.toString());
+      await prefs.setBool(_chatThemeBubbleModeKey, _chatTheme.bubbleMode);
+      await prefs.setDouble(_chatThemeTextSizeKey, _chatTheme.textSize);
+      await prefs.setBool(_chatThemeShowAgentNameKey, _chatTheme.showAgentName);
+      if (_chatTheme.fontFamily != null) {
+        await prefs.setString(_chatThemeFontFamilyKey, _chatTheme.fontFamily!);
+      } else {
+        await prefs.remove(_chatThemeFontFamilyKey);
+      }
+
+      // Save background colors
+      if (_chatTheme.backgroundColorLight != null) {
+        await prefs.setString(_chatThemeBackgroundColorLightKey, _chatTheme.backgroundColorLight!.value.toString());
+      } else {
+        await prefs.remove(_chatThemeBackgroundColorLightKey);
+      }
+      if (_chatTheme.backgroundColorDark != null) {
+        await prefs.setString(_chatThemeBackgroundColorDarkKey, _chatTheme.backgroundColorDark!.value.toString());
+      } else {
+        await prefs.remove(_chatThemeBackgroundColorDarkKey);
+      }
+
+      if (kDebugMode) {
+        debugPrint('💾 Saved chat theme');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('❌ Failed to save chat theme: $e');
+      }
+    }
+  }
+
+  /// Update chat theme
+  void updateChatTheme(ChatTheme theme) {
+    _chatTheme = theme;
+    _saveChatTheme();
+    notifyListeners();
   }
 
   /// Add a new chat tab
