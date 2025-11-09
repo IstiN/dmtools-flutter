@@ -1,12 +1,31 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_dimensions.dart';
-import '../../widgets/styleguide/component_display.dart';
-import '../../widgets/molecules/headers/headers.dart';
-import '../../widgets/molecules/user_profile_button.dart';
-import '../../widgets/atoms/buttons/app_buttons.dart';
+import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
-class HeadersPage extends StatelessWidget {
+class HeadersPage extends StatefulWidget {
   const HeadersPage({super.key});
+
+  @override
+  State<HeadersPage> createState() => _HeadersPageState();
+}
+
+class _HeadersPageState extends State<HeadersPage> {
+  // State for tabbed header example with icons
+  List<HeaderTab> _tabs = [
+    const HeaderTab(id: '1', title: 'Dashboard', icon: Icons.dashboard),
+    const HeaderTab(id: '2', title: 'Projects', icon: Icons.folder),
+    const HeaderTab(id: '3', title: 'Settings', icon: Icons.settings, closeable: false),
+  ];
+  String _selectedTabId = '1';
+  int _tabCounter = 4;
+
+  // State for simple tabbed header example without icons
+  List<HeaderTab> _simpleTabs = [
+    const HeaderTab(id: '1', title: 'Overview'),
+    const HeaderTab(id: '2', title: 'Details'),
+    const HeaderTab(id: '3', title: 'History'),
+  ];
+  String _selectedSimpleTabId = '1';
+  int _simpleTabCounter = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -359,6 +378,181 @@ class HeadersPage extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppDimensions.spacingL),
+
+        // Tabbed Header Example - With Icons
+        ComponentDisplay(
+          title: 'Tabbed Header - With Icons',
+          description: 'Professional tabbed header with icons, add/close functionality, recent history, and options menu',
+          child: _TabbedHeaderExample(
+            tabs: _tabs,
+            selectedTabId: _selectedTabId,
+            onTabSelected: (id) {
+              setState(() => _selectedTabId = id);
+            },
+            onAddTab: () {
+              setState(() {
+                _tabs = [
+                  ..._tabs,
+                  HeaderTab(
+                    id: '$_tabCounter',
+                    title: 'Tab $_tabCounter',
+                    icon: Icons.tab,
+                  ),
+                ];
+                _tabCounter++;
+              });
+            },
+            onCloseTab: (id) {
+              setState(() {
+                _tabs = _tabs.where((tab) => tab.id != id).toList();
+                if (_selectedTabId == id && _tabs.isNotEmpty) {
+                  _selectedTabId = _tabs.first.id;
+                }
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingL),
+
+        // Tabbed Header Example - Without Icons
+        ComponentDisplay(
+          title: 'Tabbed Header - Simple',
+          description: 'Tabbed header without icons for a cleaner, more compact appearance',
+          child: _TabbedHeaderExample(
+            tabs: _simpleTabs,
+            selectedTabId: _selectedSimpleTabId,
+            onTabSelected: (id) {
+              setState(() => _selectedSimpleTabId = id);
+            },
+            onAddTab: () {
+              setState(() {
+                _simpleTabs = [
+                  ..._simpleTabs,
+                  HeaderTab(
+                    id: '$_simpleTabCounter',
+                    title: 'Tab $_simpleTabCounter',
+                  ),
+                ];
+                _simpleTabCounter++;
+              });
+            },
+            onCloseTab: (id) {
+              setState(() {
+                _simpleTabs = _simpleTabs.where((tab) => tab.id != id).toList();
+                if (_selectedSimpleTabId == id && _simpleTabs.isNotEmpty) {
+                  _selectedSimpleTabId = _simpleTabs.first.id;
+                }
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: AppDimensions.spacingL),
+      ],
+    );
+  }
+}
+
+class _TabbedHeaderExample extends StatelessWidget {
+  final List<HeaderTab> tabs;
+  final String selectedTabId;
+  final Function(String) onTabSelected;
+  final VoidCallback onAddTab;
+  final Function(String) onCloseTab;
+
+  const _TabbedHeaderExample({
+    required this.tabs,
+    required this.selectedTabId,
+    required this.onTabSelected,
+    required this.onAddTab,
+    required this.onCloseTab,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Column(
+          children: [
+            const SizedBox(height: 20),
+            TabbedHeader(
+              tabs: tabs,
+              selectedTabId: selectedTabId,
+              onTabSelected: onTabSelected,
+              onAddTab: onAddTab,
+              onCloseTab: onCloseTab,
+              leading: IconButton(
+                icon: const Icon(Icons.history, size: 20),
+                onPressed: () {
+                  debugPrint('Recent button pressed');
+                },
+                tooltip: 'Recent',
+              ),
+              actions: [
+                PopupMenuButton<String>(
+                  icon: const Icon(Icons.more_vert, size: 20),
+                  tooltip: 'More options',
+                  onSelected: (value) {
+                    debugPrint('Selected: $value');
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(
+                      value: 'save',
+                      child: Row(
+                        children: [
+                          Icon(Icons.save, size: 18),
+                          SizedBox(width: 12),
+                          Text('Save Layout'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'restore',
+                      child: Row(
+                        children: [
+                          Icon(Icons.restore, size: 18),
+                          SizedBox(width: 12),
+                          Text('Restore Default'),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem(
+                      value: 'closeAll',
+                      child: Row(
+                        children: [
+                          Icon(Icons.close_fullscreen, size: 18),
+                          SizedBox(width: 12),
+                          Text('Close All Tabs'),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            // Content area to show selected tab
+            Padding(
+              padding: const EdgeInsets.all(AppDimensions.spacingL),
+              child: SizedBox(
+                height: 150,
+                child: Center(
+                  child: Text(
+                    'Content for ${tabs.firstWhere((tab) => tab.id == selectedTabId).title}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppDimensions.spacingM),
+        Text(
+          'Interactive example: Click tabs to switch • + to add • X to close • History icon for recent • ⋮ for options',
+          style: TextStyle(
+            fontSize: 12,
+            color: context.colors.textMuted,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
       ],
     );
   }

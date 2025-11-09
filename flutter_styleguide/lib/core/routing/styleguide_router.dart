@@ -41,46 +41,105 @@ class AppRoutes {
 }
 
 class StyleguideRouter {
-  static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.WELCOME,
-    routes: [
-      GoRoute(path: '/', redirect: (context, state) => AppRoutes.WELCOME),
-      ShellRoute(
+  static GoRouter createRouter() {
+    debugPrint('🚀 Creating StyleguideRouter...');
+    debugPrint('📋 Registered routes:');
+    debugPrint('  - / (redirect to ${AppRoutes.WELCOME})');
+    debugPrint('  - ${AppRoutes.WELCOME}');
+    debugPrint('  - ${AppRoutes.HEADERS}');
+    debugPrint('  - ${AppRoutes.ATOMS}');
+    debugPrint('  - ${AppRoutes.MOLECULES}');
+    debugPrint('  - ${AppRoutes.ORGANISMS}');
+    debugPrint('  - ${AppRoutes.COLORS_TYPOGRAPHY}');
+    debugPrint('  - ${AppRoutes.ICONS_LOGOS}');
+    debugPrint('  - ${AppRoutes.LOGOS_COMPONENTS}');
+    debugPrint('  - ${AppRoutes.USER_PROFILE}');
+    debugPrint('  - ${AppRoutes.AUTHENTICATION}');
+    debugPrint('  - ${AppRoutes.LOADING_INDICATORS}');
+    debugPrint('  - ${AppRoutes.LOADING_STATES}');
+    debugPrint('  - ${AppRoutes.MCP_COMPONENTS}');
+    debugPrint('  - ${AppRoutes.WEBHOOK_COMPONENTS}');
+    debugPrint('  - ${AppRoutes.MARKDOWN_RENDERER}');
+    
+    return GoRouter(
+      debugLogDiagnostics: true,
+      redirect: (context, state) {
+        debugPrint('🔵 Global redirect - location: ${state.uri.path}');
+        if (state.uri.path == '/') {
+          debugPrint('🟡 Root / redirect to ${AppRoutes.WELCOME}');
+          return AppRoutes.WELCOME;
+        }
+        debugPrint('🟢 Allowing navigation to: ${state.uri.path}');
+        return null; // Allow navigation to other routes
+      },
+      errorBuilder: (context, state) {
+        debugPrint('🔴 Router Error: ${state.error}');
+        debugPrint('🔴 Requested location: ${state.uri}');
+        debugPrint('🔴 Error details: ${state.error?.toString()}');
+        return const welcome.WelcomePage();
+      },
+      routes: [
+        ShellRoute(
         builder: (context, state, child) {
+          debugPrint('🟢 ShellRoute building - location: ${state.uri}');
           return StyleguideShell(child: child);
         },
         routes: [
           GoRoute(
             path: AppRoutes.WELCOME,
-            pageBuilder: (context, state) => const NoTransitionPage(child: welcome.WelcomePage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to WELCOME');
+              return const NoTransitionPage(child: welcome.WelcomePage());
+            },
           ),
           GoRoute(
             path: AppRoutes.COLORS_TYPOGRAPHY,
-            pageBuilder: (context, state) => const NoTransitionPage(child: ColorsTypographyPage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to COLORS_TYPOGRAPHY');
+              return const NoTransitionPage(child: ColorsTypographyPage());
+            },
           ),
           GoRoute(
             path: AppRoutes.ATOMS,
-            pageBuilder: (context, state) => const NoTransitionPage(child: AtomsPage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to ATOMS');
+              return const NoTransitionPage(child: AtomsPage());
+            },
           ),
           GoRoute(
             path: AppRoutes.MOLECULES,
-            pageBuilder: (context, state) => const NoTransitionPage(child: MoleculesPage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to MOLECULES');
+              return const NoTransitionPage(child: MoleculesPage());
+            },
           ),
           GoRoute(
             path: AppRoutes.ORGANISMS,
-            pageBuilder: (context, state) => const NoTransitionPage(child: OrganismsPage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to ORGANISMS');
+              return const NoTransitionPage(child: OrganismsPage());
+            },
           ),
           GoRoute(
             path: AppRoutes.ICONS_LOGOS,
-            pageBuilder: (context, state) => const NoTransitionPage(child: IconsLogosPage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to ICONS_LOGOS');
+              return const NoTransitionPage(child: IconsLogosPage());
+            },
           ),
           GoRoute(
             path: AppRoutes.LOGOS_COMPONENTS,
-            pageBuilder: (context, state) => const NoTransitionPage(child: LogosPage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to LOGOS_COMPONENTS');
+              return const NoTransitionPage(child: LogosPage());
+            },
           ),
           GoRoute(
             path: AppRoutes.HEADERS,
-            pageBuilder: (context, state) => const NoTransitionPage(child: HeadersPage()),
+            pageBuilder: (context, state) {
+              debugPrint('✅ Navigating to HEADERS');
+              return const NoTransitionPage(child: HeadersPage());
+            },
           ),
           GoRoute(
             path: AppRoutes.USER_PROFILE,
@@ -110,10 +169,11 @@ class StyleguideRouter {
             path: AppRoutes.MARKDOWN_RENDERER,
             pageBuilder: (context, state) => const NoTransitionPage(child: MarkdownRendererPage()),
           ),
-        ],
-      ),
-    ],
-  );
+      ],
+    ),
+  ],
+);
+  }
 }
 
 // Navigation items configuration for styleguide

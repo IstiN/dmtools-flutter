@@ -56,7 +56,7 @@ class HeadersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, String title, String description, Widget example) {
+  static Widget _buildSection(BuildContext context, String title, String description, Widget example) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -70,7 +70,7 @@ class HeadersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildAppHeaderExample(BuildContext context) {
+  static Widget _buildAppHeaderExample(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: context.colors.borderColor),
@@ -80,7 +80,7 @@ class HeadersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionHeaderExample() {
+  static Widget _buildSectionHeaderExample() {
     return const Column(
       children: [
         SectionHeader(title: 'Recent Projects'),
@@ -90,7 +90,7 @@ class HeadersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPageActionBarExample() {
+  static Widget _buildPageActionBarExample() {
     return const PageActionBar(
       title: 'Project Management',
       actions: [
@@ -100,7 +100,7 @@ class HeadersPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBaseSectionHeaderExample(BuildContext context) {
+  static Widget _buildBaseSectionHeaderExample(BuildContext context) {
     return Column(
       children: [
         Card(
