@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="100" viewBox="0 0 300 100">
+  <!-- Pill/capsule icon - top left above DM with padding (dark for light theme) -->
+  <rect x="0" y="10" width="30" height="20" rx="10" fill="#212529" opacity="0.95"/>
+  <line x1="15" y1="10" x2="15" y2="30" stroke="#3b82f6" stroke-width="1.5"/>
+  <circle cx="7" cy="20" r="2.5" fill="#06b6d4"/>
+  <circle cx="23" cy="20" r="2.5" fill="#f97316"/>
+  
+  <!-- DM text in dark - below pill icon with more space -->
+  <text x="0" y="73" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="800" font-size="48" fill="#212529">DM</text>
+  
+  <!-- ai text in cyan (#06B6D4) - positioned after DM with space -->
+  <text x="100" y="73" font-family="'SF Pro Display', 'Segoe UI', Arial, sans-serif" font-weight="700" font-size="48" fill="#06B6D4">ai</text>
+  
+  <!-- Decorative line with three dots pattern: ._.__. -->
+  <!-- Horizontal line with padding to prevent dots from being cut -->
+  <line x1="4" y1="90" x2="220" y2="90" stroke="#212529" stroke-width="2"/>
+  
+  <!-- Three dots: one at start, one closer to start, one at end (with padding) -->
+  <circle cx="4" cy="90" r="4" fill="#212529"/>
+  <circle cx="87" cy="90" r="4" fill="#212529"/>
+  <circle cx="220" cy="90" r="4" fill="#212529"/>
+</svg>

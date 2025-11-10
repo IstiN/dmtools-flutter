@@ -6,6 +6,10 @@ class ChatTheme {
   final Color aiMessageColor;
   final Color userMessageTextColor;
   final Color aiMessageTextColor;
+  final Color? userMessageTextColorLight;
+  final Color? userMessageTextColorDark;
+  final Color? aiMessageTextColorLight;
+  final Color? aiMessageTextColorDark;
   final bool showShadows;
   final bool bubbleMode;
   final double textSize;
@@ -24,6 +28,10 @@ class ChatTheme {
     required this.aiMessageTextColor,
     required this.nameColor,
     required this.dateTextColor,
+    this.userMessageTextColorLight,
+    this.userMessageTextColorDark,
+    this.aiMessageTextColorLight,
+    this.aiMessageTextColorDark,
     this.backgroundColorLight,
     this.backgroundColorDark,
     this.showShadows = false,
@@ -76,14 +84,18 @@ class ChatTheme {
     );
   }
 
-  /// Default theme - Based on DM.ai icon colors (dark slate gradient, transparent AI, white text)
+  /// Default theme - Based on DM.ai icon colors (dark slate gradient, transparent AI, adaptive text)
   /// Uses transparent background to match app theme
   factory ChatTheme.defaultTheme() {
     return const ChatTheme(
       userMessageColor: Color(0xFF1E293B), // Dark slate from icon background (start of gradient)
       aiMessageColor: Colors.transparent, // Transparent for AI messages
-      userMessageTextColor: Colors.white,
-      aiMessageTextColor: Colors.white, // White text for AI messages
+      userMessageTextColor: Colors.white, // Default for user messages
+      aiMessageTextColor: Colors.white, // Default for AI messages
+      userMessageTextColorLight: Colors.white, // White text on dark slate in light theme
+      userMessageTextColorDark: Colors.white, // White text on dark slate in dark theme
+      aiMessageTextColorLight: Color(0xFF1E293B), // Dark text for transparent AI messages in light theme
+      aiMessageTextColorDark: Colors.white, // White text for transparent AI messages in dark theme
       nameColor: Color(0xFF06B6D4), // Cyan matching "ai" badge
       dateTextColor: Color(0xFF94A3B8), // Light gray for dates
       // backgroundColorLight and backgroundColorDark default to null for transparent background
@@ -274,6 +286,10 @@ class ChatTheme {
     Color? aiMessageColor,
     Color? userMessageTextColor,
     Color? aiMessageTextColor,
+    Color? userMessageTextColorLight,
+    Color? userMessageTextColorDark,
+    Color? aiMessageTextColorLight,
+    Color? aiMessageTextColorDark,
     bool? showShadows,
     bool? bubbleMode,
     double? textSize,
@@ -291,6 +307,10 @@ class ChatTheme {
       aiMessageColor: aiMessageColor ?? this.aiMessageColor,
       userMessageTextColor: userMessageTextColor ?? this.userMessageTextColor,
       aiMessageTextColor: aiMessageTextColor ?? this.aiMessageTextColor,
+      userMessageTextColorLight: userMessageTextColorLight ?? this.userMessageTextColorLight,
+      userMessageTextColorDark: userMessageTextColorDark ?? this.userMessageTextColorDark,
+      aiMessageTextColorLight: aiMessageTextColorLight ?? this.aiMessageTextColorLight,
+      aiMessageTextColorDark: aiMessageTextColorDark ?? this.aiMessageTextColorDark,
       showShadows: showShadows ?? this.showShadows,
       bubbleMode: bubbleMode ?? this.bubbleMode,
       textSize: textSize ?? this.textSize,
@@ -307,6 +327,28 @@ class ChatTheme {
   /// Get background color based on current theme mode
   Color? getBackgroundColor(bool isDarkMode) {
     return isDarkMode ? backgroundColorDark : backgroundColorLight;
+  }
+
+  /// Get user message text color based on current theme mode
+  Color getUserMessageTextColor(bool isDarkMode) {
+    if (isDarkMode && userMessageTextColorDark != null) {
+      return userMessageTextColorDark!;
+    }
+    if (!isDarkMode && userMessageTextColorLight != null) {
+      return userMessageTextColorLight!;
+    }
+    return userMessageTextColor; // Fallback to default
+  }
+
+  /// Get AI message text color based on current theme mode
+  Color getAiMessageTextColor(bool isDarkMode) {
+    if (isDarkMode && aiMessageTextColorDark != null) {
+      return aiMessageTextColorDark!;
+    }
+    if (!isDarkMode && aiMessageTextColorLight != null) {
+      return aiMessageTextColorLight!;
+    }
+    return aiMessageTextColor; // Fallback to default
   }
 }
 

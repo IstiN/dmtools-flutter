@@ -141,41 +141,61 @@ window.ClipboardAPI = {
             if (item.type.startsWith('text/') && item.kind === 'string') {
               console.log('📝 Text found in paste event:', item.type);
               
-              // Prevent default paste behavior for text - we'll handle it programmatically
-              event.preventDefault();
+              // Check if we're in a regular HTML input/textarea element (not Flutter)
+              // Flutter web renders in canvas, so we check for native HTML inputs
+              const activeElement = document.activeElement;
+              const isNativeInput = activeElement && (
+                activeElement.tagName === 'INPUT' ||
+                activeElement.tagName === 'TEXTAREA' ||
+                (activeElement.isContentEditable && !activeElement.closest('flt-glass-pane'))
+              );
               
-              item.getAsString((text) => {
-                if (text && text.trim().length > 0) {
-                  console.log('✅ Text processed:', text.length, 'chars');
-                  
-                  const textData = {
-                    type: 'text',
-                    content: text
-                  };
-                  
-                  // Try multiple callback approaches
-                  if (callback) {
-                    try {
-                      callback(textData);
-                    } catch (callbackError) {
-                      console.error('❌ Text callback failed:', callbackError);
+              // For native HTML inputs, allow normal paste behavior
+              if (isNativeInput) {
+                console.log('📝 Allowing normal paste behavior (in native HTML input/textarea)');
+                // Don't prevent default - let normal paste work in native inputs
+                // Don't process text for chat when pasting in native inputs
+                return; // Exit - let browser handle paste normally
+              }
+              
+              // For Flutter inputs, don't prevent default - let normal paste work
+              // The chat page will check if chat input is focused before inserting
+              // This allows normal paste in all Flutter form inputs
+              console.log('📝 Allowing normal paste behavior (Flutter input)');
+              
+              // Still notify chat callback if available, but don't prevent default
+              // Chat page will decide whether to use the text based on focus state
+              const hasChatCallback = callback || window.flutterPasteCallback;
+              if (hasChatCallback) {
+                item.getAsString((text) => {
+                  if (text && text.trim().length > 0) {
+                    const textData = {
+                      type: 'text',
+                      content: text
+                    };
+                    
+                    // Try callbacks but don't prevent default paste
+                    if (callback) {
+                      try {
+                        callback(textData);
+                      } catch (callbackError) {
+                        // Ignore errors - normal paste should still work
+                      }
                     }
-                  }
-                  
-                  // Also try global Flutter callback if available
-                  if (window.flutterPasteCallback) {
-                    try {
-                      window.flutterPasteCallback(textData);
-                    } catch (globalError) {
-                      console.error('❌ Global text callback failed:', globalError);
+                    
+                    if (window.flutterPasteCallback) {
+                      try {
+                        window.flutterPasteCallback(textData);
+                      } catch (globalError) {
+                        // Ignore errors - normal paste should still work
+                      }
                     }
+                    
+                    // Store in global variable as fallback
+                    window.lastPastedContent = textData;
                   }
-                  
-                  // Store in global variable as fallback
-                  window.lastPastedContent = textData;
-                  console.log('💾 Stored text data in window.lastPastedContent');
-                }
-              });
+                });
+              }
               
               return; // Exit after processing first text
             }

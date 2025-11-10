@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../theme/app_colors.dart';
 import '../../utils/accessibility_utils.dart';
-import '../atoms/logos/logos.dart';
+import '../../theme/app_theme.dart';
+import '../atoms/navigation_icon.dart';
 
 /// Navigation item model for the sidebar
+/// Supports both SVG icons (preferred) and Material icons (fallback)
 class NavigationItem {
-  final IconData icon;
+  final IconData? icon;
+  final String? svgIconPath;
   final String label;
   final String route;
 
-  const NavigationItem({
-    required this.icon,
-    required this.label,
-    required this.route,
-  });
+  const NavigationItem({required this.label, required this.route, this.icon, this.svgIconPath})
+    : assert(icon != null || svgIconPath != null, 'Either icon or svgIconPath must be provided');
 }
 
 /// Navigation sidebar component that provides consistent navigation across the app
+/// Features vertical layout with icons above text labels, matching modern navigation patterns
 class NavigationSidebar extends StatelessWidget {
   final List<NavigationItem> items;
   final bool isMobile;
@@ -36,7 +36,7 @@ class NavigationSidebar extends StatelessWidget {
     this.onItemTap,
     this.showLogo = true,
     this.showFooter = true,
-    this.width = 240,
+    this.width = 110,
     this.isTestMode = false,
     this.testDarkMode,
     super.key,
@@ -44,27 +44,16 @@ class NavigationSidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Get theme-aware background color
     final isDarkMode = isTestMode ? (testDarkMode ?? false) : context.isDarkMode;
-    final colors = isDarkMode ? AppColors.dark : AppColors.light;
-    final Color bgColor = isDarkMode ? AppColors.darkSidebarBg : AppColors.lightSidebarBg;
+    // Use darker charcoal background matching the design, but theme-aware
+    final Color bgColor = isDarkMode ? const Color(0xFF2C2C2C) : const Color(0xFFF5F5F5);
 
     return Container(
       width: width,
       color: bgColor,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (isMobile && showLogo) ...[
-            Container(
-              padding: const EdgeInsets.all(12),
-              child: NetworkNodesLogo(
-                size: LogoSize.small,
-                isDarkMode: isDarkMode,
-                isTestMode: isTestMode,
-              ),
-            ),
-            Divider(color: colors.dividerColor, height: 1),
-          ],
           const SizedBox(height: 24),
           Expanded(
             child: ListView(
@@ -91,19 +80,6 @@ class NavigationSidebar extends StatelessWidget {
               ],
             ),
           ),
-          if (!isMobile && showFooter) ...[
-            Divider(color: colors.dividerColor, height: 1),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Text(
-                '© 2025 DMTools. All rights reserved.',
-                style: TextStyle(
-                  fontSize: 11,
-                  color: colors.textSecondary,
-                ),
-              ),
-            ),
-          ],
         ],
       ),
     );
@@ -111,7 +87,8 @@ class NavigationSidebar extends StatelessWidget {
 }
 
 /// Private widget for individual navigation items
-class _NavigationItem extends StatelessWidget {
+/// Displays icon above text label, centered vertically
+class _NavigationItem extends StatefulWidget {
   final NavigationItem item;
   final bool isSelected;
   final VoidCallback onTap;
@@ -127,58 +104,83 @@ class _NavigationItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final isDarkMode = isTestMode ? (testDarkMode ?? false) : context.isDarkMode;
-    final colors = isDarkMode ? AppColors.dark : AppColors.light;
+  State<_NavigationItem> createState() => _NavigationItemState();
+}
 
-    final Color textColor = colors.textSecondary;
-    const Color selectedTextColor = AppColors.primaryTextOnAccent;
-    const Color selectedBgColor = AppColors.selectedBgColor;
-    final Color hoverBgColor = isDarkMode ? AppColors.darkHoverBgColor : AppColors.lightHoverBgColor;
+class _NavigationItemState extends State<_NavigationItem> {
+  final GlobalKey<State<NavigationIcon>> _iconKey = GlobalKey<State<NavigationIcon>>();
+
+  @override
+  Widget build(BuildContext context) {
+    final isDarkMode = widget.isTestMode ? (widget.testDarkMode ?? false) : context.isDarkMode;
+    // Active state: cyan color (#06b6d4) from logo dots and ai badge
+    const Color activeColor = Color(0xFF06B6D4);
+    // Active background: slightly darker/lighter based on theme
+    final Color activeBgColor = isDarkMode ? const Color(0xFF1A1A1A) : const Color(0xFFE0E0E0);
+    // Inactive state: theme-aware
+    final Color inactiveColor = isDarkMode ? Colors.white : const Color(0xFF424242);
 
     // Generate test ID based on menu item label
-    final testId = generateTestId('menu-item', {'label': item.label.toLowerCase().replaceAll(' ', '-')});
-    final semanticLabel = '${item.label} navigation item${isSelected ? ', selected' : ''}';
+    final testId = generateTestId('menu-item', {'label': widget.item.label.toLowerCase().replaceAll(' ', '-')});
+    final semanticLabel = '${widget.item.label} navigation item${widget.isSelected ? ', selected' : ''}';
+
+    void handleTap() {
+      // Trigger animation if icon exists
+      if (widget.item.svgIconPath != null) {
+        final iconState = _iconKey.currentState;
+        // Use dynamic to access triggerAnimation method
+        if (iconState != null) {
+          try {
+            (iconState as dynamic).triggerAnimation();
+          } catch (_) {
+            // Animation trigger failed, continue with tap
+          }
+        }
+      }
+      // Execute the actual tap handler
+      widget.onTap();
+    }
 
     return Semantics(
       label: semanticLabel,
       button: true,
       enabled: true,
-      selected: isSelected,
-      onTap: onTap,
+      selected: widget.isSelected,
+      onTap: handleTap,
       child: Container(
         key: ValueKey(testId),
-        margin: EdgeInsets.zero,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         decoration: BoxDecoration(
-          color: isSelected ? selectedBgColor : Colors.transparent,
-          borderRadius: BorderRadius.zero,
+          color: widget.isSelected ? activeBgColor : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            borderRadius: BorderRadius.zero,
-            hoverColor: isSelected ? Colors.transparent : hoverBgColor,
-            onTap: onTap,
-            child: Container(
-              height: 50,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Row(
+            borderRadius: BorderRadius.circular(8),
+            onTap: handleTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    item.icon,
-                    color: isSelected ? selectedTextColor : textColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      item.label,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: isSelected ? selectedTextColor : textColor,
-                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                        fontSize: 14,
-                      ),
+                  widget.item.svgIconPath != null
+                      ? NavigationIcon(
+                          key: _iconKey,
+                          svgAssetPath: widget.item.svgIconPath!,
+                          color: widget.isSelected ? activeColor : inactiveColor,
+                          size: 36,
+                        )
+                      : Icon(widget.item.icon, color: widget.isSelected ? activeColor : inactiveColor, size: 36),
+                  const SizedBox(height: 4),
+                  Text(
+                    widget.item.label,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: widget.isSelected ? activeColor : inactiveColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
@@ -188,13 +190,5 @@ class _NavigationItem extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-/// Extension to add theme access for the component
-extension _ThemeContext on BuildContext {
-  bool get isDarkMode {
-    // This should match the main app's theme detection
-    return Theme.of(this).brightness == Brightness.dark;
   }
 }

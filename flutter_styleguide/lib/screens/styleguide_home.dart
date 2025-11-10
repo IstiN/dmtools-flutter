@@ -125,7 +125,8 @@ class _StyleguideHomeState extends State<StyleguideHome> {
           if (isMobile) ...[
             Container(
               padding: const EdgeInsets.all(12),
-              child: NetworkNodesLogo(
+              child: DmAiLogo(
+                size: LogoSize.small,
                 isDarkMode: isDarkMode,
                 isTestMode: true,
               ),

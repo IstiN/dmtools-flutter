@@ -37,6 +37,7 @@ export 'widgets/atoms/logos/logos.dart';
 export 'widgets/atoms/integration_type_icon.dart';
 export 'widgets/atoms/integration_status_badge.dart';
 export 'widgets/atoms/sensitive_field_input.dart';
+export 'widgets/atoms/navigation_icon.dart';
 // MCP Atoms
 export 'widgets/atoms/mcp_status_chip.dart';
 export 'widgets/atoms/integration_checkbox.dart';
@@ -105,6 +106,7 @@ export 'widgets/organisms/page_header.dart';
 export 'widgets/organisms/panel_base.dart';
 export 'widgets/organisms/welcome_banner.dart';
 export 'widgets/organisms/navigation_sidebar.dart';
+export 'widgets/organisms/bottom_navigation_bar.dart';
 export 'widgets/organisms/integration_management.dart';
 export 'widgets/organisms/integration_detail.dart';
 export 'widgets/organisms/job_configuration_management.dart';

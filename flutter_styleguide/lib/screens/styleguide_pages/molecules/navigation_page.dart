@@ -40,8 +40,16 @@ class NavigationPage extends StatelessWidget {
           _buildSection(
             context,
             'Side Navigation',
-            'Sidebar navigation menus and drawers',
+            'Modern vertical sidebar navigation with icons above text labels',
             _buildSideNavigationExample(context),
+          ),
+
+          // Bottom Navigation Section
+          _buildSection(
+            context,
+            'Bottom Navigation',
+            'Mobile bottom navigation bar for horizontal tab navigation',
+            _buildBottomNavigationExample(context),
           ),
 
           // Navigation Menu Section
@@ -141,8 +149,15 @@ class NavigationPage extends StatelessWidget {
   Widget _buildSideNavigationExample(BuildContext context) {
     final colors = context.colors;
 
+    const sampleItems = [
+      NavigationItem(label: 'Chat', route: '/chat', svgIconPath: 'assets/img/nav-icon-chat.svg'),
+      NavigationItem(label: 'AI Jobs', route: '/ai-jobs', svgIconPath: 'assets/img/nav-icon-ai-jobs.svg'),
+      NavigationItem(label: 'Integrations', route: '/integrations', svgIconPath: 'assets/img/nav-icon-integrations.svg'),
+      NavigationItem(label: 'MCP', route: '/mcp', svgIconPath: 'assets/img/nav-icon-mcp.svg'),
+    ];
+
     return Container(
-      height: 200,
+      height: 400,
       decoration: BoxDecoration(
         color: colors.cardBg,
         borderRadius: BorderRadius.circular(8),
@@ -151,27 +166,44 @@ class NavigationPage extends StatelessWidget {
       child: Row(
         children: [
           // Sidebar
-          Container(
-            width: 200,
-            decoration: BoxDecoration(
-              color: colors.bgColor,
-              borderRadius: const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
-            ),
-            child: Column(
-              children: [
-                _buildNavItem(context, 'Dashboard', Icons.dashboard, true),
-                _buildNavItem(context, 'Projects', Icons.folder, false),
-                _buildNavItem(context, 'Integrations', Icons.link, false),
-                _buildNavItem(context, 'Settings', Icons.settings, false),
-              ],
-            ),
+          const NavigationSidebar(
+            items: sampleItems,
+            currentRoute: '/chat',
+            isTestMode: true,
+            testDarkMode: true,
           ),
           // Content area
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.spacingM),
-              child: Center(
-                child: Text('Main content area', style: TextStyle(color: colors.textColor.withValues(alpha: 0.6))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Navigation Sidebar',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: colors.textColor,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.spacingS),
+                  Text(
+                    'Modern vertical navigation with icons above text labels. Features dark charcoal background (#2C2C2C) with cyan active state (#06B6D4) from logo design.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colors.textColor.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.spacingM),
+                  Text(
+                    'Active item: Chat (orange)',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colors.textColor.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -180,27 +212,58 @@ class NavigationPage extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem(BuildContext context, String title, IconData icon, bool isActive) {
+  Widget _buildBottomNavigationExample(BuildContext context) {
     final colors = context.colors;
 
+    const sampleItems = [
+      NavigationItem(label: 'Chat', route: '/chat', svgIconPath: 'assets/img/nav-icon-chat.svg'),
+      NavigationItem(label: 'AI Jobs', route: '/ai-jobs', svgIconPath: 'assets/img/nav-icon-ai-jobs.svg'),
+      NavigationItem(label: 'Integrations', route: '/integrations', svgIconPath: 'assets/img/nav-icon-integrations.svg'),
+      NavigationItem(label: 'MCP', route: '/mcp', svgIconPath: 'assets/img/nav-icon-mcp.svg'),
+    ];
+
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      height: 200,
       decoration: BoxDecoration(
-        color: isActive ? colors.accentColor.withValues(alpha: 0.1) : null,
-        borderRadius: BorderRadius.circular(6),
+        color: colors.cardBg,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colors.borderColor),
       ),
-      child: ListTile(
-        dense: true,
-        leading: Icon(icon, size: 20, color: isActive ? colors.accentColor : colors.textColor.withValues(alpha: 0.6)),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 14,
-            color: isActive ? colors.accentColor : colors.textColor,
-            fontWeight: isActive ? FontWeight.w500 : FontWeight.normal,
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(AppDimensions.spacingM),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Bottom Navigation Bar',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: colors.textColor,
+                    ),
+                  ),
+                  const SizedBox(height: AppDimensions.spacingS),
+                  Text(
+                    'Mobile-optimized horizontal navigation bar. Transforms the vertical sidebar into bottom tabs for better mobile UX.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: colors.textColor.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        onTap: () {},
+          const BottomNavigationBarWidget(
+            items: sampleItems,
+            currentRoute: '/chat',
+            isTestMode: true,
+            testDarkMode: true,
+          ),
+        ],
       ),
     );
   }

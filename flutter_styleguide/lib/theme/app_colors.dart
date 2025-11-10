@@ -81,16 +81,16 @@ class AppColors {
   static const Color darkTextMuted = Color(0xFFADB5BD); // #adb5bd
   static const Color darkBorderColor = Color(0xFF2A2A2A); // #2a2a2a
 
-  // Accent Colors
-  static const Color accentColor = Color(0xFF466AF1); // #466af1
-  static const Color accentLight = Color(0xFF6988F5); // #6988f5
-  static const Color accentHover = Color(0xFF3155DB); // #3155db
+  // Accent Colors - Cyan (#06B6D4) matching "ai" text color
+  static const Color accentColor = Color(0xFF06B6D4); // #06b6d4
+  static const Color accentLight = Color(0xFF22D3EE); // #22d3ee (lighter cyan)
+  static const Color accentHover = Color(0xFF0891B2); // #0891b2 (darker cyan)
   static const Color secondaryColor = Color(0xFF6C757D); // #6c757d
 
   // Button & Interaction Colors
-  static const Color buttonBg = Color(0xFF466AF1); // #466af1 (same as accent)
-  static const Color buttonHover = Color(0xFF3155DB); // #3155db (same as accent-hover)
-  static final Color hoverBg = const Color(0xFF466AF1).withValues(alpha: 0.08); // rgba(70,106,241,0.08)
+  static const Color buttonBg = Color(0xFF06B6D4); // #06b6d4 (same as accent)
+  static const Color buttonHover = Color(0xFF0891B2); // #0891b2 (same as accent-hover)
+  static final Color hoverBg = const Color(0xFF06B6D4).withValues(alpha: 0.08); // rgba(6,182,212,0.08)
   static final Color hoverBgLight = const Color(0xFF000000).withValues(alpha: 0.04);
   static final Color hoverBgDark = const Color(0xFFFFFFFF).withValues(alpha: 0.08);
 
@@ -109,11 +109,11 @@ class AppColors {
   // Input Colors
   static const Color inputBg = Color(0xFFFFFFFF); // #ffffff
   static const Color darkInputBg = Color(0xFF2A2A2A); // #2A2A2A (lighter than card bg)
-  static const Color inputFocusBorder = Color(0xFF466AF1); // #466af1 (same as accent)
+  static const Color inputFocusBorder = Color(0xFF06B6D4); // #06b6d4 (same as accent)
 
-  // Banner Colors
-  static const Color bannerGradientStart = Color(0xFF2C4ED7); // Darker blue
-  static const Color bannerGradientEnd = Color(0xFF3155DB); // Slightly lighter but still dark
+  // Banner Colors - using cyan accent color
+  static const Color bannerGradientStart = Color(0xFF06B6D4); // Cyan accent color
+  static const Color bannerGradientEnd = Color(0xFF0891B2); // Darker cyan (accentHover)
 
   // OAuth Button Colors
   static const Color googleRed = Color(0xFFEA4335);
@@ -146,9 +146,9 @@ class AppColors {
   static const Color darkBaseButtonBg = Color(0xFF3A3A3A);
 
   // Special UI colors
-  static const Color selectedBgColor = Color(0xFF6078F0);
-  static final Color lightHoverBgColor = const Color(0xFF466AF1).withValues(alpha: 0.08);
-  static final Color darkHoverBgColor = const Color(0xFF5B7BF0).withValues(alpha: 0.15);
+  static const Color selectedBgColor = Color(0xFF06B6D4);
+  static final Color lightHoverBgColor = const Color(0xFF06B6D4).withValues(alpha: 0.08);
+  static final Color darkHoverBgColor = const Color(0xFF06B6D4).withValues(alpha: 0.15);
 
   // Shadow and overlay colors
   static final Color lightShadowColor = const Color(0xFF000000).withValues(alpha: 0.05);

@@ -100,12 +100,11 @@ class _ChatPageState extends State<ChatPage> {
           debugPrint('✅ Image attachment added: ${attachment.name} (${attachment.size} bytes)');
         }
       } else if (type == 'text') {
-        final text = content as String;
-        // Insert text into current tab's chat interface
-        _interfaceKeys[selectedTabId]?.currentState?.insertText(text);
-
+        // Skip text insertion - let normal paste work everywhere
+        // This allows normal paste to work in all form inputs including chat
+        // Images are still handled specially because they need custom processing
         if (kDebugMode) {
-          debugPrint('✅ Text inserted into chat input: ${text.length} characters');
+          debugPrint('📝 Text paste detected - letting normal paste handle it (no programmatic insertion)');
         }
       }
     } catch (e) {

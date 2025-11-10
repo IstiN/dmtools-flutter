@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="40" viewBox="0 0 48 40" fill="none">
+  <!-- Simplified workflow: play circle > line > checkmark circle, then smooth |_ line to dots in circle -->
+  
+  <!-- Starting node with play triangle (>) pointing right -->
+  <circle cx="8" cy="12" r="6" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.9"/>
+  <path d="M5.5 9.5L5.5 14.5L10.5 12Z" fill="currentColor" opacity="0.9"/>
+  
+  <!-- Line connecting to checkmark - increased horizontal distance -->
+  <line x1="14" y1="12" x2="26" y2="12" stroke="currentColor" stroke-width="2.5" opacity="0.7"/>
+  
+  <!-- Second circle with checkmark - moved further right -->
+  <circle cx="32" cy="12" r="6" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.9"/>
+  <path d="M29 12L30.5 13.5L35 9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.9"/>
+  
+  <!-- Branching line down then right (|_) with smooth corner - adjusted to align with check circle -->
+  <path d="M8 18 L8 26 Q8 28 10 28 L26 28" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.7" stroke-linecap="round"/>
+  
+  <!-- Three dots in circle below - aligned with check circle, more spacing between dots -->
+  <circle cx="32" cy="28" r="6" stroke="currentColor" stroke-width="2.5" fill="none" opacity="0.9"/>
+  <circle cx="29" cy="28" r="1" fill="currentColor" opacity="0.7"/>
+  <circle cx="32" cy="28" r="1" fill="currentColor" opacity="0.7"/>
+  <circle cx="35" cy="28" r="1" fill="currentColor" opacity="0.7"/>
+</svg>

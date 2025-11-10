@@ -22,14 +22,24 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   late double _saturation;
   late double _value;
   late TextEditingController _hexController;
+  late double _originalAlpha;
 
   @override
   void initState() {
     super.initState();
-    _hsvColor = HSVColor.fromColor(widget.initialColor);
-    _hue = _hsvColor.hue;
-    _saturation = _hsvColor.saturation;
-    _value = _hsvColor.value;
+    _originalAlpha = widget.initialColor.a;
+    // Handle transparent color - use default HSV values
+    if (widget.initialColor.a == 0.0) {
+      _hue = 0.0;
+      _saturation = 0.0;
+      _value = 1.0;
+      _hsvColor = HSVColor.fromAHSV(1.0, _hue, _saturation, _value);
+    } else {
+      _hsvColor = HSVColor.fromColor(widget.initialColor);
+      _hue = _hsvColor.hue;
+      _saturation = _hsvColor.saturation;
+      _value = _hsvColor.value;
+    }
     _hexController = TextEditingController(text: _colorToHex(widget.initialColor));
   }
 
@@ -40,7 +50,9 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   }
 
   void _updateColor() {
-    final newColor = HSVColor.fromAHSV(1.0, _hue, _saturation, _value).toColor();
+    // Preserve original alpha if it was transparent, otherwise use full opacity
+    final alpha = _originalAlpha == 0.0 ? 0.0 : 1.0;
+    final newColor = HSVColor.fromAHSV(alpha, _hue, _saturation, _value).toColor();
     _hexController.text = _colorToHex(newColor);
     widget.onColorChanged(newColor);
   }
@@ -82,12 +94,24 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   void didUpdateWidget(ColorPickerWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.initialColor != widget.initialColor) {
-      final hsv = HSVColor.fromColor(widget.initialColor);
-      setState(() {
-        _hue = hsv.hue;
-        _saturation = hsv.saturation;
-        _value = hsv.value;
-      });
+      _originalAlpha = widget.initialColor.a;
+      // Handle transparent color - use default HSV values
+      if (widget.initialColor.a == 0.0) {
+        setState(() {
+          _hue = 0.0;
+          _saturation = 0.0;
+          _value = 1.0;
+          _hsvColor = HSVColor.fromAHSV(1.0, _hue, _saturation, _value);
+        });
+      } else {
+        final hsv = HSVColor.fromColor(widget.initialColor);
+        setState(() {
+          _hue = hsv.hue;
+          _saturation = hsv.saturation;
+          _value = hsv.value;
+          _hsvColor = hsv;
+        });
+      }
       _hexController.text = _colorToHex(widget.initialColor);
     }
   }
@@ -95,6 +119,10 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   Widget _buildHueSpectrum(ThemeColorSet colors) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        // Clamp hue to valid range [0, 360)
+        final clampedHue = _hue.clamp(0.0, 359.999);
+        final indicatorPosition = (clampedHue / 360.0) * constraints.maxWidth - 2;
+        
         return GestureDetector(
           onPanUpdate: (details) {
             _updateHueFromPosition(details.localPosition.dx, constraints.maxWidth);
@@ -123,7 +151,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
               children: [
                 // Hue indicator
                 Positioned(
-                  left: (_hue / 360.0) * constraints.maxWidth - 2,
+                  left: indicatorPosition.clamp(0.0, constraints.maxWidth - 4),
                   top: 0,
                   bottom: 0,
                   child: Container(
@@ -131,7 +159,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(2),
-                      border: Border.all(color: Colors.black, width: 1),
+                      border: Border.all(),
                     ),
                   ),
                 ),
@@ -163,8 +191,6 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppDimensions.radiusS),
               gradient: LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
                 colors: [
                   Colors.white,
                   baseColor,
@@ -181,9 +207,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+                gradient: const LinearGradient(
                   colors: [
                     Colors.transparent,
                     Colors.black,
@@ -202,7 +226,7 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: Colors.white,
-                        border: Border.all(color: Colors.black, width: 2),
+                        border: Border.all(width: 2),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.3),
@@ -296,7 +320,8 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
   }
 
   void _updateHueFromPosition(double x, double width) {
-    final newHue = (x / width * 360.0).clamp(0.0, 360.0);
+    // Clamp to [0, 360) range (360 is exclusive)
+    final newHue = (x / width * 360.0).clamp(0.0, 359.999);
     setState(() {
       _hue = newHue;
     });
@@ -310,12 +335,14 @@ class _ColorPickerWidgetState extends State<ColorPickerWidget> {
     setState(() {
       _saturation = newSaturation;
       _value = newValue;
+      // Ensure hue is in valid range
+      _hue = _hue.clamp(0.0, 359.999);
     });
     _updateColor();
   }
 
   String _colorToHex(Color color) {
-    return '#${color.value.toRadixString(16).substring(2).toUpperCase()}';
+    return '#${color.toARGB32().toRadixString(16).substring(2).toUpperCase()}';
   }
 
   Color? _parseHexColor(String hex) {

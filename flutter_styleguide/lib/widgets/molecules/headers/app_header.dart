@@ -76,39 +76,10 @@ class AppHeader extends StatelessWidget {
           ] else ...[
             InkWell(
               onTap: onLogoPressed,
-              child: Row(
-                children: [
-                  NetworkNodesLogo(
-                    size: LogoSize.small,
-                    isDarkMode: isDarkMode,
-                    isTestMode: true,
-                  ),
-                  if (showTitle) ...[
-                    const SizedBox(width: 8),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'DM',
-                            style: TextStyle(
-                              color: isDarkMode ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
-                            ),
-                          ),
-                          TextSpan(
-                            text: ' Tools',
-                            style: TextStyle(
-                              color: isDarkMode ? Colors.white : Colors.black,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
+              child: DmAiLogo(
+                size: LogoSize.small,
+                isDarkMode: isDarkMode,
+                isTestMode: true,
               ),
             ),
           ],

@@ -21,6 +21,8 @@ class MarkdownRendererPage extends StatelessWidget {
             SizedBox(height: AppDimensions.spacingXl),
             _CodeBlockExample(),
             SizedBox(height: AppDimensions.spacingXl),
+            _DetailsSummaryExample(),
+            SizedBox(height: AppDimensions.spacingXl),
             _WebhookExample(),
           ],
         ),
@@ -44,7 +46,7 @@ class _PageHeaderSection extends StatelessWidget {
           onThemeToggle: () {}, // Empty callback for demo
         ),
         Text(
-          'Rich markdown rendering with code block copy functionality',
+          'Rich markdown rendering with beautiful syntax highlighting and code block copy functionality',
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: colors.textSecondary),
         ),
       ],
@@ -57,8 +59,6 @@ class _BasicExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     const markdownContent = '''
 # Basic Markdown Features
 
@@ -96,21 +96,14 @@ Unordered list:
 | Lists | ✓ | Ordered/unordered |
 ''';
 
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader(title: 'Basic Markdown Example'),
-        const SizedBox(height: AppDimensions.spacingM),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: colors.cardBg,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-            border: Border.all(color: colors.borderColor),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(AppDimensions.spacingM),
-            child: MarkdownRenderer(data: markdownContent),
-          ),
+        SectionHeader(title: 'Basic Markdown Example'),
+        SizedBox(height: AppDimensions.spacingM),
+        Padding(
+          padding: EdgeInsets.all(AppDimensions.spacingM),
+          child: MarkdownRenderer(data: markdownContent),
         ),
       ],
     );
@@ -122,14 +115,38 @@ class _CodeBlockExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     const codeMarkdown = '''
-## Code Block Examples
+## Code Block Examples with Syntax Highlighting
 
-Here are various code examples with syntax highlighting:
+Here are various code examples demonstrating beautiful syntax highlighting:
 
-### Dart Code
+### Java Example
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}
+```
+
+**Explanation:**
+
+- `public class Main { ... }`: This defines a class named `Main`. In Java, all code must reside within a class. `public` means this class is accessible from anywhere.
+
+- `public static void main(String[] args) { ... }`: This is the main method. It's the entry point of your Java program.
+  - `public`: Makes the method accessible from outside the class.
+  - `static`: Allows the method to be called without creating an instance of the Main class.
+  - `void`: Indicates that the method doesn't return any value.
+  - `String[] args`: An array that can hold command-line arguments.
+
+- `System.out.println("Hello, World!");`: This line prints text to the console.
+  - `System.out`: Represents the standard output stream.
+  - `println()`: A method that prints the given string and adds a newline character.
+  - `"Hello, World!"`: The string literal to be printed.
+
+### Dart Code Example
+
 ```dart
 class MarkdownRenderer extends StatelessWidget {
   const MarkdownRenderer({
@@ -149,7 +166,22 @@ class MarkdownRenderer extends StatelessWidget {
 }
 ```
 
+### JavaScript Example
+
+```javascript
+const markdownRenderer = {
+  render: (content) => {
+    return processMarkdown(content);
+  },
+  
+  highlight: (code, language) => {
+    return hljs.highlight(code, { language }).value;
+  }
+};
+```
+
 ### JSON Configuration
+
 ```json
 {
   "webhook": {
@@ -163,43 +195,108 @@ class MarkdownRenderer extends StatelessWidget {
 }
 ```
 
-### Bash Script
-```bash
-#!/bin/bash
-flutter pub get
-flutter test
-flutter build web
-```
+### Python Example
 
-### JavaScript
-```javascript
-const markdownRenderer = {
-  render: (content) => {
-    return processMarkdown(content);
-  },
-  
-  highlight: (code, language) => {
-    return hljs.highlight(code, { language }).value;
-  }
-};
+```python
+def greet(name):
+    """Greet someone by name."""
+    message = f"Hello, {name}!"
+    print(message)
+    return message
+
+if __name__ == "__main__":
+    greet("World")
 ```
 ''';
 
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader(title: 'Code Block Examples'),
-        const SizedBox(height: AppDimensions.spacingM),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: colors.cardBg,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-            border: Border.all(color: colors.borderColor),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(AppDimensions.spacingM),
-            child: MarkdownRenderer(data: codeMarkdown),
-          ),
+        SectionHeader(title: 'Code Block Examples with Syntax Highlighting'),
+        SizedBox(height: AppDimensions.spacingM),
+        Padding(
+          padding: EdgeInsets.all(AppDimensions.spacingM),
+          child: MarkdownRenderer(data: codeMarkdown),
+        ),
+      ],
+    );
+  }
+}
+
+class _DetailsSummaryExample extends StatelessWidget {
+  const _DetailsSummaryExample();
+
+  @override
+  Widget build(BuildContext context) {
+    const detailsMarkdown = '''
+## Collapsible Sections with Details/Summary
+
+You can create collapsible sections using HTML `<details>` and `<summary>` tags:
+
+<details>
+<summary>Tips for collapsed sections</summary>
+
+### You can add a header
+
+You can add text within a collapsed section.
+
+You can add an image or a code block, too.
+
+```dart
+void main() {
+  print('Hello, World!');
+}
+```
+
+- List items work too
+- Another item
+- And more items
+
+</details>
+
+<details open>
+<summary>This section is open by default</summary>
+
+This section uses the `open` attribute to display expanded by default.
+
+You can include any markdown content here:
+- **Bold text**
+- *Italic text*
+- [Links](https://example.com)
+- Code blocks
+- And more!
+
+</details>
+
+<details>
+<summary>Technical Details</summary>
+
+Here are some technical implementation details:
+
+1. The details element creates a collapsible section
+2. The summary element provides the clickable header
+3. Content inside details is hidden until expanded
+4. You can nest multiple details sections
+
+```json
+{
+  "feature": "collapsible sections",
+  "supported": true,
+  "tags": ["details", "summary"]
+}
+```
+
+</details>
+''';
+
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(title: 'Collapsible Sections (Details/Summary)'),
+        SizedBox(height: AppDimensions.spacingM),
+        Padding(
+          padding: EdgeInsets.all(AppDimensions.spacingM),
+          child: MarkdownRenderer(data: detailsMarkdown),
         ),
       ],
     );
@@ -211,8 +308,6 @@ class _WebhookExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
-
     const webhookMarkdown = '''
 ## Webhook Documentation Example
 
@@ -266,21 +361,14 @@ curl -X POST "https://api.example.com/webhooks" \\
 For more information, see our [API documentation](https://docs.example.com).
 ''';
 
-    return Column(
+    return const Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHeader(title: 'Webhook Documentation Example'),
-        const SizedBox(height: AppDimensions.spacingM),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: colors.cardBg,
-            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-            border: Border.all(color: colors.borderColor),
-          ),
-          child: const Padding(
-            padding: EdgeInsets.all(AppDimensions.spacingM),
-            child: MarkdownRenderer(data: webhookMarkdown),
-          ),
+        SectionHeader(title: 'Webhook Documentation Example'),
+        SizedBox(height: AppDimensions.spacingM),
+        Padding(
+          padding: EdgeInsets.all(AppDimensions.spacingM),
+          child: MarkdownRenderer(data: webhookMarkdown),
         ),
       ],
     );

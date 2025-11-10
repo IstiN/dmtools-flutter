@@ -19,9 +19,31 @@ class IconsLogosPage extends StatelessWidget {
       children: [
         const ComponentDisplay(
           title: 'Logo Usage Guidelines',
-          child: ComponentItem(
-            title: 'When to Use Each Logo Variant',
-            child: LogoUsageGuide(),
+          child: ComponentItem(title: 'When to Use Each Logo Variant', child: LogoUsageGuide()),
+        ),
+        const SizedBox(height: AppDimensions.spacingXl),
+        const ComponentDisplay(
+          title: '🆕 NEW BRAND LOGO - DM ai',
+          child: Column(
+            children: [
+              ComponentItem(
+                title: 'DM ai Logo - Dark Theme Version',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-logo-dm-ai-dark.svg',
+                  description:
+                      'Pill icon with DNA dots • "DM" in white • "ai" in cyan (#06B6D4) • Decorative line with dots • For dark backgrounds',
+                ),
+              ),
+              SizedBox(height: AppDimensions.spacingL),
+              ComponentItem(
+                title: 'DM ai Logo - Light Theme Version',
+                child: _FinalIconPreview(
+                  assetPath: 'assets/img/dmtools-logo-dm-ai-light.svg',
+                  description:
+                      'Pill icon with DNA dots • "DM" in dark (#212529) • "ai" in cyan (#06B6D4) • Decorative line with dots • For light backgrounds',
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXl),
@@ -144,17 +166,11 @@ class IconsLogosPage extends StatelessWidget {
           title: 'New AI & Themed Concepts',
           child: Column(
             children: [
-              const ComponentItem(
-                title: 'Logo - DNA Helix (Interwoven)',
-                child: DnaLogo(),
-              ),
+              const ComponentItem(title: 'Logo - DNA Helix (Interwoven)', child: DnaLogo()),
               const SizedBox(height: AppDimensions.spacingL),
               ComponentItem(
                 title: 'Logo - DNA Helix (Interwoven - Custom Colors)',
-                child: DnaLogo(
-                  color1: Colors.cyan.shade400,
-                  color2: Colors.amber.shade600,
-                ),
+                child: DnaLogo(color1: Colors.cyan.shade400, color2: Colors.amber.shade600),
               ),
               const SizedBox(height: AppDimensions.spacingL),
               const ComponentItem(
@@ -268,7 +284,10 @@ class IconsLogosPage extends StatelessWidget {
                   previews: [
                     Container(
                       padding: const EdgeInsets.all(AppDimensions.spacingL),
-                      decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300)),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
                       child: SvgPicture.asset(
                         'assets/img/dmtools-logo-intelligent-network-fusion-dark.svg',
                         width: 320,
@@ -350,11 +369,7 @@ class CustomLogoPreview extends StatelessWidget {
   final String assetName;
   final List<Widget> previews;
 
-  const CustomLogoPreview({
-    required this.assetName,
-    required this.previews,
-    super.key,
-  });
+  const CustomLogoPreview({required this.assetName, required this.previews, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -420,11 +435,7 @@ class LogoDisplay extends StatelessWidget {
                 border: Border.all(color: colors.borderColor),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
               ),
-              child: SvgPicture.asset(
-                lightAsset,
-                height: fixedHeight,
-                width: fixedHeight,
-              ),
+              child: SvgPicture.asset(lightAsset, height: fixedHeight, width: fixedHeight),
             ),
             Container(
               padding: AppDimensions.cardPaddingM,
@@ -433,11 +444,7 @@ class LogoDisplay extends StatelessWidget {
                 border: Border.all(color: colors.borderColor),
                 borderRadius: BorderRadius.circular(AppDimensions.radiusXs),
               ),
-              child: SvgPicture.asset(
-                darkAsset,
-                height: fixedHeight,
-                width: fixedHeight,
-              ),
+              child: SvgPicture.asset(darkAsset, height: fixedHeight, width: fixedHeight),
             ),
           ],
         ),
@@ -468,8 +475,10 @@ class LogoUsageGuide extends StatelessWidget {
         children: [
           const MediumTitleText('📋 Logo Selection Rules:'),
           const SizedBox(height: AppDimensions.spacingS),
-          _buildRuleItem('🤍 White Version:',
-              'Use when placing logos on colored backgrounds (blue headers, dark backgrounds, colored banners)'),
+          _buildRuleItem(
+            '🤍 White Version:',
+            'Use when placing logos on colored backgrounds (blue headers, dark backgrounds, colored banners)',
+          ),
           _buildRuleItem('⚫ Dark Version:', 'Use for light/white backgrounds and minimal interfaces'),
           _buildRuleItem('🔄 Theme Adaptive:', 'Use for dynamic interfaces that support theme switching'),
           const SizedBox(height: AppDimensions.spacingS),
@@ -477,7 +486,7 @@ class LogoUsageGuide extends StatelessWidget {
             'Always ensure sufficient contrast between logo and background for accessibility.',
             style: const TextStyle(fontStyle: FontStyle.italic),
             color: colors.textSecondary,
-          )
+          ),
         ],
       ),
     );
@@ -502,11 +511,7 @@ class NewIconPreview extends StatelessWidget {
   final String assetPath;
   final String description;
 
-  const NewIconPreview({
-    required this.assetPath,
-    required this.description,
-    super.key,
-  });
+  const NewIconPreview({required this.assetPath, required this.description, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -527,7 +532,7 @@ class NewIconPreview extends StatelessWidget {
       children: [
         MediumBodyText(description, color: colors.textSecondary),
         const SizedBox(height: AppDimensions.spacingM),
-        
+
         // Size demonstration
         const MediumTitleText('Multiple Sizes:'),
         const SizedBox(height: AppDimensions.spacingS),
@@ -536,16 +541,12 @@ class NewIconPreview extends StatelessWidget {
           runSpacing: AppDimensions.spacingM,
           crossAxisAlignment: WrapCrossAlignment.center,
           children: sizes.map((size) {
-            return _IconSizePreview(
-              assetPath: assetPath,
-              size: size,
-              colors: colors,
-            );
+            return _IconSizePreview(assetPath: assetPath, size: size, colors: colors);
           }).toList(),
         ),
-        
+
         const SizedBox(height: AppDimensions.spacingL),
-        
+
         // Background variations
         const MediumTitleText('Background Variations:'),
         const SizedBox(height: AppDimensions.spacingS),
@@ -553,13 +554,10 @@ class NewIconPreview extends StatelessWidget {
           spacing: AppDimensions.spacingM,
           runSpacing: AppDimensions.spacingM,
           children: backgrounds.map((bg) {
-            return _IconBackgroundPreview(
-              assetPath: assetPath,
-              config: bg,
-            );
+            return _IconBackgroundPreview(assetPath: assetPath, config: bg);
           }).toList(),
         ),
-        
+
         const SizedBox(height: AppDimensions.spacingM),
         CodeText(assetPath, color: colors.textSecondary),
       ],
@@ -572,11 +570,7 @@ class _IconSizePreview extends StatelessWidget {
   final double size;
   final ThemeColorSet colors;
 
-  const _IconSizePreview({
-    required this.assetPath,
-    required this.size,
-    required this.colors,
-  });
+  const _IconSizePreview({required this.assetPath, required this.size, required this.colors});
 
   @override
   Widget build(BuildContext context) {
@@ -589,11 +583,7 @@ class _IconSizePreview extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.spacingS),
-            child: SvgPicture.asset(
-              assetPath,
-              width: size,
-              height: size,
-            ),
+            child: SvgPicture.asset(assetPath, width: size, height: size),
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXs),
@@ -607,10 +597,7 @@ class _IconBackgroundPreview extends StatelessWidget {
   final String assetPath;
   final _BackgroundConfig config;
 
-  const _IconBackgroundPreview({
-    required this.assetPath,
-    required this.config,
-  });
+  const _IconBackgroundPreview({required this.assetPath, required this.config});
 
   @override
   Widget build(BuildContext context) {
@@ -624,11 +611,7 @@ class _IconBackgroundPreview extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.spacingM),
-            child: SvgPicture.asset(
-              assetPath,
-              width: 64,
-              height: 64,
-            ),
+            child: SvgPicture.asset(assetPath, width: 64, height: 64),
           ),
         ),
         const SizedBox(height: AppDimensions.spacingXs),
@@ -650,10 +633,7 @@ class _IconVariantsGrid extends StatelessWidget {
   final List<String> iconPaths;
   final bool showLarger;
 
-  const _IconVariantsGrid({
-    required this.iconPaths,
-    this.showLarger = false,
-  });
+  const _IconVariantsGrid({required this.iconPaths, this.showLarger = false});
 
   @override
   Widget build(BuildContext context) {
@@ -668,7 +648,7 @@ class _IconVariantsGrid extends StatelessWidget {
         children: iconPaths.asMap().entries.map((entry) {
           final index = entry.key;
           final path = entry.value;
-          
+
           return _IconVariantCard(
             iconPath: path,
             variantNumber: index + 1,
@@ -687,12 +667,7 @@ class _IconVariantCard extends StatelessWidget {
   final ThemeColorSet colors;
   final double size;
 
-  const _IconVariantCard({
-    required this.iconPath,
-    required this.variantNumber,
-    required this.colors,
-    this.size = 120,
-  });
+  const _IconVariantCard({required this.iconPath, required this.variantNumber, required this.colors, this.size = 120});
 
   @override
   Widget build(BuildContext context) {
@@ -705,16 +680,9 @@ class _IconVariantCard extends StatelessWidget {
         padding: const EdgeInsets.all(AppDimensions.spacingM),
         child: Column(
           children: [
-            SvgPicture.asset(
-              iconPath,
-              width: size,
-              height: size,
-            ),
+            SvgPicture.asset(iconPath, width: size, height: size),
             const SizedBox(height: AppDimensions.spacingS),
-            SmallBodyText(
-              'Variant $variantNumber',
-              color: colors.textSecondary,
-            ),
+            SmallBodyText('Variant $variantNumber', color: colors.textSecondary),
           ],
         ),
       ),
@@ -726,10 +694,7 @@ class _FinalIconPreview extends StatelessWidget {
   final String assetPath;
   final String description;
 
-  const _FinalIconPreview({
-    required this.assetPath,
-    required this.description,
-  });
+  const _FinalIconPreview({required this.assetPath, required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -741,7 +706,7 @@ class _FinalIconPreview extends StatelessWidget {
       children: [
         MediumBodyText(description, color: colors.textSecondary),
         const SizedBox(height: AppDimensions.spacingM),
-        
+
         // Large preview
         Row(
           children: [
@@ -752,15 +717,11 @@ class _FinalIconPreview extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(AppDimensions.spacingL),
-                child: SvgPicture.asset(
-                  assetPath,
-                  width: 200,
-                  height: 200,
-                ),
+                child: SvgPicture.asset(assetPath, width: 200, height: 200),
               ),
             ),
             const SizedBox(width: AppDimensions.spacingL),
-            
+
             // Multiple sizes
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -771,18 +732,14 @@ class _FinalIconPreview extends StatelessWidget {
                   spacing: AppDimensions.spacingM,
                   runSpacing: AppDimensions.spacingM,
                   children: [16.0, 32.0, 64.0, 128.0].map((size) {
-                    return _IconSizePreview(
-                      assetPath: assetPath,
-                      size: size,
-                      colors: colors,
-                    );
+                    return _IconSizePreview(assetPath: assetPath, size: size, colors: colors);
                   }).toList(),
                 ),
               ],
             ),
           ],
         ),
-        
+
         const SizedBox(height: AppDimensions.spacingM),
         CodeText(assetPath, color: colors.textSecondary),
       ],
