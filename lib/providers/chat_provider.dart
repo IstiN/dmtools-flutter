@@ -49,6 +49,10 @@ class ChatProvider with ChangeNotifier {
   static const String _chatThemeFontFamilyKey = 'chat_theme_font_family';
   static const String _chatThemeBackgroundColorLightKey = 'chat_theme_background_color_light';
   static const String _chatThemeBackgroundColorDarkKey = 'chat_theme_background_color_dark';
+  static const String _chatThemeUserTextColorLightKey = 'chat_theme_user_text_color_light';
+  static const String _chatThemeUserTextColorDarkKey = 'chat_theme_user_text_color_dark';
+  static const String _chatThemeAiTextColorLightKey = 'chat_theme_ai_text_color_light';
+  static const String _chatThemeAiTextColorDarkKey = 'chat_theme_ai_text_color_dark';
 
   final ChatService _chatService;
   final IntegrationService _integrationService;
@@ -845,6 +849,10 @@ class ChatProvider with ChangeNotifier {
       final fontFamily = prefs.getString(_chatThemeFontFamilyKey);
       final backgroundColorLightStr = prefs.getString(_chatThemeBackgroundColorLightKey);
       final backgroundColorDarkStr = prefs.getString(_chatThemeBackgroundColorDarkKey);
+      final userTextColorLightStr = prefs.getString(_chatThemeUserTextColorLightKey);
+      final userTextColorDarkStr = prefs.getString(_chatThemeUserTextColorDarkKey);
+      final aiTextColorLightStr = prefs.getString(_chatThemeAiTextColorLightKey);
+      final aiTextColorDarkStr = prefs.getString(_chatThemeAiTextColorDarkKey);
 
       // Start with base theme
       _chatTheme = themeType?.toTheme() ?? ChatTheme.defaultTheme();
@@ -869,7 +877,7 @@ class ChatProvider with ChangeNotifier {
         _chatTheme = _chatTheme.copyWith(dateTextColor: Color(int.parse(dateColorStr)));
       }
 
-      // Apply bubble mode, text size, showAgentName, fontFamily, and background colors
+      // Apply bubble mode, text size, showAgentName, fontFamily, background colors, and text colors
       _chatTheme = _chatTheme.copyWith(
         bubbleMode: bubbleMode,
         textSize: textSize,
@@ -877,6 +885,10 @@ class ChatProvider with ChangeNotifier {
         fontFamily: fontFamily,
         backgroundColorLight: backgroundColorLightStr != null ? Color(int.parse(backgroundColorLightStr)) : null,
         backgroundColorDark: backgroundColorDarkStr != null ? Color(int.parse(backgroundColorDarkStr)) : null,
+        userMessageTextColorLight: userTextColorLightStr != null ? Color(int.parse(userTextColorLightStr)) : null,
+        userMessageTextColorDark: userTextColorDarkStr != null ? Color(int.parse(userTextColorDarkStr)) : null,
+        aiMessageTextColorLight: aiTextColorLightStr != null ? Color(int.parse(aiTextColorLightStr)) : null,
+        aiMessageTextColorDark: aiTextColorDarkStr != null ? Color(int.parse(aiTextColorDarkStr)) : null,
       );
 
       if (kDebugMode) {
@@ -898,17 +910,17 @@ class ChatProvider with ChangeNotifier {
 
       // Save theme type (try to detect from current theme)
       ChatThemeType? detectedType;
-      if (_chatTheme.userMessageColor.value == ChatTheme.defaultTheme().userMessageColor.value &&
-          _chatTheme.aiMessageColor.value == ChatTheme.defaultTheme().aiMessageColor.value) {
+      if (_chatTheme.userMessageColor.toARGB32() == ChatTheme.defaultTheme().userMessageColor.toARGB32() &&
+          _chatTheme.aiMessageColor.toARGB32() == ChatTheme.defaultTheme().aiMessageColor.toARGB32()) {
         detectedType = ChatThemeType.defaultTheme;
-      } else if (_chatTheme.userMessageColor.value == ChatTheme.day().userMessageColor.value &&
-          _chatTheme.aiMessageColor.value == ChatTheme.day().aiMessageColor.value) {
+      } else if (_chatTheme.userMessageColor.toARGB32() == ChatTheme.day().userMessageColor.toARGB32() &&
+          _chatTheme.aiMessageColor.toARGB32() == ChatTheme.day().aiMessageColor.toARGB32()) {
         detectedType = ChatThemeType.day;
-      } else if (_chatTheme.userMessageColor.value == ChatTheme.nightAccent().userMessageColor.value) {
+      } else if (_chatTheme.userMessageColor.toARGB32() == ChatTheme.nightAccent().userMessageColor.toARGB32()) {
         detectedType = ChatThemeType.nightAccent;
-      } else if (_chatTheme.userMessageColor.value == ChatTheme.dayClassic().userMessageColor.value) {
+      } else if (_chatTheme.userMessageColor.toARGB32() == ChatTheme.dayClassic().userMessageColor.toARGB32()) {
         detectedType = ChatThemeType.dayClassic;
-      } else if (_chatTheme.userMessageColor.value == ChatTheme.system().userMessageColor.value) {
+      } else if (_chatTheme.userMessageColor.toARGB32() == ChatTheme.system().userMessageColor.toARGB32()) {
         detectedType = ChatThemeType.system;
       }
 
@@ -917,12 +929,12 @@ class ChatProvider with ChangeNotifier {
       }
 
       // Save all colors
-      await prefs.setString(_chatThemeUserColorKey, _chatTheme.userMessageColor.value.toString());
-      await prefs.setString(_chatThemeAiColorKey, _chatTheme.aiMessageColor.value.toString());
-      await prefs.setString(_chatThemeUserTextColorKey, _chatTheme.userMessageTextColor.value.toString());
-      await prefs.setString(_chatThemeAiTextColorKey, _chatTheme.aiMessageTextColor.value.toString());
-      await prefs.setString(_chatThemeNameColorKey, _chatTheme.nameColor.value.toString());
-      await prefs.setString(_chatThemeDateColorKey, _chatTheme.dateTextColor.value.toString());
+      await prefs.setString(_chatThemeUserColorKey, _chatTheme.userMessageColor.toARGB32().toString());
+      await prefs.setString(_chatThemeAiColorKey, _chatTheme.aiMessageColor.toARGB32().toString());
+      await prefs.setString(_chatThemeUserTextColorKey, _chatTheme.userMessageTextColor.toARGB32().toString());
+      await prefs.setString(_chatThemeAiTextColorKey, _chatTheme.aiMessageTextColor.toARGB32().toString());
+      await prefs.setString(_chatThemeNameColorKey, _chatTheme.nameColor.toARGB32().toString());
+      await prefs.setString(_chatThemeDateColorKey, _chatTheme.dateTextColor.toARGB32().toString());
       await prefs.setBool(_chatThemeBubbleModeKey, _chatTheme.bubbleMode);
       await prefs.setDouble(_chatThemeTextSizeKey, _chatTheme.textSize);
       await prefs.setBool(_chatThemeShowAgentNameKey, _chatTheme.showAgentName);
@@ -934,14 +946,45 @@ class ChatProvider with ChangeNotifier {
 
       // Save background colors
       if (_chatTheme.backgroundColorLight != null) {
-        await prefs.setString(_chatThemeBackgroundColorLightKey, _chatTheme.backgroundColorLight!.value.toString());
+        await prefs.setString(
+          _chatThemeBackgroundColorLightKey,
+          _chatTheme.backgroundColorLight!.toARGB32().toString(),
+        );
       } else {
         await prefs.remove(_chatThemeBackgroundColorLightKey);
       }
       if (_chatTheme.backgroundColorDark != null) {
-        await prefs.setString(_chatThemeBackgroundColorDarkKey, _chatTheme.backgroundColorDark!.value.toString());
+        await prefs.setString(_chatThemeBackgroundColorDarkKey, _chatTheme.backgroundColorDark!.toARGB32().toString());
       } else {
         await prefs.remove(_chatThemeBackgroundColorDarkKey);
+      }
+
+      // Save text colors for light and dark themes
+      if (_chatTheme.userMessageTextColorLight != null) {
+        await prefs.setString(
+          _chatThemeUserTextColorLightKey,
+          _chatTheme.userMessageTextColorLight!.toARGB32().toString(),
+        );
+      } else {
+        await prefs.remove(_chatThemeUserTextColorLightKey);
+      }
+      if (_chatTheme.userMessageTextColorDark != null) {
+        await prefs.setString(
+          _chatThemeUserTextColorDarkKey,
+          _chatTheme.userMessageTextColorDark!.toARGB32().toString(),
+        );
+      } else {
+        await prefs.remove(_chatThemeUserTextColorDarkKey);
+      }
+      if (_chatTheme.aiMessageTextColorLight != null) {
+        await prefs.setString(_chatThemeAiTextColorLightKey, _chatTheme.aiMessageTextColorLight!.toARGB32().toString());
+      } else {
+        await prefs.remove(_chatThemeAiTextColorLightKey);
+      }
+      if (_chatTheme.aiMessageTextColorDark != null) {
+        await prefs.setString(_chatThemeAiTextColorDarkKey, _chatTheme.aiMessageTextColorDark!.toARGB32().toString());
+      } else {
+        await prefs.remove(_chatThemeAiTextColorDarkKey);
       }
 
       if (kDebugMode) {

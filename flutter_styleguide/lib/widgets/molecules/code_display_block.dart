@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+import 'package:dmtools_styleguide/utils/syntax_highlighter.dart';
 
 /// A widget that displays code with syntax highlighting and copy functionality
 ///
 /// This molecule provides a formatted code display with optional title,
 /// copy button, line numbers, and customizable appearance. Used for
 /// showing configuration code, JSON responses, and other text content.
-class CodeDisplayBlock extends StatelessWidget {
+class CodeDisplayBlock extends StatefulWidget {
   const CodeDisplayBlock({
     required this.code,
     this.title,
@@ -17,6 +18,8 @@ class CodeDisplayBlock extends StatelessWidget {
     this.theme = CodeDisplayTheme.dark,
     this.size = CodeDisplaySize.medium,
     this.onCopy,
+    this.initiallyCollapsed = false,
+    this.transparentBackground = false,
     super.key,
   });
 
@@ -29,6 +32,21 @@ class CodeDisplayBlock extends StatelessWidget {
   final CodeDisplayTheme theme;
   final CodeDisplaySize size;
   final VoidCallback? onCopy;
+  final bool initiallyCollapsed;
+  final bool transparentBackground;
+
+  @override
+  State<CodeDisplayBlock> createState() => _CodeDisplayBlockState();
+}
+
+class _CodeDisplayBlockState extends State<CodeDisplayBlock> {
+  bool _isCollapsed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isCollapsed = widget.initiallyCollapsed;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,48 +54,60 @@ class CodeDisplayBlock extends StatelessWidget {
     final dimensions = _getDimensions();
     final codeTheme = _getCodeTheme(colors);
 
-    return Container(
+    // Use adaptive background - no outer gray container, no border
+    // If transparentBackground is true, use transparent color to remove frame
+    return DecoratedBox(
       decoration: BoxDecoration(
-        color: codeTheme.backgroundColor,
+        color: widget.transparentBackground ? Colors.transparent : codeTheme.backgroundColor,
         borderRadius: BorderRadius.circular(dimensions.borderRadius),
-        border: Border.all(color: codeTheme.borderColor, width: dimensions.borderWidth),
+        // No border to remove gray frame
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          if (title != null || showCopyButton)
-            _HeaderSection(
-              title: title,
-              language: language,
-              showCopyButton: showCopyButton,
-              code: code,
-              codeTheme: codeTheme,
-              dimensions: dimensions,
-              onCopy: onCopy,
-            ),
-          _CodeContent(
-            code: code,
-            showLineNumbers: showLineNumbers,
-            maxHeight: maxHeight,
+          _HeaderSection(
+            title: widget.title,
+            language: widget.language,
+            showCopyButton: widget.showCopyButton,
+            code: widget.code,
             codeTheme: codeTheme,
             dimensions: dimensions,
+            onCopy: widget.onCopy,
+            isCollapsed: _isCollapsed,
+            transparentBackground: widget.transparentBackground,
+            onToggleCollapse: () {
+              setState(() {
+                _isCollapsed = !_isCollapsed;
+              });
+            },
           ),
+          if (!_isCollapsed)
+            _CodeContent(
+              code: widget.code,
+              showLineNumbers: widget.showLineNumbers,
+              maxHeight: widget.maxHeight,
+              codeTheme: codeTheme,
+              dimensions: dimensions,
+              language: widget.language,
+              transparentBackground: widget.transparentBackground,
+            ),
         ],
       ),
     );
   }
 
   _CodeDimensions _getDimensions() {
-    switch (size) {
+    switch (widget.size) {
       case CodeDisplaySize.small:
         return const _CodeDimensions(
           borderRadius: 6,
           borderWidth: 1,
-          headerPadding: 12,
-          codePadding: 12,
+          headerPadding: 6,
+          codePadding: 6,
           fontSize: 12,
           lineHeight: 1.4,
-          headerSpacing: 8,
+          headerSpacing: 6,
           copyButtonSize: CopyButtonSize.small,
         );
       case CodeDisplaySize.medium:
@@ -106,7 +136,7 @@ class CodeDisplayBlock extends StatelessWidget {
   }
 
   _CodeTheme _getCodeTheme(ThemeColorSet colors) {
-    switch (theme) {
+    switch (widget.theme) {
       case CodeDisplayTheme.light:
         return _CodeTheme(
           backgroundColor: colors.cardBg,
@@ -164,6 +194,9 @@ class _HeaderSection extends StatelessWidget {
     this.language,
     this.showCopyButton = true,
     this.onCopy,
+    this.isCollapsed = false,
+    this.transparentBackground = false,
+    this.onToggleCollapse,
   });
 
   final String? title;
@@ -173,23 +206,37 @@ class _HeaderSection extends StatelessWidget {
   final _CodeTheme codeTheme;
   final _CodeDimensions dimensions;
   final VoidCallback? onCopy;
+  final bool isCollapsed;
+  final bool transparentBackground;
+  final VoidCallback? onToggleCollapse;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(dimensions.headerPadding),
+      padding: EdgeInsets.symmetric(
+        horizontal: dimensions.headerPadding * 0.75,
+        vertical: dimensions.headerPadding * 0.5,
+      ),
       decoration: BoxDecoration(
-        color: codeTheme.headerBackgroundColor,
+        color: transparentBackground ? Colors.transparent : codeTheme.headerBackgroundColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(dimensions.borderRadius),
           topRight: Radius.circular(dimensions.borderRadius),
         ),
-        border: Border(
-          bottom: BorderSide(color: codeTheme.borderColor, width: dimensions.borderWidth),
-        ),
+        // No border to remove gray frame
       ),
       child: Row(
         children: [
+          if (onToggleCollapse != null)
+            GestureDetector(
+              onTap: onToggleCollapse,
+              child: Icon(
+                isCollapsed ? Icons.expand_more : Icons.expand_less,
+                size: 16,
+                color: codeTheme.headerTextColor, // Adaptive header text color
+              ),
+            ),
+          if (onToggleCollapse != null) SizedBox(width: dimensions.headerSpacing * 0.5),
           Expanded(
             child: Row(
               children: [
@@ -197,13 +244,13 @@ class _HeaderSection extends StatelessWidget {
                   Text(
                     title!,
                     style: TextStyle(
-                      fontSize: dimensions.fontSize,
+                      fontSize: dimensions.fontSize * 0.9,
                       fontWeight: FontWeight.w600,
-                      color: codeTheme.headerTextColor,
+                      color: codeTheme.headerTextColor, // Adaptive header text color
                     ),
                   ),
                   if (language != null) ...[
-                    SizedBox(width: dimensions.headerSpacing),
+                    SizedBox(width: dimensions.headerSpacing * 0.75),
                     _LanguageBadge(language: language!, codeTheme: codeTheme, dimensions: dimensions),
                   ],
                 ] else if (language != null) ...[
@@ -237,16 +284,16 @@ class _LanguageBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
       decoration: BoxDecoration(
-        color: codeTheme.textColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(4),
+        color: const Color(0xFF6A737D), // Gray background matching the image
+        borderRadius: BorderRadius.circular(8), // Smaller pill shape
       ),
       child: Text(
         language.toUpperCase(),
-        style: TextStyle(
-          fontSize: dimensions.fontSize * 0.8,
+        style: const TextStyle(
+          fontSize: 9,
           fontWeight: FontWeight.w500,
-          color: codeTheme.textColor.withValues(alpha: 0.7),
-          letterSpacing: 0.5,
+          color: Colors.white, // White text as shown in image
+          letterSpacing: 0.3,
         ),
       ),
     );
@@ -260,6 +307,8 @@ class _CodeContent extends StatelessWidget {
     required this.codeTheme,
     required this.dimensions,
     this.maxHeight,
+    this.language,
+    this.transparentBackground = false,
   });
 
   final String code;
@@ -267,14 +316,26 @@ class _CodeContent extends StatelessWidget {
   final double? maxHeight;
   final _CodeTheme codeTheme;
   final _CodeDimensions dimensions;
+  final String? language;
+  final bool transparentBackground;
 
   @override
   Widget build(BuildContext context) {
     final lines = code.split('\n');
 
     Widget content = showLineNumbers
-        ? _CodeWithLineNumbers(lines: lines, codeTheme: codeTheme, dimensions: dimensions)
-        : _SimpleCodeDisplay(code: code, codeTheme: codeTheme, dimensions: dimensions);
+        ? _CodeWithLineNumbers(
+            lines: lines,
+            codeTheme: codeTheme,
+            dimensions: dimensions,
+            language: language,
+          )
+        : _SimpleCodeDisplay(
+            code: code,
+            codeTheme: codeTheme,
+            dimensions: dimensions,
+            language: language,
+          );
 
     if (maxHeight != null) {
       content = SizedBox(
@@ -283,20 +344,42 @@ class _CodeContent extends StatelessWidget {
       );
     }
 
-    return Container(padding: EdgeInsets.all(dimensions.codePadding), child: content);
+    // Inner container with adaptive background for code content
+    // If transparentBackground is true, use transparent color to remove frame
+    return Container(
+      padding: EdgeInsets.all(dimensions.codePadding),
+      decoration: BoxDecoration(
+        color: transparentBackground ? Colors.transparent : codeTheme.backgroundColor,
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(dimensions.borderRadius),
+          bottomRight: Radius.circular(dimensions.borderRadius),
+        ),
+      ),
+      child: content,
+    );
   }
 }
 
 class _CodeWithLineNumbers extends StatelessWidget {
-  const _CodeWithLineNumbers({required this.lines, required this.codeTheme, required this.dimensions});
+  const _CodeWithLineNumbers({
+    required this.lines,
+    required this.codeTheme,
+    required this.dimensions,
+    this.language,
+  });
 
   final List<String> lines;
   final _CodeTheme codeTheme;
   final _CodeDimensions dimensions;
+  final String? language;
 
   @override
   Widget build(BuildContext context) {
     final lineNumberWidth = '${lines.length}'.length * 8.0 + 16;
+    final fullCode = lines.join('\n');
+    // Determine if we're using light theme
+    final isLightTheme = codeTheme.backgroundColor.computeLuminance() > 0.5;
+    final highlightedSpans = SyntaxHighlighter.highlight(fullCode, language, isLightTheme: isLightTheme);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -324,27 +407,18 @@ class _CodeWithLineNumbers extends StatelessWidget {
           ),
         ),
         SizedBox(width: dimensions.headerSpacing),
-        // Code content
+        // Code content with syntax highlighting
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: lines.map((line) {
-              return SizedBox(
-                height: dimensions.fontSize * dimensions.lineHeight,
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    line.isEmpty ? ' ' : line, // Preserve empty lines
-                    style: TextStyle(
-                      fontSize: dimensions.fontSize,
-                      color: codeTheme.textColor,
-                      fontFamily: 'monospace',
-                      height: dimensions.lineHeight,
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
+          child: RichText(
+            text: TextSpan(
+              children: highlightedSpans,
+              style: TextStyle(
+                fontSize: dimensions.fontSize,
+                fontFamily: 'monospace',
+                height: dimensions.lineHeight,
+                // Don't set color here - let TextSpan colors override
+              ),
+            ),
           ),
         ),
       ],
@@ -353,23 +427,59 @@ class _CodeWithLineNumbers extends StatelessWidget {
 }
 
 class _SimpleCodeDisplay extends StatelessWidget {
-  const _SimpleCodeDisplay({required this.code, required this.codeTheme, required this.dimensions});
+  const _SimpleCodeDisplay({
+    required this.code,
+    required this.codeTheme,
+    required this.dimensions,
+    this.language,
+  });
 
   final String code;
   final _CodeTheme codeTheme;
   final _CodeDimensions dimensions;
+  final String? language;
 
   @override
   Widget build(BuildContext context) {
-    return SelectableText(
-      code,
-      style: TextStyle(
-        fontSize: dimensions.fontSize,
-        color: codeTheme.textColor,
-        fontFamily: 'monospace',
-        height: dimensions.lineHeight,
-      ),
-    );
+    // Determine if we're using light theme
+    final isLightTheme = codeTheme.backgroundColor.computeLuminance() > 0.5;
+    final highlightedSpans = SyntaxHighlighter.highlight(code, language, isLightTheme: isLightTheme);
+
+    // If highlighting worked, use the spans; otherwise use plain text
+    // Check if we have multiple spans with actual text or if colors are different from default
+    final nonEmptySpans = highlightedSpans.where((span) => span.text != null && span.text!.isNotEmpty).toList();
+    
+    // Check if any span has a different color than default (indicating highlighting worked)
+    final hasHighlighting = nonEmptySpans.any((span) => 
+      span.style?.color != null && 
+      span.style!.color != SyntaxHighlighter.defaultTextColor &&
+      span.style!.color != SyntaxHighlighter.defaultColorLight
+    ) || nonEmptySpans.length > 1;
+    
+    if (hasHighlighting && nonEmptySpans.isNotEmpty) {
+      return SelectableText.rich(
+        TextSpan(
+          children: nonEmptySpans,
+          style: TextStyle(
+            fontSize: dimensions.fontSize,
+            fontFamily: 'monospace',
+            height: dimensions.lineHeight,
+            // Don't set color here - let TextSpan colors override
+          ),
+        ),
+      );
+    } else {
+      // Fallback to plain text if highlighting didn't work
+      return SelectableText(
+        code,
+        style: TextStyle(
+          fontSize: dimensions.fontSize,
+          fontFamily: 'monospace',
+          height: dimensions.lineHeight,
+          color: codeTheme.textColor,
+        ),
+      );
+    }
   }
 }
 

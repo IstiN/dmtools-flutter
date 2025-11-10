@@ -39,6 +39,11 @@ class _StyleguideAppState extends State<StyleguideApp> with WidgetsBindingObserv
     debugPrint('📱 StyleguideApp: Starting theme initialization...');
     try {
       await _themeProvider.initializeTheme();
+      
+      // Syntax highlighter doesn't need initialization with highlight package
+      // It works directly without initialization
+      debugPrint('📱 StyleguideApp: Syntax highlighter ready');
+      
       debugPrint('📱 StyleguideApp: Theme initialized successfully');
       if (mounted) {
         setState(() {

@@ -797,7 +797,7 @@ class _ChatThemeConfigState extends State<ChatThemeConfig> {
             child: Text(
               'Set',
               style: TextStyle(
-                color: colorToUse,
+                color: colors.accentColor,
                 fontWeight: FontWeight.w600,
               ),
             ),

@@ -63,7 +63,7 @@ class UnauthenticatedHomeScreen extends StatelessWidget {
                     SizedBox(
                       width: totalWidth,
                       child: WelcomeBanner(
-                        title: 'Welcome to DMTools',
+                        title: 'Welcome to DM.ai',
                         subtitle: 'Your all-in-one solution for delivery management and automation',
                         onPrimaryAction: () {
                           // Show login dialog

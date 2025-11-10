@@ -109,6 +109,9 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoading = false;
 
+  /// Check if the chat input field is currently focused
+  bool get isInputFocused => _messageFocusNode.hasFocus;
+
   void insertText(String text) {
     final currentText = _messageController.text;
     final currentSelection = _messageController.selection;
@@ -566,15 +569,16 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
   Widget _buildMessageBubble(ChatMessage message, dynamic colors, int index) {
     // Get theme colors with override priority: override > theme > default
     final theme = widget.chatTheme ?? ChatTheme.day();
+    final isDarkMode = context.isDarkMode;
     final userMessageColor = widget.userMessageColorOverride ?? theme.userMessageColor;
     final aiMessageColor = widget.aiMessageColorOverride ?? theme.aiMessageColor;
-    final userMessageTextColor = widget.userMessageTextColorOverride ?? theme.userMessageTextColor;
-    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? theme.aiMessageTextColor;
     final textSize = theme.textSize;
     final showAgentName = theme.showAgentName;
 
     final messageColor = message.isUser ? userMessageColor : aiMessageColor;
-    final messageTextColor = message.isUser ? userMessageTextColor : aiMessageTextColor;
+    final messageTextColor = message.isUser
+        ? (widget.userMessageTextColorOverride ?? theme.getUserMessageTextColor(isDarkMode))
+        : (widget.aiMessageTextColorOverride ?? theme.getAiMessageTextColor(isDarkMode));
 
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -897,11 +901,12 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
 
   MarkdownStyleSheet _buildMessageMarkdownStyleSheet(BuildContext context, bool isUser, dynamic colors) {
     final theme = Theme.of(context);
+    final isDarkMode = context.isDarkMode;
     final chatTheme = widget.chatTheme ?? ChatTheme.day();
-    final userMessageTextColor = widget.userMessageTextColorOverride ?? chatTheme.userMessageTextColor;
-    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? chatTheme.aiMessageTextColor;
     final textSize = chatTheme.textSize;
-    final textColor = isUser ? userMessageTextColor : aiMessageTextColor;
+    final textColor = isUser
+        ? (widget.userMessageTextColorOverride ?? chatTheme.getUserMessageTextColor(isDarkMode))
+        : (widget.aiMessageTextColorOverride ?? chatTheme.getAiMessageTextColor(isDarkMode));
     final userMessageColor = widget.userMessageColorOverride ?? chatTheme.userMessageColor;
 
     return MarkdownStyleSheet.fromTheme(theme).copyWith(
@@ -1014,12 +1019,13 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
       code: theme.textTheme.bodyMedium?.copyWith(
         color: textColor,
         fontFamily: 'monospace',
-        backgroundColor: Colors.transparent,
-        fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * textSize,
+        backgroundColor: textColor.withValues(alpha: 0.1),
+        fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * textSize * 0.9,
       ),
       codeblockDecoration: BoxDecoration(
-        color: isUser ? userMessageColor.withValues(alpha: 0.2) : colors.inputBg,
-        borderRadius: BorderRadius.circular(4),
+        color: isUser ? userMessageColor.withValues(alpha: 0.2) : colors.codeBgColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colors.borderColor.withValues(alpha: 0.3)),
       ),
       blockquote: () {
         final baseStyle = _getFontTextStyle(
@@ -1051,14 +1057,14 @@ class CleanChatInterfaceState extends State<CleanChatInterface> {
         final baseStyle = _getFontTextStyle(
           chatTheme.fontFamily,
           fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
-          color: isUser ? userMessageTextColor : colors.accentColor,
+          color: isUser ? textColor : colors.accentColor,
         );
         return baseStyle?.copyWith(
               decoration: TextDecoration.underline,
               fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
             ) ??
             theme.textTheme.bodyLarge?.copyWith(
-              color: isUser ? userMessageTextColor : colors.accentColor,
+              color: isUser ? textColor : colors.accentColor,
               decoration: TextDecoration.underline,
               fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
             );
@@ -1657,15 +1663,16 @@ class ChatInterfaceState extends State<ChatInterface> {
   Widget _buildMessageBubble(ChatMessage message, dynamic colors, int index) {
     // Get theme colors with override priority: override > theme > default
     final theme = widget.chatTheme ?? ChatTheme.day();
+    final isDarkMode = context.isDarkMode;
     final userMessageColor = widget.userMessageColorOverride ?? theme.userMessageColor;
     final aiMessageColor = widget.aiMessageColorOverride ?? theme.aiMessageColor;
-    final userMessageTextColor = widget.userMessageTextColorOverride ?? theme.userMessageTextColor;
-    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? theme.aiMessageTextColor;
     final textSize = theme.textSize;
     final showAgentName = theme.showAgentName;
 
     final messageColor = message.isUser ? userMessageColor : aiMessageColor;
-    final messageTextColor = message.isUser ? userMessageTextColor : aiMessageTextColor;
+    final messageTextColor = message.isUser
+        ? (widget.userMessageTextColorOverride ?? theme.getUserMessageTextColor(isDarkMode))
+        : (widget.aiMessageTextColorOverride ?? theme.getAiMessageTextColor(isDarkMode));
 
     return Align(
       alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -2003,11 +2010,12 @@ class ChatInterfaceState extends State<ChatInterface> {
 
   MarkdownStyleSheet _buildMessageMarkdownStyleSheet(BuildContext context, bool isUser, dynamic colors) {
     final theme = Theme.of(context);
+    final isDarkMode = context.isDarkMode;
     final chatTheme = widget.chatTheme ?? ChatTheme.day();
-    final userMessageTextColor = widget.userMessageTextColorOverride ?? chatTheme.userMessageTextColor;
-    final aiMessageTextColor = widget.aiMessageTextColorOverride ?? chatTheme.aiMessageTextColor;
     final textSize = chatTheme.textSize;
-    final textColor = isUser ? userMessageTextColor : aiMessageTextColor;
+    final textColor = isUser
+        ? (widget.userMessageTextColorOverride ?? chatTheme.getUserMessageTextColor(isDarkMode))
+        : (widget.aiMessageTextColorOverride ?? chatTheme.getAiMessageTextColor(isDarkMode));
     final userMessageColor = widget.userMessageColorOverride ?? chatTheme.userMessageColor;
 
     return MarkdownStyleSheet.fromTheme(theme).copyWith(
@@ -2120,12 +2128,13 @@ class ChatInterfaceState extends State<ChatInterface> {
       code: theme.textTheme.bodyMedium?.copyWith(
         color: textColor,
         fontFamily: 'monospace',
-        backgroundColor: Colors.transparent,
-        fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * textSize,
+        backgroundColor: textColor.withValues(alpha: 0.1),
+        fontSize: (theme.textTheme.bodyMedium?.fontSize ?? 14) * textSize * 0.9,
       ),
       codeblockDecoration: BoxDecoration(
-        color: isUser ? userMessageColor.withValues(alpha: 0.2) : colors.inputBg,
-        borderRadius: BorderRadius.circular(4),
+        color: isUser ? userMessageColor.withValues(alpha: 0.2) : colors.codeBgColor,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: colors.borderColor.withValues(alpha: 0.3)),
       ),
       blockquote: () {
         final baseStyle = _getFontTextStyle(
@@ -2157,14 +2166,14 @@ class ChatInterfaceState extends State<ChatInterface> {
         final baseStyle = _getFontTextStyle(
           chatTheme.fontFamily,
           fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
-          color: isUser ? userMessageTextColor : colors.accentColor,
+          color: isUser ? textColor : colors.accentColor,
         );
         return baseStyle?.copyWith(
               decoration: TextDecoration.underline,
               fontFamily: baseStyle.fontFamily, // Explicitly preserve fontFamily
             ) ??
             theme.textTheme.bodyLarge?.copyWith(
-              color: isUser ? userMessageTextColor : colors.accentColor,
+              color: isUser ? textColor : colors.accentColor,
               decoration: TextDecoration.underline,
               fontSize: (theme.textTheme.bodyLarge?.fontSize ?? 14) * textSize,
             );

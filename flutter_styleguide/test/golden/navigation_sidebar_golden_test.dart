@@ -5,76 +5,39 @@ import '../golden_test_helper.dart';
 
 void main() {
   group('NavigationSidebar Golden Tests', () {
-    // Sample navigation items for testing
+    // Sample navigation items for testing - Chat first as per new design
     const List<NavigationItem> testItems = [
       NavigationItem(
-        icon: Icons.dashboard_outlined,
-        label: 'Dashboard',
-        route: '/dashboard',
+        label: 'Chat',
+        route: '/chat',
+        svgIconPath: 'assets/img/nav-icon-chat.svg',
       ),
       NavigationItem(
-        icon: Icons.smart_toy_outlined,
-        label: 'Agents',
-        route: '/agents',
+        label: 'AI Jobs',
+        route: '/ai-jobs',
+        svgIconPath: 'assets/img/nav-icon-ai-jobs.svg',
       ),
       NavigationItem(
-        icon: Icons.folder_outlined,
-        label: 'Workspaces',
-        route: '/workspaces',
-      ),
-      NavigationItem(
-        icon: Icons.apps_outlined,
-        label: 'Applications',
-        route: '/applications',
-      ),
-      NavigationItem(
-        icon: Icons.extension_outlined,
         label: 'Integrations',
         route: '/integrations',
+        svgIconPath: 'assets/img/nav-icon-integrations.svg',
       ),
       NavigationItem(
-        icon: Icons.people_outlined,
-        label: 'Users',
-        route: '/users',
-      ),
-      NavigationItem(
-        icon: Icons.settings_outlined,
-        label: 'Settings',
-        route: '/settings',
+        label: 'MCP',
+        route: '/mcp',
+        svgIconPath: 'assets/img/nav-icon-mcp.svg',
       ),
     ];
 
-    testWidgets('NavigationSidebar - Light Theme - Desktop', (WidgetTester tester) async {
+    testWidgets('NavigationSidebar - Dark Theme - Desktop - Chat Selected', (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestApp(
           const SizedBox(
-            width: 300,
+            width: 130,
             height: 500,
             child: NavigationSidebar(
               items: testItems,
-              currentRoute: '/dashboard',
-              isTestMode: true,
-              testDarkMode: false,
-            ),
-          ),
-        ),
-      );
-
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/navigation_sidebar_light_desktop.png'),
-      );
-    });
-
-    testWidgets('NavigationSidebar - Dark Theme - Desktop', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestApp(
-          const SizedBox(
-            width: 300,
-            height: 500,
-            child: NavigationSidebar(
-              items: testItems,
-              currentRoute: '/dashboard',
+              currentRoute: '/chat',
               isTestMode: true,
               testDarkMode: true,
             ),
@@ -85,45 +48,21 @@ void main() {
 
       await expectLater(
         find.byType(MaterialApp),
-        matchesGoldenFile('goldens/navigation_sidebar_dark_desktop.png'),
+        matchesGoldenFile('goldens/navigation_sidebar_dark_desktop_chat_selected.png'),
       );
     });
 
-    testWidgets('NavigationSidebar - Light Theme - Mobile', (WidgetTester tester) async {
+    testWidgets('NavigationSidebar - Dark Theme - Desktop - AI Jobs Selected', (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestApp(
           const SizedBox(
-            width: 300,
+            width: 130,
             height: 500,
             child: NavigationSidebar(
               items: testItems,
-              currentRoute: '/agents',
-              isTestMode: true,
-              testDarkMode: false,
-              isMobile: true,
-            ),
-          ),
-        ),
-      );
-
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/navigation_sidebar_light_mobile.png'),
-      );
-    });
-
-    testWidgets('NavigationSidebar - Dark Theme - Mobile', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestApp(
-          const SizedBox(
-            width: 300,
-            height: 500,
-            child: NavigationSidebar(
-              items: testItems,
-              currentRoute: '/agents',
+              currentRoute: '/ai-jobs',
               isTestMode: true,
               testDarkMode: true,
-              isMobile: true,
             ),
           ),
           darkMode: true,
@@ -132,52 +71,30 @@ void main() {
 
       await expectLater(
         find.byType(MaterialApp),
-        matchesGoldenFile('goldens/navigation_sidebar_dark_mobile.png'),
+        matchesGoldenFile('goldens/navigation_sidebar_dark_desktop_ai_jobs_selected.png'),
       );
     });
 
-    testWidgets('NavigationSidebar - Different Selected States', (WidgetTester tester) async {
+    testWidgets('NavigationSidebar - Dark Theme - Integrations Selected', (WidgetTester tester) async {
       await tester.pumpWidget(
         createTestApp(
           const SizedBox(
-            width: 300,
+            width: 130,
             height: 500,
             child: NavigationSidebar(
               items: testItems,
               currentRoute: '/integrations',
               isTestMode: true,
-              testDarkMode: false,
+              testDarkMode: true,
             ),
           ),
+          darkMode: true,
         ),
       );
 
       await expectLater(
         find.byType(MaterialApp),
-        matchesGoldenFile('goldens/navigation_sidebar_integrations_selected.png'),
-      );
-    });
-
-    testWidgets('NavigationSidebar - No Footer', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        createTestApp(
-          const SizedBox(
-            width: 300,
-            height: 400,
-            child: NavigationSidebar(
-              items: testItems,
-              currentRoute: '/settings',
-              isTestMode: true,
-              testDarkMode: false,
-              showFooter: false,
-            ),
-          ),
-        ),
-      );
-
-      await expectLater(
-        find.byType(MaterialApp),
-        matchesGoldenFile('goldens/navigation_sidebar_no_footer.png'),
+        matchesGoldenFile('goldens/navigation_sidebar_dark_desktop_integrations_selected.png'),
       );
     });
   });

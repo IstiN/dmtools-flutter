@@ -92,7 +92,6 @@ class ChatMessage extends StatelessWidget {
 
   MarkdownStyleSheet _buildMarkdownStyleSheet(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = context.colors;
     final textColor = _getTextColor(theme);
 
     return MarkdownStyleSheet.fromTheme(theme).copyWith(
@@ -108,9 +107,8 @@ class ChatMessage extends StatelessWidget {
         fontFamily: 'monospace',
         backgroundColor: Colors.transparent,
       ),
-      codeblockDecoration: BoxDecoration(
-        color: sender == MessageSender.user ? Colors.black.withValues(alpha: 0.2) : colors.inputBg,
-        borderRadius: BorderRadius.circular(4),
+      codeblockDecoration: const BoxDecoration(
+        color: Colors.transparent, // No gray background for code blocks
       ),
       blockquote: theme.textTheme.bodyLarge?.copyWith(
         color: textColor?.withValues(alpha: 0.8),
@@ -133,6 +131,9 @@ class ChatMessage extends StatelessWidget {
       h5: baseStyle?.copyWith(fontWeight: FontWeight.w600),
       h6: baseStyle?.copyWith(fontWeight: FontWeight.w600),
       code: baseStyle?.copyWith(fontFamily: 'monospace'),
+      codeblockDecoration: const BoxDecoration(
+        color: Colors.transparent, // No gray background for code blocks
+      ),
       blockquote: baseStyle?.copyWith(fontStyle: FontStyle.italic),
       listBullet: baseStyle,
     );

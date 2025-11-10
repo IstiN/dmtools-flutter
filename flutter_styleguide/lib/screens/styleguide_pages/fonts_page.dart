@@ -34,9 +34,9 @@ class FontsPage extends StatelessWidget {
       {'name': 'System Default', 'style': null},
     ];
 
-    TextStyle? _getFontStyle(String fontName, TextStyle? fontStyle) {
+    TextStyle? getFontStyle(String fontName, TextStyle? fontStyle) {
       if (fontName == 'Inter') {
-        return TextStyle(fontFamily: 'Inter');
+        return const TextStyle(fontFamily: 'Inter');
       }
       return fontStyle;
     }
@@ -108,7 +108,7 @@ class FontsPage extends StatelessWidget {
                         ...fontFamilies.map((font) {
                           final fontName = font['name'] as String;
                           final fontStyle = font['style'] as TextStyle?;
-                          final textStyle = _getFontStyle(fontName, fontStyle);
+                          final textStyle = getFontStyle(fontName, fontStyle);
 
                           return TableRow(
                             children: [
@@ -142,7 +142,7 @@ class FontsPage extends StatelessWidget {
                               ),
                             ],
                           );
-                        }).toList(),
+                        }),
                       ],
                     ),
                   ),

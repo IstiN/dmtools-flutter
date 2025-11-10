@@ -128,11 +128,9 @@ class _HomeScreenState extends State<HomeScreen> {
           AppHeader(
             showSearch: false,
             showTitle: false,
-            showHamburgerMenu: true,
-            onHamburgerPressed: () => _scaffoldKey.currentState?.openDrawer(),
             onThemeToggle: () async => await themeProvider.toggleTheme(),
             onLogoPressed: () {
-              context.go('/ai-jobs');
+              context.go('/chat');
             },
             profileButton: UserProfileButton(
               userName: authProvider.currentUser?.name ?? 'User',
@@ -178,15 +176,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: _buildPageContent(),
           ),
+
+          // Bottom Navigation Bar
+          BottomNavigationBarWidget(
+            items: _convertNavigationItems(app_router.navigationItems),
+            currentRoute: GoRouterState.of(context).uri.toString(),
+          ),
         ],
-      ),
-      drawer: Drawer(
-        child: NavigationSidebar(
-          items: _convertNavigationItems(app_router.navigationItems),
-          currentRoute: GoRouterState.of(context).uri.toString(),
-          isMobile: true,
-          onItemTap: () => Navigator.of(context).pop(),
-        ),
       ),
     );
   }
@@ -206,9 +202,10 @@ class _HomeScreenState extends State<HomeScreen> {
           return true; // Show all other items
         })
         .map((item) => NavigationItem(
-              icon: item.icon,
               label: item.label,
               route: item.route,
+              icon: item.icon,
+              svgIconPath: item.svgIconPath,
             ))
         .toList();
   }

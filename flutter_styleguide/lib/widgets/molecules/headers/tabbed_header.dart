@@ -189,7 +189,6 @@ class _TabbedHeaderState extends State<TabbedHeader> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Tab icon (optional) with color animation
               if (tab.icon != null) ...[

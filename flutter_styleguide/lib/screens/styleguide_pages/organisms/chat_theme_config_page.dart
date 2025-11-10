@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
-import '../../../widgets/styleguide/component_display.dart';
 
 class ChatThemeConfigPage extends StatefulWidget {
   const ChatThemeConfigPage({super.key});

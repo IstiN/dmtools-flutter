@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="40" viewBox="0 0 48 40" fill="none">
+  <defs>
+    <!-- Mask to create transparent "AI" text cutout from filled bubble -->
+    <mask id="aiTextMask">
+      <rect width="48" height="40" fill="white"/>
+      <text x="24" y="16" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="black" text-anchor="middle" dominant-baseline="central">AI</text>
+    </mask>
+  </defs>
+  <!-- Modern wide chat bubble with elegant curves - matching AI Jobs style -->
+  <g mask="url(#aiTextMask)">
+    <path d="M6 4C4.3 4 3 5.3 3 6V30L14 20H42C43.7 20 45 18.7 45 17V6C45 4.3 43.7 3 42 3H6Z" 
+          fill="currentColor" 
+          opacity="0.95"/>
+    <!-- Three message lines for better visual balance - more spacing -->
+    <rect x="8" y="20" width="24" height="2.5" rx="1.25" fill="currentColor" opacity="0.6"/>
+    <rect x="8" y="25" width="20" height="2.5" rx="1.25" fill="currentColor" opacity="0.6"/>
+    <rect x="8" y="30" width="22" height="2.5" rx="1.25" fill="currentColor" opacity="0.6"/>
+    <!-- Elegant tail pointing down - more spacing -->
+    <path d="M14 20L6 30L14 27H14V20Z" fill="currentColor" opacity="0.95"/>
+  </g>
+</svg>

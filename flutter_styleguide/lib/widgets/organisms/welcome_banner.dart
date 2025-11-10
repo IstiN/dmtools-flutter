@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../theme/app_theme.dart';
+import '../../theme/app_colors.dart';
 import '../../theme/app_dimensions.dart';
 import '../../utils/accessibility_utils.dart';
 import '../atoms/buttons/app_buttons.dart';
@@ -34,19 +34,15 @@ class WelcomeBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = isTestMode ? testDarkMode : Provider.of<ThemeProvider>(context).isDarkMode;
+    final isDarkMode = isTestMode ? testDarkMode : context.isDarkMode;
+    final colors = isTestMode
+        ? (testDarkMode ? AppColors.dark : AppColors.light)
+        : context.colors;
 
-    final lightThemeGradient = [
-      const Color(0xFF5E72EB),
-      const Color(0xFF00C6FB),
+    final gradientColors = [
+      colors.bannerGradientStart,
+      colors.bannerGradientEnd,
     ];
-
-    final darkThemeGradient = [
-      const Color(0xFF667eea),
-      const Color(0xFF764ba2),
-    ];
-
-    final gradientColors = isDarkMode ? darkThemeGradient : lightThemeGradient;
 
     return Container(
       width: double.infinity,

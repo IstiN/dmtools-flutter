@@ -327,27 +327,33 @@ class EnhancedAppRouter {
 }
 
 // Navigation items for the main app
+/// Supports both SVG icons (preferred) and Material icons (fallback)
 class NavigationItem {
-  final IconData icon;
+  final IconData? icon;
+  final String? svgIconPath;
   final String label;
   final String route;
 
   const NavigationItem({
-    required this.icon,
     required this.label,
     required this.route,
-  });
+    this.icon,
+    this.svgIconPath,
+  }) : assert(
+          icon != null || svgIconPath != null,
+          'Either icon or svgIconPath must be provided',
+        );
 }
 
 const List<NavigationItem> navigationItems = [
-  // Core functional pages
-  NavigationItem(icon: Icons.smart_toy_outlined, label: 'AI Jobs', route: '/ai-jobs'),
-  NavigationItem(icon: Icons.integration_instructions_outlined, label: 'Integrations', route: '/integrations'),
-  NavigationItem(icon: Icons.chat_outlined, label: 'Chat', route: '/chat'),
-  NavigationItem(icon: Icons.hub_outlined, label: 'MCP', route: '/mcp'),
+  // Core functional pages - Chat first as requested
+  NavigationItem(label: 'Chat', route: '/chat', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-chat.svg'),
+  NavigationItem(label: 'AI Jobs', route: '/ai-jobs', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg'),
+  NavigationItem(label: 'Integrations', route: '/integrations', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-integrations.svg'),
+  NavigationItem(label: 'MCP', route: '/mcp', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg'),
   
   // Admin-only pages (filtered by role in home_screen.dart)
-  NavigationItem(icon: Icons.people_outline, label: 'Users', route: '/users'),
+  NavigationItem(label: 'Users', route: '/users', icon: Icons.people_outline),
   
   // Temporarily hidden pages (not needed for now)
   // NavigationItem(icon: Icons.workspaces_outlined, label: 'Workspaces', route: '/workspaces'),
