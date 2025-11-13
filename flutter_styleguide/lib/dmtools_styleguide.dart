@@ -44,6 +44,7 @@ export 'widgets/atoms/integration_checkbox.dart';
 export 'widgets/atoms/copy_button.dart';
 export 'widgets/atoms/array_input.dart';
 export 'widgets/atoms/loading_indicators.dart';
+export 'widgets/atoms/terminal_simulation.dart';
 
 // Widgets - Molecules (existing files only)
 export 'widgets/molecules/agent_card.dart';
