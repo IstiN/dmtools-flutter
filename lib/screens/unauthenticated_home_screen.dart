@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -21,9 +22,40 @@ class UnauthenticatedHomeScreen extends StatefulWidget {
 
 class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
   final ScrollController _scrollController = ScrollController();
+  bool _isScrolling = false;
+  Timer? _scrollEndTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    // Mark as scrolling
+    if (!_isScrolling) {
+      setState(() {
+        _isScrolling = true;
+      });
+    }
+
+    // Cancel previous timer
+    _scrollEndTimer?.cancel();
+
+    // Set timer to mark scrolling as ended after 150ms of no scroll activity
+    _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
+      if (mounted) {
+        setState(() {
+          _isScrolling = false;
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _scrollEndTimer?.cancel();
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -53,6 +85,7 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Use colorsListening to react to theme changes
     final colors = context.colorsListening;
     final screenWidth = MediaQuery.of(context).size.width;
 
@@ -65,7 +98,7 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
         children: [
           // macOS titlebar spacer (only for native macOS, not web)
           if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
-
+          
           // App Header from styleguide
           AppHeader(
             showTitle: false, // Hide header text
@@ -85,9 +118,9 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                         }
                       },
                       child: const Dialog(
-                        backgroundColor: Colors.transparent,
-                        insetPadding: EdgeInsets.all(16),
-                        elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      insetPadding: EdgeInsets.all(16),
+                      elevation: 0,
                         child: FocusScope(autofocus: true, child: AuthLoginWidget()),
                       ),
                     );
@@ -103,45 +136,61 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
               controller: _scrollController,
               thumbVisibility: true,
               child: SelectionArea(
-                child: SingleChildScrollView(
+            child: SingleChildScrollView(
                   controller: _scrollController,
-                  physics: const BouncingScrollPhysics(),
-                  child: Padding(
+                  // Use ClampingScrollPhysics for web (better Safari performance)
+                  // BouncingScrollPhysics is iOS-specific and can cause jank on web
+                  physics: kIsWeb 
+                      ? const ClampingScrollPhysics()
+                      : const BouncingScrollPhysics(),
+              child: Padding(
                     padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Column(
-                          children: [
+                child: Column(
+                  children: [
                             const SizedBox(height: 64),
 
                             // Hero Section
-                            SizedBox(
-                              width: totalWidth,
-                              child: _HeroSection(onInstall: _openReleasesPage, onOpenSource: _openOpenSource),
+                            RepaintBoundary(
+                              child: SizedBox(
+                      width: totalWidth,
+                                child: _HeroSection(
+                                  onInstall: _openReleasesPage,
+                                  onOpenSource: _openOpenSource,
+                                  isScrolling: _isScrolling,
+                                ),
+                              ),
                             ),
 
                             const SizedBox(height: 128),
 
                             // Pillars Section
-                            SizedBox(width: totalWidth, child: const _PillarsSection()),
+                            RepaintBoundary(
+                              child: SizedBox(width: totalWidth, child: const _PillarsSection()),
+                            ),
 
                             const SizedBox(height: 128),
 
                             // Rivers Section
-                            SizedBox(
-                              width: totalWidth,
-                              child: _RiversSection(
-                                onInstall: _openReleasesPage,
-                                onViewDocs: _openDocumentation,
-                                onOpenSource: _openOpenSource,
+                            RepaintBoundary(
+                              child: SizedBox(
+                                width: totalWidth,
+                                child: _RiversSection(
+                                  onInstall: _openReleasesPage,
+                                  onViewDocs: _openDocumentation,
+                                  onOpenSource: _openOpenSource,
+                                ),
                               ),
                             ),
 
                             const SizedBox(height: 128),
 
                             // FAQ Section
-                            SizedBox(width: totalWidth, child: const _FaqSection()),
+                            RepaintBoundary(
+                              child: SizedBox(width: totalWidth, child: const _FaqSection()),
+                            ),
 
                             const SizedBox(height: 96),
                           ],
@@ -167,8 +216,9 @@ class _ScreenshotImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use colorsListening to react to theme changes
     final colors = context.colorsListening;
-    final isDarkMode = context.isDarkMode;
+    final isDarkMode = context.isDarkModeListening;
 
     // Use theme-based image for dm-ai-app
     final String finalImagePath = imagePath == 'assets/img/dm-ai-app.png'
@@ -193,17 +243,22 @@ class _ScreenshotImage extends StatelessWidget {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-          child: Image.asset(
-            finalImagePath,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              // Fallback to placeholder if image fails to load
-              return const _ScreenshotPlaceholder();
-            },
-          ),
-        ),
-      ),
-    );
+          child: RepaintBoundary(
+            child: Image.asset(
+              finalImagePath,
+              fit: BoxFit.contain,
+              // Optimize image loading for web performance
+              cacheWidth: kIsWeb ? 1200 : null,
+              cacheHeight: kIsWeb ? 800 : null,
+              errorBuilder: (context, error, stackTrace) {
+                // Fallback to placeholder if image fails to load
+                return const _ScreenshotPlaceholder();
+              },
+            ),
+                                    ),
+                                  ),
+                                ),
+                              );
   }
 }
 
@@ -213,9 +268,11 @@ class _ScreenshotPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
-    final isDarkMode = context.isDarkMode;
+    // Use isDarkModeListening to react to theme changes
+    final isDarkMode = context.isDarkModeListening;
 
     return CustomCard(
       padding: EdgeInsets.zero,
@@ -345,7 +402,8 @@ class _SimpleCodeBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
 
     return Container(
       decoration: BoxDecoration(
@@ -452,8 +510,13 @@ class _SimpleCodeBlock extends StatelessWidget {
 class _HeroSection extends StatefulWidget {
   final VoidCallback onInstall;
   final VoidCallback onOpenSource;
+  final bool isScrolling;
 
-  const _HeroSection({required this.onInstall, required this.onOpenSource});
+  const _HeroSection({
+    required this.onInstall,
+    required this.onOpenSource,
+    required this.isScrolling,
+  });
 
   @override
   State<_HeroSection> createState() => _HeroSectionState();
@@ -483,7 +546,8 @@ class _HeroSectionState extends State<_HeroSection> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return ResponsiveBuilder(
@@ -510,7 +574,7 @@ class _HeroSectionState extends State<_HeroSection> {
     return Column(
       children: [
         _buildHeading(context, colors, textTheme),
-        const SizedBox(height: 64),
+                    const SizedBox(height: 64),
         _buildTerminal(context, colors),
         const SizedBox(height: 64),
         _buildDescription(context, colors, textTheme),
@@ -523,48 +587,57 @@ class _HeroSectionState extends State<_HeroSection> {
   Widget _buildTerminal(BuildContext context, ThemeColorSet colors) {
     final screenWidth = MediaQuery.of(context).size.width;
     final maxWidth = (screenWidth * 0.5).clamp(400.0, 800.0); // Responsive: 50% of screen, but between 400-800px
-    final isDarkMode = context.isDarkMode;
+    // Use isDarkModeListening to react to theme changes
+    final isDarkMode = context.isDarkModeListening;
 
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxWidth),
-        child: SelectionContainer.disabled(
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-              boxShadow: [
-                // Multiple shadow layers for depth
-                BoxShadow(
-                  color: colors.accentColor.withValues(alpha: 0.2),
-                  blurRadius: 30,
-                  spreadRadius: 2,
-                  offset: const Offset(0, 8),
+    return RepaintBoundary(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: SelectionContainer.disabled(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+                boxShadow: [
+                  // Multiple shadow layers for depth
+                  BoxShadow(
+                    color: colors.accentColor.withValues(alpha: 0.2),
+                    blurRadius: 30,
+                    spreadRadius: 2,
+                    offset: const Offset(0, 8),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
+                  ),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.1),
+                    blurRadius: 10,
+                    spreadRadius: -2,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Visibility(
+                visible: true,
+                maintainState: true,
+                maintainAnimation: false, // Pause animations when not visible
+                child: TerminalSimulation(
+                  commands: const [
+                    'dmtools run business_analysis_agent',
+                    'dmtools run refinement_agent',
+                    'dmtools run solution_architecture_agent',
+                    'dmtools run test_cases_generation_agent',
+                    'dmtools run developer_agent',
+                  ],
+                  commandDuration: const Duration(seconds: 3),
+                  typingSpeed: const Duration(milliseconds: 50),
+                  prompt: 'dm.ai>',
+                  promptColor: const Color(0xFF8B5CF6),
+                  paused: widget.isScrolling, // Pause during scroll
                 ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
-                  blurRadius: 20,
-                  offset: const Offset(0, 4),
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.1),
-                  blurRadius: 10,
-                  spreadRadius: -2,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: TerminalSimulation(
-              commands: const [
-                'dmtools run business_analysis_agent',
-                'dmtools run refinement_agent',
-                'dmtools run solution_architecture_agent',
-                'dmtools run test_cases_generation_agent',
-                'dmtools run developer_agent',
-              ],
-              commandDuration: const Duration(seconds: 3),
-              typingSpeed: const Duration(milliseconds: 50),
-              prompt: 'dm.ai>',
-              promptColor: const Color(0xFF8B5CF6),
+              ),
             ),
           ),
         ),
@@ -620,8 +693,8 @@ class _HeroSectionState extends State<_HeroSection> {
             const TextSpan(text: ' for them to use?'),
           ],
         ),
-        textAlign: TextAlign.center,
-      ),
+                        textAlign: TextAlign.center,
+                      ),
     );
   }
 
@@ -691,7 +764,7 @@ class _HeroSectionState extends State<_HeroSection> {
   Widget _buildLeftColumn(BuildContext context, ThemeColorSet colors, TextTheme textTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+                        children: [
         // Description text
         Text(
           'Built to help you ship, right from your terminal',
@@ -775,13 +848,13 @@ class _PillarsSection extends StatelessWidget {
   static const List<_PillarData> _pillars = [
     _PillarData(
       heading: 'Unified MCP access across all platforms',
-      description:
+                            description:
           'Configure MCP tools once and use them with Cursor, Copilot, Claude Code, Gemini, or CLI commands. Combine different MCP tools via JS code execution and save tokens.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg',
-    ),
+                          ),
     _PillarData(
       heading: 'Agent-powered, CLI-first architecture',
-      description:
+                            description:
           'Configure tools and agents together, then execute them via CLI or locally to maximize your AI workflow efficiency.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg',
     ),
@@ -857,7 +930,8 @@ class _PillarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -891,6 +965,7 @@ class _GlowWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Use colorsListening to react to theme changes
     final colors = context.colorsListening;
 
     return Container(
@@ -985,7 +1060,8 @@ function action(params) {
 
   @override
   Widget build(BuildContext context) {
-    final isDarkMode = context.isDarkMode;
+    // Use isDarkModeListening to react to theme changes
+    final isDarkMode = context.isDarkModeListening;
     return ResponsiveBuilder(
       mobile: (context, constraints) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -998,7 +1074,7 @@ function action(params) {
               const LargeBodyText(
                 'Code execution with MCP enables agents to use context more efficiently by loading tools on demand.',
               ),
-              const SizedBox(height: 32),
+                    const SizedBox(height: 32),
               const _FlowDiagram(),
               const SizedBox(height: 24),
               const MediumHeadlineText('Leverage MCP context and extend with your own tools'),
@@ -1011,13 +1087,15 @@ function action(params) {
             ],
           ),
           const SizedBox(height: 24),
-          _GlowWrapper(
-            child: CodeDisplayBlock(
-              key: ValueKey('js-code-$isDarkMode'),
-              code: _codeExample,
-              language: 'javascript',
-              maxHeight: 600,
-              theme: CodeDisplayTheme.auto,
+          RepaintBoundary(
+            child: _GlowWrapper(
+              child: CodeDisplayBlock(
+                key: ValueKey('js-code-$isDarkMode'),
+                code: _codeExample,
+                language: 'javascript',
+                maxHeight: 600,
+                theme: CodeDisplayTheme.auto,
+              ),
             ),
           ),
           if (onInstall != null && onViewDocs != null) ...[
@@ -1059,13 +1137,15 @@ function action(params) {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _GlowWrapper(
-                child: CodeDisplayBlock(
-                  key: ValueKey('js-code-$isDarkMode'),
-                  code: _codeExample,
-                  language: 'javascript',
-                  maxHeight: 600,
-                  theme: CodeDisplayTheme.auto,
+              RepaintBoundary(
+                child: _GlowWrapper(
+                  child: CodeDisplayBlock(
+                    key: ValueKey('js-code-$isDarkMode'),
+                    code: _codeExample,
+                    language: 'javascript',
+                    maxHeight: 600,
+                    theme: CodeDisplayTheme.auto,
+                  ),
                 ),
               ),
               if (onInstall != null && onViewDocs != null) ...[
@@ -1096,7 +1176,8 @@ class _FlowDiagram extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -1265,7 +1346,8 @@ class _CtaBannerSectionState extends State<_CtaBannerSection> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -1458,7 +1540,8 @@ class _CompactCategorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -1488,7 +1571,8 @@ class _CompactIntegrationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -1592,7 +1676,8 @@ class _FaqGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -1624,7 +1709,8 @@ class _FaqItemState extends State<_FaqItem> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return CustomCard(

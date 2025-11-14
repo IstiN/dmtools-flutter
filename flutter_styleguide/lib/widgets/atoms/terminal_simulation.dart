@@ -29,6 +29,9 @@ class TerminalSimulation extends StatefulWidget {
   /// Accent color for prompt and "dmtools" keyword (optional, uses theme if not provided)
   final Color? promptColor;
 
+  /// Whether to pause animations (e.g., during scroll or when off-screen)
+  final bool paused;
+
   TerminalSimulation({
     required this.commands,
     Duration? commandDuration,
@@ -37,6 +40,7 @@ class TerminalSimulation extends StatefulWidget {
     this.backgroundColor,
     this.textColor,
     this.promptColor,
+    this.paused = false,
     super.key,
   })  : commandDuration = commandDuration ?? const Duration(seconds: 3),
         typingSpeed = typingSpeed ?? const Duration(milliseconds: 50),
@@ -63,7 +67,29 @@ class _TerminalSimulationState extends State<TerminalSimulation>
       duration: const Duration(milliseconds: 500),
     )..repeat();
 
-    _startCommandCycle();
+    if (!widget.paused) {
+      _startCommandCycle();
+    }
+  }
+
+  @override
+  void didUpdateWidget(TerminalSimulation oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Handle pause/unpause state changes
+    if (widget.paused != oldWidget.paused) {
+      if (widget.paused) {
+        // Pause animations
+        _typingTimer?.cancel();
+        _typingTimer = null;
+        _controller.stop();
+      } else {
+        // Resume animations
+        _controller.repeat();
+        if (_typingTimer == null) {
+          _startCommandCycle();
+        }
+      }
+    }
   }
 
   void _startCommandCycle() {
@@ -82,14 +108,14 @@ class _TerminalSimulationState extends State<TerminalSimulation>
   }
 
   void _typeCommand() {
-    if (_isDisposed) return;
+    if (_isDisposed || widget.paused) return;
     
     final command = widget.commands[_currentCommandIndex];
     int currentIndex = 0;
     
     _typingTimer?.cancel();
     _typingTimer = Timer.periodic(widget.typingSpeed, (timer) {
-      if (_isDisposed || !mounted) {
+      if (_isDisposed || !mounted || widget.paused) {
         timer.cancel();
         return;
       }
@@ -106,9 +132,9 @@ class _TerminalSimulationState extends State<TerminalSimulation>
         // Show full command for a while, then move to next
         final typingDuration = Duration(milliseconds: command.length * widget.typingSpeed.inMilliseconds);
         final remainingDuration = widget.commandDuration - typingDuration;
-        if (remainingDuration.inMilliseconds > 0 && !_isDisposed && mounted) {
+        if (remainingDuration.inMilliseconds > 0 && !_isDisposed && mounted && !widget.paused) {
           _typingTimer = Timer(remainingDuration, () {
-            if (_isDisposed || !mounted) return;
+            if (_isDisposed || !mounted || widget.paused) return;
             
             // Move to next command
             setState(() {
@@ -116,7 +142,7 @@ class _TerminalSimulationState extends State<TerminalSimulation>
             });
             _loadNextCommand();
           });
-        } else if (!_isDisposed && mounted) {
+        } else if (!_isDisposed && mounted && !widget.paused) {
           // Move to next command immediately
           setState(() {
             _currentCommandIndex = (_currentCommandIndex + 1) % widget.commands.length;
