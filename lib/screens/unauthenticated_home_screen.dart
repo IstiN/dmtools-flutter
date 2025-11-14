@@ -1,8 +1,11 @@
 import 'dart:io' show Platform;
+import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'package:dmtools_styleguide/widgets/molecules/custom_card.dart';
 import 'package:dmtools_styleguide/utils/syntax_highlighter.dart';
@@ -48,21 +51,6 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
     }
   }
 
-  Future<void> _openMcpRegistry() async {
-    // Placeholder - update with actual MCP registry URL when available
-    final url = Uri.parse('https://github.com/IstiN/dmtools-flutter');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _openWhatsNew() async {
-    final url = Uri.parse('https://github.com/IstiN/dmtools-flutter/releases');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final colors = context.colorsListening;
@@ -90,11 +78,18 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return const Dialog(
-                      backgroundColor: Colors.transparent,
-                      insetPadding: EdgeInsets.all(16),
-                      elevation: 0,
-                      child: AuthLoginWidget(),
+                    return PopScope(
+                      onPopInvokedWithResult: (didPop, result) {
+                        if (!didPop) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.all(16),
+                        elevation: 0,
+                        child: FocusScope(autofocus: true, child: AuthLoginWidget()),
+                      ),
                     );
                   },
                 );
@@ -134,25 +129,12 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                             const SizedBox(height: 128),
 
                             // Rivers Section
-                            SizedBox(width: totalWidth, child: const _RiversSection()),
-
-                            const SizedBox(height: 128),
-
-                            // CTA Banner Section
                             SizedBox(
                               width: totalWidth,
-                              child: _CtaBannerSection(onInstall: _openReleasesPage, onViewDocs: _openDocumentation),
-                            ),
-
-                            const SizedBox(height: 128),
-
-                            // Resources Section
-                            SizedBox(
-                              width: totalWidth,
-                              child: _ResourcesSection(
-                                onDocs: _openDocumentation,
-                                onMcpRegistry: _openMcpRegistry,
-                                onWhatsNew: _openWhatsNew,
+                              child: _RiversSection(
+                                onInstall: _openReleasesPage,
+                                onViewDocs: _openDocumentation,
+                                onOpenSource: _openOpenSource,
                               ),
                             ),
 
@@ -185,8 +167,13 @@ class _ScreenshotImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    final colors = context.colorsListening;
     final isDarkMode = context.isDarkMode;
+
+    // Use theme-based image for dm-ai-app
+    final String finalImagePath = imagePath == 'assets/img/dm-ai-app.png'
+        ? (isDarkMode ? 'assets/img/dm-ai-app-dark.png' : 'assets/img/dm-ai-app-light.png')
+        : imagePath;
 
     return CustomCard(
       padding: EdgeInsets.zero,
@@ -207,7 +194,7 @@ class _ScreenshotImage extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
           child: Image.asset(
-            imagePath,
+            finalImagePath,
             fit: BoxFit.contain,
             errorBuilder: (context, error, stackTrace) {
               // Fallback to placeholder if image fails to load
@@ -534,24 +521,51 @@ class _HeroSectionState extends State<_HeroSection> {
   }
 
   Widget _buildTerminal(BuildContext context, ThemeColorSet colors) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final maxWidth = (screenWidth * 0.5).clamp(400.0, 800.0); // Responsive: 50% of screen, but between 400-800px
+    final isDarkMode = context.isDarkMode;
+
     return Center(
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width * 0.5, // 50% of screen width (50% smaller than full width)
-        ),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: SelectionContainer.disabled(
-          child: TerminalSimulation(
-            commands: const [
-              'dmtools run business_analysis_agent',
-              'dmtools run refinement_agent',
-              'dmtools run solution_architecture_agent',
-              'dmtools run test_cases_generation_agent',
-              'dmtools run developer_agent',
-            ],
-            commandDuration: const Duration(seconds: 3),
-            typingSpeed: const Duration(milliseconds: 50),
-            prompt: 'dm.ai>',
-            promptColor: const Color(0xFF8B5CF6),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+              boxShadow: [
+                // Multiple shadow layers for depth
+                BoxShadow(
+                  color: colors.accentColor.withValues(alpha: 0.2),
+                  blurRadius: 30,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 8),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.1),
+                  blurRadius: 10,
+                  spreadRadius: -2,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: TerminalSimulation(
+              commands: const [
+                'dmtools run business_analysis_agent',
+                'dmtools run refinement_agent',
+                'dmtools run solution_architecture_agent',
+                'dmtools run test_cases_generation_agent',
+                'dmtools run developer_agent',
+              ],
+              commandDuration: const Duration(seconds: 3),
+              typingSpeed: const Duration(milliseconds: 50),
+              prompt: 'dm.ai>',
+              promptColor: const Color(0xFF8B5CF6),
+            ),
           ),
         ),
       ),
@@ -560,7 +574,7 @@ class _HeroSectionState extends State<_HeroSection> {
 
   Widget _buildHeading(BuildContext context, ThemeColorSet colors, TextTheme textTheme) {
     final baseFontSize = (textTheme.displayLarge?.fontSize ?? 57) * 1.2;
-    final blueFontSize = baseFontSize * 1.4; // 40% bigger for blue blocks
+    final blueFontSize = baseFontSize * 1.35; // 35% bigger for blue blocks
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 48),
@@ -569,7 +583,7 @@ class _HeroSectionState extends State<_HeroSection> {
           style: textTheme.displayLarge?.copyWith(
             fontWeight: FontWeight.w300, // Lighter weight
             color: colors.textColor,
-            height: 1.2,
+            height: 1.5, // Increased line height
             fontFamily: 'Inter',
             fontSize: baseFontSize,
           ),
@@ -577,19 +591,31 @@ class _HeroSectionState extends State<_HeroSection> {
             const TextSpan(text: 'Is it easier to train '),
             TextSpan(
               text: 'thousands employees',
-              style: TextStyle(color: colors.accentColor, fontWeight: FontWeight.w400, fontSize: blueFontSize),
+              style: TextStyle(
+                color: colors.accentColor,
+                fontWeight: FontWeight.w300, // Lighter weight for blue text
+                fontSize: blueFontSize,
+              ),
             ),
             const TextSpan(text: '\n'),
             const TextSpan(text: 'to write perfect prompts,\n'),
-            const TextSpan(text: 'or '),
+            const TextSpan(text: '\nor '),
             TextSpan(
               text: 'to',
-              style: TextStyle(color: colors.accentColor, fontWeight: FontWeight.w400, fontSize: blueFontSize),
+              style: TextStyle(
+                color: colors.accentColor,
+                fontWeight: FontWeight.w300, // Lighter weight for blue text
+                fontSize: blueFontSize,
+              ),
             ),
             const TextSpan(text: ' build a '),
             TextSpan(
               text: 'system of expert agents',
-              style: TextStyle(color: colors.accentColor, fontWeight: FontWeight.w400, fontSize: blueFontSize),
+              style: TextStyle(
+                color: colors.accentColor,
+                fontWeight: FontWeight.w300, // Lighter weight for blue text
+                fontSize: blueFontSize,
+              ),
             ),
             const TextSpan(text: ' for them to use?'),
           ],
@@ -601,24 +627,38 @@ class _HeroSectionState extends State<_HeroSection> {
 
   Widget _buildDescription(BuildContext context, ThemeColorSet colors, TextTheme textTheme) {
     final baseFontSize = (textTheme.bodyMedium?.fontSize ?? 16) * 1.25;
-    final blueFontSize = baseFontSize * 1.4; // 40% bigger for blue blocks
+    final blueFontSize = baseFontSize * 1.35; // 35% bigger for blue blocks
 
     return Text.rich(
       TextSpan(
-        style: textTheme.bodyMedium?.copyWith(color: colors.textSecondary, height: 1.6, fontSize: baseFontSize),
+        style: textTheme.bodyMedium?.copyWith(
+          color: colors.textSecondary,
+          height: 1.5, // Increased line height
+          fontSize: baseFontSize,
+        ),
         children: [
           const TextSpan(
             text:
-                'DMTools provides a comprehensive AI agent orchestration platform that connects all your project tools through a unified ',
+                'DMTools provides a comprehensive AI agent orchestration platform that connects all your project tools through ',
           ),
+          const TextSpan(text: '\n'),
+          const TextSpan(text: 'a unified '),
           TextSpan(
             text: 'CLI',
-            style: TextStyle(color: colors.accentColor, fontWeight: FontWeight.w600, fontSize: blueFontSize),
+            style: TextStyle(
+              color: colors.accentColor,
+              fontWeight: FontWeight.w300, // Lighter weight for blue text
+              fontSize: blueFontSize,
+            ),
           ),
           const TextSpan(text: ' and '),
           TextSpan(
             text: 'Desktop',
-            style: TextStyle(color: colors.accentColor, fontWeight: FontWeight.w600, fontSize: blueFontSize),
+            style: TextStyle(
+              color: colors.accentColor,
+              fontWeight: FontWeight.w300, // Lighter weight for blue text
+              fontSize: blueFontSize,
+            ),
           ),
           const TextSpan(text: ' interface. Build expert agents, automate workflows, deliver faster.'),
         ],
@@ -662,20 +702,18 @@ class _HeroSectionState extends State<_HeroSection> {
         Align(
           alignment: Alignment.centerLeft,
           child: SelectionContainer.disabled(
-            child: Semantics(
-              label: generateSemanticLabel('button', 'View installation instructions'),
-              button: true,
-              child: IntrinsicWidth(
-                child: SecondaryButton(
-                  text: 'Instructions',
-                  onPressed: () async {
-                    final url = Uri.parse('https://github.com/IstiN/dmtools/releases/');
-                    if (await canLaunchUrl(url)) {
-                      await launchUrl(url, mode: LaunchMode.externalApplication);
-                    }
-                  },
-                  size: ButtonSize.small,
-                ),
+            child: IntrinsicWidth(
+              child: SecondaryButton(
+                text: 'Instructions',
+                testId: generateTestId('button', {'action': 'view-installation-instructions', 'context': 'hero'}),
+                semanticLabel: generateSemanticLabel('button', 'View installation instructions'),
+                onPressed: () async {
+                  final url = Uri.parse('https://github.com/IstiN/dmtools/releases/');
+                  if (await canLaunchUrl(url)) {
+                    await launchUrl(url, mode: LaunchMode.externalApplication);
+                  }
+                },
+                size: ButtonSize.small,
               ),
             ),
           ),
@@ -704,16 +742,20 @@ class _HeroSectionState extends State<_HeroSection> {
         SelectionContainer.disabled(
           child: Row(
             children: [
-              Semantics(
-                label: generateSemanticLabel('button', 'Install DMTools now'),
-                button: true,
-                child: PrimaryButton(text: 'Install now', onPressed: widget.onInstall, size: ButtonSize.small),
+              PrimaryButton(
+                text: 'Install Desktop',
+                testId: generateTestId('button', {'action': 'install-desktop', 'context': 'hero'}),
+                semanticLabel: generateSemanticLabel('button', 'Install DMTools Desktop now'),
+                onPressed: widget.onInstall,
+                size: ButtonSize.small,
               ),
               const SizedBox(width: 12),
-              Semantics(
-                label: generateSemanticLabel('button', 'View open source repository'),
-                button: true,
-                child: SecondaryButton(text: 'OpenSource', onPressed: widget.onOpenSource, size: ButtonSize.small),
+              SecondaryButton(
+                text: 'OpenSource',
+                testId: generateTestId('button', {'action': 'view-opensource', 'context': 'hero'}),
+                semanticLabel: generateSemanticLabel('button', 'View open source repository'),
+                onPressed: widget.onOpenSource,
+                size: ButtonSize.small,
               ),
             ],
           ),
@@ -730,6 +772,26 @@ class _HeroSectionState extends State<_HeroSection> {
 class _PillarsSection extends StatelessWidget {
   const _PillarsSection();
 
+  static const List<_PillarData> _pillars = [
+    _PillarData(
+      heading: 'Unified MCP access across all platforms',
+      description:
+          'Configure MCP tools once and use them with Cursor, Copilot, Claude Code, Gemini, or CLI commands. Combine different MCP tools via JS code execution and save tokens.',
+      svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg',
+    ),
+    _PillarData(
+      heading: 'Agent-powered, CLI-first architecture',
+      description:
+          'Configure tools and agents together, then execute them via CLI or locally to maximize your AI workflow efficiency.',
+      svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg',
+    ),
+    _PillarData(
+      heading: 'Open source, full control',
+      description: 'Open source AI-native tools built by AI, with humans in control.',
+      icon: Icons.code, // GitHub icon for open source
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return ResponsiveBuilder(
@@ -739,73 +801,59 @@ class _PillarsSection extends StatelessWidget {
   }
 
   Widget _buildMobileLayout(BuildContext context) {
-    return const Column(
+    return Column(
       children: [
-        _PillarCard(
-          icon: Icons.rocket_launch,
-          heading: 'Less setup, more shipping',
-          description:
-              'Included with Desktop, CLI, and Server deployments—keeping setup simple and costs predictable so you can focus on shipping.',
-        ),
-        SizedBox(height: 24),
-        _PillarCard(
-          icon: Icons.psychology,
-          heading: 'Agent-powered, tool-native',
-          description:
-              'Execute coding tasks with agents that know your repositories, issues, and pull requests—all natively integrated with your tools.',
-        ),
-        SizedBox(height: 24),
-        _PillarCard(
-          icon: Icons.code,
-          heading: 'Open source, full control',
-          description:
-              'Open source platform with explicit approvals—so you stay in control with full transparency and customization.',
-        ),
+        for (int i = 0; i < _pillars.length; i++) ...[
+          _PillarCard(
+            icon: _pillars[i].icon,
+            svgIconPath: _pillars[i].svgIconPath,
+            heading: _pillars[i].heading,
+            description: _pillars[i].description,
+          ),
+          if (i < _pillars.length - 1) const SizedBox(height: 24),
+        ],
       ],
     );
   }
 
   Widget _buildDesktopLayout(BuildContext context) {
-    return const Row(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: _PillarCard(
-            icon: Icons.rocket_launch,
-            heading: 'Less setup, more shipping',
-            description:
-                'Included with Desktop, CLI, and Server deployments—keeping setup simple and costs predictable so you can focus on shipping.',
+        for (int i = 0; i < _pillars.length; i++) ...[
+          Expanded(
+            child: _PillarCard(
+              icon: _pillars[i].icon,
+              svgIconPath: _pillars[i].svgIconPath,
+              heading: _pillars[i].heading,
+              description: _pillars[i].description,
+            ),
           ),
-        ),
-        SizedBox(width: 24),
-        Expanded(
-          child: _PillarCard(
-            icon: Icons.psychology,
-            heading: 'Agent-powered, tool-native',
-            description:
-                'Execute coding tasks with agents that know your repositories, issues, and pull requests—all natively integrated with your tools.',
-          ),
-        ),
-        SizedBox(width: 24),
-        Expanded(
-          child: _PillarCard(
-            icon: Icons.code,
-            heading: 'Open source, full control',
-            description:
-                'Open source platform with explicit approvals—so you stay in control with full transparency and customization.',
-          ),
-        ),
+          if (i < _pillars.length - 1) const SizedBox(width: 24),
+        ],
       ],
     );
   }
 }
 
-class _PillarCard extends StatelessWidget {
-  final IconData icon;
+class _PillarData {
+  final IconData? icon;
+  final String? svgIconPath;
   final String heading;
   final String description;
 
-  const _PillarCard({required this.icon, required this.heading, required this.description});
+  const _PillarData({required this.heading, required this.description, this.icon, this.svgIconPath})
+    : assert(icon != null || svgIconPath != null, 'Either icon or svgIconPath must be provided');
+}
+
+class _PillarCard extends StatelessWidget {
+  final IconData? icon;
+  final String? svgIconPath;
+  final String heading;
+  final String description;
+
+  const _PillarCard({required this.heading, required this.description, this.icon, this.svgIconPath})
+    : assert(icon != null || svgIconPath != null, 'Either icon or svgIconPath must be provided');
 
   @override
   Widget build(BuildContext context) {
@@ -815,7 +863,14 @@ class _PillarCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 32, color: colors.accentColor),
+        svgIconPath != null
+            ? SvgPicture.asset(
+                svgIconPath!,
+                width: 32,
+                height: 32,
+                colorFilter: ColorFilter.mode(colors.accentColor, BlendMode.srcIn),
+              )
+            : Icon(icon!, size: 32, color: colors.accentColor),
         const SizedBox(height: 16),
         Text(
           heading,
@@ -828,100 +883,385 @@ class _PillarCard extends StatelessWidget {
   }
 }
 
-// Rivers Section
-class _RiversSection extends StatelessWidget {
-  const _RiversSection();
+// Glow Wrapper Widget for adding glow effect to any widget
+class _GlowWrapper extends StatelessWidget {
+  final Widget child;
+
+  const _GlowWrapper({required this.child});
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [
-        MediumDisplayText('Built for every development workflow', textAlign: TextAlign.center),
-        SizedBox(height: 16),
-        LargeBodyText(
-          'From rapid prototyping to legacy code navigation, DMTools adapts to your unique development needs with autonomous task execution.',
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: 64),
-        _RiverItem(
-          heading: 'Get started in any codebase instantly',
-          text:
-              'Ask DMTools to explore the project structure, install dependencies, and explain how everything works—all through simple conversation.',
-          imageOnLeft: false,
-          imagePath: 'assets/img/dmtools-cli.png',
-        ),
-        SizedBox(height: 96),
-        _RiverItem(
-          heading: 'Leverage MCP context and extend with your own tools',
-          text:
-              'Bring context from your issues and pull requests directly to your environment, eliminating context switching. Plus, extend DMTools capabilities through custom MCP servers.',
-          imageOnLeft: true,
-          imagePath: 'assets/img/dm-ai-app.png',
-        ),
-        SizedBox(height: 96),
-        _RiverItem(
-          heading: 'Build, edit, debug, and refactor code locally',
-          text:
-              'DMTools edits files, runs commands, and helps you iterate fast without ever leaving your local environment.',
-          imageOnLeft: false,
-          imagePath: 'assets/img/dm-ai-app.png',
-        ),
-      ],
+    final colors = context.colorsListening;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+        boxShadow: [
+          BoxShadow(
+            color: colors.accentColor.withValues(alpha: 0.2),
+            blurRadius: 20,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: colors.accentColor.withValues(alpha: 0.1),
+            blurRadius: 40,
+            spreadRadius: -2,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }
 
-class _RiverItem extends StatelessWidget {
-  final String heading;
-  final String text;
-  final bool imageOnLeft;
-  final String? imagePath;
+// Code Example Item (Text on left, Code on right)
+class _CodeExampleItem extends StatelessWidget {
+  final VoidCallback? onInstall;
+  final VoidCallback? onViewDocs;
+  final VoidCallback? onOpenSource;
 
-  const _RiverItem({required this.heading, required this.text, required this.imageOnLeft, this.imagePath});
+  const _CodeExampleItem({this.onInstall, this.onViewDocs, this.onOpenSource});
+
+  static const String _codeExample = r'''/**
+ * Simple Workflow: Ticket → Figma → AI → Cursor
+ * 
+ * Reads ticket, extracts Figma link, gets design content,
+ * generates developer prompt with AI, and runs Cursor CLI command.
+ */
+function action(params) {
+    try {
+        const ticketKey = params.ticket.key;
+        
+        // Step 1: Read ticket details
+        const ticket = jira_get_ticket({
+            key: ticketKey,
+            fields: ["summary", "description"]
+        });
+        
+        // Step 2: Extract Figma link from description
+        const text = (ticket.description || "").toLowerCase();
+        const figmaMatch = text.match(/(https?:\/\/[^\s]*figma\.com\/[^\s]*)/i);
+        const figmaUrl = figmaMatch ? figmaMatch[1] : null;
+      
+        // Step 3: Read Figma content
+        const figmaStructure = figma_get_file_structure({ href: figmaUrl });
+        const figmaIcons = figma_get_icons({ href: figmaUrl });
+        
+        // Step 4: Generate developer prompt with AI
+        const aiPrompt = 
+          `Create a development prompt for Cursor AI to implement:
+          Ticket: ${ticketKey} - ${ticket.summary}
+          Description: ${ticket.description}
+          Figma Design: ${figmaUrl}
+          Design Elements: ${figmaIcons?.length || 0} visual elements found
+          Provide a clear, actionable prompt for implementing this feature.`;
+        
+        const developerPrompt = gemini_ai_chat({ message: aiPrompt });
+        
+        // Step 5: Execute Cursor CLI command
+        const cursorCommand = `cursor --prompt "${developerPrompt.replace(/"/g, '\\"')}"`;
+        const cliResult = cli_execute_command({ command: cursorCommand });
+        
+        // Post summary comment
+        jira_post_comment({
+            key: ticketKey,
+            comment: `✅ Development is Done.`
+        });
+        
+        return {
+            success: true,
+            ticketKey,
+            figmaUrl,
+            developerPrompt,
+            cliResult
+        };
+        
+    } catch (error) {
+        return { success: false, error: error.toString() };
+    }
+}''';
 
   @override
   Widget build(BuildContext context) {
+    final isDarkMode = context.isDarkMode;
     return ResponsiveBuilder(
       mobile: (context, constraints) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [MediumHeadlineText(heading), const SizedBox(height: 16), LargeBodyText(text)],
+            children: [
+              const MediumHeadlineText('MCP tools orchestration via JavaScript interface'),
+              const SizedBox(height: 16),
+              const LargeBodyText(
+                'Code execution with MCP enables agents to use context more efficiently by loading tools on demand.',
+              ),
+              const SizedBox(height: 32),
+              const _FlowDiagram(),
+              const SizedBox(height: 24),
+              const MediumHeadlineText('Leverage MCP context and extend with your own tools'),
+              const SizedBox(height: 16),
+              const LargeBodyText(
+                'Bring context from your issues and pull requests directly to your environment, eliminating context switching. Plus, extend DMTools capabilities through custom MCP servers.',
+              ),
+              const SizedBox(height: 32),
+              _IntegrationsList(onInstall: onInstall, onViewDocs: onViewDocs),
+            ],
           ),
           const SizedBox(height: 24),
-          imagePath != null ? _ScreenshotImage(imagePath: imagePath!) : const _ScreenshotPlaceholder(),
+          _GlowWrapper(
+            child: CodeDisplayBlock(
+              key: ValueKey('js-code-$isDarkMode'),
+              code: _codeExample,
+              language: 'javascript',
+              maxHeight: 600,
+              theme: CodeDisplayTheme.auto,
+            ),
+          ),
+          if (onInstall != null && onViewDocs != null) ...[
+            const SizedBox(height: 32),
+            _CtaBannerSection(
+              onInstall: onInstall!,
+              onViewDocs: onViewDocs!,
+              onOpenSource: onOpenSource,
+              showInstructionsAndCli: true,
+            ),
+          ],
         ],
       ),
       desktop: (context, constraints) {
         final textWidget = Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [MediumHeadlineText(heading), const SizedBox(height: 16), LargeBodyText(text)],
+            children: [
+              const MediumHeadlineText('MCP tools orchestration via JavaScript interface'),
+              const SizedBox(height: 16),
+              const LargeBodyText(
+                'Code execution with MCP enables agents to use context more efficiently by loading tools on demand.',
+              ),
+              const SizedBox(height: 32),
+              const _FlowDiagram(),
+              const SizedBox(height: 24),
+              const MediumHeadlineText('Leverage MCP context and extend with your own tools'),
+              const SizedBox(height: 16),
+              const LargeBodyText(
+                'Bring context from your issues and pull requests directly to your environment, eliminating context switching. Plus, extend DMTools capabilities through custom MCP servers.',
+              ),
+              const SizedBox(height: 32),
+              _IntegrationsList(onInstall: onInstall, onViewDocs: onViewDocs),
+            ],
           ),
         );
 
-        final imageWidget = Expanded(
-          child: imagePath != null ? _ScreenshotImage(imagePath: imagePath!) : const _ScreenshotPlaceholder(),
+        final codeWidget = Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _GlowWrapper(
+                child: CodeDisplayBlock(
+                  key: ValueKey('js-code-$isDarkMode'),
+                  code: _codeExample,
+                  language: 'javascript',
+                  maxHeight: 600,
+                  theme: CodeDisplayTheme.auto,
+                ),
+              ),
+              if (onInstall != null && onViewDocs != null) ...[
+                const SizedBox(height: 32),
+                _CtaBannerSection(
+                  onInstall: onInstall!,
+                  onViewDocs: onViewDocs!,
+                  onOpenSource: onOpenSource,
+                  showInstructionsAndCli: true,
+                ),
+              ],
+            ],
+          ),
         );
 
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: imageOnLeft
-              ? [imageWidget, const SizedBox(width: 48), textWidget]
-              : [textWidget, const SizedBox(width: 48), imageWidget],
+          children: [textWidget, const SizedBox(width: 48), codeWidget],
         );
       },
     );
   }
 }
 
+// Flow Diagram Widget
+class _FlowDiagram extends StatelessWidget {
+  const _FlowDiagram();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: colors.cardBg,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
+        border: Border.all(color: colors.borderColor.withValues(alpha: 0.3)),
+        boxShadow: [
+          BoxShadow(
+            color: colors.accentColor.withValues(alpha: 0.2),
+            blurRadius: 20,
+            spreadRadius: 2,
+            offset: const Offset(0, 4),
+          ),
+          BoxShadow(
+            color: colors.accentColor.withValues(alpha: 0.1),
+            blurRadius: 40,
+            spreadRadius: -2,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Workflow',
+            style: textTheme.titleMedium?.copyWith(color: colors.textColor, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 24),
+          _buildFlowRow(colors, textTheme),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFlowRow(ThemeColorSet colors, TextTheme textTheme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        _FlowStep(label: 'Ticket', icon: Icons.assignment, colors: colors, textTheme: textTheme),
+        _FlowArrow(colors: colors),
+        _FlowStep(label: 'Figma', icon: Icons.design_services, colors: colors, textTheme: textTheme),
+        _FlowArrow(colors: colors),
+        _FlowStep(label: 'AI', icon: Icons.auto_awesome, colors: colors, textTheme: textTheme),
+        _FlowArrow(colors: colors),
+        _FlowStep(label: 'Cursor CLI', icon: Icons.code, colors: colors, textTheme: textTheme),
+      ],
+    );
+  }
+}
+
+class _FlowStep extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final ThemeColorSet colors;
+  final TextTheme textTheme;
+
+  const _FlowStep({required this.label, required this.icon, required this.colors, required this.textTheme});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: colors.accentColor.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+            border: Border.all(color: colors.accentColor.withValues(alpha: 0.3), width: 2),
+          ),
+          child: Icon(icon, color: colors.accentColor, size: 32),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: textTheme.bodySmall?.copyWith(color: colors.textColor, fontWeight: FontWeight.w500),
+        ),
+      ],
+    );
+  }
+}
+
+class _FlowArrow extends StatelessWidget {
+  final ThemeColorSet colors;
+
+  const _FlowArrow({required this.colors});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 32),
+      child: Icon(Icons.arrow_forward, color: colors.accentColor.withValues(alpha: 0.6), size: 24),
+    );
+  }
+}
+
+// Rivers Section
+class _RiversSection extends StatelessWidget {
+  final VoidCallback? onInstall;
+  final VoidCallback? onViewDocs;
+  final VoidCallback? onOpenSource;
+
+  const _RiversSection({this.onInstall, this.onViewDocs, this.onOpenSource});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const MediumDisplayText('Built for every enterprise SDLC', textAlign: TextAlign.center),
+        const SizedBox(height: 16),
+        const LargeBodyText(
+          'From rapid prototyping to legacy code navigation, DMTools adapts to your unique development needs with autonomous task execution.',
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 64),
+        _CodeExampleItem(onInstall: onInstall, onViewDocs: onViewDocs, onOpenSource: onOpenSource),
+      ],
+    );
+  }
+}
+
 // CTA Banner Section
-class _CtaBannerSection extends StatelessWidget {
+class _CtaBannerSection extends StatefulWidget {
   final VoidCallback onInstall;
   final VoidCallback onViewDocs;
+  final VoidCallback? onOpenSource;
+  final bool showInstructionsAndCli;
 
-  const _CtaBannerSection({required this.onInstall, required this.onViewDocs});
+  const _CtaBannerSection({
+    required this.onInstall,
+    required this.onViewDocs,
+    this.onOpenSource,
+    this.showInstructionsAndCli = false,
+  });
+
+  @override
+  State<_CtaBannerSection> createState() => _CtaBannerSectionState();
+}
+
+class _CtaBannerSectionState extends State<_CtaBannerSection> {
+  String _cliInstallCommand = 'curl -fsSL https://github.com/IstiN/dmtools/releases/download/v1.7.91/install.sh | bash';
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.showInstructionsAndCli) {
+      _loadCliInstallCommand();
+    }
+  }
+
+  Future<void> _loadCliInstallCommand() async {
+    try {
+      final command = await ReleaseService.getCliInstallCommand();
+      if (mounted) {
+        setState(() {
+          _cliInstallCommand = command;
+        });
+      }
+    } catch (e) {
+      // Keep default command if loading fails
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -945,106 +1285,150 @@ class _CtaBannerSection extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-          Wrap(
-            spacing: 16,
-            runSpacing: 16,
-            children: [
-              Semantics(
-                label: generateSemanticLabel('button', 'Install DMTools now'),
-                button: true,
-                child: PrimaryButton(text: 'Install now', onPressed: onInstall),
+          if (widget.showInstructionsAndCli) ...[
+            // Instructions button and Install/OpenSource buttons in one row
+            SelectionContainer.disabled(
+              child: Row(
+                children: [
+                  IntrinsicWidth(
+                    child: SecondaryButton(
+                      text: 'Instructions',
+                      testId: generateTestId('button', {
+                        'action': 'view-installation-instructions',
+                        'context': 'cta-banner',
+                      }),
+                      semanticLabel: generateSemanticLabel('button', 'View installation instructions'),
+                      onPressed: () async {
+                        final url = Uri.parse('https://github.com/IstiN/dmtools/releases/');
+                        if (await canLaunchUrl(url)) {
+                          await launchUrl(url, mode: LaunchMode.externalApplication);
+                        }
+                      },
+                      size: ButtonSize.small,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  PrimaryButton(
+                    text: 'Install Desktop',
+                    testId: generateTestId('button', {'action': 'install-desktop', 'context': 'cta-banner'}),
+                    semanticLabel: generateSemanticLabel('button', 'Install DMTools Desktop now'),
+                    onPressed: widget.onInstall,
+                    size: ButtonSize.small,
+                  ),
+                  const SizedBox(width: 12),
+                  if (widget.onOpenSource != null)
+                    SecondaryButton(
+                      text: 'OpenSource',
+                      testId: generateTestId('button', {'action': 'view-opensource', 'context': 'cta-banner'}),
+                      semanticLabel: generateSemanticLabel('button', 'View open source repository'),
+                      onPressed: widget.onOpenSource!,
+                      size: ButtonSize.small,
+                    ),
+                ],
               ),
-              Semantics(
-                label: generateSemanticLabel('button', 'View documentation'),
-                button: true,
-                child: SecondaryButton(text: 'View documentation', onPressed: onViewDocs),
-              ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 16),
+            // CLI Install Code Block
+            _SimpleCodeBlock(
+              code: _cliInstallCommand,
+              language: 'bash',
+              showLanguageBadge: false,
+              inlineCopyButton: true,
+            ),
+          ] else ...[
+            Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: [
+                PrimaryButton(
+                  text: 'Install now',
+                  testId: generateTestId('button', {'action': 'install-now', 'context': 'cta-banner'}),
+                  semanticLabel: generateSemanticLabel('button', 'Install DMTools now'),
+                  onPressed: widget.onInstall,
+                ),
+                SecondaryButton(
+                  text: 'View documentation',
+                  testId: generateTestId('button', {'action': 'view-documentation', 'context': 'cta-banner'}),
+                  semanticLabel: generateSemanticLabel('button', 'View documentation'),
+                  onPressed: widget.onViewDocs,
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
   }
 }
 
-// Resources Section
-class _ResourcesSection extends StatelessWidget {
-  final VoidCallback onDocs;
-  final VoidCallback onMcpRegistry;
-  final VoidCallback onWhatsNew;
+// Integrations List Widget (compact version for left column)
+class _IntegrationsList extends StatelessWidget {
+  final VoidCallback? onInstall;
+  final VoidCallback? onViewDocs;
 
-  const _ResourcesSection({required this.onDocs, required this.onMcpRegistry, required this.onWhatsNew});
+  const _IntegrationsList({this.onInstall, this.onViewDocs});
+
+  static const List<_IntegrationCategory> _categories = [
+    _IntegrationCategory(
+      title: 'Project Management',
+      integrations: [
+        _Integration(name: 'Jira', toolCount: '40+', icon: Icons.bug_report),
+        _Integration(name: 'Confluence', toolCount: '16', icon: Icons.article),
+        _Integration(name: 'Rally', toolCount: '22', icon: Icons.track_changes),
+        _Integration(name: 'Azure DevOps', toolCount: '24', icon: Icons.cloud_queue),
+      ],
+    ),
+    _IntegrationCategory(
+      title: 'Code Base',
+      integrations: [
+        _Integration(name: 'GitHub', toolCount: '20+', icon: Icons.code),
+        _Integration(name: 'GitLab', toolCount: '20+', icon: Icons.merge),
+        _Integration(name: 'Bitbucket', toolCount: '20+', icon: Icons.source),
+      ],
+    ),
+    _IntegrationCategory(
+      title: 'Design',
+      integrations: [_Integration(name: 'Figma', toolCount: '6+', icon: Icons.design_services)],
+    ),
+    _IntegrationCategory(
+      title: 'Collaboration & Communication',
+      integrations: [
+        _Integration(name: 'Microsoft Teams', toolCount: '20+', icon: Icons.groups),
+        _Integration(name: 'Teams Auth', toolCount: '3', icon: Icons.lock),
+        _Integration(name: 'SharePoint', toolCount: '2', icon: Icons.folder),
+      ],
+    ),
+    _IntegrationCategory(
+      title: 'AI Services',
+      integrations: [
+        _Integration(name: 'Gemini AI', toolCount: '', icon: Icons.auto_awesome),
+        _Integration(name: 'Dial AI', toolCount: '', icon: Icons.chat_bubble),
+        _Integration(name: 'Ollama AI', toolCount: '', icon: Icons.dns),
+        _Integration(name: 'Anthropic AI', toolCount: '', icon: Icons.psychology),
+        _Integration(name: 'OpenAI', toolCount: '', icon: Icons.smart_toy),
+      ],
+    ),
+    _IntegrationCategory(
+      title: 'Utilities',
+      integrations: [
+        _Integration(name: 'CLI', toolCount: '1', icon: Icons.terminal),
+        _Integration(name: 'File', toolCount: '4', icon: Icons.insert_drive_file),
+        _Integration(name: 'KB', toolCount: '5', icon: Icons.library_books),
+      ],
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const MediumDisplayText('Resources on DMTools', textAlign: TextAlign.center),
-        const SizedBox(height: 48),
-        ResponsiveBuilder(
-          mobile: (context, constraints) => Column(
-            children: [
-              _ResourceCard(
-                icon: Icons.book,
-                heading: 'DMTools Documentation',
-                description: 'Learn how to set up and use DMTools for your agentic workflows.',
-                ctaText: 'Read the docs',
-                onPressed: onDocs,
-              ),
-              const SizedBox(height: 24),
-              _ResourceCard(
-                icon: Icons.extension,
-                heading: 'MCP Registry',
-                description: 'Discover an ecosystem of partner and community-driven MCP servers to connect to DMTools.',
-                ctaText: 'Discover the MCP Registry',
-                onPressed: onMcpRegistry,
-              ),
-              const SizedBox(height: 24),
-              _ResourceCard(
-                icon: Icons.new_releases,
-                heading: 'What\'s New',
-                description:
-                    'Discover AI-powered updates designed to supercharge your productivity and streamline your workflow.',
-                ctaText: 'See what\'s new',
-                onPressed: onWhatsNew,
-              ),
-            ],
-          ),
-          desktop: (context, constraints) => Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _ResourceCard(
-                  icon: Icons.book,
-                  heading: 'DMTools Documentation',
-                  description: 'Learn how to set up and use DMTools for your agentic workflows.',
-                  ctaText: 'Read the docs',
-                  onPressed: onDocs,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: _ResourceCard(
-                  icon: Icons.extension,
-                  heading: 'MCP Registry',
-                  description:
-                      'Discover an ecosystem of partner and community-driven MCP servers to connect to DMTools.',
-                  ctaText: 'Discover the MCP Registry',
-                  onPressed: onMcpRegistry,
-                ),
-              ),
-              const SizedBox(width: 24),
-              Expanded(
-                child: _ResourceCard(
-                  icon: Icons.new_releases,
-                  heading: 'What\'s New',
-                  description:
-                      'Discover AI-powered updates designed to supercharge your productivity and streamline your workflow.',
-                  ctaText: 'See what\'s new',
-                  onPressed: onWhatsNew,
-                ),
-              ),
-            ],
+        const MediumHeadlineText('Available Integrations'),
+        const SizedBox(height: 24),
+        ..._categories.map(
+          (category) => Padding(
+            padding: const EdgeInsets.only(bottom: 24),
+            child: _CompactCategorySection(category: category),
           ),
         ),
       ],
@@ -1052,52 +1436,81 @@ class _ResourcesSection extends StatelessWidget {
   }
 }
 
-class _ResourceCard extends StatelessWidget {
-  final IconData icon;
-  final String heading;
-  final String description;
-  final String ctaText;
-  final VoidCallback onPressed;
+class _IntegrationCategory {
+  final String title;
+  final List<_Integration> integrations;
 
-  const _ResourceCard({
-    required this.icon,
-    required this.heading,
-    required this.description,
-    required this.ctaText,
-    required this.onPressed,
-  });
+  const _IntegrationCategory({required this.title, required this.integrations});
+}
+
+class _Integration {
+  final String name;
+  final String toolCount;
+  final IconData icon;
+
+  const _Integration({required this.name, required this.toolCount, required this.icon});
+}
+
+class _CompactCategorySection extends StatelessWidget {
+  final _IntegrationCategory category;
+
+  const _CompactCategorySection({required this.category});
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
-    return CustomCard(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          category.title,
+          style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: colors.textColor),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            for (final integration in category.integrations) _CompactIntegrationCard(integration: integration),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _CompactIntegrationCard extends StatelessWidget {
+  final _Integration integration;
+
+  const _CompactIntegrationCard({required this.integration});
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: colors.cardBg,
+        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+        border: Border.all(color: colors.borderColor.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colors.accentColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Icon(icon, color: colors.accentColor, size: 24),
-          ),
-          const SizedBox(height: 16),
+          Icon(integration.icon, color: colors.accentColor, size: 18),
+          const SizedBox(width: 8),
           Text(
-            heading,
-            style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: colors.textColor),
+            integration.name,
+            style: textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w500, color: colors.textColor),
           ),
-          const SizedBox(height: 8),
-          Text(description, style: textTheme.bodyMedium?.copyWith(color: colors.textSecondary, height: 1.5)),
-          const SizedBox(height: 16),
-          Semantics(
-            label: generateSemanticLabel('button', ctaText),
-            button: true,
-            child: AppTextButton(text: '$ctaText →', onPressed: onPressed),
-          ),
+          if (integration.toolCount.isNotEmpty) ...[
+            const SizedBox(width: 6),
+            Text('(${integration.toolCount})', style: textTheme.bodySmall?.copyWith(color: colors.textSecondary)),
+          ],
         ],
       ),
     );
@@ -1105,92 +1518,67 @@ class _ResourceCard extends StatelessWidget {
 }
 
 // FAQ Section
-class _FaqSection extends StatelessWidget {
+class _FaqSection extends StatefulWidget {
   const _FaqSection();
 
   @override
+  State<_FaqSection> createState() => _FaqSectionState();
+}
+
+class _FaqSectionState extends State<_FaqSection> {
+  List<Map<String, dynamic>> _faqGroups = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFaqData();
+  }
+
+  Future<void> _loadFaqData() async {
+    try {
+      final String jsonString = await rootBundle.loadString('assets/faq_data.json');
+      final Map<String, dynamic> jsonData = json.decode(jsonString);
+      if (mounted) {
+        setState(() {
+          _faqGroups = List<Map<String, dynamic>>.from(jsonData['faqGroups'] ?? []);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading FAQ data: $e');
+      // Fallback to empty list
+      if (mounted) {
+        setState(() {
+          _faqGroups = [];
+        });
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Column(
+    if (_faqGroups.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
       children: [
-        MediumDisplayText('Frequently asked questions', textAlign: TextAlign.center),
-        SizedBox(height: 48),
-        _FaqGroup(
-          heading: 'Getting Started, Installation & Access',
-          questions: [
-            _FaqItem(
-              question: 'Who can access DMTools?',
-              answer:
-                  'DMTools is open source and available to all developers. No subscription or API keys required. Simply install Desktop, CLI, or Server version and start using it.',
-            ),
-            _FaqItem(
-              question: 'How much does it cost to use DMTools?',
-              answer:
-                  'DMTools is completely free and open source. There are no costs, subscriptions, or usage limits. You can use it for personal projects, commercial applications, or enterprise deployments.',
-            ),
-            _FaqItem(
-              question: 'How do I install and set up DMTools?',
-              answer:
-                  'Install Desktop app from releases page, or use CLI version with: curl -fsSL https://github.com/IstiN/dmtools/releases/download/v1.7.82/install.sh | bash. For server deployment, download the Java server bundle.',
-            ),
-            _FaqItem(
-              question: 'What operating systems are supported?',
-              answer:
-                  'Desktop: Android, iOS, Windows, Web, macOS. CLI: macOS, Linux, Windows (via WSL). Server: Any platform with Java runtime.',
-            ),
-          ],
-        ),
-        SizedBox(height: 48),
-        _FaqGroup(
-          heading: 'Capabilities & Functionality',
-          questions: [
-            _FaqItem(
-              question: 'Can I use DMTools with any code editor?',
-              answer:
-                  'Yes. DMTools operates independently and can modify files that any editor can display. It works with VS Code, IntelliJ, Vim, or any other editor of your choice.',
-            ),
-            _FaqItem(
-              question: 'Can I extend DMTools with custom tools?',
-              answer:
-                  'Yes. DMTools supports Model Context Protocol (MCP) server integrations, allowing you to add custom capabilities and contextual richness tailored to your unique development environment.',
-            ),
-            _FaqItem(
-              question: 'What types of development tasks work best with DMTools?',
-              answer:
-                  'DMTools excels at legacy codebase navigation, cross-platform development setup, multi-step implementations, project management integration, and any scenario requiring autonomous task execution with terminal-native workflows.',
-            ),
-            _FaqItem(
-              question: 'Does DMTools support multiple AI providers?',
-              answer:
-                  'Yes. DMTools supports Ollama, Anthropic, OpenAI, Dial, Gemini, and custom JavaScript models. You can configure different providers for different agents.',
-            ),
-            _FaqItem(
-              question: 'How does MCP integration work?',
-              answer:
-                  'DMTools provides a unified MCP wrapper that allows you to access all MCP connectors through a single URL. This simplifies integrations and reduces complexity in your workflows.',
-            ),
-          ],
-        ),
-        SizedBox(height: 48),
-        _FaqGroup(
-          heading: 'Security & Governance',
-          questions: [
-            _FaqItem(
-              question: 'How does DMTools handle security and compliance?',
-              answer:
-                  'DMTools is open source, giving you full visibility into the codebase. All file changes and command executions require explicit approval. You maintain complete control over all autonomous actions.',
-            ),
-            _FaqItem(
-              question: 'How does file modification and command execution work?',
-              answer:
-                  'Every file change and command execution requires your explicit approval before being applied. You maintain complete visibility and control over all autonomous actions through the approval workflow.',
-            ),
-            _FaqItem(
-              question: 'Can I run DMTools in a headless CI/CD environment?',
-              answer:
-                  'Yes. DMTools is designed for headless environments and is perfect for GitHub Actions, GitLab runners, Bitbucket pipelines, and Jenkins jobs. The CLI and Server versions are ideal for automation.',
-            ),
-          ],
-        ),
+        const MediumDisplayText('Frequently asked questions', textAlign: TextAlign.center),
+        const SizedBox(height: 48),
+        ..._faqGroups.asMap().entries.map((entry) {
+          final group = entry.value;
+          final isLast = entry.key == _faqGroups.length - 1;
+          return Column(
+            children: [
+              _FaqGroup(
+                heading: group['heading'] as String,
+                questions: (group['questions'] as List<dynamic>)
+                    .map((q) => _FaqItem(question: q['question'] as String, answer: q['answer'] as String))
+                    .toList(),
+              ),
+              if (!isLast) const SizedBox(height: 48),
+            ],
+          );
+        }),
       ],
     );
   }

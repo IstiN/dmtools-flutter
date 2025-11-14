@@ -217,22 +217,27 @@ class _TerminalSimulationState extends State<TerminalSimulation>
     final command = _currentCommand;
     final typedPart = command.substring(0, _typedCharacters);
 
-    // Check if "dmtools" is in the typed part
+    // Check if "dmtools" starts in the typed part (even if not complete)
     final dmtoolsIndex = typedPart.indexOf('dmtools');
     final List<InlineSpan> children = [];
 
-    if (dmtoolsIndex != -1 && dmtoolsIndex + 'dmtools'.length <= _typedCharacters) {
-      // Split the command into parts: before "dmtools", "dmtools", and after
-      final beforeDmtools = typedPart.substring(0, dmtoolsIndex);
-      final dmtoolsPart = typedPart.substring(dmtoolsIndex, dmtoolsIndex + 'dmtools'.length);
-      final afterDmtools = typedPart.substring(dmtoolsIndex + 'dmtools'.length);
+    if (dmtoolsIndex != -1) {
+      // "dmtools" starts at dmtoolsIndex, check how much of it is typed
+      final dmtoolsStart = dmtoolsIndex;
+      final dmtoolsEnd = (dmtoolsStart + 'dmtools'.length).clamp(0, _typedCharacters);
+      final dmtoolsTyped = typedPart.substring(dmtoolsStart, dmtoolsEnd);
+
+      // Split the command into parts: before "dmtools", partial/complete "dmtools", and after
+      final beforeDmtools = typedPart.substring(0, dmtoolsStart);
+      final afterDmtools = typedPart.substring(dmtoolsEnd);
 
       if (beforeDmtools.isNotEmpty) {
         children.add(TextSpan(text: beforeDmtools));
       }
+      // Always highlight "dmtools" (even if partial) in blue
       children.add(
         TextSpan(
-          text: dmtoolsPart,
+          text: dmtoolsTyped,
           style: TextStyle(color: promptColor, fontWeight: FontWeight.bold),
         ),
       );
@@ -240,8 +245,36 @@ class _TerminalSimulationState extends State<TerminalSimulation>
         children.add(TextSpan(text: afterDmtools));
       }
     } else {
-      // No "dmtools" found yet, just show regular text
-      children.add(TextSpan(text: typedPart));
+      // Check if we're in the middle of typing "dmtools" (partial match)
+      // Look for partial "dmtools" at the end of typed text
+      final dmtoolsPrefix = 'dmtools';
+      int partialMatchLength = 0;
+      for (int i = 1; i <= dmtoolsPrefix.length && i <= typedPart.length; i++) {
+        final suffix = typedPart.substring(typedPart.length - i);
+        final prefix = dmtoolsPrefix.substring(0, i);
+        if (suffix == prefix) {
+          partialMatchLength = i;
+        }
+      }
+
+      if (partialMatchLength > 0) {
+        // We're typing "dmtools" - highlight the partial match
+        final beforePartial = typedPart.substring(0, typedPart.length - partialMatchLength);
+        final partialMatch = typedPart.substring(typedPart.length - partialMatchLength);
+
+        if (beforePartial.isNotEmpty) {
+          children.add(TextSpan(text: beforePartial));
+        }
+        children.add(
+          TextSpan(
+            text: partialMatch,
+            style: TextStyle(color: promptColor, fontWeight: FontWeight.bold),
+          ),
+        );
+      } else {
+        // No "dmtools" found yet, just show regular text
+        children.add(TextSpan(text: typedPart));
+      }
     }
 
     // Add cursor after the text (only when there's text)

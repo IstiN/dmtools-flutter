@@ -1,0 +1,73 @@
+{
+  "faqGroups": [
+    {
+      "heading": "Getting Started, Installation & Access",
+      "questions": [
+        {
+          "question": "Who can access DMTools?",
+          "answer": "DMTools is open source and available to all people under the MIT license. No subscription or API keys required. Simply install Desktop (dmtools-flutter), CLI (dmtools), or Server version and start using it with your own keys."
+        },
+        {
+          "question": "How much does it cost to use DMTools?",
+          "answer": "DMTools is completely free and open source. There are no costs, subscriptions, or usage limits. You can use it for personal projects, commercial applications, or enterprise deployments. Contact me for custom setup: http://linkedin.com/in/klyshevich/"
+        },
+        {
+          "question": "How do I install and set up DMTools?",
+          "answer": "Install Desktop app from releases page, or use CLI version with: curl -fsSL https://github.com/IstiN/dmtools/releases/download/latest/install.sh | bash. For server deployment, download the Java server bundle."
+        },
+        {
+          "question": "What operating systems are supported?",
+          "answer": "Desktop Flutter: Android, iOS, Windows, Web, macOS. CLI: macOS, Linux, Windows (via WSL). Server: Any platform with Java runtime."
+        }
+      ]
+    },
+    {
+      "heading": "Capabilities & Functionality",
+      "questions": [
+        {
+          "question": "Can I use DMTools with any code editor?",
+          "answer": "Yes. DMTools is CLI first, so you can call actions via terminal or any other CLI tool."
+        },
+        {
+          "question": "Can I extend DMTools with custom tools?",
+          "answer": "Yes. DMTools supports internal Model Context Protocol (MCP) server integrations (custom integrations support is in progress), allowing you to add custom capabilities and contextual richness tailored to your unique development environment."
+        },
+        {
+          "question": "What types of development tasks work best with DMTools?",
+          "answer": "DMTools is orchestrator of tools, so you can use it for any SDLC task via combination of context preparation tools and other agents."
+        },
+        {
+          "question": "Does DMTools support multiple AI providers?",
+          "answer": "Yes. DMTools supports Ollama, Anthropic, OpenAI, Dial, Gemini, and custom JavaScript models. You can configure different providers for different agents."
+        },
+        {
+          "question": "How does MCP integration work?",
+          "answer": "DMTools provides a unified MCP wrapper that allows you to access all MCP connectors through a single URL. This simplifies integrations and reduces complexity in your workflows."
+        },
+        {
+          "question": "How does CLI MCP work?",
+          "answer": "DMTools provides access to all MCP like configuration via terminal commands. That means if it's not possible to setup MCP server in your environment, you can use DMTools to access it via CLI."
+        }
+      ]
+    },
+    {
+      "heading": "Security & Governance",
+      "questions": [
+        {
+          "question": "How does DMTools handle security and compliance?",
+          "answer": "DMTools is open source, giving you full visibility into the codebase. Permissions model is built based on workflows and agents permissions. You're in control what DMTools can do and what is not."
+        },
+        {
+          "question": "How does file modification and command execution work?",
+          "answer": "It's same as DevOps script. You're defining what DMTools can do and what is not. DMTools is not a magic tool that can do anything without your permission."
+        },
+        {
+          "question": "Can I run DMTools in a headless CI/CD environment?",
+          "answer": "Yes. DMTools is designed for headless environments and is perfect for GitHub Actions, GitLab runners, Bitbucket pipelines, and Jenkins jobs. The CLI and Server versions are ideal for automation."
+        }
+      ]
+    }
+  ]
+}
+
+
