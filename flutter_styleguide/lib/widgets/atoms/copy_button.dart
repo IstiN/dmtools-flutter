@@ -17,6 +17,10 @@ class CopyButton extends StatefulWidget {
     this.variant = CopyButtonVariant.outlined,
     this.size = CopyButtonSize.medium,
     this.onCopied,
+    this.enableInteractionTracking = true,
+    this.analyticsId,
+    this.analyticsScreenName,
+    this.analyticsMetadata,
     super.key,
   });
 
@@ -28,6 +32,10 @@ class CopyButton extends StatefulWidget {
   final CopyButtonVariant variant;
   final CopyButtonSize size;
   final VoidCallback? onCopied;
+  final bool enableInteractionTracking;
+  final String? analyticsId;
+  final String? analyticsScreenName;
+  final Map<String, dynamic>? analyticsMetadata;
 
   @override
   State<CopyButton> createState() => _CopyButtonState();
@@ -56,6 +64,22 @@ class _CopyButtonState extends State<CopyButton> with SingleTickerProviderStateM
 
   Future<void> _handleCopy() async {
     try {
+      if (widget.enableInteractionTracking) {
+        final metadata = <String, dynamic>{
+          'button_variant': 'CopyButton',
+          'copy_variant': widget.variant.name,
+          if (widget.analyticsMetadata != null) ...widget.analyticsMetadata!,
+        };
+        UserInteractionTracker.instance.trackButtonInteraction(
+          context: context,
+          label: widget.label,
+          size: _resolveButtonSize(),
+          analyticsId: widget.analyticsId,
+          screenNameOverride: widget.analyticsScreenName,
+          metadata: metadata,
+        );
+      }
+
       await Clipboard.setData(ClipboardData(text: widget.textToCopy));
 
       // Trigger animation
@@ -166,6 +190,17 @@ class _CopyButtonState extends State<CopyButton> with SingleTickerProviderStateM
           fontSize: 16,
           spacing: 10,
         );
+    }
+  }
+
+  ButtonSize _resolveButtonSize() {
+    switch (widget.size) {
+      case CopyButtonSize.small:
+        return ButtonSize.small;
+      case CopyButtonSize.medium:
+        return ButtonSize.medium;
+      case CopyButtonSize.large:
+        return ButtonSize.large;
     }
   }
 }

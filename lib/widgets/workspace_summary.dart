@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
+import '../core/analytics/analytics_event_helpers.dart';
+
 class WorkspaceSummary extends StatelessWidget {
   const WorkspaceSummary({super.key});
 
@@ -156,7 +158,9 @@ class _WorkspaceHeader extends StatelessWidget {
               icon: const Icon(Icons.add, color: Colors.white, size: 20),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              onPressed: () {},
+              onPressed: () {
+                trackManualButtonClick('workspace_summary_add_button');
+              },
             ),
           ],
         ),

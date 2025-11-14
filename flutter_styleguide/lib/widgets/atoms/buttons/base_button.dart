@@ -1,9 +1,10 @@
+import 'package:dmtools_styleguide/core/services/user_interaction_tracker.dart';
+import 'package:dmtools_styleguide/theme/app_colors.dart';
+import 'package:dmtools_styleguide/theme/app_dimensions.dart';
+import 'package:dmtools_styleguide/theme/app_theme.dart';
+import 'package:dmtools_styleguide/utils/accessibility_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../theme/app_theme.dart';
-import '../../../theme/app_colors.dart';
-import '../../../theme/app_dimensions.dart';
-import '../../../utils/accessibility_utils.dart';
 
 /// Base class for all button components
 /// This provides common functionality and properties for all button variants
@@ -17,6 +18,10 @@ abstract class BaseButton extends StatefulWidget {
   final bool isDisabled;
   final bool isTestMode;
   final bool testDarkMode;
+  final bool enableInteractionTracking;
+  final String? analyticsId;
+  final String? analyticsScreenName;
+  final Map<String, dynamic>? analyticsMetadata;
   
   // Accessibility properties
   final String? semanticLabel;
@@ -33,6 +38,10 @@ abstract class BaseButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    this.enableInteractionTracking = true,
+    this.analyticsId,
+    this.analyticsScreenName,
+    this.analyticsMetadata,
     this.semanticLabel,
     this.testId,
     this.semanticHint,
@@ -186,24 +195,48 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
         ? 'Loading' 
         : generatedHint;
 
+    final trackedOnPressed = effectiveOnPressed == null
+        ? null
+        : () {
+            if (widget.enableInteractionTracking) {
+              final metadata = <String, dynamic>{
+                'button_variant': widget.runtimeType.toString(),
+                'button_size': widget.size.name,
+                if (widget.analyticsMetadata != null) ...widget.analyticsMetadata!,
+              };
+              UserInteractionTracker.instance.trackButtonInteraction(
+                context: context,
+                label: widget.text,
+                size: widget.size,
+                analyticsId: widget.analyticsId,
+                screenNameOverride: widget.analyticsScreenName,
+                metadata: metadata,
+                testId: generatedTestId,
+                isDisabled: widget.isDisabled,
+                isLoading: widget.isLoading,
+              );
+            }
+            effectiveOnPressed();
+          };
+
     return Semantics(
       label: generatedLabel,
       hint: semanticHint,
       button: true,
-      enabled: effectiveOnPressed != null && !widget.isLoading,
+      enabled: trackedOnPressed != null && !widget.isLoading,
       focusable: true,
-      onTap: effectiveOnPressed,
+      onTap: trackedOnPressed,
       child: Focus(
         focusNode: _focusNode,
         onFocusChange: (focused) {
           setState(() => _isFocused = focused);
         },
         onKeyEvent: (node, event) {
-          if (effectiveOnPressed != null && 
+          if (trackedOnPressed != null && 
               (event.logicalKey == LogicalKeyboardKey.enter || 
                event.logicalKey == LogicalKeyboardKey.space) &&
               event is KeyDownEvent) {
-            effectiveOnPressed();
+            trackedOnPressed();
             return KeyEventResult.handled;
           }
           return KeyEventResult.ignored;
@@ -211,12 +244,12 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
         child: MouseRegion(
           onEnter: (_) => setState(() => _isHovering = true),
           onExit: (_) => setState(() => _isHovering = false),
-          cursor: effectiveOnPressed != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+          cursor: trackedOnPressed != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
           child: GestureDetector(
             onTapDown: (_) => setState(() => _isPressed = true),
             onTapUp: (_) => setState(() => _isPressed = false),
             onTapCancel: () => setState(() => _isPressed = false),
-            onTap: effectiveOnPressed,
+            onTap: trackedOnPressed,
             child: Container(
               key: ValueKey(generatedTestId),
               child: TweenAnimationBuilder<double>(

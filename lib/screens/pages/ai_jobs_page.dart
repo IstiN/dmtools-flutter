@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
-import '../../service_locator.dart';
-import '../../network/services/api_service.dart';
-import '../../network/generated/api.models.swagger.dart';
+import '../../core/analytics/analytics_event_helpers.dart';
 import '../../core/pages/authenticated_page.dart';
-import '../../providers/webhook_state_provider.dart';
-import '../../providers/enhanced_auth_provider.dart';
 import '../../core/services/webhook_api_service.dart';
+import '../../network/generated/api.models.swagger.dart';
+import '../../network/services/api_service.dart';
+import '../../providers/enhanced_auth_provider.dart';
+import '../../providers/webhook_state_provider.dart';
+import '../../service_locator.dart';
 
 class AiJobsPage extends StatefulWidget {
   const AiJobsPage({super.key});
@@ -962,11 +963,17 @@ class _AiJobsPageState extends AuthenticatedPage<AiJobsPage> {
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
+                    onPressed: () {
+                      trackManualButtonClick('job_config_delete_cancel_button');
+                      Navigator.of(context).pop(false);
+                    },
                     child: const Text('Cancel'),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
+                    onPressed: () {
+                      trackManualButtonClick('job_config_delete_confirm_button');
+                      Navigator.of(context).pop(true);
+                    },
                     style: TextButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.error,
                     ),

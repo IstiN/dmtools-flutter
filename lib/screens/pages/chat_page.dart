@@ -1,15 +1,18 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
+import 'dart:async';
+
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
-import '../../providers/chat_provider.dart';
-import '../../providers/enhanced_auth_provider.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../core/analytics/analytics_event_helpers.dart';
 import '../../core/services/file_service.dart';
 import '../../core/services/web_paste_service.dart'
     if (dart.library.io) '../../core/services/web_paste_service_stub.dart';
+import '../../providers/chat_provider.dart';
+import '../../providers/enhanced_auth_provider.dart';
 import '../../service_locator.dart';
-import 'dart:async';
 
 /// Main chat page that integrates with the DMTools app
 /// Uses CleanChatInterface with TabbedHeader for multi-chat support
@@ -157,6 +160,7 @@ class _ChatPageState extends State<ChatPage> {
                 leading: IconButton(
                   icon: const Icon(Icons.history, size: 20),
                   onPressed: () {
+                    trackManualButtonClick('chat_recent_button');
                     // TODO: Recent functionality
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Recent feature coming soon')),
@@ -201,6 +205,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                     ],
                     onSelected: (value) {
+                      trackManualButtonClick('chat_menu_${value}_option');
                       if (value == 'theme') {
                         _showChatThemeConfig(context, chatProvider);
                       } else {

@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../providers/webhook_state_provider.dart';
+
+import '../core/analytics/analytics_event_helpers.dart';
 import '../core/services/webhook_api_service.dart';
+import '../providers/webhook_state_provider.dart';
 import '../widgets/webhook/webhook_management_section.dart';
 
 /// Job Configuration Detail Screen with Webhook Management
@@ -155,11 +157,17 @@ class _JobConfigurationDetailScreenState extends State<JobConfigurationDetailScr
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(false),
+                    onPressed: () {
+                      trackManualButtonClick('job_detail_delete_cancel_button');
+                      Navigator.of(context).pop(false);
+                    },
                     child: const Text('Cancel'),
                   ),
                   TextButton(
-                    onPressed: () => Navigator.of(context).pop(true),
+                    onPressed: () {
+                      trackManualButtonClick('job_detail_delete_confirm_button');
+                      Navigator.of(context).pop(true);
+                    },
                     style: TextButton.styleFrom(
                       foregroundColor: Theme.of(context).colorScheme.error,
                     ),

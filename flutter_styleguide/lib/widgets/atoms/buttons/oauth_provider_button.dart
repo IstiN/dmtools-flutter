@@ -1,11 +1,11 @@
 import 'package:dmtools_styleguide/core/config/app_config.dart';
+import 'package:dmtools_styleguide/core/services/user_interaction_tracker.dart';
+import 'package:dmtools_styleguide/theme/app_colors.dart';
 import 'package:dmtools_styleguide/theme/app_dimensions.dart';
+import 'package:dmtools_styleguide/utils/accessibility_utils.dart';
 import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart'; // Unused
 import 'package:url_launcher/url_launcher.dart';
-// import '../../../theme/app_theme.dart'; // Unused
-import '../../../theme/app_colors.dart';
-import '../../../utils/accessibility_utils.dart';
 
 enum OAuthProvider {
   google,
@@ -23,6 +23,10 @@ class OAuthProviderButton extends StatefulWidget {
   final bool isDisabled;
   final String? semanticLabel;
   final String? testId;
+  final bool enableInteractionTracking;
+  final String? analyticsId;
+  final String? analyticsScreenName;
+  final Map<String, dynamic>? analyticsMetadata;
 
   const OAuthProviderButton({
     required this.provider,
@@ -33,6 +37,10 @@ class OAuthProviderButton extends StatefulWidget {
     this.isDisabled = false,
     this.semanticLabel,
     this.testId,
+    this.enableInteractionTracking = true,
+    this.analyticsId,
+    this.analyticsScreenName,
+    this.analyticsMetadata,
     super.key,
   });
 
@@ -45,6 +53,8 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
   bool _isLoading = false;
 
   Future<void> _handleOnPressed() async {
+    _trackInteraction();
+
     if (widget.onPressed != null) {
       widget.onPressed!();
       return;
@@ -74,6 +84,30 @@ class _OAuthProviderButtonState extends State<OAuthProviderButton> {
         _isLoading = false;
       });
     }
+  }
+
+  void _trackInteraction() {
+    if (!widget.enableInteractionTracking) {
+      return;
+    }
+
+    final providerName = widget.provider.name;
+    final metadata = <String, dynamic>{
+      'button_variant': 'OAuthProviderButton',
+      'provider': providerName,
+      if (widget.analyticsMetadata != null) ...widget.analyticsMetadata!,
+    };
+
+    UserInteractionTracker.instance.trackButtonInteraction(
+      context: context,
+      label: widget.text,
+      size: ButtonSize.large,
+      analyticsId: widget.analyticsId ?? 'oauth_$providerName',
+      screenNameOverride: widget.analyticsScreenName,
+      metadata: metadata,
+      isDisabled: widget.isDisabled,
+      isLoading: widget.isLoading || _isLoading,
+    );
   }
 
   @override

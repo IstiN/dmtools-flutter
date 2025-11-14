@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+
+import '../core/analytics/analytics_event_helpers.dart';
 import '../providers/enhanced_auth_provider.dart';
 
 class LocalLoginForm extends StatefulWidget {
@@ -174,6 +176,7 @@ class _LocalLoginFormState extends State<LocalLoginForm> {
                         color: colors.textSecondary,
                       ),
                       onPressed: () {
+                        trackManualButtonClick('local_login_toggle_password_button');
                         setState(() {
                           _obscurePassword = !_obscurePassword;
                         });
