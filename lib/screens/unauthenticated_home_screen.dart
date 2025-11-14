@@ -32,7 +32,7 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
   }
 
   void _onScroll() {
-    // Mark as scrolling
+    // Mark as scrolling immediately for better Safari performance
     if (!_isScrolling) {
       setState(() {
         _isScrolling = true;
@@ -42,8 +42,8 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
     // Cancel previous timer
     _scrollEndTimer?.cancel();
 
-    // Set timer to mark scrolling as ended after 150ms of no scroll activity
-    _scrollEndTimer = Timer(const Duration(milliseconds: 150), () {
+    // Use shorter debounce for Safari (100ms instead of 150ms) for faster resume
+    _scrollEndTimer = Timer(const Duration(milliseconds: 500), () {
       if (mounted) {
         setState(() {
           _isScrolling = false;
@@ -98,7 +98,7 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
         children: [
           // macOS titlebar spacer (only for native macOS, not web)
           if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
-          
+
           // App Header from styleguide
           AppHeader(
             showTitle: false, // Hide header text
@@ -118,9 +118,9 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                         }
                       },
                       child: const Dialog(
-                      backgroundColor: Colors.transparent,
-                      insetPadding: EdgeInsets.all(16),
-                      elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.all(16),
+                        elevation: 0,
                         child: FocusScope(autofocus: true, child: AuthLoginWidget()),
                       ),
                     );
@@ -136,26 +136,24 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
               controller: _scrollController,
               thumbVisibility: true,
               child: SelectionArea(
-            child: SingleChildScrollView(
+                child: SingleChildScrollView(
                   controller: _scrollController,
                   // Use ClampingScrollPhysics for web (better Safari performance)
                   // BouncingScrollPhysics is iOS-specific and can cause jank on web
-                  physics: kIsWeb 
-                      ? const ClampingScrollPhysics()
-                      : const BouncingScrollPhysics(),
-              child: Padding(
+                  physics: kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
+                  child: Padding(
                     padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
                     child: Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  children: [
+                        child: Column(
+                          children: [
                             const SizedBox(height: 64),
 
                             // Hero Section
                             RepaintBoundary(
                               child: SizedBox(
-                      width: totalWidth,
+                                width: totalWidth,
                                 child: _HeroSection(
                                   onInstall: _openReleasesPage,
                                   onOpenSource: _openOpenSource,
@@ -255,10 +253,10 @@ class _ScreenshotImage extends StatelessWidget {
                 return const _ScreenshotPlaceholder();
               },
             ),
-                                    ),
-                                  ),
-                                ),
-                              );
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -512,11 +510,7 @@ class _HeroSection extends StatefulWidget {
   final VoidCallback onOpenSource;
   final bool isScrolling;
 
-  const _HeroSection({
-    required this.onInstall,
-    required this.onOpenSource,
-    required this.isScrolling,
-  });
+  const _HeroSection({required this.onInstall, required this.onOpenSource, required this.isScrolling});
 
   @override
   State<_HeroSection> createState() => _HeroSectionState();
@@ -574,7 +568,7 @@ class _HeroSectionState extends State<_HeroSection> {
     return Column(
       children: [
         _buildHeading(context, colors, textTheme),
-                    const SizedBox(height: 64),
+        const SizedBox(height: 64),
         _buildTerminal(context, colors),
         const SizedBox(height: 64),
         _buildDescription(context, colors, textTheme),
@@ -620,22 +614,24 @@ class _HeroSectionState extends State<_HeroSection> {
                 ],
               ),
               child: Visibility(
-                visible: true,
                 maintainState: true,
-                maintainAnimation: false, // Pause animations when not visible
-                child: TerminalSimulation(
-                  commands: const [
-                    'dmtools run business_analysis_agent',
-                    'dmtools run refinement_agent',
-                    'dmtools run solution_architecture_agent',
-                    'dmtools run test_cases_generation_agent',
-                    'dmtools run developer_agent',
-                  ],
-                  commandDuration: const Duration(seconds: 3),
-                  typingSpeed: const Duration(milliseconds: 50),
-                  prompt: 'dm.ai>',
-                  promptColor: const Color(0xFF8B5CF6),
-                  paused: widget.isScrolling, // Pause during scroll
+                child: IgnorePointer(
+                  // Disable pointer events during scroll for better Safari performance
+                  ignoring: widget.isScrolling && kIsWeb,
+                  child: TerminalSimulation(
+                    commands: const [
+                      'dmtools run business_analysis_agent',
+                      'dmtools run refinement_agent',
+                      'dmtools run solution_architecture_agent',
+                      'dmtools run test_cases_generation_agent',
+                      'dmtools run developer_agent',
+                    ],
+                    commandDuration: const Duration(seconds: 3),
+                    typingSpeed: const Duration(milliseconds: 50),
+                    prompt: 'dm.ai>',
+                    promptColor: const Color(0xFF8B5CF6),
+                    paused: widget.isScrolling, // Pause during scroll
+                  ),
                 ),
               ),
             ),
@@ -693,8 +689,8 @@ class _HeroSectionState extends State<_HeroSection> {
             const TextSpan(text: ' for them to use?'),
           ],
         ),
-                        textAlign: TextAlign.center,
-                      ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
@@ -764,7 +760,7 @@ class _HeroSectionState extends State<_HeroSection> {
   Widget _buildLeftColumn(BuildContext context, ThemeColorSet colors, TextTheme textTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+      children: [
         // Description text
         Text(
           'Built to help you ship, right from your terminal',
@@ -848,13 +844,13 @@ class _PillarsSection extends StatelessWidget {
   static const List<_PillarData> _pillars = [
     _PillarData(
       heading: 'Unified MCP access across all platforms',
-                            description:
+      description:
           'Configure MCP tools once and use them with Cursor, Copilot, Claude Code, Gemini, or CLI commands. Combine different MCP tools via JS code execution and save tokens.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg',
-                          ),
+    ),
     _PillarData(
       heading: 'Agent-powered, CLI-first architecture',
-                            description:
+      description:
           'Configure tools and agents together, then execute them via CLI or locally to maximize your AI workflow efficiency.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg',
     ),
@@ -1074,7 +1070,7 @@ function action(params) {
               const LargeBodyText(
                 'Code execution with MCP enables agents to use context more efficiently by loading tools on demand.',
               ),
-                    const SizedBox(height: 32),
+              const SizedBox(height: 32),
               const _FlowDiagram(),
               const SizedBox(height: 24),
               const MediumHeadlineText('Leverage MCP context and extend with your own tools'),

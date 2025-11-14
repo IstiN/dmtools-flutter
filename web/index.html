@@ -177,6 +177,39 @@
   <!-- Shared theme styles -->
   <link rel="stylesheet" href="css/shared-theme.css">
   
+  <!-- Safari-specific performance optimizations -->
+  <style>
+    /* Optimize scrolling performance in Safari */
+    html, body {
+      -webkit-overflow-scrolling: touch;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: scroll-position;
+    }
+    
+    /* Optimize Flutter canvas rendering in Safari */
+    flt-scene-host, flt-glass-pane, canvas {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: transform;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+    }
+    
+    /* Reduce repaints during scroll */
+    * {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Optimize images */
+    img {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      image-rendering: -webkit-optimize-contrast;
+    }
+  </style>
+  
   <!-- Runtime configuration -->
   <script src="config.js" defer></script>
   
