@@ -1,25 +1,26 @@
 import 'package:flutter/foundation.dart';
 import '../core/services/integration_service.dart';
+import '../core/interfaces/auth_token_provider.dart';
 
 /// Provider for managing integration state across the application
 class IntegrationProvider extends ChangeNotifier {
   final IntegrationService _integrationService;
+  final AuthTokenProvider? _authProvider;
   bool _isInitialized = false;
   bool _isLoading = false;
   String? _error;
 
-  IntegrationProvider(this._integrationService) {
+  IntegrationProvider(this._integrationService) : _authProvider = _integrationService.authProvider {
     // Listen to the integration service for changes
     _integrationService.addListener(_onIntegrationServiceChanged);
 
     // Initialize if auth provider is already authenticated
-    final authProvider = _integrationService.authProvider;
-    if (authProvider != null && authProvider.isAuthenticated) {
+    if (_authProvider != null && _authProvider.isAuthenticated) {
       _initialize();
     }
 
     // Listen to auth changes to initialize when user becomes authenticated
-    authProvider?.addListener(_onAuthChanged);
+    _authProvider?.addListener(_onAuthChanged);
   }
 
   /// Getters
@@ -28,13 +29,16 @@ class IntegrationProvider extends ChangeNotifier {
     final providerLoading = _isLoading;
     final serviceLoading = _integrationService.isLoading;
     final result = providerLoading || serviceLoading;
-    
+
     if (kDebugMode && result) {
-      debugPrint('🔍 IntegrationProvider.isLoading: provider=$providerLoading, service=$serviceLoading, result=$result');
+      debugPrint(
+        '🔍 IntegrationProvider.isLoading: provider=$providerLoading, service=$serviceLoading, result=$result',
+      );
     }
-    
+
     return result;
   }
+
   String? get error => _error ?? _integrationService.error;
   List<IntegrationModel> get integrations => _integrationService.integrations;
   List<IntegrationTypeModel> get availableTypes => _integrationService.availableTypes;
@@ -53,10 +57,7 @@ class IntegrationProvider extends ChangeNotifier {
       }
 
       // Load integration types and integrations in parallel
-      await Future.wait([
-        _integrationService.loadIntegrationTypes(),
-        _integrationService.loadIntegrations(),
-      ]);
+      await Future.wait([_integrationService.loadIntegrationTypes(), _integrationService.loadIntegrations()]);
 
       _isInitialized = true;
 
@@ -100,10 +101,7 @@ class IntegrationProvider extends ChangeNotifier {
     _clearError();
 
     try {
-      await Future.wait([
-        _integrationService.loadIntegrationTypes(),
-        _integrationService.loadIntegrations(),
-      ]);
+      await Future.wait([_integrationService.loadIntegrationTypes(), _integrationService.loadIntegrations()]);
 
       if (kDebugMode) {
         debugPrint('✅ IntegrationProvider: Refreshed successfully');
@@ -230,10 +228,7 @@ class IntegrationProvider extends ChangeNotifier {
       debugPrint('🔧 IntegrationProvider: Testing integration - $type');
     }
 
-    final request = TestIntegrationRequest(
-      type: type,
-      configParams: configParams,
-    );
+    final request = TestIntegrationRequest(type: type, configParams: configParams);
 
     final result = await _integrationService.testIntegration(request);
 
@@ -352,19 +347,25 @@ class IntegrationProvider extends ChangeNotifier {
   /// Force reinitialize (useful for testing or after auth changes)
   Future<void> forceReinitialize() async {
     if (kDebugMode) {
-      debugPrint('🔄 IntegrationProvider: Force reinitialize called - current state: initialized: $_isInitialized, loading: $_isLoading');
+      debugPrint(
+        '🔄 IntegrationProvider: Force reinitialize called - current state: initialized: $_isInitialized, loading: $_isLoading',
+      );
     }
     _isInitialized = false;
     await _initialize();
     if (kDebugMode) {
-      debugPrint('🔄 IntegrationProvider: Force reinitialize completed - new state: initialized: $_isInitialized, loading: $_isLoading');
+      debugPrint(
+        '🔄 IntegrationProvider: Force reinitialize completed - new state: initialized: $_isInitialized, loading: $_isLoading',
+      );
     }
   }
 
   @override
   void dispose() {
+    // Remove auth provider listener first
+    _authProvider?.removeListener(_onAuthChanged);
+    // Remove integration service listener
     _integrationService.removeListener(_onIntegrationServiceChanged);
-    _integrationService.dispose();
     super.dispose();
   }
 }
