@@ -77,8 +77,6 @@ jobs:
 
       - name: Build Main App for Web
         run: |
-          # Use auto renderer for best compatibility (Safari/WebKit optimized)
-          # --web-renderer=auto switches between html and canvaskit based on device
           flutter build web \
             --release \
             --csp \
@@ -87,7 +85,6 @@ jobs:
             --optimization-level=4 \
             --pwa-strategy=offline-first \
             --base-href=/ \
-            --web-renderer=auto \
             --dart-define=FLUTTER_ENV=production \
             --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
 
@@ -107,7 +104,6 @@ jobs:
       - name: Build Styleguide for Web
         run: |
           cd flutter_styleguide
-          # Use auto renderer for best compatibility (Safari/WebKit optimized)
           flutter build web \
             --release \
             --csp \
@@ -116,7 +112,6 @@ jobs:
             --optimization-level=4 \
             --pwa-strategy=offline-first \
             --base-href=/styleguide/ \
-            --web-renderer=auto \
             --dart-define=FLUTTER_ENV=production \
             --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
           cd ..
@@ -324,7 +319,6 @@ jobs:
 
       - name: Build Main App for Web
         run: |
-          # Use auto renderer for best compatibility (Safari/WebKit optimized)
           flutter build web \
             --release \
             --csp \
@@ -333,7 +327,6 @@ jobs:
             --optimization-level=4 \
             --pwa-strategy=offline-first \
             --base-href=/ \
-            --web-renderer=auto \
             --dart-define=FLUTTER_ENV=production \
             --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
           
@@ -343,7 +336,6 @@ jobs:
       - name: Build Styleguide for Web (Combined Package)
         run: |
           cd flutter_styleguide
-          # Use auto renderer for best compatibility
           flutter build web \
             --release \
             --csp \
@@ -352,7 +344,6 @@ jobs:
             --optimization-level=4 \
             --pwa-strategy=offline-first \
             --base-href=/styleguide/ \
-            --web-renderer=auto \
             --dart-define=FLUTTER_ENV=production \
             --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
           
@@ -372,7 +363,6 @@ jobs:
             --optimization-level=4 \
             --pwa-strategy=offline-first \
             --base-href=/ \
-            --web-renderer=auto \
             --dart-define=FLUTTER_ENV=production \
             --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
           
