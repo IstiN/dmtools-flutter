@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
 import '../../../theme/app_theme.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_dimensions.dart';
@@ -94,16 +93,12 @@ abstract class BaseButtonState<T extends BaseButton> extends State<T> {
     if (widget.isTestMode) {
       isDarkMode = widget.testDarkMode;
     } else {
-      try {
-        // Try to get the theme provider from context
-        isDarkMode = Provider.of<ThemeProvider>(context).isDarkMode;
-      } catch (e) {
-        // Fallback to light theme if provider is not available
-        isDarkMode = false;
-      }
+      // Use optimized theme extension instead of direct Provider access
+      isDarkMode = context.isDarkMode;
     }
 
-    final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
+    // Use optimized theme extension for colors
+    final ThemeColorSet colors = context.colors;
 
     // Get dimensions from AppDimensions
     const paddings = AppDimensions.buttonPadding;

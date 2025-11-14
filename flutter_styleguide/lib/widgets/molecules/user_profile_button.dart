@@ -80,14 +80,10 @@ class _UserProfileButtonState extends State<UserProfileButton> {
 
     _overlayEntry = OverlayEntry(
       builder: (context) {
-        bool isDarkMode;
-        if (widget.isTestMode) {
-          isDarkMode = widget.testDarkMode;
-        } else {
-          isDarkMode = context.isDarkMode;
-        }
-
-        final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
+        // Use optimized theme extension instead of manual color selection
+        final ThemeColorSet colors = widget.isTestMode 
+            ? (widget.testDarkMode ? AppColors.dark : AppColors.light)
+            : context.colors;
 
         return Positioned(
           width: 200,
@@ -198,14 +194,10 @@ class _UserProfileButtonState extends State<UserProfileButton> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode;
-    if (widget.isTestMode) {
-      isDarkMode = widget.testDarkMode;
-    } else {
-      isDarkMode = context.isDarkMode;
-    }
-
-    final ThemeColorSet colors = isDarkMode ? AppColors.dark : AppColors.light;
+    // Use optimized theme extension instead of manual color selection
+    final ThemeColorSet colors = widget.isTestMode 
+        ? (widget.testDarkMode ? AppColors.dark : AppColors.light)
+        : context.colors;
 
     return CompositedTransformTarget(
       link: _layerLink,

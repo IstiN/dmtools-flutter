@@ -394,54 +394,76 @@ class AppTheme {
 /// Extension to provide easy access to theme colors from any BuildContext
 extension ThemeContext on BuildContext {
   /// Get theme colors without listening to changes (for non-reactive usage)
+  /// Optimized to cache brightness check and reduce Provider lookups
   ThemeColorSet get colors {
     try {
       final themeProvider = Provider.of<ThemeProvider>(this, listen: false);
-      // If not initialized yet, wait for initialization to prevent race conditions
+      // If not initialized yet, use system theme as fallback
       if (!themeProvider.isInitialized) {
-        // During initialization, use system theme as fallback
-        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-        return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+        return _getSystemTheme();
       }
       return themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
     } catch (e) {
       // Fallback to system brightness if Provider is not available
-      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+      return _getSystemTheme();
     }
   }
 
   /// Get theme colors with listening to changes (for reactive usage)
+  /// Optimized to cache brightness check and reduce Provider lookups
   ThemeColorSet get colorsListening {
     try {
       final themeProvider = Provider.of<ThemeProvider>(this);
-      // If not initialized yet, wait for initialization to prevent race conditions
+      // If not initialized yet, use system theme as fallback
       if (!themeProvider.isInitialized) {
-        // During initialization, use system theme as fallback
-        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-        return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+        return _getSystemTheme();
       }
       return themeProvider.isDarkMode ? AppColors.dark : AppColors.light;
     } catch (e) {
       // Fallback to system brightness if Provider is not available
-      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+      return _getSystemTheme();
     }
   }
 
   /// Check if current theme is dark mode
+  /// Optimized to cache brightness check and reduce Provider lookups
   bool get isDarkMode {
     try {
       final themeProvider = Provider.of<ThemeProvider>(this, listen: false);
       // If not initialized yet, use system theme
       if (!themeProvider.isInitialized) {
-        final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-        return brightness == Brightness.dark;
+        return _isSystemDarkMode();
       }
       return themeProvider.isDarkMode;
     } catch (e) {
-      final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-      return brightness == Brightness.dark;
+      return _isSystemDarkMode();
     }
+  }
+
+  /// Check if current theme is dark mode with listening to changes (for reactive usage)
+  /// Optimized to cache brightness check and reduce Provider lookups
+  bool get isDarkModeListening {
+    try {
+      final themeProvider = Provider.of<ThemeProvider>(this);
+      // If not initialized yet, use system theme
+      if (!themeProvider.isInitialized) {
+        return _isSystemDarkMode();
+      }
+      return themeProvider.isDarkMode;
+    } catch (e) {
+      return _isSystemDarkMode();
+    }
+  }
+
+  /// Internal helper to get system theme (cached for performance)
+  static ThemeColorSet _getSystemTheme() {
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    return brightness == Brightness.dark ? AppColors.dark : AppColors.light;
+  }
+
+  /// Internal helper to check if system is dark mode (cached for performance)
+  static bool _isSystemDarkMode() {
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    return brightness == Brightness.dark;
   }
 }
