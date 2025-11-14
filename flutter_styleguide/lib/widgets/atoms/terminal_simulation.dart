@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
 import '../../theme/app_colors.dart';
@@ -51,6 +52,8 @@ class _TerminalSimulationState extends State<TerminalSimulation>
   int _currentCommandIndex = 0;
   int _typedCharacters = 0;
   String _currentCommand = '';
+  Timer? _typingTimer;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -78,34 +81,57 @@ class _TerminalSimulationState extends State<TerminalSimulation>
     _typeCommand();
   }
 
-  Future<void> _typeCommand() async {
+  void _typeCommand() {
+    if (_isDisposed) return;
+    
     final command = widget.commands[_currentCommandIndex];
-    for (int i = 0; i <= command.length; i++) {
-      if (!mounted) return;
-      await Future.delayed(widget.typingSpeed);
-      if (!mounted) return;
-      setState(() {
-        _typedCharacters = i;
-      });
-    }
-
-    // Show full command for a while, then move to next
-    final typingDuration = Duration(milliseconds: command.length * widget.typingSpeed.inMilliseconds);
-    final remainingDuration = widget.commandDuration - typingDuration;
-    if (remainingDuration.inMilliseconds > 0) {
-      await Future.delayed(remainingDuration);
-      if (!mounted) return;
-    }
-
-    // Move to next command
-    setState(() {
-      _currentCommandIndex = (_currentCommandIndex + 1) % widget.commands.length;
+    int currentIndex = 0;
+    
+    _typingTimer?.cancel();
+    _typingTimer = Timer.periodic(widget.typingSpeed, (timer) {
+      if (_isDisposed || !mounted) {
+        timer.cancel();
+        return;
+      }
+      
+      if (currentIndex <= command.length) {
+        setState(() {
+          _typedCharacters = currentIndex;
+        });
+        currentIndex++;
+      } else {
+        timer.cancel();
+        _typingTimer = null;
+        
+        // Show full command for a while, then move to next
+        final typingDuration = Duration(milliseconds: command.length * widget.typingSpeed.inMilliseconds);
+        final remainingDuration = widget.commandDuration - typingDuration;
+        if (remainingDuration.inMilliseconds > 0 && !_isDisposed && mounted) {
+          _typingTimer = Timer(remainingDuration, () {
+            if (_isDisposed || !mounted) return;
+            
+            // Move to next command
+            setState(() {
+              _currentCommandIndex = (_currentCommandIndex + 1) % widget.commands.length;
+            });
+            _loadNextCommand();
+          });
+        } else if (!_isDisposed && mounted) {
+          // Move to next command immediately
+          setState(() {
+            _currentCommandIndex = (_currentCommandIndex + 1) % widget.commands.length;
+          });
+          _loadNextCommand();
+        }
+      }
     });
-    _loadNextCommand();
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
+    _typingTimer?.cancel();
+    _typingTimer = null;
     _controller.dispose();
     super.dispose();
   }

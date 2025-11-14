@@ -58,12 +58,13 @@ void main() {
 
     // The app should show either loading screen or unauthenticated screen
     // This is the expected behavior in the test environment
-    expect(find.byType(CircularProgressIndicator), findsAtLeastNWidgets(0));
+    expect(find.byType(MaterialApp), findsOneWidget);
 
-    // Check if we have either loading text or welcome content
+    // Check if we have either loading text or landing page content
     final hasLoadingText = find.text('Initializing DMTools...').evaluate().isNotEmpty;
-    final hasWelcomeText = find.text('Welcome to DMTools').evaluate().isNotEmpty;
+    final hasLandingText = find.textContaining('Is it easier to train').evaluate().isNotEmpty ||
+                           find.textContaining('DMTools provides').evaluate().isNotEmpty;
 
-    expect(hasLoadingText || hasWelcomeText, isTrue);
+    expect(hasLoadingText || hasLandingText, isTrue);
   });
 }
