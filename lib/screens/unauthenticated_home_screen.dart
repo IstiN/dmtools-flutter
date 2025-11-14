@@ -228,16 +228,25 @@ class _ScreenshotImage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-          boxShadow: [
-            // Outer glow effect
-            BoxShadow(color: colors.accentColor.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
-            // Inner shadow for depth
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: kIsWeb
+              ? [
+                  // Simplified shadow for web/Safari performance
+                  BoxShadow(
+                    color: colors.accentColor.withValues(alpha: 0.2),
+                    blurRadius: 16,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [
+                  // Outer glow effect
+                  BoxShadow(color: colors.accentColor.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
+                  // Inner shadow for depth
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
@@ -592,26 +601,35 @@ class _HeroSectionState extends State<_HeroSection> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-                boxShadow: [
-                  // Multiple shadow layers for depth
-                  BoxShadow(
-                    color: colors.accentColor.withValues(alpha: 0.2),
-                    blurRadius: 30,
-                    spreadRadius: 2,
-                    offset: const Offset(0, 8),
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 4),
-                  ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.1),
-                    blurRadius: 10,
-                    spreadRadius: -2,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+                boxShadow: kIsWeb
+                    ? [
+                        // Simplified shadow for web/Safari performance
+                        BoxShadow(
+                          color: colors.accentColor.withValues(alpha: 0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 6),
+                        ),
+                      ]
+                    : [
+                        // Multiple shadow layers for depth
+                        BoxShadow(
+                          color: colors.accentColor.withValues(alpha: 0.2),
+                          blurRadius: 30,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 8),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 4),
+                        ),
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: isDarkMode ? 0.3 : 0.1),
+                          blurRadius: 10,
+                          spreadRadius: -2,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
               ),
               child: Visibility(
                 maintainState: true,
@@ -631,6 +649,7 @@ class _HeroSectionState extends State<_HeroSection> {
                     prompt: 'dm.ai>',
                     promptColor: const Color(0xFF8B5CF6),
                     paused: widget.isScrolling, // Pause during scroll
+                    enableAnimation: !kIsWeb,
                   ),
                 ),
               ),
@@ -934,11 +953,13 @@ class _PillarCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         svgIconPath != null
-            ? SvgPicture.asset(
-                svgIconPath!,
-                width: 32,
-                height: 32,
-                colorFilter: ColorFilter.mode(colors.accentColor, BlendMode.srcIn),
+            ? RepaintBoundary(
+                child: SvgPicture.asset(
+                  svgIconPath!,
+                  width: 32,
+                  height: 32,
+                  colorFilter: ColorFilter.mode(colors.accentColor, BlendMode.srcIn),
+                ),
               )
             : Icon(icon!, size: 32, color: colors.accentColor),
         const SizedBox(height: 16),
@@ -967,20 +988,29 @@ class _GlowWrapper extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-        boxShadow: [
-          BoxShadow(
-            color: colors.accentColor.withValues(alpha: 0.2),
-            blurRadius: 20,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: colors.accentColor.withValues(alpha: 0.1),
-            blurRadius: 40,
-            spreadRadius: -2,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        boxShadow: kIsWeb
+            ? [
+                // Simplified shadow for web/Safari performance
+                BoxShadow(
+                  color: colors.accentColor.withValues(alpha: 0.15),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: colors.accentColor.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: colors.accentColor.withValues(alpha: 0.1),
+                  blurRadius: 40,
+                  spreadRadius: -2,
+                  offset: const Offset(0, 8),
+                ),
+              ],
       ),
       child: child,
     );
@@ -997,9 +1027,7 @@ class _CodeExampleItem extends StatelessWidget {
 
   static const String _codeExample = r'''/**
  * Simple Workflow: Ticket → Figma → AI → Cursor
- * 
- * Reads ticket, extracts Figma link, gets design content,
- * generates developer prompt with AI, and runs Cursor CLI command.
+ * MCP tools orchestration via JavaScript
  */
 function action(params) {
     try {
@@ -1011,44 +1039,32 @@ function action(params) {
             fields: ["summary", "description"]
         });
         
-        // Step 2: Extract Figma link from description
+        // Step 2: Extract Figma link
         const text = (ticket.description || "").toLowerCase();
-        const figmaMatch = text.match(/(https?:\/\/[^\s]*figma\.com\/[^\s]*)/i);
-        const figmaUrl = figmaMatch ? figmaMatch[1] : null;
+        const figmaUrl = text.match(/(https?:\/\/[^\s]*figma\.com\/[^\s]*)/i)?.[1];
       
-        // Step 3: Read Figma content
-        const figmaStructure = figma_get_file_structure({ href: figmaUrl });
+        // Step 3: Get Figma design elements
         const figmaIcons = figma_get_icons({ href: figmaUrl });
         
-        // Step 4: Generate developer prompt with AI
-        const aiPrompt = 
-          `Create a development prompt for Cursor AI to implement:
-          Ticket: ${ticketKey} - ${ticket.summary}
-          Description: ${ticket.description}
-          Figma Design: ${figmaUrl}
-          Design Elements: ${figmaIcons?.length || 0} visual elements found
-          Provide a clear, actionable prompt for implementing this feature.`;
+        // Step 4: Generate prompt with AI
+        const prompt = `Implement: ${ticketKey} - ${ticket.summary}
+          Design: ${figmaUrl}
+          Elements: ${figmaIcons?.length || 0} found`;
         
-        const developerPrompt = gemini_ai_chat({ message: aiPrompt });
+        const devPrompt = gemini_ai_chat({ message: prompt });
         
-        // Step 5: Execute Cursor CLI command
-        const cursorCommand = `cursor --prompt "${developerPrompt.replace(/"/g, '\\"')}"`;
-        const cliResult = cli_execute_command({ command: cursorCommand });
-        
-        // Post summary comment
-        jira_post_comment({
-            key: ticketKey,
-            comment: `✅ Development is Done.`
+        // Step 5: Execute Cursor CLI
+        const result = cli_execute_command({ 
+            command: `cursor --prompt "${devPrompt}"` 
         });
         
-        return {
-            success: true,
-            ticketKey,
-            figmaUrl,
-            developerPrompt,
-            cliResult
-        };
+        // Post completion
+        jira_post_comment({
+            key: ticketKey,
+            comment: `✅ Development Done`
+        });
         
+        return { success: true, ticketKey, result };
     } catch (error) {
         return { success: false, error: error.toString() };
     }
@@ -1089,7 +1105,7 @@ function action(params) {
                 key: ValueKey('js-code-$isDarkMode'),
                 code: _codeExample,
                 language: 'javascript',
-                maxHeight: 600,
+                maxHeight: kIsWeb ? null : 600, // No maxHeight on web to avoid nested scrolling
                 theme: CodeDisplayTheme.auto,
               ),
             ),
@@ -1139,7 +1155,7 @@ function action(params) {
                     key: ValueKey('js-code-$isDarkMode'),
                     code: _codeExample,
                     language: 'javascript',
-                    maxHeight: 600,
+                    maxHeight: kIsWeb ? null : 600, // No maxHeight on web to avoid nested scrolling
                     theme: CodeDisplayTheme.auto,
                   ),
                 ),
@@ -1182,20 +1198,29 @@ class _FlowDiagram extends StatelessWidget {
         color: colors.cardBg,
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
         border: Border.all(color: colors.borderColor.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: colors.accentColor.withValues(alpha: 0.2),
-            blurRadius: 20,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: colors.accentColor.withValues(alpha: 0.1),
-            blurRadius: 40,
-            spreadRadius: -2,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        boxShadow: kIsWeb
+            ? [
+                // Simplified shadow for web/Safari performance
+                BoxShadow(
+                  color: colors.accentColor.withValues(alpha: 0.15),
+                  blurRadius: 16,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [
+                BoxShadow(
+                  color: colors.accentColor.withValues(alpha: 0.2),
+                  blurRadius: 20,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 4),
+                ),
+                BoxShadow(
+                  color: colors.accentColor.withValues(alpha: 0.1),
+                  blurRadius: 40,
+                  spreadRadius: -2,
+                  offset: const Offset(0, 8),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

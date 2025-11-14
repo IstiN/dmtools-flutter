@@ -100,7 +100,7 @@ These hints allow the browser to establish early connections to external resourc
 The following placeholders are replaced during the build process:
 
 - `__BUILD_VERSION__`: Timestamp and git hash (e.g., `20241220143022-a1b2c3d`)
-- `__CANONICAL_URL__`: Production URL (default: `https://dmtools.app`)
+- `__CANONICAL_URL__`: Production URL (default: `https://ai-native.agency`)
 - `__BUILD_DATE__`: ISO 8601 formatted date (e.g., `2024-12-20T14:30:22Z`)
 
 ### Build Script
