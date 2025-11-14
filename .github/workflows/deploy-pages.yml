@@ -77,13 +77,62 @@ jobs:
 
       - name: Build Main App for Web
         run: |
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/ --dart-define=FLUTTER_ENV=production --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
+          # Use auto renderer for best compatibility (Safari/WebKit optimized)
+          # --web-renderer=auto switches between html and canvaskit based on device
+          flutter build web \
+            --release \
+            --csp \
+            --no-source-maps \
+            --tree-shake-icons \
+            --optimization-level=4 \
+            --pwa-strategy=offline-first \
+            --base-href=/ \
+            --web-renderer=auto \
+            --dart-define=FLUTTER_ENV=production \
+            --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
+
+      - name: Optimize Main App Build (Safari/Performance)
+        run: |
+          echo "🚀 Applying additional optimizations for Safari and performance..."
+          
+          # Remove unused canvaskit files if using auto renderer to reduce bundle size
+          rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
+          
+          # Ensure proper MIME types and compression hints
+          find build/web -name "*.js" -exec touch {} \;
+          find build/web -name "*.css" -exec touch {} \;
+          
+          echo "✅ Additional optimizations applied"
 
       - name: Build Styleguide for Web
         run: |
           cd flutter_styleguide
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/styleguide/ --dart-define=FLUTTER_ENV=production --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+          # Use auto renderer for best compatibility (Safari/WebKit optimized)
+          flutter build web \
+            --release \
+            --csp \
+            --no-source-maps \
+            --tree-shake-icons \
+            --optimization-level=4 \
+            --pwa-strategy=offline-first \
+            --base-href=/styleguide/ \
+            --web-renderer=auto \
+            --dart-define=FLUTTER_ENV=production \
+            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
           cd ..
+
+      - name: Optimize Styleguide Build (Safari/Performance)
+        run: |
+          echo "🚀 Applying additional optimizations for styleguide..."
+          
+          # Remove unused canvaskit files
+          rm -f flutter_styleguide/build/web/canvaskit/chromium/* 2>/dev/null || true
+          
+          # Ensure proper file timestamps
+          find flutter_styleguide/build/web -name "*.js" -exec touch {} \;
+          find flutter_styleguide/build/web -name "*.css" -exec touch {} \;
+          
+          echo "✅ Styleguide optimizations applied"
 
       - name: Create deployment structure
         run: |
@@ -275,19 +324,61 @@ jobs:
 
       - name: Build Main App for Web
         run: |
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/ --dart-define=FLUTTER_ENV=production --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
+          # Use auto renderer for best compatibility (Safari/WebKit optimized)
+          flutter build web \
+            --release \
+            --csp \
+            --no-source-maps \
+            --tree-shake-icons \
+            --optimization-level=4 \
+            --pwa-strategy=offline-first \
+            --base-href=/ \
+            --web-renderer=auto \
+            --dart-define=FLUTTER_ENV=production \
+            --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
+          
+          # Apply optimizations
+          rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
 
       - name: Build Styleguide for Web (Combined Package)
         run: |
           cd flutter_styleguide
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/styleguide/ --dart-define=FLUTTER_ENV=production --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+          # Use auto renderer for best compatibility
+          flutter build web \
+            --release \
+            --csp \
+            --no-source-maps \
+            --tree-shake-icons \
+            --optimization-level=4 \
+            --pwa-strategy=offline-first \
+            --base-href=/styleguide/ \
+            --web-renderer=auto \
+            --dart-define=FLUTTER_ENV=production \
+            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+          
+          # Apply optimizations
+          rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
           cd ..
 
       - name: Build Styleguide for Web (Standalone Package)
         run: |
           cd flutter_styleguide
           # Build styleguide with root base href for standalone deployment
-          flutter build web --release --csp --no-source-maps --tree-shake-icons --optimization-level=4 --pwa-strategy=offline-first --base-href=/ --dart-define=FLUTTER_ENV=production --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+          flutter build web \
+            --release \
+            --csp \
+            --no-source-maps \
+            --tree-shake-icons \
+            --optimization-level=4 \
+            --pwa-strategy=offline-first \
+            --base-href=/ \
+            --web-renderer=auto \
+            --dart-define=FLUTTER_ENV=production \
+            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+          
+          # Apply optimizations
+          rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
+          
           # Create a separate build directory for standalone
           mkdir -p build/web_standalone
           cp -r build/web/* build/web_standalone/

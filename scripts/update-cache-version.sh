@@ -14,7 +14,7 @@ BUILD_VERSION="${TIMESTAMP}-${GIT_HASH}"
 BUILD_DATE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
 
 # Get canonical URL from environment or use default
-CANONICAL_URL="${CANONICAL_URL:-https://dmtools.app}"
+CANONICAL_URL="${CANONICAL_URL:-https://ai-native.agency}"
 
 echo "🔄 Updating cache version to: ${BUILD_VERSION}"
 echo "📅 Build date: ${BUILD_DATE}"

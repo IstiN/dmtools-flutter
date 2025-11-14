@@ -32,6 +32,9 @@ class TerminalSimulation extends StatefulWidget {
   /// Whether to pause animations (e.g., during scroll or when off-screen)
   final bool paused;
 
+  /// Whether to enable typing/cursor animations (disabled on web for performance)
+  final bool enableAnimation;
+
   TerminalSimulation({
     required this.commands,
     Duration? commandDuration,
@@ -41,63 +44,127 @@ class TerminalSimulation extends StatefulWidget {
     this.textColor,
     this.promptColor,
     this.paused = false,
+    this.enableAnimation = true,
     super.key,
-  })  : commandDuration = commandDuration ?? const Duration(seconds: 3),
-        typingSpeed = typingSpeed ?? const Duration(milliseconds: 50),
-        assert(commands.isNotEmpty, 'Commands list cannot be empty');
+  }) : commandDuration = commandDuration ?? const Duration(seconds: 3),
+       typingSpeed = typingSpeed ?? const Duration(milliseconds: 50),
+       assert(commands.isNotEmpty, 'Commands list cannot be empty');
 
   @override
   State<TerminalSimulation> createState() => _TerminalSimulationState();
 }
 
-class _TerminalSimulationState extends State<TerminalSimulation>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+class _TerminalSimulationState extends State<TerminalSimulation> with SingleTickerProviderStateMixin {
+  AnimationController? _controller;
   int _currentCommandIndex = 0;
   int _typedCharacters = 0;
   String _currentCommand = '';
   Timer? _typingTimer;
+  Timer? _fadeTimer;
   bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    )..repeat();
+    _isDisposed = false;
 
-    if (!widget.paused) {
-      _startCommandCycle();
+    if (widget.enableAnimation) {
+      _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat();
+      if (!widget.paused) {
+        _startCommandCycle();
+      }
+    } else {
+      // When animation is disabled, use fade-in/out to cycle through commands
+      _currentCommand = widget.commands.first;
+      _typedCharacters = _currentCommand.length;
+      if (!widget.paused && widget.commands.length > 1) {
+        _startFadeCycle();
+      }
+    }
+  }
+
+  void _initializeAnimation() {
+    if (widget.enableAnimation) {
+      _controller ??= AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat();
+
+      if (!_isDisposed && !widget.paused) {
+        _startCommandCycle();
+      }
     }
   }
 
   @override
   void didUpdateWidget(TerminalSimulation oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.enableAnimation != oldWidget.enableAnimation) {
+      if (widget.enableAnimation) {
+        _fadeTimer?.cancel();
+        _fadeTimer = null;
+        _initializeAnimation();
+      } else {
+        _typingTimer?.cancel();
+        _typingTimer = null;
+        _controller?.stop();
+        _controller?.dispose();
+        _controller = null;
+        setState(() {
+          _currentCommand = widget.commands.first;
+          _typedCharacters = _currentCommand.length;
+        });
+        if (!widget.paused && widget.commands.length > 1) {
+          _startFadeCycle();
+        }
+      }
+    }
     // Handle pause/unpause state changes
     if (widget.paused != oldWidget.paused) {
       if (widget.paused) {
         // Pause animations
         _typingTimer?.cancel();
         _typingTimer = null;
-        _controller.stop();
+        _fadeTimer?.cancel();
+        _fadeTimer = null;
+        _controller?.stop();
       } else {
-        // Resume animations
-        _controller.repeat();
-        if (_typingTimer == null) {
-          _startCommandCycle();
+        if (widget.enableAnimation) {
+          _controller ??= AnimationController(vsync: this, duration: const Duration(milliseconds: 500))..repeat();
+          if (_typingTimer == null) {
+            _startCommandCycle();
+          }
+        } else if (widget.commands.length > 1 && _fadeTimer == null) {
+          _startFadeCycle();
         }
       }
     }
   }
 
   void _startCommandCycle() {
+    if (!widget.enableAnimation) return;
     _currentCommandIndex = 0;
     _loadNextCommand();
   }
 
+  void _startFadeCycle() {
+    if (widget.enableAnimation || _isDisposed || widget.paused) return;
+
+    // Cycle through commands every 3 seconds
+    _fadeTimer = Timer.periodic(widget.commandDuration, (timer) {
+      if (_isDisposed || !mounted || widget.paused || widget.enableAnimation) {
+        timer.cancel();
+        _fadeTimer = null;
+        return;
+      }
+
+      setState(() {
+        _currentCommandIndex = (_currentCommandIndex + 1) % widget.commands.length;
+        _currentCommand = widget.commands[_currentCommandIndex];
+        _typedCharacters = _currentCommand.length;
+      });
+    });
+  }
+
   void _loadNextCommand() {
+    if (!widget.enableAnimation) return;
     setState(() {
       _currentCommand = widget.commands[_currentCommandIndex];
       _typedCharacters = 0;
@@ -108,18 +175,18 @@ class _TerminalSimulationState extends State<TerminalSimulation>
   }
 
   void _typeCommand() {
-    if (_isDisposed || widget.paused) return;
-    
+    if (_isDisposed || widget.paused || !widget.enableAnimation) return;
+
     final command = widget.commands[_currentCommandIndex];
     int currentIndex = 0;
-    
+
     _typingTimer?.cancel();
     _typingTimer = Timer.periodic(widget.typingSpeed, (timer) {
-      if (_isDisposed || !mounted || widget.paused) {
+      if (_isDisposed || !mounted || widget.paused || !widget.enableAnimation) {
         timer.cancel();
         return;
       }
-      
+
       if (currentIndex <= command.length) {
         setState(() {
           _typedCharacters = currentIndex;
@@ -128,21 +195,25 @@ class _TerminalSimulationState extends State<TerminalSimulation>
       } else {
         timer.cancel();
         _typingTimer = null;
-        
+
         // Show full command for a while, then move to next
         final typingDuration = Duration(milliseconds: command.length * widget.typingSpeed.inMilliseconds);
         final remainingDuration = widget.commandDuration - typingDuration;
-        if (remainingDuration.inMilliseconds > 0 && !_isDisposed && mounted && !widget.paused) {
+        if (remainingDuration.inMilliseconds > 0 &&
+            !_isDisposed &&
+            mounted &&
+            !widget.paused &&
+            widget.enableAnimation) {
           _typingTimer = Timer(remainingDuration, () {
-            if (_isDisposed || !mounted || widget.paused) return;
-            
+            if (_isDisposed || !mounted || widget.paused || !widget.enableAnimation) return;
+
             // Move to next command
             setState(() {
               _currentCommandIndex = (_currentCommandIndex + 1) % widget.commands.length;
             });
             _loadNextCommand();
           });
-        } else if (!_isDisposed && mounted && !widget.paused) {
+        } else if (!_isDisposed && mounted && !widget.paused && widget.enableAnimation) {
           // Move to next command immediately
           setState(() {
             _currentCommandIndex = (_currentCommandIndex + 1) % widget.commands.length;
@@ -158,7 +229,9 @@ class _TerminalSimulationState extends State<TerminalSimulation>
     _isDisposed = true;
     _typingTimer?.cancel();
     _typingTimer = null;
-    _controller.dispose();
+    _fadeTimer?.cancel();
+    _fadeTimer = null;
+    _controller?.dispose();
     super.dispose();
   }
 
@@ -176,15 +249,9 @@ class _TerminalSimulationState extends State<TerminalSimulation>
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-        border: Border.all(
-          color: colors.borderColor.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: colors.borderColor.withValues(alpha: 0.3)),
         boxShadow: [
-          BoxShadow(
-            color: colors.shadowColor.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
+          BoxShadow(color: colors.shadowColor.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -197,37 +264,22 @@ class _TerminalSimulationState extends State<TerminalSimulation>
               Container(
                 width: 12,
                 height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.red.withValues(alpha: 0.8),
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: Colors.red.withValues(alpha: 0.8), shape: BoxShape.circle),
               ),
               const SizedBox(width: 8),
               Container(
                 width: 12,
                 height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.8),
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: Colors.orange.withValues(alpha: 0.8), shape: BoxShape.circle),
               ),
               const SizedBox(width: 8),
               Container(
                 width: 12,
                 height: 12,
-                decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.8),
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.8), shape: BoxShape.circle),
               ),
               const Spacer(),
-              Text(
-                'Terminal',
-                style: textTheme.bodySmall?.copyWith(
-                  color: colors.textSecondary,
-                  fontSize: 12,
-                ),
-              ),
+              Text('Terminal', style: textTheme.bodySmall?.copyWith(color: colors.textSecondary, fontSize: 12)),
             ],
           ),
           const SizedBox(height: 16),
@@ -244,9 +296,26 @@ class _TerminalSimulationState extends State<TerminalSimulation>
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              // Command with typing animation and inline cursor
+              // Command with typing animation and inline cursor, or fade transition for web
               Expanded(
-                child: _buildCommandTextWithCursor(textTheme, textColor, colors.accentColor, colors),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: widget.enableAnimation
+                      ? _buildCommandTextWithCursor(textTheme, textColor, colors.accentColor, colors)
+                      : AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          transitionBuilder: (child, animation) {
+                            return FadeTransition(opacity: animation, child: child);
+                          },
+                          child: _buildCommandTextWithCursor(
+                            textTheme,
+                            textColor,
+                            colors.accentColor,
+                            colors,
+                            key: ValueKey('cmd-$_currentCommandIndex'),
+                          ),
+                        ),
+                ),
               ),
             ],
           ),
@@ -259,14 +328,20 @@ class _TerminalSimulationState extends State<TerminalSimulation>
     TextTheme textTheme,
     Color textColor,
     Color promptColor,
-    ThemeColorSet colors,
-  ) {
-    // Hide cursor when no text (during transition between commands)
+    ThemeColorSet colors, {
+    Key? key,
+  }) {
+    // When animation is disabled, always show full command without cursor
+    if (!widget.enableAnimation) {
+      return KeyedSubtree(key: key, child: _buildFullCommandText(textTheme, textColor, promptColor));
+    }
+
+    // Hide cursor when no text (during transition between commands in animation mode)
     if (_typedCharacters == 0) {
       return const SizedBox.shrink();
     }
 
-    final command = _currentCommand;
+    final command = _currentCommand.isEmpty ? widget.commands.first : _currentCommand;
     final typedPart = command.substring(0, _typedCharacters);
 
     // Check if "dmtools" starts in the typed part (even if not complete)
@@ -330,34 +405,68 @@ class _TerminalSimulationState extends State<TerminalSimulation>
     }
 
     // Add cursor after the text (only when there's text)
-    children.add(
-      WidgetSpan(
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Opacity(
-              opacity: (_controller.value * 2) % 2 < 1 ? 1.0 : 0.0,
-              child: Container(
-                width: 8,
-                height: 18,
-                margin: const EdgeInsets.only(left: 2),
-                color: colors.accentColor,
-              ),
-            );
-          },
+    if (_controller != null && widget.enableAnimation) {
+      children.add(
+        WidgetSpan(
+          child: AnimatedBuilder(
+            animation: _controller!,
+            builder: (context, child) {
+              return Opacity(
+                opacity: (_controller!.value * 2) % 2 < 1 ? 1.0 : 0.0,
+                child: Container(
+                  width: 8,
+                  height: 18,
+                  margin: const EdgeInsets.only(left: 2),
+                  color: colors.accentColor,
+                ),
+              );
+            },
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     return Text.rich(
       TextSpan(
-        style: textTheme.bodyLarge?.copyWith(
-          color: textColor,
-          fontFamily: 'monospace',
-        ),
+        style: textTheme.bodyLarge?.copyWith(color: textColor, fontFamily: 'monospace'),
         children: children,
       ),
+      textAlign: TextAlign.left,
+    );
+  }
+
+  Widget _buildFullCommandText(TextTheme textTheme, Color textColor, Color promptColor) {
+    final command = _currentCommand.isEmpty ? widget.commands.first : _currentCommand;
+    final dmtoolsIndex = command.indexOf('dmtools');
+    final spans = <InlineSpan>[];
+
+    if (dmtoolsIndex != -1) {
+      final before = command.substring(0, dmtoolsIndex);
+      final dmtoolsEnd = dmtoolsIndex + 'dmtools'.length;
+      final after = command.substring(dmtoolsEnd);
+
+      if (before.isNotEmpty) {
+        spans.add(TextSpan(text: before));
+      }
+      spans.add(
+        TextSpan(
+          text: 'dmtools',
+          style: TextStyle(color: promptColor, fontWeight: FontWeight.bold),
+        ),
+      );
+      if (after.isNotEmpty) {
+        spans.add(TextSpan(text: after));
+      }
+    } else {
+      spans.add(TextSpan(text: command));
+    }
+
+    return Text.rich(
+      TextSpan(
+        style: textTheme.bodyLarge?.copyWith(color: textColor, fontFamily: 'monospace'),
+        children: spans,
+      ),
+      textAlign: TextAlign.left,
     );
   }
 }
-
