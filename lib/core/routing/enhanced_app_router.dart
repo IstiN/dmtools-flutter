@@ -1,22 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../providers/enhanced_auth_provider.dart';
 
+import '../analytics/analytics_event_helpers.dart';
+import '../analytics/analytics_route_observer.dart';
+import '../../providers/enhanced_auth_provider.dart';
 import '../../screens/home_screen.dart';
 import '../../screens/loading_screen.dart';
-import '../../screens/unauthenticated_home_screen.dart';
 import '../../screens/oauth_callback_screen.dart';
-import '../../screens/pages/dashboard_page.dart';
 import '../../screens/pages/ai_jobs_page.dart';
-import '../../screens/pages/workspaces_page.dart';
-import '../../screens/pages/applications_page.dart';
-import '../../screens/pages/integrations_page.dart';
-import '../../screens/pages/users_page.dart';
-import '../../screens/pages/settings_page.dart';
 import '../../screens/pages/api_demo_page.dart';
-import '../../screens/pages/mcp_page.dart';
+import '../../screens/pages/applications_page.dart';
 import '../../screens/pages/chat_page.dart';
+import '../../screens/pages/dashboard_page.dart';
+import '../../screens/pages/integrations_page.dart';
+import '../../screens/pages/mcp_page.dart';
+import '../../screens/pages/settings_page.dart';
+import '../../screens/pages/users_page.dart';
+import '../../screens/pages/workspaces_page.dart';
+import '../../screens/unauthenticated_home_screen.dart';
 
 // Conditional import for web-specific OAuth handling
 import '../../screens/oauth_callback_web.dart' if (dart.library.io) '../../screens/oauth_callback_stub.dart';
@@ -27,6 +29,7 @@ class EnhancedAppRouter {
   static GoRouter createRouter(EnhancedAuthProvider authProvider) {
     return GoRouter(
       refreshListenable: authProvider,
+      observers: [AnalyticsRouteObserver()],
       redirect: (context, state) {
         final authState = authProvider.authState;
         final isAuthenticated = authProvider.isAuthenticated;
@@ -120,6 +123,7 @@ class EnhancedAppRouter {
       routes: [
         // Root route - redirect to auth by default
         GoRoute(
+          name: 'root_redirect',
           path: '/',
           redirect: (context, state) {
             // Always redirect to auth, let main redirect logic handle auth
@@ -130,6 +134,7 @@ class EnhancedAppRouter {
 
         // OAuth processing route - handles OAuth parameters from window
         GoRoute(
+          name: 'oauth_processing',
           path: '/oauth-processing',
           builder: (context, state) {
             // Create a mock URI with OAuth parameters from window
@@ -164,18 +169,21 @@ class EnhancedAppRouter {
 
         // Loading route - shown during authentication initialization
         GoRoute(
+          name: 'loading_screen',
           path: '/loading',
           builder: (context, state) => const LoadingScreen(),
         ),
 
         // Dynamic authentication route
         GoRoute(
+          name: 'auth_page',
           path: '/auth',
           builder: (context, state) => const UnauthenticatedHomeScreen(),
         ),
 
         // Dashboard route - directly accessible
         GoRoute(
+          name: 'dashboard_page',
           path: '/dashboard',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -185,6 +193,7 @@ class EnhancedAppRouter {
 
         // AI Jobs route
         GoRoute(
+          name: 'ai_jobs_page',
           path: '/ai-jobs',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -194,6 +203,7 @@ class EnhancedAppRouter {
 
         // Workspaces route
         GoRoute(
+          name: 'workspaces_page',
           path: '/workspaces',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -203,6 +213,7 @@ class EnhancedAppRouter {
 
         // Applications route
         GoRoute(
+          name: 'applications_page',
           path: '/applications',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -212,6 +223,7 @@ class EnhancedAppRouter {
 
         // Integrations route
         GoRoute(
+          name: 'integrations_page',
           path: '/integrations',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -221,6 +233,7 @@ class EnhancedAppRouter {
 
         // Users route
         GoRoute(
+          name: 'users_page',
           path: '/users',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -230,6 +243,7 @@ class EnhancedAppRouter {
 
         // Settings route
         GoRoute(
+          name: 'settings_page',
           path: '/settings',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -239,6 +253,7 @@ class EnhancedAppRouter {
 
         // API Demo route
         GoRoute(
+          name: 'api_demo_page',
           path: '/api-demo',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -248,6 +263,7 @@ class EnhancedAppRouter {
 
         // MCP route
         GoRoute(
+          name: 'mcp_page',
           path: '/mcp',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -257,6 +273,7 @@ class EnhancedAppRouter {
 
         // Chat route
         GoRoute(
+          name: 'chat_page',
           path: '/chat',
           pageBuilder: (context, state) => _buildFadePage(
             state,
@@ -275,7 +292,10 @@ class EnhancedAppRouter {
               Text('Page not found: ${state.uri}'),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => context.go('/ai-jobs'),
+                onPressed: () {
+                  trackManualButtonClick('go_home_button');
+                  context.go('/ai-jobs');
+                },
                 child: const Text('Go Home'),
               ),
             ],

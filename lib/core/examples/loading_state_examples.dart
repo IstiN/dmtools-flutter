@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../analytics/analytics_event_helpers.dart';
 import '../mixins/loading_state_mixin.dart' as app_loading;
 import '../providers/loading_state_provider.dart';
-import '../widgets/loading_state_widget.dart';
 import '../utils/async_data_loader.dart';
+import '../widgets/loading_state_widget.dart';
 
 /// Example 1: Using LoadingStateMixin for simple screens
 class SimpleDataPage extends StatefulWidget {
@@ -259,6 +261,7 @@ class _AdvancedDataPageState extends State<AdvancedDataPage> with app_loading.Lo
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
+              trackManualButtonClick('advanced_data_refresh_button');
               AsyncDataLoader.clearCache();
               retry();
             },

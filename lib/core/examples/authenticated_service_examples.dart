@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../analytics/analytics_event_helpers.dart';
 import '../services/authenticated_service.dart';
 import '../../providers/mcp_provider.dart';
 
@@ -172,7 +174,10 @@ class _ExamplePageWithAuthenticatedServiceState extends State<ExamplePageWithAut
           children: [
             Text('Error: $_error'),
             ElevatedButton(
-              onPressed: _loadData,
+              onPressed: () {
+                trackManualButtonClick('service_examples_retry_button');
+                _loadData();
+              },
               child: const Text('Retry'),
             ),
           ],

@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+
+import '../core/analytics/analytics_event_helpers.dart';
 import '../providers/enhanced_auth_provider.dart';
 import '../service_locator.dart';
 
@@ -289,6 +291,7 @@ class _OAuthCallbackScreenState extends State<OAuthCallbackScreen> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
+                        trackManualButtonClick('oauth_try_again_button');
                         GoRouter.of(context).go('/auth');
                       },
                       style: ElevatedButton.styleFrom(

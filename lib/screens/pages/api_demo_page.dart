@@ -1,12 +1,13 @@
+import 'package:dmtools_styleguide/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:dmtools_styleguide/theme/app_theme.dart';
 
-import '../../network/services/api_service.dart';
-import '../../network/generated/api.models.swagger.dart';
-import '../../network/generated/api.enums.swagger.dart' as enums;
-import '../../providers/enhanced_auth_provider.dart';
+import '../../core/analytics/analytics_event_helpers.dart';
 import '../../core/models/user.dart';
+import '../../network/generated/api.enums.swagger.dart' as enums;
+import '../../network/generated/api.models.swagger.dart';
+import '../../network/services/api_service.dart';
+import '../../providers/enhanced_auth_provider.dart';
 
 class ApiDemoPage extends StatefulWidget {
   const ApiDemoPage({super.key});
@@ -104,11 +105,15 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () {
+                trackManualButtonClick('user_profile_close_button');
+                Navigator.of(context).pop();
+              },
               child: const Text('Close'),
             ),
             ElevatedButton(
               onPressed: () {
+                trackManualButtonClick('user_profile_refresh_button');
                 Navigator.of(context).pop();
                 _loadCurrentUser();
               },
@@ -254,11 +259,17 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () {
+              trackManualButtonClick('workspace_modal_cancel_button');
+              Navigator.of(context).pop(false);
+            },
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              trackManualButtonClick('workspace_modal_create_button');
+              Navigator.of(context).pop(true);
+            },
             child: const Text('Create'),
           ),
         ],
@@ -391,11 +402,17 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () {
+                trackManualButtonClick('workspace_share_cancel_button');
+                Navigator.of(context).pop(false);
+              },
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(true),
+              onPressed: () {
+                trackManualButtonClick('workspace_share_confirm_button');
+                Navigator.of(context).pop(true);
+              },
               child: const Text('Share'),
             ),
           ],
@@ -433,11 +450,17 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
         content: Text('Are you sure you want to delete "${workspace.name}"? This action cannot be undone.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () {
+              trackManualButtonClick('workspace_delete_cancel_button');
+              Navigator.of(context).pop(false);
+            },
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              trackManualButtonClick('workspace_delete_confirm_button');
+              Navigator.of(context).pop(true);
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
@@ -474,17 +497,26 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
         title: const Text('API Demo'),
         actions: [
           IconButton(
-            onPressed: _testUserProfile,
+            onPressed: () {
+              trackManualButtonClick('api_demo_test_profile_button');
+              _testUserProfile();
+            },
             icon: const Icon(Icons.person),
             tooltip: 'Test User Profile',
           ),
           IconButton(
-            onPressed: _loadWorkspaces,
+            onPressed: () {
+              trackManualButtonClick('api_demo_refresh_workspaces_button');
+              _loadWorkspaces();
+            },
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Workspaces',
           ),
           IconButton(
-            onPressed: _createWorkspace,
+            onPressed: () {
+              trackManualButtonClick('api_demo_create_workspace_button');
+              _createWorkspace();
+            },
             icon: const Icon(Icons.add),
             tooltip: 'Create Workspace',
           ),
@@ -522,7 +554,10 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
                       )
                     else
                       IconButton(
-                        onPressed: _loadCurrentUser,
+                        onPressed: () {
+                          trackManualButtonClick('user_profile_refresh_button');
+                          _loadCurrentUser();
+                        },
                         icon: const Icon(Icons.refresh),
                         tooltip: 'Refresh User Profile',
                       ),
@@ -598,7 +633,10 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
                           ),
                         ),
                         ElevatedButton.icon(
-                          onPressed: _testUserProfile,
+                          onPressed: () {
+                            trackManualButtonClick('user_profile_details_button');
+                            _testUserProfile();
+                          },
                           icon: const Icon(Icons.info, size: 16),
                           label: const Text('Details'),
                           style: ElevatedButton.styleFrom(
@@ -672,7 +710,10 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
             ),
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: _loadWorkspaces,
+              onPressed: () {
+                trackManualButtonClick('workspaces_retry_button');
+                _loadWorkspaces();
+              },
               child: const Text('Retry'),
             ),
           ],
@@ -699,7 +740,10 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
             const Text('Create your first workspace to get started'),
             const SizedBox(height: 16),
             ElevatedButton.icon(
-              onPressed: _createWorkspace,
+              onPressed: () {
+                trackManualButtonClick('empty_state_create_workspace_button');
+                _createWorkspace();
+              },
               icon: const Icon(Icons.add),
               label: const Text('Create Workspace'),
             ),
@@ -758,9 +802,11 @@ class _ApiDemoPageState extends State<ApiDemoPage> {
               onSelected: (value) {
                 switch (value) {
                   case 'share':
+                    trackManualButtonClick('workspace_share_menu_item');
                     _shareWorkspace(workspace);
                     break;
                   case 'delete':
+                    trackManualButtonClick('workspace_delete_menu_item');
                     _deleteWorkspace(workspace);
                     break;
                 }

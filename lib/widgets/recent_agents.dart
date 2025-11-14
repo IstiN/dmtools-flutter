@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
+import '../core/analytics/analytics_event_helpers.dart';
+
 // Agent data model
 class _AgentData {
   final String title;
@@ -159,7 +161,9 @@ class _RecentAgentsHeader extends StatelessWidget {
               icon: const Icon(Icons.add, color: Colors.white, size: 20),
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              onPressed: () {},
+              onPressed: () {
+                trackManualButtonClick('recent_agents_add_button');
+              },
             ),
           ],
         ),

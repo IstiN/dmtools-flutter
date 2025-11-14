@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
-import '../network/generated/api.models.swagger.dart';
-import '../network/generated/api.enums.swagger.dart' as enums;
+import '../core/analytics/analytics_event_helpers.dart';
 import '../core/services/users_service.dart';
+import '../network/generated/api.enums.swagger.dart' as enums;
+import '../network/generated/api.models.swagger.dart';
 
 /// A simplified users table for the main app
 class UsersTable extends StatefulWidget {
@@ -372,7 +373,12 @@ class _UsersTableState extends State<UsersTable> {
                     Row(
                       children: [
                         IconButton(
-                          onPressed: _currentPage > 0 ? () => setState(() => _currentPage--) : null,
+                          onPressed: _currentPage > 0
+                              ? () {
+                                  trackManualButtonClick('users_table_prev_page_button');
+                                  setState(() => _currentPage--);
+                                }
+                              : null,
                           icon: Icon(Icons.chevron_left, color: _currentPage > 0 ? colors.textColor : colors.textMuted),
                         ),
                         Text(
@@ -380,7 +386,12 @@ class _UsersTableState extends State<UsersTable> {
                           style: TextStyle(color: colors.textColor, fontSize: 14),
                         ),
                         IconButton(
-                          onPressed: _currentPage < _totalPages - 1 ? () => setState(() => _currentPage++) : null,
+                          onPressed: _currentPage < _totalPages - 1
+                              ? () {
+                                  trackManualButtonClick('users_table_next_page_button');
+                                  setState(() => _currentPage++);
+                                }
+                              : null,
                           icon: Icon(Icons.chevron_right,
                               color: _currentPage < _totalPages - 1 ? colors.textColor : colors.textMuted),
                         ),

@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+import 'package:flutter/material.dart';
+
+import '../../core/analytics/analytics_event_helpers.dart';
 
 /// Wrapper widget for the webhook management section from styleguide
 ///
@@ -94,11 +96,17 @@ class _WebhookManagementSectionWrapperState extends State<WebhookManagementSecti
         content: const Text('Are you sure you want to delete this API key? This action cannot be undone.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
+            onPressed: () {
+              trackManualButtonClick('webhook_delete_cancel_button');
+              Navigator.of(context).pop(false);
+            },
             child: const Text('Cancel'),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
+            onPressed: () {
+              trackManualButtonClick('webhook_delete_confirm_button');
+              Navigator.of(context).pop(true);
+            },
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),

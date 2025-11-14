@@ -86,7 +86,9 @@ jobs:
             --pwa-strategy=offline-first \
             --base-href=/ \
             --dart-define=FLUTTER_ENV=production \
-            --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
+            --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app \
+            --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
+            --dart-define=FLUTTER_WEB_USE_SKIA=false
 
       - name: Optimize Main App Build (Safari/Performance)
         run: |
@@ -113,7 +115,9 @@ jobs:
             --pwa-strategy=offline-first \
             --base-href=/styleguide/ \
             --dart-define=FLUTTER_ENV=production \
-            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app \
+            --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
+            --dart-define=FLUTTER_WEB_USE_SKIA=false
           cd ..
 
       - name: Optimize Styleguide Build (Safari/Performance)
@@ -328,7 +332,9 @@ jobs:
             --pwa-strategy=offline-first \
             --base-href=/ \
             --dart-define=FLUTTER_ENV=production \
-            --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app
+            --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app \
+            --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
+            --dart-define=FLUTTER_WEB_USE_SKIA=false
           
           # Apply optimizations
           rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
@@ -345,7 +351,9 @@ jobs:
             --pwa-strategy=offline-first \
             --base-href=/styleguide/ \
             --dart-define=FLUTTER_ENV=production \
-            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app \
+            --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
+            --dart-define=FLUTTER_WEB_USE_SKIA=false
           
           # Apply optimizations
           rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
@@ -364,7 +372,9 @@ jobs:
             --pwa-strategy=offline-first \
             --base-href=/ \
             --dart-define=FLUTTER_ENV=production \
-            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app
+            --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app \
+            --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
+            --dart-define=FLUTTER_WEB_USE_SKIA=false
           
           # Apply optimizations
           rm -f build/web/canvaskit/chromium/* 2>/dev/null || true

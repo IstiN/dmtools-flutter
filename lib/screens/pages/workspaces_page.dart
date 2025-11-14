@@ -1,14 +1,16 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
-import '../../core/services/workspace_service.dart';
+import '../../core/analytics/analytics_event_helpers.dart';
 import '../../core/models/workspace.dart';
-import '../../network/generated/api.models.swagger.dart' as api;
-import '../../network/generated/api.enums.swagger.dart' as enums;
 import '../../core/pages/authenticated_page.dart';
+import '../../core/services/workspace_service.dart';
+import '../../network/generated/api.enums.swagger.dart' as enums;
+import '../../network/generated/api.models.swagger.dart' as api;
 import '../../network/services/api_service.dart';
 import '../../providers/enhanced_auth_provider.dart';
-import 'package:flutter/foundation.dart';
 
 class WorkspacesPage extends StatefulWidget {
   const WorkspacesPage({super.key});
@@ -332,6 +334,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
         actions: [
           TextButton(
             onPressed: () {
+              trackManualButtonClick('auth_debug_force_reset_button');
               authProvider.forceResetDemoMode();
               Navigator.of(context).pop();
               retry(); // Reload to see changes
@@ -339,7 +342,10 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
             child: const Text('Force Reset Demo Mode'),
           ),
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              trackManualButtonClick('auth_debug_close_button');
+              Navigator.of(context).pop();
+            },
             child: const Text('Close'),
           ),
         ],
@@ -366,7 +372,10 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
             ),
           ),
           IconButton(
-            onPressed: () => _workspaceService.clearError(),
+            onPressed: () {
+              trackManualButtonClick('workspace_error_dismiss_button');
+              _workspaceService.clearError();
+            },
             icon: Icon(Icons.close, color: colors.dangerColor),
           ),
         ],
@@ -398,6 +407,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
               ),
               IconButton(
                 onPressed: () {
+                  trackManualButtonClick('workspace_create_form_close_button');
                   setState(() {
                     _showCreateForm = false;
                   });
@@ -474,6 +484,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
               ),
               IconButton(
                 onPressed: () {
+                  trackManualButtonClick('workspace_edit_form_close_button');
                   setState(() {
                     _showEditForm = false;
                     _selectedWorkspace = null;
@@ -552,6 +563,7 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
               ),
               IconButton(
                 onPressed: () {
+                  trackManualButtonClick('workspace_share_form_close_button');
                   setState(() {
                     _showShareForm = false;
                     _selectedWorkspace = null;
@@ -1031,7 +1043,10 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
           if (isCurrentUserAdmin && !isOwner) ...[
             const SizedBox(width: 8),
             IconButton(
-              onPressed: () => _removeUser(workspace, user),
+              onPressed: () {
+                trackManualButtonClick('workspace_remove_user_button');
+                _removeUser(workspace, user);
+              },
               icon: const Icon(Icons.remove_circle, size: 16),
               color: colors.dangerColor,
               tooltip: 'Remove user',
@@ -1050,11 +1065,15 @@ class _WorkspacesPageState extends AuthenticatedPage<WorkspacesPage> {
         content: Text('Are you sure you want to delete "${workspace.name}"? This action cannot be undone.'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () {
+              trackManualButtonClick('workspace_delete_cancel_button');
+              Navigator.of(context).pop();
+            },
             child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () {
+              trackManualButtonClick('workspace_delete_confirm_button');
               Navigator.of(context).pop();
               _deleteWorkspace(workspace);
             },

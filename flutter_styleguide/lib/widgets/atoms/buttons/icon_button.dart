@@ -1,8 +1,9 @@
+import 'package:dmtools_styleguide/core/services/user_interaction_tracker.dart';
+import 'package:dmtools_styleguide/theme/app_colors.dart';
+import 'package:dmtools_styleguide/theme/app_dimensions.dart';
+import 'package:dmtools_styleguide/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../theme/app_theme.dart';
-import '../../../theme/app_colors.dart';
-import '../../../theme/app_dimensions.dart';
 
 /// Icon button component with square shape and icon
 /// Used for compact actions like settings, delete, etc.
@@ -15,6 +16,10 @@ class AppIconButton extends StatefulWidget {
   final bool isDisabled;
   final bool isTestMode;
   final bool testDarkMode;
+  final bool enableInteractionTracking;
+  final String? analyticsId;
+  final String? analyticsScreenName;
+  final Map<String, dynamic>? analyticsMetadata;
 
   const AppIconButton({
     required this.text,
@@ -25,6 +30,10 @@ class AppIconButton extends StatefulWidget {
     this.isDisabled = false,
     this.isTestMode = false,
     this.testDarkMode = false,
+    this.enableInteractionTracking = true,
+    this.analyticsId,
+    this.analyticsScreenName,
+    this.analyticsMetadata,
     super.key,
   });
 
@@ -128,15 +137,39 @@ class AppIconButtonState extends State<AppIconButton> {
       content = Icon(widget.icon, size: iconSizes[widget.size], color: isHovering ? hoverTextColor : textColor);
     }
 
+    final trackedOnPressed = effectiveOnPressed == null
+        ? null
+        : () {
+            if (widget.enableInteractionTracking) {
+              final metadata = <String, dynamic>{
+                'button_variant': widget.runtimeType.toString(),
+                'button_size': widget.size.name,
+                'icon_code_point': widget.icon.codePoint,
+                if (widget.analyticsMetadata != null) ...widget.analyticsMetadata!,
+              };
+              UserInteractionTracker.instance.trackButtonInteraction(
+                context: context,
+                label: widget.text,
+                size: widget.size,
+                analyticsId: widget.analyticsId,
+                screenNameOverride: widget.analyticsScreenName,
+                metadata: metadata,
+                isDisabled: widget.isDisabled,
+                isLoading: widget.isLoading,
+              );
+            }
+            effectiveOnPressed();
+          };
+
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovering = true),
       onExit: (_) => setState(() => _isHovering = false),
-      cursor: SystemMouseCursors.click,
+      cursor: trackedOnPressed != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: GestureDetector(
         onTapDown: (_) => setState(() => _isPressed = true),
         onTapUp: (_) => setState(() => _isPressed = false),
         onTapCancel: () => setState(() => _isPressed = false),
-        onTap: effectiveOnPressed,
+        onTap: trackedOnPressed,
         child: TweenAnimationBuilder<double>(
           tween: Tween(begin: 0.0, end: isHovering ? 1.0 : 0.0),
           duration: AppDimensions.animationDurationFast,

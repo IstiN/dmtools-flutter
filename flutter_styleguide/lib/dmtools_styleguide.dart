@@ -11,6 +11,7 @@ export 'core/models/page_loading_state.dart';
 
 // Services
 export 'core/services/auth_service.dart';
+export 'core/services/user_interaction_tracker.dart';
 
 // Mixins
 export 'core/mixins/loading_state_mixin.dart';

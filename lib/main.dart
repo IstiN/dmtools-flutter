@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
 import 'package:macos_window_utils/macos_window_utils.dart';
+import 'core/analytics/interaction_tracker_binding.dart';
 import 'core/routing/enhanced_app_router.dart';
 import 'core/services/analytics_service.dart';
 import 'providers/enhanced_auth_provider.dart';
@@ -52,6 +53,7 @@ void main(List<String> args) async {
     debugPrint('⚠️ Analytics initialization failed: $e');
     // Continue app startup even if analytics fails
   }
+  InteractionTrackerBinding.configure();
 
   runApp(
     MultiProvider(
