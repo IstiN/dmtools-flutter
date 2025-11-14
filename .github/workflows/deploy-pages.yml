@@ -88,7 +88,7 @@ jobs:
             --dart-define=FLUTTER_ENV=production \
             --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app \
             --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
-            --dart-define=FLUTTER_WEB_USE_SKIA=false
+            --dart-define=FLUTTER_WEB_USE_SKIA=true
 
       - name: Optimize Main App Build (Safari/Performance)
         run: |
@@ -117,7 +117,7 @@ jobs:
             --dart-define=FLUTTER_ENV=production \
             --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app \
             --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
-            --dart-define=FLUTTER_WEB_USE_SKIA=false
+            --dart-define=FLUTTER_WEB_USE_SKIA=true
           cd ..
 
       - name: Optimize Styleguide Build (Safari/Performance)
@@ -334,7 +334,7 @@ jobs:
             --dart-define=FLUTTER_ENV=production \
             --dart-define=baseUrl=https://dmtools-431977789017.us-central1.run.app \
             --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
-            --dart-define=FLUTTER_WEB_USE_SKIA=false
+            --dart-define=FLUTTER_WEB_USE_SKIA=true
           
           # Apply optimizations
           rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
@@ -353,7 +353,7 @@ jobs:
             --dart-define=FLUTTER_ENV=production \
             --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app \
             --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
-            --dart-define=FLUTTER_WEB_USE_SKIA=false
+            --dart-define=FLUTTER_WEB_USE_SKIA=true
           
           # Apply optimizations
           rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
@@ -374,7 +374,7 @@ jobs:
             --dart-define=FLUTTER_ENV=production \
             --dart-define=BACKEND_BASE_URL=https://dmtools-431977789017.us-central1.run.app \
             --dart-define=FLUTTER_WEB_AUTO_DETECT=false \
-            --dart-define=FLUTTER_WEB_USE_SKIA=false
+            --dart-define=FLUTTER_WEB_USE_SKIA=true
           
           # Apply optimizations
           rm -f build/web/canvaskit/chromium/* 2>/dev/null || true
