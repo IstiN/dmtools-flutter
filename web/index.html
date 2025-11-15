@@ -1,43 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" class="theme-dark">
+<html>
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-SETFFT4EWQ"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-SETFFT4EWQ');
-  </script>
-
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
   <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  
-  <!-- Resource Hints for Performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://www.googletagmanager.com">
-  <link rel="dns-prefetch" href="https://dmtools-431977789017.us-central1.run.app">
-  <link rel="preload" href="main.dart.js" as="script">
-  <link rel="preload" href="flutter.js" as="script">
-  <link rel="preload" href="assets/assets/img/dmtools-cli.png" as="image">
-  <link rel="preload" href="assets/assets/img/dm-ai-app-light.png" as="image">
-  <link rel="preload" href="assets/assets/img/dm-ai-app-dark.png" as="image">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DMTools</title>
 
   <script>
     (function() {
@@ -54,7 +21,7 @@
       // Create visual indicator overlay
       const indicator = document.createElement('div');
       indicator.id = 'perf-indicator';
-      const indicatorColor = isSafari ? 'rgba(0, 122, 255, 0.9)' : 'rgba(234, 67, 53, 0.9)'; // Blue for Safari, Red for Chrome
+      const indicatorColor = isSafari ? 'rgba(0, 122, 255, 0.9)' : 'rgba(234, 67, 53, 0.9)';
       indicator.style.cssText = `
         position: fixed;
         top: 10px;
@@ -72,11 +39,9 @@
         pointer-events: none;
         line-height: 1.4;
       `;
-      // Detect renderer type
       const rendererType = window.flutterWebRenderer || 'auto';
       indicator.textContent = `📊 ${browserName} (${rendererType}) Measuring...`;
       
-      // Wait for body to be ready
       if (document.body) {
         document.body.appendChild(indicator);
       } else {
@@ -109,13 +74,12 @@
         const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
         const worst = Math.max(...deltas);
         
-        // Color indicator based on performance (keep browser color hue)
         if (avg > 20) {
-          indicator.style.background = 'rgba(200, 0, 0, 0.9)'; // Red: poor
+          indicator.style.background = 'rgba(200, 0, 0, 0.9)';
         } else if (avg > 16.67) {
-          indicator.style.background = 'rgba(255, 165, 0, 0.9)'; // Orange: ok
+          indicator.style.background = 'rgba(255, 165, 0, 0.9)';
         } else {
-          indicator.style.background = indicatorColor; // Browser color: good
+          indicator.style.background = indicatorColor;
         }
         
         const fps = avg > 0 ? (1000 / avg).toFixed(0) : '—';
@@ -143,7 +107,6 @@
         frameTimes.push(ts);
         updateIndicator();
         
-        // Log every 15 frames for quick feedback
         if (frameTimes.length > 0 && frameTimes.length % 15 === 0) {
           logFrameStats();
         }
@@ -159,7 +122,7 @@
             logFrameStats(true);
             resetSampler();
             console.log(`[${browserName} Perf] ⏹️ Stopped measuring`);
-          }, 800); // Increased to 800ms to catch more frames
+          }, 800);
         };
       })();
 
@@ -173,12 +136,10 @@
         debouncedStop();
       }
 
-      // Listen to multiple scroll-related events
       window.addEventListener('scroll', startMeasuring, { passive: true });
       window.addEventListener('wheel', startMeasuring, { passive: true });
       window.addEventListener('touchmove', startMeasuring, { passive: true });
       
-      // Also try to attach to Flutter's canvas/glass-pane once it's ready
       const attachToFlutter = () => {
         const glassPane = document.querySelector('flt-glass-pane');
         if (glassPane) {
@@ -188,380 +149,14 @@
         }
       };
       
-      // Try immediately and after a delay
       setTimeout(attachToFlutter, 1000);
       setTimeout(attachToFlutter, 3000);
 
       console.log(`[${browserName} Perf] 👂 Listening for scroll/wheel/touch events`);
     })();
   </script>
-
-  <!-- SEO Meta Tags -->
-  <meta name="description" content="DMTools - AI Agent Management Platform. Build expert agents, automate workflows, deliver faster. Unified CLI and Desktop interface. Connect with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools. Supports Gemini AI, OpenAI, Anthropic AI, Ollama, and Dial AI.">
-  <meta name="keywords" content="AI agents, agent management, development tools, Flutter, cross-platform, AI platform, automation tools, desktop app, CLI installation, MCP connectors, MCP tools orchestration, JavaScript agents, Jira integration, GitHub integration, GitLab, Bitbucket, Figma integration, Microsoft Teams, SharePoint, CI/CD, headless automation, Gemini AI, OpenAI, Anthropic AI, Ollama, Dial AI, enterprise SDLC">
-  <meta name="author" content="DMTools">
-  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-  <meta name="language" content="English">
-  <meta name="revisit-after" content="7 days">
-  <meta name="rating" content="general">
-  
-  <!-- Canonical URL -->
-  <link rel="canonical" href="__CANONICAL_URL__">
-  
-  <!-- Geo Tags -->
-  <meta name="geo.region" content="US">
-  <meta name="geo.placename" content="United States">
-  <meta name="ICBM" content="39.8283, -98.5795">
-  
-  <!-- Enhanced cache control for Safari -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Version tracking for cache busting -->
-  <meta name="app-version" content="__BUILD_VERSION__">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="__CANONICAL_URL__">
-  <meta property="og:title" content="DMTools - AI Agent Management Platform">
-  <meta property="og:description" content="Build expert agents, automate workflows, deliver faster. Unified CLI and Desktop interface. Connect with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools. Supports Gemini AI, OpenAI, Anthropic AI, Ollama, and Dial AI.">
-  <meta property="og:image" content="__CANONICAL_URL__/assets/assets/img/dmtools-cli.png">
-  <meta property="og:image:secure_url" content="__CANONICAL_URL__/assets/assets/img/dmtools-cli.png">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1086">
-  <meta property="og:image:height" content="434">
-  <meta property="og:image:alt" content="DMTools CLI - AI Agent Management Platform">
-  <meta property="og:site_name" content="DMTools">
-  <meta property="og:locale" content="en_US">
-  
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:url" content="__CANONICAL_URL__">
-  <meta name="twitter:title" content="DMTools - AI Agent Management Platform">
-  <meta name="twitter:description" content="Build expert agents, automate workflows, deliver faster. Unified CLI and Desktop interface. Connect with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools.">
-  <meta name="twitter:image" content="__CANONICAL_URL__/assets/assets/img/dmtools-cli.png">
-  <meta name="twitter:image:alt" content="DMTools CLI - AI Agent Management Platform">
-  <meta name="twitter:creator" content="@dmtools">
-  <meta name="twitter:site" content="@dmtools">
-  
-  <!-- Geo Optimization: Resource Hints -->
-  <link rel="dns-prefetch" href="//fonts.googleapis.com">
-  <link rel="dns-prefetch" href="//fonts.gstatic.com">
-  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  
-  <!-- Preload critical resources -->
-  <link rel="preload" href="css/shared-theme.css" as="style">
-  <link rel="preload" href="config.js" as="script">
-  
-  <!-- Structured Data (JSON-LD) -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "DMTools",
-    "alternateName": "DMTools AI Agent Management Platform",
-    "url": "__CANONICAL_URL__",
-    "logo": "__CANONICAL_URL__/assets/assets/img/dmtools-cli.png",
-    "description": "Build expert agents, automate workflows, deliver faster. Unified CLI and Desktop interface. Connect with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools. Supports Gemini AI, OpenAI, Anthropic AI, Ollama, and Dial AI.",
-    "applicationCategory": "DeveloperApplication",
-    "operatingSystem": "Web, Android, iOS, macOS, Windows, Linux",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.5",
-      "ratingCount": "100"
-    },
-    "featureList": [
-      "AI Agent Management",
-      "Desktop Application",
-      "CLI Installation",
-      "Project Management Integration",
-      "Multiple AI Providers",
-      "MCP Connectors",
-      "Headless CI/CD Support",
-      "JavaScript Agent Development"
-    ],
-    "screenshot": "__CANONICAL_URL__/assets/assets/img/dmtools-cli.png",
-    "softwareVersion": "__BUILD_VERSION__",
-    "releaseNotes": "AI Agent Management Platform with comprehensive design system",
-    "author": {
-      "@type": "Organization",
-      "name": "DMTools"
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "DMTools",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "__CANONICAL_URL__/assets/assets/img/dmtools-cli.png"
-      }
-    }
-  }
-  </script>
-  <script>
-    // Simple Safari cache detection and handling
-    (function() {
-      const currentVersion = '__BUILD_VERSION__';
-      const storedVersion = localStorage.getItem('dmtools-app-version');
-      
-      if (storedVersion && storedVersion !== currentVersion) {
-        console.log('New version detected, clearing cache:', currentVersion);
-        // Clear localStorage and force reload for Safari
-        localStorage.clear();
-        sessionStorage.clear();
-        
-        // Force a hard reload for Safari
-        if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
-          window.location.reload(true);
-        }
-      }
-      
-      localStorage.setItem('dmtools-app-version', currentVersion);
-    })();
-  </script>
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="DMTools">
-
-  <!-- Favicons -->
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png"/>
-  <link rel="shortcut icon" href="favicon.png"/>
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/Icon-192.png"/>
-
-  <title>DMTools - AI Agent Management Platform | Build Expert Agents, Automate Workflows</title>
-  <link rel="manifest" href="manifest.json">
-  <link rel="sitemap" type="application/xml" href="sitemap.xml">
-  
-  <!-- Shared theme styles -->
-  <link rel="stylesheet" href="css/shared-theme.css">
-  
-  <!-- Safari-specific performance optimizations -->
-  <style>
-    /* Optimize scrolling performance in Safari */
-    html, body {
-      -webkit-overflow-scrolling: touch;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      will-change: scroll-position;
-    }
-    /* Prevent trackpad horizontal gestures triggering back navigation on desktop */
-    @media (pointer: fine) and (hover: hover) {
-      html,
-      body {
-        overscroll-behavior-x: none;
-        overflow-x: hidden;
-      }
-      body {
-        touch-action: pan-y;
-        -webkit-overflow-scrolling: auto;
-      }
-      .flutter-view,
-      flt-glass-pane,
-      flt-scene-host {
-        touch-action: manipulation;
-      }
-    }
-    
-    /* Optimize Flutter canvas rendering in Safari */
-    flt-scene-host, flt-glass-pane, canvas {
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      will-change: transform;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-    
-    /* Reduce repaints during scroll */
-    * {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
-    /* Optimize images */
-    img {
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      image-rendering: -webkit-optimize-contrast;
-    }
-  </style>
-  
-  <!-- Runtime configuration -->
-  <script src="config.js" defer></script>
-  
-  <!-- Shared theme management -->
-  <script src="js/shared-theme.js" defer></script>
-  <script src="js/clipboard.js" defer></script>
-  
-  <!-- Immediate background script - runs before any other content -->
-  <script>
-    // Detect theme preference early and set appropriate background
-    function setInitialBackground() {
-      const savedTheme = localStorage.getItem('flutter.theme_preference');
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      // Determine if should use dark theme
-      const shouldUseDark = savedTheme === '"ThemePreference.dark"' || 
-                           (savedTheme !== '"ThemePreference.light"' && prefersDark);
-      
-      const bgColor = shouldUseDark ? '#121212' : '#F8F9FA';
-      
-      // Set background immediately
-      document.documentElement.style.backgroundColor = bgColor;
-      
-      console.log('Initial background set to:', shouldUseDark ? 'dark' : 'light', bgColor);
-      
-      // Set body background when it's available
-      function setBodyBackground() {
-        if (document.body) {
-          document.body.style.backgroundColor = bgColor;
-        } else {
-          // Try again in a few milliseconds
-          setTimeout(setBodyBackground, 1);
-        }
-      }
-      
-      // Start trying to set body background
-      setBodyBackground();
-      
-      // Also listen for DOMContentLoaded as backup
-      document.addEventListener('DOMContentLoaded', function() {
-        if (document.body) {
-          document.body.style.backgroundColor = bgColor;
-        }
-      });
-    }
-    
-    // Run immediately
-    setInitialBackground();
-  </script>
-
-
-
-  <!-- Theme detection now handled by shared-theme.js -->
-
-  <!-- OAuth Callback Handler -->
-  <script type="text/javascript">
-    // Handle OAuth callback parameters
-    (function() {
-      console.log('OAuth handler running, URL:', window.location.href);
-      
-      var urlParams = new URLSearchParams(window.location.search);
-      var code = urlParams.get('code');
-      var state = urlParams.get('state');
-      var error = urlParams.get('error');
-      
-      console.log('OAuth params:', { 
-        code: code ? code.substring(0, 10) + '...' : 'missing', 
-        state: state ? state.substring(0, 10) + '...' : 'missing',
-        error: error || 'none'
-      });
-      
-      if (code && state) {
-        // Store OAuth parameters for Flutter to read
-        window.oauthParams = {
-          code: code,
-          state: state,
-          error: error
-        };
-        
-        // Set a flag that OAuth parameters are ready
-        window.oauthParamsReady = true;
-        
-        console.log('OAuth params stored in window.oauthParams');
-        
-        // Clean up URL parameters to avoid showing them in the address bar
-        if (window.history && window.history.replaceState) {
-          var cleanUrl = window.location.pathname + window.location.hash;
-          window.history.replaceState(null, null, cleanUrl);
-          console.log('URL cleaned to:', cleanUrl);
-        }
-      } else {
-        console.log('No OAuth parameters found in URL');
-      }
-    })();
-  </script>
 </head>
 <body>
-  <div id="loading-indicator">
-    <canvas id="dna-loader" width="300" height="150"></canvas>
-    <p>Loading DMTools...</p>
-    <script>
-      // Check for OffscreenCanvas and Worker support
-      if ('OffscreenCanvas' in window && 'Worker' in window) {
-        const canvas = document.getElementById('dna-loader');
-        // Transfer control to a new worker thread
-        const offscreen = canvas.transferControlToOffscreen();
-        const worker = new Worker('animation_worker.js');
-        // Send the canvas to the worker
-        worker.postMessage({ canvas: offscreen }, [offscreen]);
-      } else {
-        // Fallback for older browsers that don't support OffscreenCanvas
-        console.log("Browser does not support OffscreenCanvas. Animation will run on the main thread.");
-        // You could potentially load a simpler, CSS-based animation here as a fallback
-        const script = document.createElement('script');
-        script.src = 'animation_fallback.js'; // A non-worker version of the script
-        document.body.appendChild(script);
-      }
-    </script>
-  </div>
-  
-  <script>
-    // Hide loading indicator when Flutter is ready
-    window.addEventListener('flutter-first-frame', function() {
-      const loadingIndicator = document.getElementById('loading-indicator');
-      if (loadingIndicator) {
-        loadingIndicator.style.display = 'none';
-      }
-      
-      // Force enable Flutter semantics for accessibility
-      // This makes the semantic tree accessible to automation tools, screen readers, and browser MCP
-      setTimeout(() => {
-        // Flutter creates an "Enable accessibility" button - click it automatically
-        // This exposes the entire semantic tree to the accessibility API
-        const enableAccessibility = () => {
-          const button = document.querySelector('flt-semantics-placeholder[aria-label="Enable accessibility"]');
-          if (button) {
-            console.log('🔘 Auto-enabling accessibility for automation tools and browser MCP...');
-            button.click();
-            
-            // Verify after a moment
-            setTimeout(() => {
-              console.log('✅ Accessibility enabled!');
-              console.log('🤖 Automation tools can now access elements via:');
-              console.log('   - page.getByRole("button", { name: "Demo" })');
-              console.log('   - page.accessibility.snapshot()');
-              console.log('   - Browser MCP can interact with all UI elements');
-            }, 1000);
-            return true;
-          }
-          return false;
-        };
-        
-        // Try immediately
-        if (!enableAccessibility()) {
-          // If not found, try again after a delay
-          setTimeout(enableAccessibility, 2000);
-        }
-      }, 1000);
-      
-      // Theme debugging and management now handled by shared-theme.js
-      if (window.themeManager) {
-        // Run debug after Flutter loads
-        setTimeout(() => window.themeManager.debugTheme(), 1000);
-      }
-    });
-  </script>
-  
-  <script src="flutter_bootstrap.js?v=__BUILD_VERSION__" async></script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
