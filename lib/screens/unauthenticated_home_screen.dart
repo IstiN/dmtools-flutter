@@ -18,193 +18,51 @@ import 'package:dmtools_styleguide/widgets/molecules/headers/app_header.dart';
 import '../core/services/release_service.dart';
 import '../widgets/auth_login_widget.dart';
 
-class UnauthenticatedHomeScreen extends StatefulWidget {
+// PERFORMANCE TEST: Changed to StatelessWidget - no ScrollController, no Timer, no setState
+class UnauthenticatedHomeScreen extends StatelessWidget {
   const UnauthenticatedHomeScreen({super.key});
 
   @override
-  State<UnauthenticatedHomeScreen> createState() => _UnauthenticatedHomeScreenState();
-}
-
-class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
-  final ScrollController _scrollController = ScrollController();
-  bool _isScrolling = false;
-  Timer? _scrollEndTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    _scrollController.addListener(_onScroll);
-  }
-
-  void _onScroll() {
-    // Mark as scrolling immediately for better Safari performance
-    if (!_isScrolling) {
-      setState(() {
-        _isScrolling = true;
-      });
-    }
-
-    // Cancel previous timer
-    _scrollEndTimer?.cancel();
-
-    // Use shorter debounce for Safari (100ms instead of 150ms) for faster resume
-    _scrollEndTimer = Timer(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        setState(() {
-          _isScrolling = false;
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _scrollEndTimer?.cancel();
-    _scrollController.removeListener(_onScroll);
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _openReleasesPage() async {
-    final urlString = await ReleaseService.getReleasesPageUrl();
-    final url = Uri.parse(urlString);
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _openOpenSource() async {
-    final url = Uri.parse('https://github.com/IstiN/dmtools-flutter');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  Future<void> _openDocumentation() async {
-    // Placeholder - update with actual docs URL when available
-    final url = Uri.parse('https://github.com/IstiN/dmtools-flutter');
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
-    final screenWidth = MediaQuery.of(context).size.width;
+    // PERFORMANCE TEST: Absolute minimum - just text and scrolling
+    const faqText = '''
+Frequently Asked Questions
 
-    // Calculate the total width - use screen width on mobile, fixed width on desktop
-    final totalWidth = screenWidth < 1200 ? screenWidth - 48.0 : 1200.0;
+Getting Started
+Q: How do I install DMTools?
+A: You can install DMTools via CLI or download the desktop app.
+
+Q: What platforms are supported?
+A: DMTools supports Web, Android, iOS, macOS, Windows, and Linux.
+
+Features
+Q: What integrations are available?
+A: DMTools integrates with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools.
+
+Q: Which AI providers are supported?
+A: DMTools supports Gemini AI, OpenAI, Anthropic AI, Ollama, and Dial AI.
+
+Usage
+Q: Can I develop custom agents?
+A: Yes, you can easily develop agents using JavaScript.
+
+Q: Is CI/CD supported?
+A: Yes, DMTools is designed for headless automation, GitHub Actions, GitLab runners, Bitbucket, and Jenkins jobs.
+''';
 
     return Scaffold(
-      backgroundColor: colors.bgColor,
-      body: Column(
-        children: [
-          // macOS titlebar spacer (only for native macOS, not web)
-          if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
-
-          // App Header from styleguide
-          AppHeader(
-            showTitle: false, // Hide header text
-            showSearch: false, // Hide search as requested
-            onThemeToggle: () async => await Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
-            actions: const [], // Remove actions as we'll use profileButton
-            profileButton: UserProfileButton(
-              loginState: LoginState.loggedOut,
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return PopScope(
-                      onPopInvokedWithResult: (didPop, result) {
-                        if (!didPop) {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: const Dialog(
-                        backgroundColor: Colors.transparent,
-                        insetPadding: EdgeInsets.all(16),
-                        elevation: 0,
-                        child: FocusScope(autofocus: true, child: AuthLoginWidget()),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-
-          // Main Content
-          Expanded(
-            child: ScrollConfiguration(
-              behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-              child: isSafariOnWeb
-                  ? SingleChildScrollView(
-                      // No text selection for Safari
-                      controller: _scrollController,
-                      physics: const ClampingScrollPhysics(),
-                      child: _buildPageContent(totalWidth),
-                    )
-                  : SelectionArea(
-                      // Text selection for other browsers
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        physics: kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
-                        child: _buildPageContent(totalWidth),
-                      ),
-                    ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPageContent(double totalWidth) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-      child: Center(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          padding: const EdgeInsets.all(24.0),
           child: Column(
-            children: [
-              const SizedBox(height: 64),
-              // Hero Section
-              RepaintBoundary(
-                child: SizedBox(
-                  width: totalWidth,
-                  child: _HeroSection(
-                    onInstall: _openReleasesPage,
-                    onOpenSource: _openOpenSource,
-                    isScrolling: _isScrolling,
-                  ),
-                ),
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: List.generate(
+              20, // Repeat FAQ 20 times to have enough content to scroll
+              (index) => Padding(
+                padding: const EdgeInsets.only(bottom: 32.0),
+                child: Text('Section ${index + 1}\n\n$faqText', style: const TextStyle(fontSize: 16, height: 1.6)),
               ),
-              const SizedBox(height: 128),
-              // Pillars Section
-              RepaintBoundary(
-                child: SizedBox(width: totalWidth, child: const _PillarsSection()),
-              ),
-              const SizedBox(height: 128),
-              // Rivers Section
-              RepaintBoundary(
-                child: SizedBox(
-                  width: totalWidth,
-                  child: _RiversSection(
-                    onInstall: _openReleasesPage,
-                    onViewDocs: _openDocumentation,
-                    onOpenSource: _openOpenSource,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 128),
-              // FAQ Section
-              RepaintBoundary(
-                child: SizedBox(width: totalWidth, child: const _FaqSection()),
-              ),
-              const SizedBox(height: 96),
-            ],
+            ),
           ),
         ),
       ),
@@ -1657,151 +1515,41 @@ class _CompactIntegrationCard extends StatelessWidget {
 }
 
 // FAQ Section
-class _FaqSection extends StatefulWidget {
+// PERFORMANCE TEST: Minimal FAQ without styleguide dependencies
+class _FaqSection extends StatelessWidget {
   const _FaqSection();
 
   @override
-  State<_FaqSection> createState() => _FaqSectionState();
-}
-
-class _FaqSectionState extends State<_FaqSection> {
-  List<Map<String, dynamic>> _faqGroups = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadFaqData();
-  }
-
-  Future<void> _loadFaqData() async {
-    try {
-      final String jsonString = await rootBundle.loadString('assets/faq_data.json');
-      final Map<String, dynamic> jsonData = json.decode(jsonString);
-      if (mounted) {
-        setState(() {
-          _faqGroups = List<Map<String, dynamic>>.from(jsonData['faqGroups'] ?? []);
-        });
-      }
-    } catch (e) {
-      debugPrint('Error loading FAQ data: $e');
-      // Fallback to empty list
-      if (mounted) {
-        setState(() {
-          _faqGroups = [];
-        });
-      }
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (_faqGroups.isEmpty) {
-      return const SizedBox.shrink();
-    }
+    // Simple hardcoded FAQ text - no JSON loading, no styleguide components
+    const faqText = '''
+Frequently Asked Questions
 
-    return Column(
-      children: [
-        const MediumDisplayText('Frequently asked questions', textAlign: TextAlign.center),
-        const SizedBox(height: 48),
-        ..._faqGroups.asMap().entries.map((entry) {
-          final group = entry.value;
-          final isLast = entry.key == _faqGroups.length - 1;
-          return Column(
-            children: [
-              _FaqGroup(
-                heading: group['heading'] as String,
-                questions: (group['questions'] as List<dynamic>)
-                    .map((q) => _FaqItem(question: q['question'] as String, answer: q['answer'] as String))
-                    .toList(),
-              ),
-              if (!isLast) const SizedBox(height: 48),
-            ],
-          );
-        }),
-      ],
-    );
-  }
-}
+Getting Started
+Q: How do I install DMTools?
+A: You can install DMTools via CLI or download the desktop app.
 
-class _FaqGroup extends StatelessWidget {
-  final String heading;
-  final List<_FaqItem> questions;
+Q: What platforms are supported?
+A: DMTools supports Web, Android, iOS, macOS, Windows, and Linux.
 
-  const _FaqGroup({required this.heading, required this.questions});
+Features
+Q: What integrations are available?
+A: DMTools integrates with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools.
 
-  @override
-  Widget build(BuildContext context) {
-    // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
-    final textTheme = Theme.of(context).textTheme;
+Q: Which AI providers are supported?
+A: DMTools supports Gemini AI, OpenAI, Anthropic AI, Ollama, and Dial AI.
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          heading,
-          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold, color: colors.textColor),
-        ),
-        const SizedBox(height: 24),
-        ...questions.map((item) => Padding(padding: const EdgeInsets.only(bottom: 16), child: item)),
-      ],
-    );
-  }
-}
+Usage
+Q: Can I develop custom agents?
+A: Yes, you can easily develop agents using JavaScript.
 
-class _FaqItem extends StatefulWidget {
-  final String question;
-  final String answer;
+Q: Is CI/CD supported?
+A: Yes, DMTools is designed for headless automation, GitHub Actions, GitLab runners, Bitbucket, and Jenkins jobs.
+''';
 
-  const _FaqItem({required this.question, required this.answer});
-
-  @override
-  State<_FaqItem> createState() => _FaqItemState();
-}
-
-class _FaqItemState extends State<_FaqItem> {
-  bool _isExpanded = false;
-
-  @override
-  Widget build(BuildContext context) {
-    // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
-    final textTheme = Theme.of(context).textTheme;
-
-    return CustomCard(
-      padding: EdgeInsets.zero,
-      child: Column(
-        children: [
-          InkWell(
-            onTap: () => setState(() => _isExpanded = !_isExpanded),
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.question,
-                      style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: colors.textColor),
-                    ),
-                  ),
-                  Icon(_isExpanded ? Icons.expand_less : Icons.expand_more, color: colors.textSecondary),
-                ],
-              ),
-            ),
-          ),
-          if (_isExpanded)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  widget.answer,
-                  style: textTheme.bodyMedium?.copyWith(color: colors.textSecondary, height: 1.6),
-                ),
-              ),
-            ),
-        ],
-      ),
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: const Text(faqText, style: TextStyle(fontSize: 16, height: 1.6)),
     );
   }
 }
