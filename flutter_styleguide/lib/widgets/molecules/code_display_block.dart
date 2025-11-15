@@ -360,7 +360,7 @@ class _CodeContent extends StatelessWidget {
   }
 }
 
-class _CodeWithLineNumbers extends StatelessWidget {
+class _CodeWithLineNumbers extends StatefulWidget {
   const _CodeWithLineNumbers({
     required this.lines,
     required this.codeTheme,
@@ -374,12 +374,29 @@ class _CodeWithLineNumbers extends StatelessWidget {
   final String? language;
 
   @override
+  State<_CodeWithLineNumbers> createState() => _CodeWithLineNumbersState();
+}
+
+class _CodeWithLineNumbersState extends State<_CodeWithLineNumbers> {
+  List<TextSpan>? _cachedSpans;
+  String? _cachedCode;
+  bool? _cachedIsLightTheme;
+
+  @override
   Widget build(BuildContext context) {
-    final lineNumberWidth = '${lines.length}'.length * 8.0 + 16;
-    final fullCode = lines.join('\n');
+    final lineNumberWidth = '${widget.lines.length}'.length * 8.0 + 16;
+    final fullCode = widget.lines.join('\n');
     // Determine if we're using light theme
-    final isLightTheme = codeTheme.backgroundColor.computeLuminance() > 0.5;
-    final highlightedSpans = SyntaxHighlighter.highlight(fullCode, language, isLightTheme: isLightTheme);
+    final isLightTheme = widget.codeTheme.backgroundColor.computeLuminance() > 0.5;
+    
+    // Cache syntax highlighting result
+    if (_cachedCode != fullCode || _cachedIsLightTheme != isLightTheme) {
+      _cachedCode = fullCode;
+      _cachedIsLightTheme = isLightTheme;
+      _cachedSpans = SyntaxHighlighter.highlight(fullCode, widget.language, isLightTheme: isLightTheme);
+    }
+    
+    final highlightedSpans = _cachedSpans!;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -389,33 +406,33 @@ class _CodeWithLineNumbers extends StatelessWidget {
           width: lineNumberWidth,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: lines.asMap().entries.map((entry) {
+            children: widget.lines.asMap().entries.map((entry) {
               return Container(
-                height: dimensions.fontSize * dimensions.lineHeight,
+                height: widget.dimensions.fontSize * widget.dimensions.lineHeight,
                 alignment: Alignment.centerRight,
                 child: Text(
                   '${entry.key + 1}',
                   style: TextStyle(
-                    fontSize: dimensions.fontSize,
-                    color: codeTheme.lineNumberColor,
+                    fontSize: widget.dimensions.fontSize,
+                    color: widget.codeTheme.lineNumberColor,
                     fontFamily: 'monospace',
-                    height: dimensions.lineHeight,
+                    height: widget.dimensions.lineHeight,
                   ),
                 ),
               );
             }).toList(),
           ),
         ),
-        SizedBox(width: dimensions.headerSpacing),
+        SizedBox(width: widget.dimensions.headerSpacing),
         // Code content with syntax highlighting
         Expanded(
           child: RichText(
             text: TextSpan(
               children: highlightedSpans,
               style: TextStyle(
-                fontSize: dimensions.fontSize,
+                fontSize: widget.dimensions.fontSize,
                 fontFamily: 'monospace',
-                height: dimensions.lineHeight,
+                height: widget.dimensions.lineHeight,
                 // Don't set color here - let TextSpan colors override
               ),
             ),
@@ -426,7 +443,7 @@ class _CodeWithLineNumbers extends StatelessWidget {
   }
 }
 
-class _SimpleCodeDisplay extends StatelessWidget {
+class _SimpleCodeDisplay extends StatefulWidget {
   const _SimpleCodeDisplay({
     required this.code,
     required this.codeTheme,
@@ -440,10 +457,27 @@ class _SimpleCodeDisplay extends StatelessWidget {
   final String? language;
 
   @override
+  State<_SimpleCodeDisplay> createState() => _SimpleCodeDisplayState();
+}
+
+class _SimpleCodeDisplayState extends State<_SimpleCodeDisplay> {
+  List<TextSpan>? _cachedSpans;
+  String? _cachedCode;
+  bool? _cachedIsLightTheme;
+
+  @override
   Widget build(BuildContext context) {
     // Determine if we're using light theme
-    final isLightTheme = codeTheme.backgroundColor.computeLuminance() > 0.5;
-    final highlightedSpans = SyntaxHighlighter.highlight(code, language, isLightTheme: isLightTheme);
+    final isLightTheme = widget.codeTheme.backgroundColor.computeLuminance() > 0.5;
+    
+    // Cache syntax highlighting result
+    if (_cachedCode != widget.code || _cachedIsLightTheme != isLightTheme) {
+      _cachedCode = widget.code;
+      _cachedIsLightTheme = isLightTheme;
+      _cachedSpans = SyntaxHighlighter.highlight(widget.code, widget.language, isLightTheme: isLightTheme);
+    }
+    
+    final highlightedSpans = _cachedSpans!;
 
     // If highlighting worked, use the spans; otherwise use plain text
     // Check if we have multiple spans with actual text or if colors are different from default
@@ -457,26 +491,32 @@ class _SimpleCodeDisplay extends StatelessWidget {
     ) || nonEmptySpans.length > 1;
     
     if (hasHighlighting && nonEmptySpans.isNotEmpty) {
-      return SelectableText.rich(
-        TextSpan(
-          children: nonEmptySpans,
-          style: TextStyle(
-            fontSize: dimensions.fontSize,
-            fontFamily: 'monospace',
-            height: dimensions.lineHeight,
-            // Don't set color here - let TextSpan colors override
+      return ConstrainedBox(
+        constraints: const BoxConstraints(),
+        child: SelectableText.rich(
+          TextSpan(
+            children: nonEmptySpans,
+            style: TextStyle(
+              fontSize: widget.dimensions.fontSize,
+              fontFamily: 'monospace',
+              height: widget.dimensions.lineHeight,
+              // Don't set color here - let TextSpan colors override
+            ),
           ),
         ),
       );
     } else {
       // Fallback to plain text if highlighting didn't work
-      return SelectableText(
-        code,
-        style: TextStyle(
-          fontSize: dimensions.fontSize,
-          fontFamily: 'monospace',
-          height: dimensions.lineHeight,
-          color: codeTheme.textColor,
+      return ConstrainedBox(
+        constraints: const BoxConstraints(),
+        child: SelectableText(
+          widget.code,
+          style: TextStyle(
+            fontSize: widget.dimensions.fontSize,
+            fontFamily: 'monospace',
+            height: widget.dimensions.lineHeight,
+            color: widget.codeTheme.textColor,
+          ),
         ),
       );
     }

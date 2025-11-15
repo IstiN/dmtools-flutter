@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { STYLEGUIDE_BASE_URL } from './testEnv';
 
 /**
  * Accessibility E2E Tests for DMTools Flutter Styleguide
@@ -11,7 +12,7 @@ import { test, expect } from '@playwright/test';
  */
 
 // Base URL for the Flutter styleguide web app
-const STYLEGUIDE_URL = 'http://localhost:8080';
+const STYLEGUIDE_URL = STYLEGUIDE_BASE_URL;
 
 test.describe('DMTools Styleguide - Accessibility Tests', () => {
   

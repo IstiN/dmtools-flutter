@@ -7,10 +7,11 @@
 ### Quick Start
 
 ```bash
-# 1. Start the app (auto renderer - works with both canvas and HTML!)
-flutter run -d chrome --web-port=8080
+# 1. Start the styleguide (auto renderer - works with both canvas and HTML!)
+cd flutter_styleguide
+flutter run -d chrome --web-port=8091
 
-# 2. Run the complete working test
+# 2. Run the landing page accessibility test
 npx playwright test tests/integration/complete_demo_flow.spec.ts
 ```
 
@@ -22,8 +23,8 @@ Flutter web exposes elements through the **accessibility tree** (not DOM). After
 
 ```typescript
 // Access any button by role and name
-await page.getByRole('button', { name: /demo/i }).click();
-await page.getByRole('button', { name: 'AI Jobs' }).click();
+await page.getByRole('button', { name: /Install DMTools Desktop now button/i }).click();
+await page.getByRole('button', { name: /View installation instructions button/i }).click();
 
 // Get full accessibility tree
 const tree = await page.accessibility.snapshot();
@@ -37,13 +38,13 @@ const tree = await page.accessibility.snapshot();
 
 This directory contains Playwright end-to-end tests for verifying accessibility features in:
 1. DMTools Flutter Styleguide web application
-2. DMTools Main Application (demo mode flow)
+2. DMTools Main Application landing experience
 
 ## Prerequisites
 
 1. **Node.js** (v18 or higher)
 2. **Playwright** installed
-3. **Flutter Styleguide** running locally on port 8080
+3. **Flutter Styleguide** running locally on port 8091
 
 ## Installation
 
@@ -61,7 +62,7 @@ npx playwright install
 
 ```bash
 cd flutter_styleguide
-flutter run -d chrome --web-port=8080 --web-experimental-hot-reload
+flutter run -d chrome --web-port=8091 --web-experimental-hot-reload
 ```
 
 ### 2. Run Playwright Tests
@@ -115,7 +116,7 @@ npx playwright test accessibility.spec.ts
 
 ```bash
 # First, start the main app
-flutter run -d chrome --web-port=8080 --web-experimental-hot-reload
+flutter run -d chrome --web-port=8090 --web-experimental-hot-reload
 
 # Then run tests (from project root)
 npx playwright test --config=tests/integration/playwright.config.ts main_app_demo.spec.ts
@@ -138,15 +139,14 @@ npx playwright test main_app_demo.spec.ts
 7. **Focus Indicators**: Checks visible focus states
 8. **Screen Reader Simulation**: Validates ARIA attributes and semantic tree
 
-### Main App Demo Mode Tests (`main_app_demo.spec.ts`)
+### Main App Landing Tests (`main_app_demo.spec.ts`)
 
-1. **Landing Page Load**: Verifies main app landing page loads correctly
-2. **Demo Button Click**: Tests entering demo mode
-3. **Navigation Menu Display**: Checks all menu items are visible in demo mode
-4. **Menu Navigation**: Tests clicking through each menu item (AI Jobs, Integrations, Chat, MCP)
-5. **Accessibility Labels**: Verifies semantic labels on menu items
-6. **Keyboard Navigation**: Tests keyboard interaction with menu items
-7. **Theme Toggle**: Checks theme toggle button accessibility
+1. **Landing Page Load**: Verifies hero question and CTA buttons render correctly
+2. **Terminal Simulation**: Confirms CLI commands and install snippet are visible
+3. **CTA Banner**: Ensures install, instructions, and open source actions are exposed
+4. **Integrations Section**: Checks each integration category heading is accessible
+5. **Rivers + FAQ**: Validates CTA copy and FAQ accordion interactions
+6. **Theme Toggle**: Checks theme toggle button accessibility
 
 ## Test Structure
 
@@ -204,7 +204,7 @@ page.locator('text=Submit')
 
 ```typescript
 test('debug semantic tree', async ({ page }) => {
-  await page.goto('http://localhost:8080');
+  await page.goto('http://localhost:8091');
   
   // Get all semantic elements
   const semantics = await page.locator('flt-semantics').all();
@@ -275,7 +275,7 @@ jobs:
       - name: Start Flutter web app
         run: |
           cd flutter_styleguide
-          flutter run -d web-server --web-port=8080 &
+          flutter run -d web-server --web-port=8091 &
           sleep 30
       
       - name: Run Playwright tests
