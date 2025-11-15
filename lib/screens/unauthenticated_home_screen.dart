@@ -1,17 +1,22 @@
-import 'dart:async';
-import 'dart:io' show Platform;
-import 'dart:convert';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:convert';
+import 'package:flutter/services.dart' show rootBundle;
+import 'dart:io' show Platform;
+
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'package:dmtools_styleguide/widgets/molecules/custom_card.dart';
 import 'package:dmtools_styleguide/utils/syntax_highlighter.dart';
-import '../widgets/auth_login_widget.dart';
+import 'package:dmtools_styleguide/utils/platform_utils.dart';
+import 'package:dmtools_styleguide/theme/app_theme.dart';
+import 'package:dmtools_styleguide/widgets/molecules/headers/app_header.dart';
+
 import '../core/services/release_service.dart';
+import '../widgets/auth_login_widget.dart';
 
 class UnauthenticatedHomeScreen extends StatefulWidget {
   const UnauthenticatedHomeScreen({super.key});
@@ -98,7 +103,7 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
         children: [
           // macOS titlebar spacer (only for native macOS, not web)
           if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
-          
+
           // App Header from styleguide
           AppHeader(
             showTitle: false, // Hide header text
@@ -111,18 +116,18 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                      return PopScope(
-                        onPopInvokedWithResult: (didPop, result) {
-                          if (!didPop) {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: const Dialog(
-                      backgroundColor: Colors.transparent,
-                      insetPadding: EdgeInsets.all(16),
-                      elevation: 0,
-                          child: FocusScope(autofocus: true, child: AuthLoginWidget()),
-                        ),
+                    return PopScope(
+                      onPopInvokedWithResult: (didPop, result) {
+                        if (!didPop) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.all(16),
+                        elevation: 0,
+                        child: FocusScope(autofocus: true, child: AuthLoginWidget()),
+                      ),
                     );
                   },
                 );
@@ -132,76 +137,78 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
 
           // Main Content
           Expanded(
-              child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                child: SelectionArea(
-            child: SingleChildScrollView(
-                    controller: _scrollController,
-                    // Use ClampingScrollPhysics for web (better Safari performance)
-                    // BouncingScrollPhysics is iOS-specific and can cause jank on web
-                    physics: kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
-              child: Padding(
-                      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  children: [
-                              const SizedBox(height: 64),
-
-                              // Hero Section
-                              RepaintBoundary(
-                                child: SizedBox(
-                      width: totalWidth,
-                                  child: _HeroSection(
-                                    onInstall: _openReleasesPage,
-                                    onOpenSource: _openOpenSource,
-                                    isScrolling: _isScrolling,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 128),
-
-                              // Pillars Section
-                              RepaintBoundary(
-                                child: SizedBox(width: totalWidth, child: const _PillarsSection()),
-                              ),
-
-                              const SizedBox(height: 128),
-
-                              // Rivers Section
-                              RepaintBoundary(
-                                child: SizedBox(
-                                  width: totalWidth,
-                                  child: _RiversSection(
-                                    onInstall: _openReleasesPage,
-                                    onViewDocs: _openDocumentation,
-                                    onOpenSource: _openOpenSource,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 128),
-
-                              // FAQ Section
-                              RepaintBoundary(
-                                child: SizedBox(width: totalWidth, child: const _FaqSection()),
-                              ),
-
-                              const SizedBox(height: 96),
-                            ],
-                          ),
-                        ),
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+              child: isSafariOnWeb
+                  ? SingleChildScrollView(
+                      // No text selection for Safari
+                      controller: _scrollController,
+                      physics: const ClampingScrollPhysics(),
+                      child: _buildPageContent(totalWidth),
+                    )
+                  : SelectionArea(
+                      // Text selection for other browsers
+                      child: SingleChildScrollView(
+                        controller: _scrollController,
+                        physics: kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
+                        child: _buildPageContent(totalWidth),
                       ),
                     ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageContent(double totalWidth) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 64),
+              // Hero Section
+              RepaintBoundary(
+                child: SizedBox(
+                  width: totalWidth,
+                  child: _HeroSection(
+                    onInstall: _openReleasesPage,
+                    onOpenSource: _openOpenSource,
+                    isScrolling: _isScrolling,
                   ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 128),
+              // Pillars Section
+              RepaintBoundary(
+                child: SizedBox(width: totalWidth, child: const _PillarsSection()),
+              ),
+              const SizedBox(height: 128),
+              // Rivers Section
+              RepaintBoundary(
+                child: SizedBox(
+                  width: totalWidth,
+                  child: _RiversSection(
+                    onInstall: _openReleasesPage,
+                    onViewDocs: _openDocumentation,
+                    onOpenSource: _openOpenSource,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 128),
+              // FAQ Section
+              RepaintBoundary(
+                child: SizedBox(width: totalWidth, child: const _FaqSection()),
+              ),
+              const SizedBox(height: 96),
+            ],
+          ),
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -227,7 +234,9 @@ class _ScreenshotImage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-          boxShadow: kIsWeb
+          boxShadow: isSafariOnWeb
+              ? [] // Disable shadows on Safari for performance
+              : kIsWeb
               ? [
                   // Simplified shadow for web/Safari performance
                   BoxShadow(
@@ -261,10 +270,10 @@ class _ScreenshotImage extends StatelessWidget {
                 return const _ScreenshotPlaceholder();
               },
             ),
-                                    ),
-                                  ),
-                                ),
-                              );
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -285,16 +294,18 @@ class _ScreenshotPlaceholder extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-          boxShadow: [
-            // Outer glow effect
-            BoxShadow(color: colors.accentColor.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
-            // Inner shadow for depth
-            BoxShadow(
-              color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: isSafariOnWeb
+              ? [] // Disable shadows on Safari for performance
+              : [
+                  // Outer glow effect
+                  BoxShadow(color: colors.accentColor.withValues(alpha: 0.3), blurRadius: 20, spreadRadius: 2),
+                  // Inner shadow for depth
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDarkMode ? 0.5 : 0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
@@ -576,7 +587,7 @@ class _HeroSectionState extends State<_HeroSection> {
     return Column(
       children: [
         _buildHeading(context, colors, textTheme),
-                    const SizedBox(height: 64),
+        const SizedBox(height: 64),
         _buildTerminal(context, colors),
         const SizedBox(height: 64),
         _buildDescription(context, colors, textTheme),
@@ -600,7 +611,9 @@ class _HeroSectionState extends State<_HeroSection> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-                boxShadow: kIsWeb
+                boxShadow: isSafariOnWeb
+                    ? [] // Disable shadows on Safari for performance
+                    : kIsWeb
                     ? [
                         // Simplified shadow for web/Safari performance
                         BoxShadow(
@@ -707,8 +720,8 @@ class _HeroSectionState extends State<_HeroSection> {
             const TextSpan(text: ' for them to use?'),
           ],
         ),
-                        textAlign: TextAlign.center,
-                      ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
@@ -778,7 +791,7 @@ class _HeroSectionState extends State<_HeroSection> {
   Widget _buildLeftColumn(BuildContext context, ThemeColorSet colors, TextTheme textTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+      children: [
         // Description text
         Text(
           'Built to help you ship, right from your terminal',
@@ -867,13 +880,13 @@ class _PillarsSectionState extends State<_PillarsSection> with AutomaticKeepAliv
   static const List<_PillarData> _pillars = [
     _PillarData(
       heading: 'Unified MCP access across all platforms',
-                            description:
+      description:
           'Configure MCP tools once and use them with Cursor, Copilot, Claude Code, Gemini, or CLI commands. Combine different MCP tools via JS code execution and save tokens.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg',
-                          ),
+    ),
     _PillarData(
       heading: 'Agent-powered, CLI-first architecture',
-                            description:
+      description:
           'Configure tools and agents together, then execute them via CLI or locally to maximize your AI workflow efficiency.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg',
     ),
@@ -996,7 +1009,9 @@ class _GlowWrapper extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-        boxShadow: kIsWeb
+        boxShadow: isSafariOnWeb
+            ? [] // Disable shadows on Safari for performance
+            : kIsWeb
             ? [
                 // Simplified shadow for web/Safari performance
                 BoxShadow(
@@ -1094,7 +1109,7 @@ function action(params) {
               const LargeBodyText(
                 'Code execution with MCP enables agents to use context more efficiently by loading tools on demand.',
               ),
-                    const SizedBox(height: 32),
+              const SizedBox(height: 32),
               const _FlowDiagram(),
               const SizedBox(height: 24),
               const MediumHeadlineText('Leverage MCP context and extend with your own tools'),
@@ -1206,7 +1221,9 @@ class _FlowDiagram extends StatelessWidget {
         color: colors.cardBg,
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
         border: Border.all(color: colors.borderColor.withValues(alpha: 0.3)),
-        boxShadow: kIsWeb
+        boxShadow: isSafariOnWeb
+            ? [] // Disable shadows on Safari for performance
+            : kIsWeb
             ? [
                 // Simplified shadow for web/Safari performance
                 BoxShadow(

@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:google_fonts/google_fonts.dart'; // Unused
 import 'app_colors.dart';
+import '../utils/platform_utils.dart';
 
 // Web-only import for HTML messaging
 // Conditional imports for web-only functionality
@@ -203,6 +204,7 @@ class AppTheme {
 
   static ThemeData _buildTheme(ThemeColorSet colors, Brightness brightness) {
     final baseTextTheme = _buildTextTheme(colors);
+    final isSafari = isSafariOnWeb;
 
     return ThemeData(
       brightness: brightness,
@@ -221,7 +223,7 @@ class AppTheme {
         onSurface: colors.textColor,
       ),
       textTheme: baseTextTheme,
-      fontFamily: 'Inter',
+      fontFamily: isSafari ? '.AppleSystemUIFont' : 'Inter',
       appBarTheme: AppBarTheme(
         backgroundColor: colors.bgColor,
         foregroundColor: colors.textColor,

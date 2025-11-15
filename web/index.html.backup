@@ -38,6 +38,24 @@
   <link rel="preload" href="assets/assets/img/dmtools-cli.png" as="image">
   <link rel="preload" href="assets/assets/img/dm-ai-app-light.png" as="image">
   <link rel="preload" href="assets/assets/img/dm-ai-app-dark.png" as="image">
+  
+  <!-- Safari-specific optimizations -->
+  <script>
+    (function() {
+      const ua = navigator.userAgent;
+      const isSafari = ua.includes('Safari') && !ua.includes('Chrome');
+      if (!isSafari) return;
+
+      // Disable WebGL2 for Safari only (force WebGL1 fallback)
+      if (window.WebGL2RenderingContext) {
+        try {
+          delete window.WebGL2RenderingContext;
+        } catch (err) {
+          window.WebGL2RenderingContext = undefined;
+        }
+      }
+    })();
+  </script>
 
   <script>
     (function() {

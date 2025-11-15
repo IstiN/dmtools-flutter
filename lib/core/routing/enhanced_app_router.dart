@@ -168,119 +168,80 @@ class EnhancedAppRouter {
         ),
 
         // Loading route - shown during authentication initialization
-        GoRoute(
-          name: 'loading_screen',
-          path: '/loading',
-          builder: (context, state) => const LoadingScreen(),
-        ),
+        GoRoute(name: 'loading_screen', path: '/loading', builder: (context, state) => const LoadingScreen()),
 
         // Dynamic authentication route
-        GoRoute(
-          name: 'auth_page',
-          path: '/auth',
-          builder: (context, state) => const UnauthenticatedHomeScreen(),
-        ),
+        GoRoute(name: 'auth_page', path: '/auth', builder: (context, state) => const UnauthenticatedHomeScreen()),
 
         // Dashboard route - directly accessible
         GoRoute(
           name: 'dashboard_page',
           path: '/dashboard',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: DashboardPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: DashboardPage())),
         ),
 
         // AI Jobs route
         GoRoute(
           name: 'ai_jobs_page',
           path: '/ai-jobs',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: AiJobsPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: AiJobsPage())),
         ),
 
         // Workspaces route
         GoRoute(
           name: 'workspaces_page',
           path: '/workspaces',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: WorkspacesPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: WorkspacesPage())),
         ),
 
         // Applications route
         GoRoute(
           name: 'applications_page',
           path: '/applications',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: ApplicationsPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: ApplicationsPage())),
         ),
 
         // Integrations route
         GoRoute(
           name: 'integrations_page',
           path: '/integrations',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: IntegrationsPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: IntegrationsPage())),
         ),
 
         // Users route
         GoRoute(
           name: 'users_page',
           path: '/users',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: UsersPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: UsersPage())),
         ),
 
         // Settings route
         GoRoute(
           name: 'settings_page',
           path: '/settings',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: SettingsPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: SettingsPage())),
         ),
 
         // API Demo route
         GoRoute(
           name: 'api_demo_page',
           path: '/api-demo',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: ApiDemoPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: ApiDemoPage())),
         ),
 
         // MCP route
         GoRoute(
           name: 'mcp_page',
           path: '/mcp',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: McpPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: McpPage())),
         ),
 
         // Chat route
         GoRoute(
           name: 'chat_page',
           path: '/chat',
-          pageBuilder: (context, state) => _buildFadePage(
-            state,
-            const HomeScreen(child: ChatPage()),
-          ),
+          pageBuilder: (context, state) => _buildFadePage(state, const HomeScreen(child: ChatPage())),
         ),
-
       ],
       errorBuilder: (context, state) => Scaffold(
         body: Center(
@@ -324,9 +285,7 @@ class EnhancedAppRouter {
 
   // Helper method to check if a route requires admin role
   static bool _isAdminOnlyRoute(String path) {
-    const adminOnlyRoutes = [
-      '/users',
-    ];
+    const adminOnlyRoutes = ['/users'];
     return adminOnlyRoutes.contains(path);
   }
 
@@ -336,10 +295,7 @@ class EnhancedAppRouter {
       key: state.pageKey,
       child: child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return FadeTransition(
-          opacity: animation,
-          child: child,
-        );
+        return FadeTransition(opacity: animation, child: child);
       },
       transitionDuration: const Duration(milliseconds: 200),
     );
@@ -354,31 +310,36 @@ class NavigationItem {
   final String label;
   final String route;
 
-  const NavigationItem({
-    required this.label,
-    required this.route,
-    this.icon,
-    this.svgIconPath,
-  }) : assert(
-          icon != null || svgIconPath != null,
-          'Either icon or svgIconPath must be provided',
-        );
+  const NavigationItem({required this.label, required this.route, this.icon, this.svgIconPath})
+    : assert(icon != null || svgIconPath != null, 'Either icon or svgIconPath must be provided');
 }
 
 const List<NavigationItem> navigationItems = [
   // Core functional pages - Chat first as requested
-  NavigationItem(label: 'Chat', route: '/chat', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-chat.svg'),
-  NavigationItem(label: 'AI Jobs', route: '/ai-jobs', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg'),
-  NavigationItem(label: 'Integrations', route: '/integrations', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-integrations.svg'),
+  NavigationItem(
+    label: 'Chat',
+    route: '/chat',
+    svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-chat.svg',
+  ),
+  NavigationItem(
+    label: 'AI Jobs',
+    route: '/ai-jobs',
+    svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg',
+  ),
+  NavigationItem(
+    label: 'Integrations',
+    route: '/integrations',
+    svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-integrations.svg',
+  ),
   NavigationItem(label: 'MCP', route: '/mcp', svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg'),
-  
+
   // Admin-only pages (filtered by role in home_screen.dart)
   NavigationItem(label: 'Users', route: '/users', icon: Icons.people_outline),
-  
+
   // Temporarily hidden pages (not needed for now)
   // NavigationItem(icon: Icons.workspaces_outlined, label: 'Workspaces', route: '/workspaces'),
   // NavigationItem(icon: Icons.api_outlined, label: 'API Demo', route: '/api-demo'),
-  
+
   // Placeholder pages (TODO: implement and uncomment when ready)
   // NavigationItem(icon: Icons.dashboard_outlined, label: 'Dashboard', route: '/dashboard'),
   // NavigationItem(icon: Icons.apps_outlined, label: 'Applications', route: '/applications'),
