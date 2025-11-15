@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { STYLEGUIDE_BASE_URL } from './testEnv';
+
+const BASE_URL = STYLEGUIDE_BASE_URL;
 
 /**
  * Test accessing Flutter elements via Accessibility Tree
@@ -7,7 +10,7 @@ import { test, expect } from '@playwright/test';
  */
 test.describe('Accessibility Tree Access', () => {
   test('should access elements via accessibility tree snapshot', async ({ page }) => {
-    await page.goto('http://localhost:8080');
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(5000); // Give Flutter time to render
     
@@ -48,9 +51,9 @@ test.describe('Accessibility Tree Access', () => {
     });
     
     // Search for specific button text
-    const demoButtons = findInTree(snapshot, 'Demo');
-    console.log(`\n🎯 Found ${demoButtons.length} "Demo" element(s):`);
-    demoButtons.forEach(btn => {
+    const atomsButtons = findInTree(snapshot, 'Atoms');
+    console.log(`\n🎯 Found ${atomsButtons.length} "Atoms" element(s):`);
+    atomsButtons.forEach(btn => {
       console.log(`  - Name: "${btn.name}", Role: ${btn.role}`);
     });
     
@@ -72,7 +75,7 @@ test.describe('Accessibility Tree Access', () => {
   });
   
   test('should click elements using accessibility tree and getByRole', async ({ page }) => {
-    await page.goto('http://localhost:8080');
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(5000);
     
@@ -94,17 +97,17 @@ test.describe('Accessibility Tree Access', () => {
     }
     
     // Try to find button by accessible name
-    const demoButton = page.getByRole('button', { name: /demo/i });
-    const demoCount = await demoButton.count();
-    console.log(`\n🎯 Found ${demoCount} button(s) with name containing "demo"`);
+    const atomsButton = page.getByRole('button', { name: /atoms/i });
+    const atomsCount = await atomsButton.count();
+    console.log(`\n🎯 Found ${atomsCount} button(s) with name containing "Atoms"`);
     
-    if (demoCount > 0) {
-      console.log('✅ Can access Demo button via accessibility!');
-      console.log('🖱️ Attempting to click Demo button...');
+    if (atomsCount > 0) {
+      console.log('✅ Can access Atoms button via accessibility!');
+      console.log('🖱️ Attempting to click Atoms button...');
       
       try {
-        await demoButton.first().click({ timeout: 5000 });
-        console.log('✅ Successfully clicked Demo button!');
+        await atomsButton.first().click({ timeout: 5000 });
+        console.log('✅ Successfully clicked Atoms button!');
         
         await page.waitForTimeout(2000);
         
@@ -113,7 +116,7 @@ test.describe('Accessibility Tree Access', () => {
         console.log(`📍 Current URL: ${url}`);
         
       } catch (e) {
-        console.log('❌ Could not click Demo button:', e.message);
+        console.log('❌ Could not click Atoms button:', e.message);
       }
     }
     
@@ -121,17 +124,17 @@ test.describe('Accessibility Tree Access', () => {
   });
   
   test('should use getByLabel to find elements', async ({ page }) => {
-    await page.goto('http://localhost:8080');
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(5000);
     
     // Try different label selectors
     const labelSearches = [
-      'Demo',
-      'Get Started',
-      'demo button',
-      'Demo button',
-      'button-demo',
+      'Atoms',
+      'Molecules',
+      'Organisms',
+      'atoms button',
+      'button-atoms',
     ];
     
     console.log('\n🔍 Searching by label:');
@@ -150,7 +153,7 @@ test.describe('Accessibility Tree Access', () => {
   });
   
   test('should dump full accessibility tree structure', async ({ page }) => {
-    await page.goto('http://localhost:8080');
+    await page.goto(BASE_URL);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(5000);
     

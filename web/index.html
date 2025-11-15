@@ -43,13 +43,180 @@
     (function() {
       const ua = navigator.userAgent;
       const isSafari = ua.includes('Safari') && !ua.includes('Chrome');
-      if (isSafari && window.WebGL2RenderingContext) {
+      if (!isSafari) return;
+
+      console.log('[Safari Optimization] 🎨 Forcing HTML renderer for Safari');
+      
+      // Force HTML renderer for Safari (better performance than CanvasKit)
+      window.flutterWebRenderer = 'html';
+      
+      // Also disable WebGL2 as backup (in case HTML renderer falls back to CanvasKit)
+      if (window.WebGL2RenderingContext) {
         try {
           delete window.WebGL2RenderingContext;
         } catch (err) {
           window.WebGL2RenderingContext = undefined;
         }
       }
+      
+      console.log('[Safari Optimization] ✅ HTML renderer enabled');
+    })();
+  </script>
+
+  <script>
+    (function() {
+      const ua = navigator.userAgent;
+      const isSafari = ua.includes('Safari') && !ua.includes('Chrome');
+      const isChrome = ua.includes('Chrome');
+      const browserName = isSafari ? 'Safari' : (isChrome ? 'Chrome' : 'Browser');
+      
+      // Enable for both Safari and Chrome for comparison
+      if (!isSafari && !isChrome) return;
+
+      console.log(`[${browserName} Perf] 🚀 Sampler enabled`);
+
+      // Create visual indicator overlay
+      const indicator = document.createElement('div');
+      indicator.id = 'perf-indicator';
+      const indicatorColor = isSafari ? 'rgba(0, 122, 255, 0.9)' : 'rgba(234, 67, 53, 0.9)'; // Blue for Safari, Red for Chrome
+      indicator.style.cssText = `
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: ${indicatorColor};
+        color: white;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-family: -apple-system, BlinkMacSystemFont, monospace;
+        font-size: 13px;
+        font-weight: 600;
+        z-index: 999999;
+        display: none;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        pointer-events: none;
+        line-height: 1.4;
+      `;
+      // Detect renderer type
+      const rendererType = window.flutterWebRenderer || 'auto';
+      indicator.textContent = `📊 ${browserName} (${rendererType}) Measuring...`;
+      
+      // Wait for body to be ready
+      if (document.body) {
+        document.body.appendChild(indicator);
+      } else {
+        window.addEventListener('DOMContentLoaded', () => {
+          document.body.appendChild(indicator);
+        });
+      }
+
+      let rafHandle = null;
+      const frameTimes = [];
+
+      function resetSampler() {
+        if (rafHandle !== null) {
+          cancelAnimationFrame(rafHandle);
+          rafHandle = null;
+        }
+        frameTimes.length = 0;
+        indicator.style.display = 'none';
+      }
+
+      function updateIndicator() {
+        if (frameTimes.length < 2) {
+          indicator.textContent = `📊 ${browserName} (${rendererType}) - ${frameTimes.length} frames`;
+          return;
+        }
+        const deltas = [];
+        for (let i = 1; i < frameTimes.length; i++) {
+          deltas.push(frameTimes[i] - frameTimes[i - 1]);
+        }
+        const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+        const worst = Math.max(...deltas);
+        
+        // Color indicator based on performance (keep browser color hue)
+        if (avg > 20) {
+          indicator.style.background = 'rgba(200, 0, 0, 0.9)'; // Red: poor
+        } else if (avg > 16.67) {
+          indicator.style.background = 'rgba(255, 165, 0, 0.9)'; // Orange: ok
+        } else {
+          indicator.style.background = indicatorColor; // Browser color: good
+        }
+        
+        const fps = avg > 0 ? (1000 / avg).toFixed(0) : '—';
+        indicator.innerHTML = `📊 ${browserName} (${rendererType})<br>FPS: ${fps} | avg ${avg.toFixed(1)}ms<br>worst ${worst.toFixed(1)}ms | ${deltas.length} frames`;
+      }
+
+      function logFrameStats(force = false) {
+        if (frameTimes.length < 2) {
+          if (force && frameTimes.length > 0) {
+            console.log(`[${browserName} Perf] only ${frameTimes.length} sample(s); need more scroll to measure.`);
+          }
+          return;
+        }
+        const deltas = [];
+        for (let i = 1; i < frameTimes.length; i++) {
+          deltas.push(frameTimes[i] - frameTimes[i - 1]);
+        }
+        const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+        const worst = Math.max(...deltas);
+        const fps = avg > 0 ? (1000 / avg).toFixed(0) : '—';
+        console.log(`[${browserName} Perf] 📊 FPS: ${fps} | avg frame ${avg.toFixed(2)}ms, worst ${worst.toFixed(2)}ms over ${deltas.length} frames`);
+      }
+
+      function sampleFrame(ts) {
+        frameTimes.push(ts);
+        updateIndicator();
+        
+        // Log every 15 frames for quick feedback
+        if (frameTimes.length > 0 && frameTimes.length % 15 === 0) {
+          logFrameStats();
+        }
+        
+        rafHandle = requestAnimationFrame(sampleFrame);
+      }
+
+      const debouncedStop = (() => {
+        let timeout;
+        return () => {
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            logFrameStats(true);
+            resetSampler();
+            console.log(`[${browserName} Perf] ⏹️ Stopped measuring`);
+          }, 800); // Increased to 800ms to catch more frames
+        };
+      })();
+
+      function startMeasuring() {
+        if (!rafHandle) {
+          console.log(`[${browserName} Perf] 🎬 Started measuring`);
+          indicator.style.display = 'block';
+          indicator.style.background = indicatorColor;
+          rafHandle = requestAnimationFrame(sampleFrame);
+        }
+        debouncedStop();
+      }
+
+      // Listen to multiple scroll-related events
+      window.addEventListener('scroll', startMeasuring, { passive: true });
+      window.addEventListener('wheel', startMeasuring, { passive: true });
+      window.addEventListener('touchmove', startMeasuring, { passive: true });
+      
+      // Also try to attach to Flutter's canvas/glass-pane once it's ready
+      const attachToFlutter = () => {
+        const glassPane = document.querySelector('flt-glass-pane');
+        if (glassPane) {
+          console.log(`[${browserName} Perf] 🎯 Attached to Flutter glass pane`);
+          glassPane.addEventListener('wheel', startMeasuring, { passive: true });
+          glassPane.addEventListener('touchmove', startMeasuring, { passive: true });
+        }
+      };
+      
+      // Try immediately and after a delay
+      setTimeout(attachToFlutter, 1000);
+      setTimeout(attachToFlutter, 3000);
+
+      console.log(`[${browserName} Perf] 👂 Listening for scroll/wheel/touch events`);
     })();
   </script>
 

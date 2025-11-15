@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import { APP_BASE_URL } from './testEnv';
+
+const APP_URL = APP_BASE_URL;
 
 /**
  * Simple load test for Flutter Web App
@@ -7,7 +10,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Simple App Load Test', () => {
   test('should load the app without crashing', async ({ page }) => {
     // Go to the page
-    await page.goto('http://localhost:8080');
+    await page.goto(APP_URL);
     
     // Wait for Flutter to initialize
     await page.waitForLoadState('networkidle');
@@ -29,7 +32,7 @@ test.describe('Simple App Load Test', () => {
   });
   
   test('should not show error messages', async ({ page }) => {
-    await page.goto('http://localhost:8080');
+    await page.goto(APP_URL);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
     

@@ -1,11 +1,20 @@
 import { test, expect } from '@playwright/test';
+import { APP_BASE_URL } from './testEnv';
+
+const APP_URL = APP_BASE_URL;
+
+const HERO_BUTTON_LABELS = [
+  'View installation instructions button',
+  'Install DMTools Desktop now button',
+  'View open source repository button',
+];
 
 /**
  * Test clicking the "Enable accessibility" button to expose Flutter's semantic tree
  */
 test.describe('Enable Accessibility and Access Elements', () => {
-  test('should click Enable Accessibility button and access Demo button', async ({ page }) => {
-    await page.goto('http://localhost:8080');
+  test('should click Enable Accessibility button and access hero CTAs', async ({ page }) => {
+    await page.goto(APP_URL);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
     
@@ -49,8 +58,8 @@ test.describe('Enable Accessibility and Access Elements', () => {
       printTree(snapshot);
       console.log('========================================\n');
       
-      // Now look for Demo button
-      console.log('🔍 Step 4: Searching for Demo button...');
+      // Now look for hero CTA buttons
+      console.log('🔍 Step 4: Searching for hero CTA buttons...');
       
       function findInTree(node: any, searchTerm: string, results: any[] = []): any[] {
         if (!node) return results;
@@ -68,63 +77,33 @@ test.describe('Enable Accessibility and Access Elements', () => {
         return results;
       }
       
-      const demoElements = findInTree(snapshot, 'demo');
-      console.log(`Found ${demoElements.length} element(s) containing "demo":`);
-      demoElements.forEach(el => {
-        console.log(`  - Role: ${el.role}, Name: "${el.name}"`);
-      });
+      for (const label of HERO_BUTTON_LABELS) {
+        const matches = findInTree(snapshot, label.replace(/button/i, '').trim());
+        console.log(`Found ${matches.length} element(s) containing "${label}":`);
+        matches.forEach(el => {
+          console.log(`  - Role: ${el.role}, Name: "${el.name}"`);
+        });
+      }
       
-      const getStartedElements = findInTree(snapshot, 'get started');
-      console.log(`\nFound ${getStartedElements.length} element(s) containing "get started":`);
-      getStartedElements.forEach(el => {
-        console.log(`  - Role: ${el.role}, Name: "${el.name}"`);
-      });
-      
-      // Try to click Demo button if found
-      if (demoElements.length > 0) {
-        console.log('\n✅ Demo button found in accessibility tree!');
-        console.log('🖱️ Attempting to click Demo button via getByRole...');
-        
-        const demoButton = page.getByRole('button', { name: /demo/i });
-        const demoCount = await demoButton.count();
-        console.log(`getByRole found ${demoCount} Demo button(s)`);
-        
-        if (demoCount > 0) {
-          await demoButton.first().click();
-          console.log('✅ Clicked Demo button successfully!');
-          
-          await page.waitForTimeout(2000);
-          
-          // Check navigation
-          const url = page.url();
-          console.log(`📍 Current URL: ${url}`);
-          
-          // Check for navigation items
-          console.log('\n🧭 Looking for navigation menu items...');
-          const menuSnapshot = await page.accessibility.snapshot();
-          const navItems = findInTree(menuSnapshot, 'navigation');
-          const aiJobs = findInTree(menuSnapshot, 'AI Jobs');
-          const integrations = findInTree(menuSnapshot, 'Integrations');
-          
-          console.log(`Found ${navItems.length} navigation element(s)`);
-          console.log(`Found ${aiJobs.length} "AI Jobs" element(s)`);
-          console.log(`Found ${integrations.length} "Integrations" element(s)`);
-          
-          if (aiJobs.length > 0 || integrations.length > 0) {
-            console.log('\n🎉 SUCCESS! Can access navigation menu via accessibility tree!');
-          }
-        }
+      for (const label of HERO_BUTTON_LABELS) {
+        const button = page.getByRole('button', { name: new RegExp(label, 'i') });
+        const buttonCount = await button.count();
+        console.log(`getByRole found ${buttonCount} "${label}" button(s)`);
+        expect(buttonCount).toBeGreaterThan(0);
       }
       
       expect(snapshot).not.toBeNull();
     } else {
-      console.log('❌ Enable accessibility button not found');
-      expect(count).toBeGreaterThan(0);
+      console.log('ℹ️ Enable accessibility button not found; semantics likely auto-enabled');
+      for (const label of HERO_BUTTON_LABELS) {
+        const button = page.getByRole('button', { name: new RegExp(label, 'i') });
+        await expect(button.first()).toBeVisible({ timeout: 10000 });
+      }
     }
   });
   
-  test('should navigate through menu items after enabling accessibility', async ({ page }) => {
-    await page.goto('http://localhost:8080');
+  test('should navigate hero sections after enabling accessibility', async ({ page }) => {
+    await page.goto(APP_URL);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(3000);
     
@@ -135,53 +114,20 @@ test.describe('Enable Accessibility and Access Elements', () => {
       await page.waitForTimeout(2000);
     }
     
-    // Click Demo button
-    const demoButton = page.getByRole('button', { name: /demo/i });
-    if (await demoButton.count() > 0) {
-      console.log('✅ Clicking Demo button...');
-      await demoButton.click();
-      await page.waitForTimeout(2000);
-      
-      // Get all buttons after navigation
-      const allButtons = await page.getByRole('button').all();
-      console.log(`\n📋 Found ${allButtons.length} buttons after navigation`);
-      
-      // List all accessible elements
-      const snapshot = await page.accessibility.snapshot();
-      
-      function collectAll(node: any, role: string, results: any[] = []): any[] {
-        if (!node) return results;
-        if (node.role === role) results.push(node);
-        if (node.children) {
-          for (const child of node.children) {
-            collectAll(child, role, results);
-          }
-        }
-        return results;
-      }
-      
-      const buttons = collectAll(snapshot, 'button');
-      console.log(`\n🔘 Buttons in accessibility tree:`);
-      buttons.forEach((btn, i) => {
-        console.log(`  ${i + 1}. "${btn.name}"`);
-      });
-      
-      // Try to click menu items
-      const menuItems = ['AI Jobs', 'Integrations', 'Chat', 'MCP'];
-      for (const item of menuItems) {
-        const menuButton = page.getByRole('button', { name: item, exact: false });
-        if (await menuButton.count() > 0) {
-          console.log(`\n✅ Found "${item}" menu item!`);
-          await menuButton.click();
-          await page.waitForTimeout(1000);
-          console.log(`   Clicked "${item}"`);
-        }
-      }
-      
-      console.log('\n🎉 Navigation through menu items successful!');
+    const heroHeading = page.getByText(/Built to help you ship/i);
+    await expect(heroHeading.first()).toBeVisible({ timeout: 10000 });
+    
+    const ctaHeading = page.getByText(/Get started in seconds/i);
+    await ctaHeading.scrollIntoViewIfNeeded();
+    await expect(ctaHeading.first()).toBeVisible({ timeout: 10000 });
+    
+    for (const label of HERO_BUTTON_LABELS) {
+      const button = page.getByRole('button', { name: new RegExp(label, 'i') }).first();
+      await expect(button).toBeVisible({ timeout: 10000 });
+      await button.scrollIntoViewIfNeeded();
     }
     
-    expect(true).toBe(true);
+    console.log('\n🎉 Hero sections verified via accessibility tree!');
   });
 });
 

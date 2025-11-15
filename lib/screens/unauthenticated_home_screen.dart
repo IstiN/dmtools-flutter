@@ -98,7 +98,7 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
         children: [
           // macOS titlebar spacer (only for native macOS, not web)
           if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
-
+          
           // App Header from styleguide
           AppHeader(
             showTitle: false, // Hide header text
@@ -111,18 +111,18 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                    return PopScope(
-                      onPopInvokedWithResult: (didPop, result) {
-                        if (!didPop) {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                      child: const Dialog(
-                        backgroundColor: Colors.transparent,
-                        insetPadding: EdgeInsets.all(16),
-                        elevation: 0,
-                        child: FocusScope(autofocus: true, child: AuthLoginWidget()),
-                      ),
+                      return PopScope(
+                        onPopInvokedWithResult: (didPop, result) {
+                          if (!didPop) {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child: const Dialog(
+                      backgroundColor: Colors.transparent,
+                      insetPadding: EdgeInsets.all(16),
+                      elevation: 0,
+                          child: FocusScope(autofocus: true, child: AuthLoginWidget()),
+                        ),
                     );
                   },
                 );
@@ -132,66 +132,66 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
 
           // Main Content
           Expanded(
-            child: Scrollbar(
-              controller: _scrollController,
-              thumbVisibility: true,
-              child: SelectionArea(
-                child: SingleChildScrollView(
-                  controller: _scrollController,
-                  // Use ClampingScrollPhysics for web (better Safari performance)
-                  // BouncingScrollPhysics is iOS-specific and can cause jank on web
-                  physics: kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 64),
+              child: ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
+                child: SelectionArea(
+            child: SingleChildScrollView(
+                    controller: _scrollController,
+                    // Use ClampingScrollPhysics for web (better Safari performance)
+                    // BouncingScrollPhysics is iOS-specific and can cause jank on web
+                    physics: kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
+              child: Padding(
+                      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: Column(
+                  children: [
+                              const SizedBox(height: 64),
 
-                            // Hero Section
-                            RepaintBoundary(
-                              child: SizedBox(
-                                width: totalWidth,
-                                child: _HeroSection(
-                                  onInstall: _openReleasesPage,
-                                  onOpenSource: _openOpenSource,
-                                  isScrolling: _isScrolling,
+                              // Hero Section
+                              RepaintBoundary(
+                                child: SizedBox(
+                      width: totalWidth,
+                                  child: _HeroSection(
+                                    onInstall: _openReleasesPage,
+                                    onOpenSource: _openOpenSource,
+                                    isScrolling: _isScrolling,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            const SizedBox(height: 128),
+                              const SizedBox(height: 128),
 
-                            // Pillars Section
-                            RepaintBoundary(
-                              child: SizedBox(width: totalWidth, child: const _PillarsSection()),
-                            ),
+                              // Pillars Section
+                              RepaintBoundary(
+                                child: SizedBox(width: totalWidth, child: const _PillarsSection()),
+                              ),
 
-                            const SizedBox(height: 128),
+                              const SizedBox(height: 128),
 
-                            // Rivers Section
-                            RepaintBoundary(
-                              child: SizedBox(
-                                width: totalWidth,
-                                child: _RiversSection(
-                                  onInstall: _openReleasesPage,
-                                  onViewDocs: _openDocumentation,
-                                  onOpenSource: _openOpenSource,
+                              // Rivers Section
+                              RepaintBoundary(
+                                child: SizedBox(
+                                  width: totalWidth,
+                                  child: _RiversSection(
+                                    onInstall: _openReleasesPage,
+                                    onViewDocs: _openDocumentation,
+                                    onOpenSource: _openOpenSource,
+                                  ),
                                 ),
                               ),
-                            ),
 
-                            const SizedBox(height: 128),
+                              const SizedBox(height: 128),
 
-                            // FAQ Section
-                            RepaintBoundary(
-                              child: SizedBox(width: totalWidth, child: const _FaqSection()),
-                            ),
+                              // FAQ Section
+                              RepaintBoundary(
+                                child: SizedBox(width: totalWidth, child: const _FaqSection()),
+                              ),
 
-                            const SizedBox(height: 96),
-                          ],
+                              const SizedBox(height: 96),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -199,10 +199,9 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                 ),
               ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
   }
 }
 
@@ -262,10 +261,10 @@ class _ScreenshotImage extends StatelessWidget {
                 return const _ScreenshotPlaceholder();
               },
             ),
-          ),
-        ),
-      ),
-    );
+                                    ),
+                                  ),
+                                ),
+                              );
   }
 }
 
@@ -577,7 +576,7 @@ class _HeroSectionState extends State<_HeroSection> {
     return Column(
       children: [
         _buildHeading(context, colors, textTheme),
-        const SizedBox(height: 64),
+                    const SizedBox(height: 64),
         _buildTerminal(context, colors),
         const SizedBox(height: 64),
         _buildDescription(context, colors, textTheme),
@@ -708,8 +707,8 @@ class _HeroSectionState extends State<_HeroSection> {
             const TextSpan(text: ' for them to use?'),
           ],
         ),
-        textAlign: TextAlign.center,
-      ),
+                        textAlign: TextAlign.center,
+                      ),
     );
   }
 
@@ -779,7 +778,7 @@ class _HeroSectionState extends State<_HeroSection> {
   Widget _buildLeftColumn(BuildContext context, ThemeColorSet colors, TextTheme textTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+                        children: [
         // Description text
         Text(
           'Built to help you ship, right from your terminal',
@@ -857,19 +856,24 @@ class _HeroSectionState extends State<_HeroSection> {
 }
 
 // Pillars Section
-class _PillarsSection extends StatelessWidget {
+class _PillarsSection extends StatefulWidget {
   const _PillarsSection();
 
+  @override
+  State<_PillarsSection> createState() => _PillarsSectionState();
+}
+
+class _PillarsSectionState extends State<_PillarsSection> with AutomaticKeepAliveClientMixin {
   static const List<_PillarData> _pillars = [
     _PillarData(
       heading: 'Unified MCP access across all platforms',
-      description:
+                            description:
           'Configure MCP tools once and use them with Cursor, Copilot, Claude Code, Gemini, or CLI commands. Combine different MCP tools via JS code execution and save tokens.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg',
-    ),
+                          ),
     _PillarData(
       heading: 'Agent-powered, CLI-first architecture',
-      description:
+                            description:
           'Configure tools and agents together, then execute them via CLI or locally to maximize your AI workflow efficiency.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg',
     ),
@@ -881,7 +885,11 @@ class _PillarsSection extends StatelessWidget {
   ];
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return ResponsiveBuilder(
       mobile: (context, constraints) => _buildMobileLayout(context),
       desktop: (context, constraints) => _buildDesktopLayout(context),
@@ -1086,7 +1094,7 @@ function action(params) {
               const LargeBodyText(
                 'Code execution with MCP enables agents to use context more efficiently by loading tools on demand.',
               ),
-              const SizedBox(height: 32),
+                    const SizedBox(height: 32),
               const _FlowDiagram(),
               const SizedBox(height: 24),
               const MediumHeadlineText('Leverage MCP context and extend with your own tools'),
@@ -1299,7 +1307,7 @@ class _FlowArrow extends StatelessWidget {
 }
 
 // Rivers Section
-class _RiversSection extends StatelessWidget {
+class _RiversSection extends StatefulWidget {
   final VoidCallback? onInstall;
   final VoidCallback? onViewDocs;
   final VoidCallback? onOpenSource;
@@ -1307,7 +1315,16 @@ class _RiversSection extends StatelessWidget {
   const _RiversSection({this.onInstall, this.onViewDocs, this.onOpenSource});
 
   @override
+  State<_RiversSection> createState() => _RiversSectionState();
+}
+
+class _RiversSectionState extends State<_RiversSection> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context); // Required for AutomaticKeepAliveClientMixin
     return Column(
       children: [
         const MediumDisplayText('Built for every enterprise SDLC', textAlign: TextAlign.center),
@@ -1317,7 +1334,7 @@ class _RiversSection extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 64),
-        _CodeExampleItem(onInstall: onInstall, onViewDocs: onViewDocs, onOpenSource: onOpenSource),
+        _CodeExampleItem(onInstall: widget.onInstall, onViewDocs: widget.onViewDocs, onOpenSource: widget.onOpenSource),
       ],
     );
   }

@@ -1,0 +1,11 @@
+const DEFAULT_APP_PORT = process.env.PLAYWRIGHT_APP_PORT ?? '8090';
+const DEFAULT_STYLEGUIDE_PORT = process.env.PLAYWRIGHT_STYLEGUIDE_PORT ?? '8091';
+
+export const APP_BASE_URL = process.env.PLAYWRIGHT_APP_BASE_URL ?? `http://localhost:${DEFAULT_APP_PORT}`;
+export const STYLEGUIDE_BASE_URL =
+  process.env.PLAYWRIGHT_STYLEGUIDE_BASE_URL ?? `http://localhost:${DEFAULT_STYLEGUIDE_PORT}`;
+
+export const APP_PORT = DEFAULT_APP_PORT;
+export const STYLEGUIDE_PORT = DEFAULT_STYLEGUIDE_PORT;
+
+
