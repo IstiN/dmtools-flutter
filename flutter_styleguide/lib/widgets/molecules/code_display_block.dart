@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 import 'package:dmtools_styleguide/utils/syntax_highlighter.dart';
+import 'package:dmtools_styleguide/utils/platform_utils.dart';
 
 /// A widget that displays code with syntax highlighting and copy functionality
 ///
@@ -398,6 +399,18 @@ class _CodeWithLineNumbersState extends State<_CodeWithLineNumbers> {
     
     final highlightedSpans = _cachedSpans!;
 
+    final textSpan = TextSpan(
+      children: highlightedSpans,
+      style: TextStyle(
+        fontSize: widget.dimensions.fontSize,
+        fontFamily: 'monospace',
+        height: widget.dimensions.lineHeight,
+        // Don't set color here - let TextSpan colors override
+      ),
+    );
+
+    final codeWidget = RichText(text: textSpan);
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -426,17 +439,11 @@ class _CodeWithLineNumbersState extends State<_CodeWithLineNumbers> {
         SizedBox(width: widget.dimensions.headerSpacing),
         // Code content with syntax highlighting
         Expanded(
-          child: RichText(
-            text: TextSpan(
-              children: highlightedSpans,
-              style: TextStyle(
-                fontSize: widget.dimensions.fontSize,
-                fontFamily: 'monospace',
-                height: widget.dimensions.lineHeight,
-                // Don't set color here - let TextSpan colors override
-              ),
-            ),
-          ),
+          child: isSafariOnWeb
+              ? codeWidget
+              : SelectionArea(
+                  child: codeWidget,
+                ),
         ),
       ],
     );
@@ -491,33 +498,37 @@ class _SimpleCodeDisplayState extends State<_SimpleCodeDisplay> {
     ) || nonEmptySpans.length > 1;
     
     if (hasHighlighting && nonEmptySpans.isNotEmpty) {
-      return ConstrainedBox(
-        constraints: const BoxConstraints(),
-        child: SelectableText.rich(
-          TextSpan(
-            children: nonEmptySpans,
-            style: TextStyle(
-              fontSize: widget.dimensions.fontSize,
-              fontFamily: 'monospace',
-              height: widget.dimensions.lineHeight,
-              // Don't set color here - let TextSpan colors override
-            ),
-          ),
+      final textSpan = TextSpan(
+        children: nonEmptySpans,
+        style: TextStyle(
+          fontSize: widget.dimensions.fontSize,
+          fontFamily: 'monospace',
+          height: widget.dimensions.lineHeight,
+          // Don't set color here - let TextSpan colors override
         ),
+      );
+      if (isSafariOnWeb) {
+        return RichText(text: textSpan);
+      }
+      return SelectionArea(
+        child: RichText(text: textSpan),
       );
     } else {
       // Fallback to plain text if highlighting didn't work
-      return ConstrainedBox(
-        constraints: const BoxConstraints(),
-        child: SelectableText(
-          widget.code,
-          style: TextStyle(
-            fontSize: widget.dimensions.fontSize,
-            fontFamily: 'monospace',
-            height: widget.dimensions.lineHeight,
-            color: widget.codeTheme.textColor,
-          ),
+      final textWidget = Text(
+        widget.code,
+        style: TextStyle(
+          fontSize: widget.dimensions.fontSize,
+          fontFamily: 'monospace',
+          height: widget.dimensions.lineHeight,
+          color: widget.codeTheme.textColor,
         ),
+      );
+      if (isSafariOnWeb) {
+        return textWidget;
+      }
+      return SelectionArea(
+        child: textWidget,
       );
     }
   }
