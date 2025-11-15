@@ -1,13 +1,72 @@
-// PERFORMANCE TEST: Testing ThemeProvider impact - added ThemeProvider + GoRouter
+// PERFORMANCE TEST: Adding ALL providers back to test impact on FPS
+import 'dart:io' show Platform;
+import 'package:dmtools/service_locator.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+import 'package:go_router/go_router.dart';
+import 'package:dmtools_styleguide/dmtools_styleguide.dart' hide AuthProvider;
+import 'package:macos_window_utils/macos_window_utils.dart';
+import 'core/analytics/interaction_tracker_binding.dart';
+import 'core/routing/enhanced_app_router.dart';
+import 'core/services/analytics_service.dart';
+import 'providers/enhanced_auth_provider.dart';
+import 'providers/integration_provider.dart';
+import 'providers/mcp_provider.dart';
+import 'providers/chat_provider.dart';
+import 'network/services/api_service.dart';
 import 'screens/unauthenticated_home_screen.dart';
 
-void main() async {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const DMToolsApp());
+
+  // Force enable semantics for web to expose elements to automation tools and browser MCP
+  if (kIsWeb) {
+    WidgetsBinding.instance.ensureSemantics();
+    debugPrint('[MAIN] ✅ Semantics enabled for web - automation tools can access elements');
+  }
+
+  // Parse command line arguments
+  String? serverPort;
+  for (var i = 0; i < args.length; i++) {
+    if (args[i].startsWith('--server-port=')) {
+      serverPort = args[i].substring('--server-port='.length);
+      debugPrint('[MAIN] Server port from args: $serverPort');
+      break;
+    }
+  }
+
+  // Configure macOS window appearance (only for native macOS, not web)
+  if (!kIsWeb && Platform.isMacOS) {
+    await WindowManipulator.initialize(enableWindowDelegate: true);
+    WindowManipulator.makeTitlebarTransparent();
+    WindowManipulator.enableFullSizeContentView();
+    WindowManipulator.hideTitle();
+  }
+
+  ServiceLocator.init(serverPort: serverPort);
+
+  // Initialize analytics (fail gracefully if initialization fails)
+  try {
+    await AnalyticsService.initialize();
+  } catch (e) {
+    debugPrint('⚠️ Analytics initialization failed: $e');
+    // Continue app startup even if analytics fails
+  }
+  InteractionTrackerBinding.configure();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<EnhancedAuthProvider>()),
+        Provider<ApiService>(create: (_) => ServiceLocator.get()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<IntegrationProvider>()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<McpProvider>()),
+        ChangeNotifierProvider(create: (_) => ServiceLocator.get<ChatProvider>()),
+      ],
+      child: const DMToolsApp(),
+    ),
+  );
 }
 
 class DMToolsApp extends StatefulWidget {
@@ -17,18 +76,29 @@ class DMToolsApp extends StatefulWidget {
   State<DMToolsApp> createState() => _DMToolsAppState();
 }
 
-class _DMToolsAppState extends State<DMToolsApp> {
+class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
   late ThemeProvider _themeProvider;
   bool _isThemeInitialized = false;
+  GoRouter? _router;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _themeProvider = ThemeProvider();
-    _initializeTheme();
+
+    // Initialize theme and authentication
+    _initializeApp();
   }
 
-  Future<void> _initializeTheme() async {
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  Future<void> _initializeApp() async {
+    // Initialize theme first
     try {
       await _themeProvider.initializeTheme();
       if (mounted) {
@@ -37,13 +107,32 @@ class _DMToolsAppState extends State<DMToolsApp> {
         });
       }
     } catch (e) {
-      debugPrint('Error initializing theme: $e');
+      debugPrint('DMToolsApp: Error initializing theme: $e');
       if (mounted) {
         setState(() {
           _isThemeInitialized = true;
         });
       }
     }
+
+    // Initialize authentication state
+    if (mounted) {
+      final enhancedAuthProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
+      await enhancedAuthProvider.initializeAuth();
+
+      // Load user info from API if authenticated
+      if (enhancedAuthProvider.isAuthenticated) {
+        await ServiceLocator.initializeUserInfo();
+      }
+    }
+  }
+
+  @override
+  void didChangePlatformBrightness() {
+    super.didChangePlatformBrightness();
+    // Update theme when system brightness changes
+    final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
+    _themeProvider.updateSystemTheme(brightness);
   }
 
   @override
@@ -52,11 +141,8 @@ class _DMToolsAppState extends State<DMToolsApp> {
       value: _themeProvider,
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          // Simple router without authentication
-          final router = GoRouter(
-            initialLocation: '/',
-            routes: [GoRoute(path: '/', builder: (context, state) => const UnauthenticatedHomeScreen())],
-          );
+          final enhancedAuthProvider = Provider.of<EnhancedAuthProvider>(context);
+          _router ??= EnhancedAppRouter.createRouter(enhancedAuthProvider);
 
           return MaterialApp.router(
             title: 'DMTools',
@@ -64,7 +150,7 @@ class _DMToolsAppState extends State<DMToolsApp> {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: _isThemeInitialized ? themeProvider.currentThemeMode : ThemeMode.system,
-            routerConfig: router,
+            routerConfig: _router!,
           );
         },
       ),
