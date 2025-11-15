@@ -18,53 +18,110 @@ import 'package:dmtools_styleguide/widgets/molecules/headers/app_header.dart';
 import '../core/services/release_service.dart';
 import '../widgets/auth_login_widget.dart';
 
-// PERFORMANCE TEST: Changed to StatelessWidget - no ScrollController, no Timer, no setState
-class UnauthenticatedHomeScreen extends StatelessWidget {
+// PERFORMANCE TEST: Testing ScrollController impact - added back ScrollController + Timer + setState
+class UnauthenticatedHomeScreen extends StatefulWidget {
   const UnauthenticatedHomeScreen({super.key});
 
   @override
+  State<UnauthenticatedHomeScreen> createState() => _UnauthenticatedHomeScreenState();
+}
+
+class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
+  final ScrollController _scrollController = ScrollController();
+  bool _isScrolling = false;
+  Timer? _scrollEndTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    // Mark as scrolling immediately
+    if (!_isScrolling) {
+      setState(() {
+        _isScrolling = true;
+      });
+    }
+
+    // Cancel previous timer
+    _scrollEndTimer?.cancel();
+
+    // Debounce: mark as not scrolling after 500ms
+    _scrollEndTimer = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        setState(() {
+          _isScrolling = false;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollEndTimer?.cancel();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _openReleasesPage() async {
+    final urlString = await ReleaseService.getReleasesPageUrl();
+    final url = Uri.parse(urlString);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _openOpenSource() async {
+    final url = Uri.parse('https://github.com/IstiN/dmtools-flutter');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  Future<void> _openDocumentation() async {
+    final url = Uri.parse('https://github.com/IstiN/dmtools-flutter');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // PERFORMANCE TEST: Absolute minimum - just text and scrolling
-    const faqText = '''
-Frequently Asked Questions
-
-Getting Started
-Q: How do I install DMTools?
-A: You can install DMTools via CLI or download the desktop app.
-
-Q: What platforms are supported?
-A: DMTools supports Web, Android, iOS, macOS, Windows, and Linux.
-
-Features
-Q: What integrations are available?
-A: DMTools integrates with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools.
-
-Q: Which AI providers are supported?
-A: DMTools supports Gemini AI, OpenAI, Anthropic AI, Ollama, and Dial AI.
-
-Usage
-Q: Can I develop custom agents?
-A: Yes, you can easily develop agents using JavaScript.
-
-Q: Is CI/CD supported?
-A: Yes, DMTools is designed for headless automation, GitHub Actions, GitLab runners, Bitbucket, and Jenkins jobs.
-''';
-
+    // PERFORMANCE TEST: Full complex content + AppHeader with ScrollController + Timer + setState
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(
-              20, // Repeat FAQ 20 times to have enough content to scroll
-              (index) => Padding(
-                padding: const EdgeInsets.only(bottom: 32.0),
-                child: Text('Section ${index + 1}\n\n$faqText', style: const TextStyle(fontSize: 16, height: 1.6)),
+      body: Column(
+        children: [
+          const AppHeader(),
+          Expanded(
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                children: [
+                  _HeroSection(onInstall: _openReleasesPage, onOpenSource: _openOpenSource, isScrolling: _isScrolling),
+                  const SizedBox(height: 64),
+                  const _PillarsSection(),
+                  const SizedBox(height: 64),
+                  const _RiversSection(),
+                  const SizedBox(height: 64),
+                  _CtaBannerSection(
+                    onInstall: _openReleasesPage,
+                    onViewDocs: _openDocumentation,
+                    onOpenSource: _openOpenSource,
+                  ),
+                  const SizedBox(height: 64),
+                  const _IntegrationsList(),
+                  const SizedBox(height: 64),
+                  const _FaqSection(),
+                  const SizedBox(height: 64),
+                ],
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
