@@ -1,4 +1,4 @@
-// PERFORMANCE TEST: Adding ALL providers back to test impact on FPS
+// PERFORMANCE TEST: Step-by-step adding changes - STEP 1: Added imports
 import 'dart:io' show Platform;
 import 'package:dmtools/service_locator.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -20,28 +20,13 @@ import 'screens/unauthenticated_home_screen.dart';
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Force enable semantics for web to expose elements to automation tools and browser MCP
-  if (kIsWeb) {
-    WidgetsBinding.instance.ensureSemantics();
-    debugPrint('[MAIN] ✅ Semantics enabled for web - automation tools can access elements');
-  }
-
-  // Parse command line arguments
+  // STEP 2b: Testing ServiceLocator + AnalyticsService
   String? serverPort;
   for (var i = 0; i < args.length; i++) {
     if (args[i].startsWith('--server-port=')) {
       serverPort = args[i].substring('--server-port='.length);
-      debugPrint('[MAIN] Server port from args: $serverPort');
       break;
     }
-  }
-
-  // Configure macOS window appearance (only for native macOS, not web)
-  if (!kIsWeb && Platform.isMacOS) {
-    await WindowManipulator.initialize(enableWindowDelegate: true);
-    WindowManipulator.makeTitlebarTransparent();
-    WindowManipulator.enableFullSizeContentView();
-    WindowManipulator.hideTitle();
   }
 
   ServiceLocator.init(serverPort: serverPort);
@@ -53,8 +38,11 @@ void main(List<String> args) async {
     debugPrint('⚠️ Analytics initialization failed: $e');
     // Continue app startup even if analytics fails
   }
+
+  // STEP 2c: Testing InteractionTrackerBinding - tracks user interactions including scroll!
   InteractionTrackerBinding.configure();
 
+  // STEP 3: Adding MultiProvider with ALL providers
   runApp(
     MultiProvider(
       providers: [
@@ -76,6 +64,7 @@ class DMToolsApp extends StatefulWidget {
   State<DMToolsApp> createState() => _DMToolsAppState();
 }
 
+// STEP 4: Added WidgetsBindingObserver + GoRouter field
 class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
   late ThemeProvider _themeProvider;
   bool _isThemeInitialized = false;
@@ -86,8 +75,7 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _themeProvider = ThemeProvider();
-
-    // Initialize theme and authentication
+    // STEP 6: Renamed _initializeTheme() → _initializeApp()
     _initializeApp();
   }
 
@@ -97,6 +85,7 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  // STEP 6: Added auth initialization to _initializeApp()
   Future<void> _initializeApp() async {
     // Initialize theme first
     try {
@@ -127,6 +116,7 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
     }
   }
 
+  // STEP 5: Added didChangePlatformBrightness
   @override
   void didChangePlatformBrightness() {
     super.didChangePlatformBrightness();
@@ -141,7 +131,8 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
       value: _themeProvider,
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
-          final enhancedAuthProvider = Provider.of<EnhancedAuthProvider>(context);
+          // STEP 7: Using EnhancedAppRouter + Provider.of<EnhancedAuthProvider>
+          final enhancedAuthProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
           _router ??= EnhancedAppRouter.createRouter(enhancedAuthProvider);
 
           return MaterialApp.router(

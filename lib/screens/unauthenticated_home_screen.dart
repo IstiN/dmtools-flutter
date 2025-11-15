@@ -90,11 +90,46 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // PERFORMANCE TEST: Full complex content + AppHeader with ScrollController + Timer + setState
+    // PERFORMANCE: Use context.colors (NOT colorsListening!) + simple layout
+    final colors = context.colors;
     return Scaffold(
+      backgroundColor: colors.bgColor,
       body: Column(
         children: [
-          const AppHeader(),
+          // macOS titlebar spacer (only for native macOS, not web)
+          if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
+
+          // App Header with Sign In button
+          AppHeader(
+            showTitle: false,
+            showSearch: false,
+            onThemeToggle: () async => await Provider.of<ThemeProvider>(context, listen: false).toggleTheme(),
+            actions: const [],
+            profileButton: UserProfileButton(
+              loginState: LoginState.loggedOut,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return PopScope(
+                      onPopInvokedWithResult: (didPop, result) {
+                        if (!didPop) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.all(16),
+                        elevation: 0,
+                        child: FocusScope(autofocus: true, child: AuthLoginWidget()),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+
           Expanded(
             child: SingleChildScrollView(
               controller: _scrollController,
