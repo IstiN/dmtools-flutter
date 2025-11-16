@@ -27,7 +27,7 @@ const INTEGRATION_HEADINGS = [
 ];
 
 async function navigateToLandingPage(page: Page) {
-  await page.goto(APP_BASE_URL);
+  await page.goto(`${APP_BASE_URL}?automation=true`);
   await page.waitForLoadState('networkidle');
   await page.waitForSelector('flt-semantics', { timeout: 15000 });
 }

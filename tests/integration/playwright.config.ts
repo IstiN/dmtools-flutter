@@ -53,7 +53,7 @@ export default defineConfig({
           {
             command: `bash -lc "cd /Users/Uladzimir_Klyshevich/git/dmtools/dmtools-flutter/flutter_styleguide && flutter run -d web-server --web-port=${STYLEGUIDE_PORT} --web-experimental-hot-reload"`,
             url: STYLEGUIDE_BASE_URL,
-            reuseExistingServer: false,
+            reuseExistingServer: true,
             timeout: 180 * 1000,
             stdout: 'ignore',
             stderr: 'pipe',
@@ -61,7 +61,7 @@ export default defineConfig({
           {
             command: `bash -lc "cd /Users/Uladzimir_Klyshevich/git/dmtools/dmtools-flutter && flutter run -d web-server --web-port=${APP_PORT} --web-experimental-hot-reload"`,
             url: APP_BASE_URL,
-            reuseExistingServer: false,
+            reuseExistingServer: true,
             timeout: 180 * 1000,
             stdout: 'ignore',
             stderr: 'pipe',

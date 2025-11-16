@@ -110,9 +110,58 @@
   <script>
     // Hide loading indicator when Flutter is ready
     window.addEventListener('flutter-first-frame', function() {
+      console.log('[LoadingIndicator] flutter-first-frame event fired');
       const loadingIndicator = document.getElementById('loading-indicator');
       if (loadingIndicator) {
+        console.log('[LoadingIndicator] Hiding loading indicator');
         loadingIndicator.style.display = 'none';
+      }
+      
+      const isAutomationTest = window.location.search.includes('automation=true');
+      const isScreenReader = window.navigator.userAgent.includes('ScreenReader');
+      if (isAutomationTest || isScreenReader) {
+        console.log('[LoadingIndicator] Auto accessibility enabled because automation or screen reader detected');
+        // Force enable Flutter semantics for accessibility (for automation/screen readers only)
+        setTimeout(() => {
+          // Flutter creates an "Enable accessibility" button - click it automatically
+          // This exposes the entire semantic tree to the accessibility API
+          console.log('Flutter creates an "Enable accessibility" button - click it automatically');
+          const enableAccessibility = () => {
+            console.log('enableAccessibility');
+            const button = document.querySelector('flt-semantics-placeholder[aria-label="Enable accessibility"]');
+            if (button) {
+              console.log('[LoadingIndicator] 🔘 Auto-enabling accessibility for automation tools and browser MCP...');
+              button.click();
+              
+              // Verify after a moment
+              setTimeout(() => {
+                console.log('[LoadingIndicator] ✅ Accessibility enabled!');
+                console.log('[LoadingIndicator] 🤖 Automation tools can now access elements via:');
+                console.log('[LoadingIndicator]    - page.getByRole("button", { name: "Demo" })');
+                console.log('[LoadingIndicator]    - page.accessibility.snapshot()');
+                console.log('[LoadingIndicator]    - Browser MCP can interact with all UI elements');
+              }, 1000);
+              return true;
+            }
+            console.warn('[LoadingIndicator] Accessibility enable button not found');
+            return false;
+          };
+          
+          // Try immediately
+          if (!enableAccessibility()) {
+            // If not found, try again after a delay
+            setTimeout(enableAccessibility, 2000);
+          }
+        }, 1000);
+      } else {
+        console.log('[LoadingIndicator] Skipping auto accessibility (normal user session)');
+      }
+      
+      // Theme debugging and management now handled by shared-theme.js
+      if (window.themeManager) {
+        console.log('[LoadingIndicator] Run debug after Flutter loads');
+        // Run debug after Flutter loads
+        setTimeout(() => window.themeManager.debugTheme(), 1000);
       }
     });
   </script>

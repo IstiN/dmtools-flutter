@@ -75,7 +75,7 @@ test.describe('Accessibility Tree Access', () => {
   });
   
   test('should click elements using accessibility tree and getByRole', async ({ page }) => {
-    await page.goto(BASE_URL);
+    await page.goto(`${BASE_URL}?automation=true`);
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(5000);
     
