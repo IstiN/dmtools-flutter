@@ -603,7 +603,6 @@ class _HeroSectionState extends State<_HeroSection> {
                     prompt: 'dm.ai>',
                     promptColor: const Color(0xFF8B5CF6),
                     paused: widget.isScrolling, // Pause during scroll
-                    enableAnimation: !kIsWeb,
                   ),
                 ),
               ),
