@@ -237,7 +237,8 @@ class _TerminalSimulationState extends State<TerminalSimulation> with SingleTick
 
   @override
   Widget build(BuildContext context) {
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     final bgColor = widget.backgroundColor ?? colors.cardBg;
