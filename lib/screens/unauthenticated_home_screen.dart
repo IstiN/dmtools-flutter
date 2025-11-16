@@ -85,8 +85,8 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // PERFORMANCE: Use context.colors (NOT colorsListening!) to avoid unnecessary rebuilds
-    final colors = context.colors;
+    // Use colorsListening to react to theme changes (Scaffold must rebuild on theme change!)
+    final colors = context.colorsListening;
     return Scaffold(
       backgroundColor: colors.bgColor,
       body: Column(
@@ -169,8 +169,8 @@ class _ScreenshotImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colors;
-    final isDarkMode = context.isDarkMode;
+    final colors = context.colorsListening;
+    final isDarkMode = context.isDarkModeListening;
 
     // Use theme-based image for dm-ai-app
     final String finalImagePath = imagePath == 'assets/img/dm-ai-app.png'
@@ -205,8 +205,10 @@ class _ScreenshotImage extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppDimensions.radiusL),
           child: RepaintBoundary(
+            key: ValueKey('screenshot-$finalImagePath-$isDarkMode'),
             child: Image.asset(
               finalImagePath,
+              key: ValueKey('image-$finalImagePath-$isDarkMode'),
               fit: BoxFit.contain,
               // Optimize image loading for web performance
               cacheWidth: kIsWeb ? 1200 : null,
@@ -230,10 +232,10 @@ class _ScreenshotPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colors;
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
     // Use isDarkModeListening to react to theme changes
-    final isDarkMode = context.isDarkMode;
+    final isDarkMode = context.isDarkModeListening;
 
     return CustomCard(
       padding: EdgeInsets.zero,
@@ -504,7 +506,7 @@ class _HeroSectionState extends State<_HeroSection> {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colors;
+    final colors = context.colorsListening;
     final textTheme = Theme.of(context).textTheme;
 
     return ResponsiveBuilder(
@@ -545,7 +547,7 @@ class _HeroSectionState extends State<_HeroSection> {
     final screenWidth = MediaQuery.of(context).size.width;
     final maxWidth = (screenWidth * 0.5).clamp(400.0, 800.0); // Responsive: 50% of screen, but between 400-800px
     // Use isDarkModeListening to react to theme changes
-    final isDarkMode = context.isDarkMode;
+    final isDarkMode = context.isDarkModeListening;
 
     return RepaintBoundary(
       child: Center(
@@ -1035,7 +1037,7 @@ function action(params) {
   @override
   Widget build(BuildContext context) {
     // Use isDarkModeListening to react to theme changes
-    final isDarkMode = context.isDarkMode;
+    final isDarkMode = context.isDarkModeListening;
     return ResponsiveBuilder(
       mobile: (context, constraints) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,

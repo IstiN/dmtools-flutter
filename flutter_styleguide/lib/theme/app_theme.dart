@@ -9,6 +9,7 @@ import 'package:dmtools_styleguide/utils/platform_utils.dart';
 // Web-only import for HTML messaging
 // Conditional imports for web-only functionality
 import 'web_theme_helper.dart' if (dart.library.io) 'stub_theme_helper.dart' as theme_helper;
+import 'web_theme_helper.dart';
 
 enum ThemePreference { system, light, dark }
 
@@ -40,6 +41,50 @@ class ThemeProvider with ChangeNotifier {
   ThemeData get currentTheme => isDarkMode ? AppTheme.darkTheme : AppTheme.lightTheme;
 
   /// Initialize theme from saved preferences and system settings
+  /// Load saved theme preference synchronously (for initial render)
+  void loadSavedThemeSync() {
+    try {
+      // Try to load from localStorage synchronously (web only)
+      if (kIsWeb) {
+        var savedPreference = WebThemeHelper.getStoredTheme();
+        debugPrint('ThemeProvider: Sync load - saved preference (raw) = $savedPreference');
+
+        if (savedPreference != null) {
+          // Remove quotes if present (JavaScript stores as '"ThemePreference.light"')
+          savedPreference = savedPreference.replaceAll('"', '');
+          debugPrint('ThemeProvider: Sync load - saved preference (cleaned) = $savedPreference');
+
+          _themePreference = ThemePreference.values.firstWhere(
+            (e) => e.toString() == savedPreference,
+            orElse: () => ThemePreference.light, // Default to light instead of system
+          );
+
+          // Update dark mode immediately based on preference
+          if (_themePreference == ThemePreference.light) {
+            _isDarkMode = false;
+          } else if (_themePreference == ThemePreference.dark) {
+            _isDarkMode = true;
+          } else {
+            // For system preference, check system theme
+            _isDarkMode = WebThemeHelper.getSystemTheme() == 'dark';
+          }
+
+          debugPrint('ThemeProvider: Sync loaded - isDarkMode: $_isDarkMode, preference: $_themePreference');
+        } else {
+          // Default to light theme if no preference saved
+          _isDarkMode = false;
+          _themePreference = ThemePreference.light;
+          debugPrint('ThemeProvider: No saved preference, defaulting to light');
+        }
+      }
+    } catch (e) {
+      debugPrint('ThemeProvider: Error in sync load: $e');
+      // Default to light on error
+      _isDarkMode = false;
+      _themePreference = ThemePreference.light;
+    }
+  }
+
   Future<void> initializeTheme() async {
     if (_isInitialized) return;
 

@@ -88,6 +88,9 @@ class _DMToolsAppState extends State<DMToolsApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _themeProvider = ThemeProvider();
 
+    // Load saved theme preference synchronously before first render
+    _themeProvider.loadSavedThemeSync();
+
     // Initialize theme and authentication
     _initializeApp();
   }
