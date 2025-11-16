@@ -193,8 +193,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
+          node-version: "18"
+          cache: "npm"
 
       - name: Install Flutter dependencies
         run: |
@@ -238,15 +238,11 @@ jobs:
       - name: Run Playwright integration tests
         run: |
           echo "🧪 Running Playwright integration tests..."
-          # Skip styleguide tests and obsolete "Enable accessibility" tests in CI
-          # Run only main app tests that use accessibility tree API
-          # Excluded: accessibility.spec.ts (styleguide), enable_accessibility_test.spec.ts, force_enable_accessibility.spec.ts (obsolete)
-          cd tests/integration
+          # Run main app tests only (static build on port 8080)
+          # Styleguide tests are skipped in CI (require separate dev server)
           npx playwright test \
-            accessibility_tree_test.spec.ts \
-            complete_demo_flow.spec.ts \
-            main_app_demo.spec.ts \
-            simple_load_test.spec.ts \
+            --config tests/integration/playwright.config.ts \
+            --grep-invert "Styleguide" \
             --reporter=list
           echo "✅ Integration tests completed"
 
