@@ -46,26 +46,28 @@ export default defineConfig({
     },
   ],
 
-  /* Run your local dev server before starting the tests (only in local development) */
+  /* Run your local dev server before starting the tests */
   webServer: process.env.CI
-      ? undefined
-      : [
-          {
-            command: `bash -lc "cd /Users/Uladzimir_Klyshevich/git/dmtools/dmtools-flutter/flutter_styleguide && flutter run -d web-server --web-port=${STYLEGUIDE_PORT} --web-experimental-hot-reload"`,
-            url: STYLEGUIDE_BASE_URL,
-            reuseExistingServer: true,
-            timeout: 180 * 1000,
-            stdout: 'ignore',
-            stderr: 'pipe',
-          },
-          {
-            command: `bash -lc "cd /Users/Uladzimir_Klyshevich/git/dmtools/dmtools-flutter && flutter run -d web-server --web-port=${APP_PORT} --web-experimental-hot-reload"`,
-            url: APP_BASE_URL,
-            reuseExistingServer: true,
-            timeout: 180 * 1000,
-            stdout: 'ignore',
-            stderr: 'pipe',
-          },
-        ],
+    ? undefined // On CI, server is started separately in workflow (port 8080)
+    : [
+        {
+          command: `flutter run -d web-server --web-port=${STYLEGUIDE_PORT} --web-experimental-hot-reload`,
+          url: STYLEGUIDE_BASE_URL,
+          reuseExistingServer: true, // Reuse manually started servers or start new ones
+          timeout: 180 * 1000,
+          stdout: 'ignore',
+          stderr: 'pipe',
+          cwd: './flutter_styleguide',
+        },
+        {
+          command: `flutter run -d web-server --web-port=${APP_PORT} --web-experimental-hot-reload`,
+          url: APP_BASE_URL,
+          reuseExistingServer: true, // Reuse manually started servers or start new ones
+          timeout: 180 * 1000,
+          stdout: 'ignore',
+          stderr: 'pipe',
+          cwd: '.',
+        },
+      ],
 });
 
