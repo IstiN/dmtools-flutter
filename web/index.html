@@ -416,79 +416,101 @@
   
 </head>
 <body>
-  <!--
+  
   <div id="loading-indicator">
     <canvas id="dna-loader" width="300" height="150"></canvas>
     <p>Loading DMTools...</p>
     <script>
+      console.log('[LoadingIndicator] Script initialized');
       // Check for OffscreenCanvas and Worker support
       if ('OffscreenCanvas' in window && 'Worker' in window) {
+        console.log('[LoadingIndicator] OffscreenCanvas & Worker supported – booting worker');
         const canvas = document.getElementById('dna-loader');
+        if (!canvas) {
+          console.error('[LoadingIndicator] Canvas element not found!');
+        }
         // Transfer control to a new worker thread
         const offscreen = canvas.transferControlToOffscreen();
         const worker = new Worker('animation_worker.js');
         // Send the canvas to the worker
         worker.postMessage({ canvas: offscreen }, [offscreen]);
+        worker.onmessage = (event) => {
+          console.log('[LoadingIndicator][Worker]', event.data);
+        };
+        worker.onerror = (error) => {
+          console.error('[LoadingIndicator][Worker] error:', error);
+        };
+        console.log('[LoadingIndicator] Worker message posted');
       } else {
         // Fallback for older browsers that don't support OffscreenCanvas
-        console.log("Browser does not support OffscreenCanvas. Animation will run on the main thread.");
+        console.warn('[LoadingIndicator] OffscreenCanvas unsupported – loading fallback animation');
         // You could potentially load a simpler, CSS-based animation here as a fallback
         const script = document.createElement('script');
         script.src = 'animation_fallback.js'; // A non-worker version of the script
         document.body.appendChild(script);
+        script.onload = () => console.log('[LoadingIndicator] Fallback animation script loaded');
+        script.onerror = () => console.error('[LoadingIndicator] Failed to load fallback animation script');
       }
     </script>
   </div>
-  -->
+  
 
   <!--
+  <!-- PERFORMANCE TEST: commenting this block drastically improves Safari FPS -->
+  
   <script>
     // Hide loading indicator when Flutter is ready
     window.addEventListener('flutter-first-frame', function() {
+      console.log('[LoadingIndicator] flutter-first-frame event fired');
       const loadingIndicator = document.getElementById('loading-indicator');
       if (loadingIndicator) {
+        console.log('[LoadingIndicator] Hiding loading indicator');
         loadingIndicator.style.display = 'none';
       }
       
-      // Force enable Flutter semantics for accessibility
-      // This makes the semantic tree accessible to automation tools, screen readers, and browser MCP
-      setTimeout(() => {
-        // Flutter creates an "Enable accessibility" button - click it automatically
-        // This exposes the entire semantic tree to the accessibility API
-        const enableAccessibility = () => {
-          const button = document.querySelector('flt-semantics-placeholder[aria-label="Enable accessibility"]');
-          if (button) {
-            console.log('🔘 Auto-enabling accessibility for automation tools and browser MCP...');
-            button.click();
-            
-            // Verify after a moment
-            setTimeout(() => {
-              console.log('✅ Accessibility enabled!');
-              console.log('🤖 Automation tools can now access elements via:');
-              console.log('   - page.getByRole("button", { name: "Demo" })');
-              console.log('   - page.accessibility.snapshot()');
-              console.log('   - Browser MCP can interact with all UI elements');
-            }, 1000);
-            return true;
-          }
-          return false;
-        };
-        
-        // Try immediately
-        if (!enableAccessibility()) {
-          // If not found, try again after a delay
-          setTimeout(enableAccessibility, 2000);
-        }
-      }, 1000);
+      // // Force enable Flutter semantics for accessibility
+      // // This makes the semantic tree accessible to automation tools, screen readers, and browser MCP
+      // setTimeout(() => {
+      //   // Flutter creates an "Enable accessibility" button - click it automatically
+      //   // This exposes the entire semantic tree to the accessibility API
+      //   console.log('Flutter creates an "Enable accessibility" button - click it automatically');
+      //   const enableAccessibility = () => {
+      //     console.log('enableAccessibility');
+      //     const button = document.querySelector('flt-semantics-placeholder[aria-label="Enable accessibility"]');
+      //     if (button) {
+      //       console.log('[LoadingIndicator] 🔘 Auto-enabling accessibility for automation tools and browser MCP...');
+      //       button.click();
+      //       
+      //       // Verify after a moment
+      //       setTimeout(() => {
+      //         console.log('[LoadingIndicator] ✅ Accessibility enabled!');
+      //         console.log('[LoadingIndicator] 🤖 Automation tools can now access elements via:');
+      //         console.log('[LoadingIndicator]    - page.getByRole("button", { name: "Demo" })');
+      //         console.log('[LoadingIndicator]    - page.accessibility.snapshot()');
+      //         console.log('[LoadingIndicator]    - Browser MCP can interact with all UI elements');
+      //       }, 1000);
+      //       return true;
+      //     }
+      //     console.warn('[LoadingIndicator] Accessibility enable button not found');
+      //     return false;
+      //   };
+      //   
+      //   // Try immediately
+      //   if (!enableAccessibility()) {
+      //     // If not found, try again after a delay
+      //
+      //     setTimeout(enableAccessibility, 2000);
+      //   }
+      // }, 1000);
       
       // Theme debugging and management now handled by shared-theme.js
       if (window.themeManager) {
+        console.log('[LoadingIndicator] Run debug after Flutter loads');
         // Run debug after Flutter loads
         setTimeout(() => window.themeManager.debugTheme(), 1000);
       }
     });
   </script>
-  -->
   
   <script src="flutter_bootstrap.js?v=__BUILD_VERSION__" async></script>
 </body>
