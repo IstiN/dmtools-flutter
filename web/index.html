@@ -39,6 +39,7 @@
   <link rel="preload" href="assets/assets/img/dm-ai-app-light.png" as="image">
   <link rel="preload" href="assets/assets/img/dm-ai-app-dark.png" as="image">
   
+  <!--
   <script>
     (function() {
       const ua = navigator.userAgent;
@@ -62,7 +63,9 @@
       console.log('[Safari Optimization] ✅ HTML renderer enabled');
     })();
   </script>
+  -->
 
+  <!--
   <script>
     (function() {
       const ua = navigator.userAgent;
@@ -70,15 +73,13 @@
       const isChrome = ua.includes('Chrome');
       const browserName = isSafari ? 'Safari' : (isChrome ? 'Chrome' : 'Browser');
       
-      // Enable for both Safari and Chrome for comparison
       if (!isSafari && !isChrome) return;
 
       console.log(`[${browserName} Perf] 🚀 Sampler enabled`);
 
-      // Create visual indicator overlay
       const indicator = document.createElement('div');
       indicator.id = 'perf-indicator';
-      const indicatorColor = isSafari ? 'rgba(0, 122, 255, 0.9)' : 'rgba(234, 67, 53, 0.9)'; // Blue for Safari, Red for Chrome
+      const indicatorColor = isSafari ? 'rgba(0, 122, 255, 0.9)' : 'rgba(234, 67, 53, 0.9)';
       indicator.style.cssText = `
         position: fixed;
         top: 10px;
@@ -96,11 +97,9 @@
         pointer-events: none;
         line-height: 1.4;
       `;
-      // Detect renderer type
       const rendererType = window.flutterWebRenderer || 'auto';
       indicator.textContent = `📊 ${browserName} (${rendererType}) Measuring...`;
       
-      // Wait for body to be ready
       if (document.body) {
         document.body.appendChild(indicator);
       } else {
@@ -133,13 +132,12 @@
         const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
         const worst = Math.max(...deltas);
         
-        // Color indicator based on performance (keep browser color hue)
         if (avg > 20) {
-          indicator.style.background = 'rgba(200, 0, 0, 0.9)'; // Red: poor
+          indicator.style.background = 'rgba(200, 0, 0, 0.9)';
         } else if (avg > 16.67) {
-          indicator.style.background = 'rgba(255, 165, 0, 0.9)'; // Orange: ok
+          indicator.style.background = 'rgba(255, 165, 0, 0.9)';
         } else {
-          indicator.style.background = indicatorColor; // Browser color: good
+          indicator.style.background = indicatorColor;
         }
         
         const fps = avg > 0 ? (1000 / avg).toFixed(0) : '—';
@@ -167,7 +165,6 @@
         frameTimes.push(ts);
         updateIndicator();
         
-        // Log every 15 frames for quick feedback
         if (frameTimes.length > 0 && frameTimes.length % 15 === 0) {
           logFrameStats();
         }
@@ -183,7 +180,7 @@
             logFrameStats(true);
             resetSampler();
             console.log(`[${browserName} Perf] ⏹️ Stopped measuring`);
-          }, 800); // Increased to 800ms to catch more frames
+          }, 800);
         };
       })();
 
@@ -197,12 +194,10 @@
         debouncedStop();
       }
 
-      // Listen to multiple scroll-related events
       window.addEventListener('scroll', startMeasuring, { passive: true });
       window.addEventListener('wheel', startMeasuring, { passive: true });
       window.addEventListener('touchmove', startMeasuring, { passive: true });
       
-      // Also try to attach to Flutter's canvas/glass-pane once it's ready
       const attachToFlutter = () => {
         const glassPane = document.querySelector('flt-glass-pane');
         if (glassPane) {
@@ -219,6 +214,7 @@
       console.log(`[${browserName} Perf] 👂 Listening for scroll/wheel/touch events`);
     })();
   </script>
+  -->
 
   <!-- SEO Meta Tags -->
   <meta name="description" content="DMTools - AI Agent Management Platform. Build expert agents, automate workflows, deliver faster. Unified CLI and Desktop interface. Connect with Jira, GitHub, Figma, Microsoft Teams, and 67+ MCP tools. Supports Gemini AI, OpenAI, Anthropic AI, Ollama, and Dial AI.">
@@ -281,6 +277,7 @@
   <link rel="preload" href="config.js" as="script">
   
   <!-- Structured Data (JSON-LD) -->
+  <!--
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -350,6 +347,7 @@
       localStorage.setItem('dmtools-app-version', currentVersion);
     })();
   </script>
+  -->
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -367,9 +365,10 @@
   <link rel="sitemap" type="application/xml" href="sitemap.xml">
   
   <!-- Shared theme styles -->
-  <link rel="stylesheet" href="css/shared-theme.css">
+  <!-- <link rel="stylesheet" href="css/shared-theme.css"> -->
   
   <!-- Safari-specific performance optimizations -->
+  <!--
   <style>
     /* Optimize scrolling performance in Safari */
     html, body {
@@ -418,15 +417,19 @@
       image-rendering: -webkit-optimize-contrast;
     }
   </style>
+  -->
   
   <!-- Runtime configuration -->
-  <script src="config.js" defer></script>
+  <!-- <script src="config.js" defer></script> -->
   
   <!-- Shared theme management -->
+  <!--
   <script src="js/shared-theme.js" defer></script>
   <script src="js/clipboard.js" defer></script>
+  -->
   
   <!-- Immediate background script - runs before any other content -->
+  <!--
   <script>
     // Detect theme preference early and set appropriate background
     function setInitialBackground() {
@@ -468,12 +471,14 @@
     // Run immediately
     setInitialBackground();
   </script>
+  -->
 
 
 
   <!-- Theme detection now handled by shared-theme.js -->
 
   <!-- OAuth Callback Handler -->
+  <!--
   <script type="text/javascript">
     // Handle OAuth callback parameters
     (function() {
@@ -514,8 +519,10 @@
       }
     })();
   </script>
+  -->
 </head>
 <body>
+  <!--
   <div id="loading-indicator">
     <canvas id="dna-loader" width="300" height="150"></canvas>
     <p>Loading DMTools...</p>
@@ -538,7 +545,9 @@
       }
     </script>
   </div>
-  
+  -->
+
+  <!--
   <script>
     // Hide loading indicator when Flutter is ready
     window.addEventListener('flutter-first-frame', function() {
@@ -585,6 +594,7 @@
       }
     });
   </script>
+  -->
   
   <script src="flutter_bootstrap.js?v=__BUILD_VERSION__" async></script>
 </body>

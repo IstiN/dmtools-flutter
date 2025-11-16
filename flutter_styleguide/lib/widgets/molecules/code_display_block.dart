@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dmtools_styleguide/dmtools_styleguide.dart';
+import 'package:dmtools_styleguide/utils/platform_utils.dart';
 import 'package:dmtools_styleguide/utils/syntax_highlighter.dart';
 
 /// A widget that displays code with syntax highlighting and copy functionality
@@ -324,18 +325,8 @@ class _CodeContent extends StatelessWidget {
     final lines = code.split('\n');
 
     Widget content = showLineNumbers
-        ? _CodeWithLineNumbers(
-            lines: lines,
-            codeTheme: codeTheme,
-            dimensions: dimensions,
-            language: language,
-          )
-        : _SimpleCodeDisplay(
-            code: code,
-            codeTheme: codeTheme,
-            dimensions: dimensions,
-            language: language,
-          );
+        ? _CodeWithLineNumbers(lines: lines, codeTheme: codeTheme, dimensions: dimensions, language: language)
+        : _SimpleCodeDisplay(code: code, codeTheme: codeTheme, dimensions: dimensions, language: language);
 
     if (maxHeight != null) {
       content = SizedBox(
@@ -361,12 +352,7 @@ class _CodeContent extends StatelessWidget {
 }
 
 class _CodeWithLineNumbers extends StatefulWidget {
-  const _CodeWithLineNumbers({
-    required this.lines,
-    required this.codeTheme,
-    required this.dimensions,
-    this.language,
-  });
+  const _CodeWithLineNumbers({required this.lines, required this.codeTheme, required this.dimensions, this.language});
 
   final List<String> lines;
   final _CodeTheme codeTheme;
@@ -388,15 +374,29 @@ class _CodeWithLineNumbersState extends State<_CodeWithLineNumbers> {
     final fullCode = widget.lines.join('\n');
     // Determine if we're using light theme
     final isLightTheme = widget.codeTheme.backgroundColor.computeLuminance() > 0.5;
-    
+
     // Cache syntax highlighting result
     if (_cachedCode != fullCode || _cachedIsLightTheme != isLightTheme) {
       _cachedCode = fullCode;
       _cachedIsLightTheme = isLightTheme;
       _cachedSpans = SyntaxHighlighter.highlight(fullCode, widget.language, isLightTheme: isLightTheme);
     }
-    
+
     final highlightedSpans = _cachedSpans!;
+
+    final textSpan = TextSpan(
+      children: highlightedSpans,
+      style: TextStyle(
+        fontSize: widget.dimensions.fontSize,
+        fontFamily: 'monospace',
+        height: widget.dimensions.lineHeight,
+        // Don't set color here - let TextSpan colors override
+      ),
+    );
+
+    final codeWidget = RichText(text: textSpan);
+
+    final codeContent = isSafariOnWeb ? codeWidget : SelectionArea(child: codeWidget);
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -425,31 +425,14 @@ class _CodeWithLineNumbersState extends State<_CodeWithLineNumbers> {
         ),
         SizedBox(width: widget.dimensions.headerSpacing),
         // Code content with syntax highlighting
-        Expanded(
-          child: RichText(
-            text: TextSpan(
-              children: highlightedSpans,
-              style: TextStyle(
-                fontSize: widget.dimensions.fontSize,
-                fontFamily: 'monospace',
-                height: widget.dimensions.lineHeight,
-                // Don't set color here - let TextSpan colors override
-              ),
-            ),
-          ),
-        ),
+        Expanded(child: codeContent),
       ],
     );
   }
 }
 
 class _SimpleCodeDisplay extends StatefulWidget {
-  const _SimpleCodeDisplay({
-    required this.code,
-    required this.codeTheme,
-    required this.dimensions,
-    this.language,
-  });
+  const _SimpleCodeDisplay({required this.code, required this.codeTheme, required this.dimensions, this.language});
 
   final String code;
   final _CodeTheme codeTheme;
@@ -469,56 +452,65 @@ class _SimpleCodeDisplayState extends State<_SimpleCodeDisplay> {
   Widget build(BuildContext context) {
     // Determine if we're using light theme
     final isLightTheme = widget.codeTheme.backgroundColor.computeLuminance() > 0.5;
-    
+
     // Cache syntax highlighting result
     if (_cachedCode != widget.code || _cachedIsLightTheme != isLightTheme) {
       _cachedCode = widget.code;
       _cachedIsLightTheme = isLightTheme;
       _cachedSpans = SyntaxHighlighter.highlight(widget.code, widget.language, isLightTheme: isLightTheme);
     }
-    
+
     final highlightedSpans = _cachedSpans!;
 
     // If highlighting worked, use the spans; otherwise use plain text
     // Check if we have multiple spans with actual text or if colors are different from default
     final nonEmptySpans = highlightedSpans.where((span) => span.text != null && span.text!.isNotEmpty).toList();
-    
+
     // Check if any span has a different color than default (indicating highlighting worked)
-    final hasHighlighting = nonEmptySpans.any((span) => 
-      span.style?.color != null && 
-      span.style!.color != SyntaxHighlighter.defaultTextColor &&
-      span.style!.color != SyntaxHighlighter.defaultColorLight
-    ) || nonEmptySpans.length > 1;
-    
+    final hasHighlighting =
+        nonEmptySpans.any(
+          (span) =>
+              span.style?.color != null &&
+              span.style!.color != SyntaxHighlighter.defaultTextColor &&
+              span.style!.color != SyntaxHighlighter.defaultColorLight,
+        ) ||
+        nonEmptySpans.length > 1;
+
     if (hasHighlighting && nonEmptySpans.isNotEmpty) {
-      return ConstrainedBox(
-        constraints: const BoxConstraints(),
-        child: SelectableText.rich(
-          TextSpan(
-            children: nonEmptySpans,
-            style: TextStyle(
-              fontSize: widget.dimensions.fontSize,
-              fontFamily: 'monospace',
-              height: widget.dimensions.lineHeight,
-              // Don't set color here - let TextSpan colors override
-            ),
-          ),
+      final textSpan = TextSpan(
+        children: nonEmptySpans,
+        style: TextStyle(
+          fontSize: widget.dimensions.fontSize,
+          fontFamily: 'monospace',
+          height: widget.dimensions.lineHeight,
+          // Don't set color here - let TextSpan colors override
         ),
       );
+
+      final highlighted = RichText(text: textSpan);
+
+      if (isSafariOnWeb) {
+        return highlighted;
+      }
+
+      return SelectionArea(child: highlighted);
     } else {
       // Fallback to plain text if highlighting didn't work
-      return ConstrainedBox(
-        constraints: const BoxConstraints(),
-        child: SelectableText(
-          widget.code,
-          style: TextStyle(
-            fontSize: widget.dimensions.fontSize,
-            fontFamily: 'monospace',
-            height: widget.dimensions.lineHeight,
-            color: widget.codeTheme.textColor,
-          ),
+      final textWidget = Text(
+        widget.code,
+        style: TextStyle(
+          fontSize: widget.dimensions.fontSize,
+          fontFamily: 'monospace',
+          height: widget.dimensions.lineHeight,
+          color: widget.codeTheme.textColor,
         ),
       );
+
+      if (isSafariOnWeb) {
+        return textWidget;
+      }
+
+      return SelectionArea(child: textWidget);
     }
   }
 }
