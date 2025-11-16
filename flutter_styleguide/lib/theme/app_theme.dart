@@ -9,7 +9,6 @@ import 'package:dmtools_styleguide/utils/platform_utils.dart';
 // Web-only import for HTML messaging
 // Conditional imports for web-only functionality
 import 'web_theme_helper.dart' if (dart.library.io) 'stub_theme_helper.dart' as theme_helper;
-import 'web_theme_helper.dart';
 
 enum ThemePreference { system, light, dark }
 
@@ -46,7 +45,7 @@ class ThemeProvider with ChangeNotifier {
     try {
       // Try to load from localStorage synchronously (web only)
       if (kIsWeb) {
-        var savedPreference = WebThemeHelper.getStoredTheme();
+        var savedPreference = theme_helper.WebThemeHelper.getStoredTheme();
         debugPrint('ThemeProvider: Sync load - saved preference (raw) = $savedPreference');
 
         if (savedPreference != null) {
@@ -66,7 +65,7 @@ class ThemeProvider with ChangeNotifier {
             _isDarkMode = true;
           } else {
             // For system preference, check system theme
-            _isDarkMode = WebThemeHelper.getSystemTheme() == 'dark';
+            _isDarkMode = theme_helper.WebThemeHelper.getSystemTheme() == 'dark';
           }
 
           debugPrint('ThemeProvider: Sync loaded - isDarkMode: $_isDarkMode, preference: $_themePreference');
