@@ -39,33 +39,6 @@
   <link rel="preload" href="assets/assets/img/dm-ai-app-light.png" as="image">
   <link rel="preload" href="assets/assets/img/dm-ai-app-dark.png" as="image">
   
-  <!--
-  <script>
-    (function() {
-      const ua = navigator.userAgent;
-      const isSafari = ua.includes('Safari') && !ua.includes('Chrome');
-      if (!isSafari) return;
-
-      console.log('[Safari Optimization] 🎨 Forcing HTML renderer for Safari');
-      
-      // Force HTML renderer for Safari (better performance than CanvasKit)
-      window.flutterWebRenderer = 'html';
-      
-      // Also disable WebGL2 as backup (in case HTML renderer falls back to CanvasKit)
-      if (window.WebGL2RenderingContext) {
-        try {
-          delete window.WebGL2RenderingContext;
-        } catch (err) {
-          window.WebGL2RenderingContext = undefined;
-        }
-      }
-      
-      console.log('[Safari Optimization] ✅ HTML renderer enabled');
-    })();
-  </script>
-  -->
-
-  
   <script>
     (function() {
       const ua = navigator.userAgent;
@@ -325,29 +298,7 @@
     }
   }
   </script>
-  <!--
-  <script>
-    // Simple Safari cache detection and handling
-    (function() {
-      const currentVersion = '__BUILD_VERSION__';
-      const storedVersion = localStorage.getItem('dmtools-app-version');
-      
-      if (storedVersion && storedVersion !== currentVersion) {
-        console.log('New version detected, clearing cache:', currentVersion);
-        // Clear localStorage and force reload for Safari
-        localStorage.clear();
-        sessionStorage.clear();
-        
-        // Force a hard reload for Safari
-        if (navigator.userAgent.includes('Safari') && !navigator.userAgent.includes('Chrome')) {
-          window.location.reload(true);
-        }
-      }
-      
-      localStorage.setItem('dmtools-app-version', currentVersion);
-    })();
-  </script>
-  -->
+  
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -366,59 +317,7 @@
   
   <!-- Shared theme styles -->
   <link rel="stylesheet" href="css/shared-theme.css">
-  
-  <!-- Safari-specific performance optimizations -->
-  <!--
-  <style>
-    /* Optimize scrolling performance in Safari */
-    html, body {
-      -webkit-overflow-scrolling: touch;
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      will-change: scroll-position;
-    }
-    /* Prevent trackpad horizontal gestures triggering back navigation on desktop */
-    @media (pointer: fine) and (hover: hover) {
-      html,
-      body {
-        overscroll-behavior-x: none;
-        overflow-x: hidden;
-      }
-      body {
-        touch-action: pan-y;
-        -webkit-overflow-scrolling: auto;
-      }
-      .flutter-view,
-      flt-glass-pane,
-      flt-scene-host {
-        touch-action: manipulation;
-      }
-    }
-    
-    /* Optimize Flutter canvas rendering in Safari */
-    flt-scene-host, flt-glass-pane, canvas {
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      will-change: transform;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-    }
-    
-    /* Reduce repaints during scroll */
-    * {
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-    
-    /* Optimize images */
-    img {
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      image-rendering: -webkit-optimize-contrast;
-    }
-  </style>
-  -->
-  
+   
   <!-- Runtime configuration -->
   <script src="config.js" defer></script>
   
@@ -427,7 +326,7 @@
   <script src="js/clipboard.js" defer></script>
   
   <!-- Immediate background script - runs before any other content -->
-  <!--
+  
   <script>
     // Detect theme preference early and set appropriate background
     function setInitialBackground() {
@@ -469,10 +368,7 @@
     // Run immediately
     setInitialBackground();
   </script>
-  -->
-
-
-
+  
   <!-- Theme detection now handled by shared-theme.js -->
 
   <!-- OAuth Callback Handler -->
