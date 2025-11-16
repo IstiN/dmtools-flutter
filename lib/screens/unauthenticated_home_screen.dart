@@ -129,29 +129,28 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
             child: SingleChildScrollView(
               controller: _scrollController,
               physics: const ClampingScrollPhysics(),
-              child: Column(
-                children: [
-                  _HeroSection(onInstall: _openReleasesPage, onOpenSource: _openOpenSource, isScrolling: _isScrolling),
-                  const SizedBox(height: 64),
-                  const _PillarsSection(),
-                  const SizedBox(height: 64),
-                  _RiversSection(
-                    onInstall: _openReleasesPage,
-                    onViewDocs: _openDocumentation,
-                    onOpenSource: _openOpenSource,
-                  ),
-                  const SizedBox(height: 64),
-                  _CtaBannerSection(
-                    onInstall: _openReleasesPage,
-                    onViewDocs: _openDocumentation,
-                    onOpenSource: _openOpenSource,
-                  ),
-                  const SizedBox(height: 64),
-                  const _IntegrationsList(),
-                  const SizedBox(height: 64),
-                  const _FaqSection(),
-                  const SizedBox(height: 64),
-                ],
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ResponsiveUtils.isWideScreen(context) ? 64 : 24),
+                child: Column(
+                  children: [
+                    _HeroSection(
+                      onInstall: _openReleasesPage,
+                      onOpenSource: _openOpenSource,
+                      isScrolling: _isScrolling,
+                    ),
+                    const SizedBox(height: 64),
+                    const _PillarsSection(),
+                    const SizedBox(height: 64),
+                    _RiversSection(
+                      onInstall: _openReleasesPage,
+                      onViewDocs: _openDocumentation,
+                      onOpenSource: _openOpenSource,
+                    ),
+                    const SizedBox(height: 64),
+                    const _FaqSection(),
+                    const SizedBox(height: 64),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1058,8 +1057,10 @@ function action(params) {
               const LargeBodyText(
                 'Bring context from your issues and pull requests directly to your environment, eliminating context switching. Plus, extend DMTools capabilities through custom MCP servers.',
               ),
-              const SizedBox(height: 32),
-              _IntegrationsList(onInstall: onInstall, onViewDocs: onViewDocs),
+              if (onInstall != null && onViewDocs != null) ...[
+                const SizedBox(height: 32),
+                _IntegrationsList(onInstall: onInstall, onViewDocs: onViewDocs),
+              ],
             ],
           ),
           const SizedBox(height: 24),
@@ -1103,8 +1104,10 @@ function action(params) {
               const LargeBodyText(
                 'Bring context from your issues and pull requests directly to your environment, eliminating context switching. Plus, extend DMTools capabilities through custom MCP servers.',
               ),
-              const SizedBox(height: 32),
-              _IntegrationsList(onInstall: onInstall, onViewDocs: onViewDocs),
+              if (onInstall != null && onViewDocs != null) ...[
+                const SizedBox(height: 32),
+                _IntegrationsList(onInstall: onInstall, onViewDocs: onViewDocs),
+              ],
             ],
           ),
         );
