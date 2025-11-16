@@ -85,20 +85,15 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // Calculate the total width - use screen width on mobile, fixed width on desktop
-    final totalWidth = screenWidth < 1200 ? screenWidth - 48.0 : 1200.0;
-
+    // PERFORMANCE: Use context.colors (NOT colorsListening!) to avoid unnecessary rebuilds
+    final colors = context.colors;
     return Scaffold(
       backgroundColor: colors.bgColor,
       body: Column(
         children: [
           // macOS titlebar spacer (only for native macOS, not web)
           if (!kIsWeb && Platform.isMacOS) const SizedBox(height: 12),
-          
+
           // App Header from styleguide
           AppHeader(
             showTitle: false, // Hide header text
@@ -111,18 +106,18 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
                 showDialog(
                   context: context,
                   builder: (BuildContext context) {
-                      return PopScope(
-                        onPopInvokedWithResult: (didPop, result) {
-                          if (!didPop) {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child: const Dialog(
-                      backgroundColor: Colors.transparent,
-                      insetPadding: EdgeInsets.all(16),
-                      elevation: 0,
-                          child: FocusScope(autofocus: true, child: AuthLoginWidget()),
-                        ),
+                    return PopScope(
+                      onPopInvokedWithResult: (didPop, result) {
+                        if (!didPop) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      child: const Dialog(
+                        backgroundColor: Colors.transparent,
+                        insetPadding: EdgeInsets.all(16),
+                        elevation: 0,
+                        child: FocusScope(autofocus: true, child: AuthLoginWidget()),
+                      ),
                     );
                   },
                 );
@@ -130,78 +125,39 @@ class _UnauthenticatedHomeScreenState extends State<UnauthenticatedHomeScreen> {
             ),
           ),
 
-          // Main Content
           Expanded(
-              child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                child: SelectionArea(
             child: SingleChildScrollView(
-                    controller: _scrollController,
-                    // Use ClampingScrollPhysics for web (better Safari performance)
-                    // BouncingScrollPhysics is iOS-specific and can cause jank on web
-                    physics: kIsWeb ? const ClampingScrollPhysics() : const BouncingScrollPhysics(),
-              child: Padding(
-                      padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
-                      child: Center(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                child: Column(
-                  children: [
-                              const SizedBox(height: 64),
-
-                              // Hero Section
-                              RepaintBoundary(
-                                child: SizedBox(
-                      width: totalWidth,
-                                  child: _HeroSection(
-                                    onInstall: _openReleasesPage,
-                                    onOpenSource: _openOpenSource,
-                                    isScrolling: _isScrolling,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 128),
-
-                              // Pillars Section
-                              RepaintBoundary(
-                                child: SizedBox(width: totalWidth, child: const _PillarsSection()),
-                              ),
-
-                              const SizedBox(height: 128),
-
-                              // Rivers Section
-                              RepaintBoundary(
-                                child: SizedBox(
-                                  width: totalWidth,
-                                  child: _RiversSection(
-                                    onInstall: _openReleasesPage,
-                                    onViewDocs: _openDocumentation,
-                                    onOpenSource: _openOpenSource,
-                                  ),
-                                ),
-                              ),
-
-                              const SizedBox(height: 128),
-
-                              // FAQ Section
-                              RepaintBoundary(
-                                child: SizedBox(width: totalWidth, child: const _FaqSection()),
-                              ),
-
-                              const SizedBox(height: 96),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+              controller: _scrollController,
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                children: [
+                  _HeroSection(onInstall: _openReleasesPage, onOpenSource: _openOpenSource, isScrolling: _isScrolling),
+                  const SizedBox(height: 64),
+                  const _PillarsSection(),
+                  const SizedBox(height: 64),
+                  _RiversSection(
+                    onInstall: _openReleasesPage,
+                    onViewDocs: _openDocumentation,
+                    onOpenSource: _openOpenSource,
                   ),
-                ),
+                  const SizedBox(height: 64),
+                  _CtaBannerSection(
+                    onInstall: _openReleasesPage,
+                    onViewDocs: _openDocumentation,
+                    onOpenSource: _openOpenSource,
+                  ),
+                  const SizedBox(height: 64),
+                  const _IntegrationsList(),
+                  const SizedBox(height: 64),
+                  const _FaqSection(),
+                  const SizedBox(height: 64),
+                ],
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -214,8 +170,8 @@ class _ScreenshotImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
-    final isDarkMode = context.isDarkModeListening;
+    final colors = context.colors;
+    final isDarkMode = context.isDarkMode;
 
     // Use theme-based image for dm-ai-app
     final String finalImagePath = imagePath == 'assets/img/dm-ai-app.png'
@@ -261,10 +217,10 @@ class _ScreenshotImage extends StatelessWidget {
                 return const _ScreenshotPlaceholder();
               },
             ),
-                                    ),
-                                  ),
-                                ),
-                              );
+          ),
+        ),
+      ),
+    );
   }
 }
 
@@ -275,10 +231,10 @@ class _ScreenshotPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
     // Use isDarkModeListening to react to theme changes
-    final isDarkMode = context.isDarkModeListening;
+    final isDarkMode = context.isDarkMode;
 
     return CustomCard(
       padding: EdgeInsets.zero,
@@ -409,7 +365,7 @@ class _SimpleCodeBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
 
     return Container(
       decoration: BoxDecoration(
@@ -549,7 +505,7 @@ class _HeroSectionState extends State<_HeroSection> {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return ResponsiveBuilder(
@@ -576,7 +532,7 @@ class _HeroSectionState extends State<_HeroSection> {
     return Column(
       children: [
         _buildHeading(context, colors, textTheme),
-                    const SizedBox(height: 64),
+        const SizedBox(height: 64),
         _buildTerminal(context, colors),
         const SizedBox(height: 64),
         _buildDescription(context, colors, textTheme),
@@ -590,7 +546,7 @@ class _HeroSectionState extends State<_HeroSection> {
     final screenWidth = MediaQuery.of(context).size.width;
     final maxWidth = (screenWidth * 0.5).clamp(400.0, 800.0); // Responsive: 50% of screen, but between 400-800px
     // Use isDarkModeListening to react to theme changes
-    final isDarkMode = context.isDarkModeListening;
+    final isDarkMode = context.isDarkMode;
 
     return RepaintBoundary(
       child: Center(
@@ -707,8 +663,8 @@ class _HeroSectionState extends State<_HeroSection> {
             const TextSpan(text: ' for them to use?'),
           ],
         ),
-                        textAlign: TextAlign.center,
-                      ),
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
@@ -778,7 +734,7 @@ class _HeroSectionState extends State<_HeroSection> {
   Widget _buildLeftColumn(BuildContext context, ThemeColorSet colors, TextTheme textTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+      children: [
         // Description text
         Text(
           'Built to help you ship, right from your terminal',
@@ -867,13 +823,13 @@ class _PillarsSectionState extends State<_PillarsSection> with AutomaticKeepAliv
   static const List<_PillarData> _pillars = [
     _PillarData(
       heading: 'Unified MCP access across all platforms',
-                            description:
+      description:
           'Configure MCP tools once and use them with Cursor, Copilot, Claude Code, Gemini, or CLI commands. Combine different MCP tools via JS code execution and save tokens.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-mcp.svg',
-                          ),
+    ),
     _PillarData(
       heading: 'Agent-powered, CLI-first architecture',
-                            description:
+      description:
           'Configure tools and agents together, then execute them via CLI or locally to maximize your AI workflow efficiency.',
       svgIconPath: 'packages/dmtools_styleguide/assets/img/nav-icon-ai-jobs.svg',
     ),
@@ -954,7 +910,7 @@ class _PillarCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -991,7 +947,7 @@ class _GlowWrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
 
     return Container(
       decoration: BoxDecoration(
@@ -1081,7 +1037,7 @@ function action(params) {
   @override
   Widget build(BuildContext context) {
     // Use isDarkModeListening to react to theme changes
-    final isDarkMode = context.isDarkModeListening;
+    final isDarkMode = context.isDarkMode;
     return ResponsiveBuilder(
       mobile: (context, constraints) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1094,7 +1050,7 @@ function action(params) {
               const LargeBodyText(
                 'Code execution with MCP enables agents to use context more efficiently by loading tools on demand.',
               ),
-                    const SizedBox(height: 32),
+              const SizedBox(height: 32),
               const _FlowDiagram(),
               const SizedBox(height: 24),
               const MediumHeadlineText('Leverage MCP context and extend with your own tools'),
@@ -1197,7 +1153,7 @@ class _FlowDiagram extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -1385,7 +1341,7 @@ class _CtaBannerSectionState extends State<_CtaBannerSection> {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -1579,7 +1535,7 @@ class _CompactCategorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -1610,7 +1566,7 @@ class _CompactIntegrationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
@@ -1715,7 +1671,7 @@ class _FaqGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return Column(
@@ -1748,7 +1704,7 @@ class _FaqItemState extends State<_FaqItem> {
   @override
   Widget build(BuildContext context) {
     // Use colorsListening to react to theme changes
-    final colors = context.colorsListening;
+    final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
 
     return CustomCard(

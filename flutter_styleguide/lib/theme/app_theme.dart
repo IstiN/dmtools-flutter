@@ -4,16 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 // import 'package:google_fonts/google_fonts.dart'; // Unused
 import 'app_colors.dart';
+import 'package:dmtools_styleguide/utils/platform_utils.dart';
 
 // Web-only import for HTML messaging
 // Conditional imports for web-only functionality
 import 'web_theme_helper.dart' if (dart.library.io) 'stub_theme_helper.dart' as theme_helper;
 
-enum ThemePreference {
-  system,
-  light,
-  dark,
-}
+enum ThemePreference { system, light, dark }
 
 class ThemeProvider with ChangeNotifier {
   static const String _themePreferenceKey = 'theme_preference';
@@ -203,6 +200,7 @@ class AppTheme {
 
   static ThemeData _buildTheme(ThemeColorSet colors, Brightness brightness) {
     final baseTextTheme = _buildTextTheme(colors);
+    final isSafari = isSafariOnWeb;
 
     return ThemeData(
       brightness: brightness,
@@ -221,27 +219,19 @@ class AppTheme {
         onSurface: colors.textColor,
       ),
       textTheme: baseTextTheme,
-      fontFamily: 'Inter',
-      appBarTheme: AppBarTheme(
-        backgroundColor: colors.bgColor,
-        foregroundColor: colors.textColor,
-        elevation: 0,
-      ),
+      fontFamily: isSafari ? '.AppleSystemUIFont' : 'Inter',
+      appBarTheme: AppBarTheme(backgroundColor: colors.bgColor, foregroundColor: colors.textColor, elevation: 0),
       buttonTheme: ButtonThemeData(
         buttonColor: colors.accentColor,
         textTheme: ButtonTextTheme.primary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colors.accentColor,
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -249,18 +239,14 @@ class AppTheme {
           foregroundColor: colors.accentColor,
           side: BorderSide(color: colors.accentColor),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: colors.accentColor,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -286,24 +272,12 @@ class AppTheme {
       ),
       popupMenuTheme: PopupMenuThemeData(
         color: colors.cardBg,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        textStyle: TextStyle(
-          color: colors.textColor,
-          fontWeight: FontWeight.w500,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        textStyle: TextStyle(color: colors.textColor, fontWeight: FontWeight.w500),
       ),
       tooltipTheme: TooltipThemeData(
-        decoration: BoxDecoration(
-          color: colors.cardBg,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        textStyle: TextStyle(
-          color: colors.textColor,
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-        ),
+        decoration: BoxDecoration(color: colors.cardBg, borderRadius: BorderRadius.circular(4)),
+        textStyle: TextStyle(color: colors.textColor, fontSize: 12, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       ),
     );
@@ -342,51 +316,19 @@ class AppTheme {
         fontWeight: FontWeight.bold,
         color: colors.textColor,
       ),
-      titleLarge: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: colors.textColor,
-      ),
-      titleMedium: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: colors.textColor,
-      ),
-      titleSmall: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: colors.textColor,
-      ),
+      titleLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: colors.textColor),
+      titleMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textColor),
+      titleSmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textColor),
       bodyLarge: TextStyle(
         fontSize: 16, // Standard paragraph
         color: colors.textColor,
         height: 1.6, // Match line-height: 1.6 from CSS
       ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: colors.textColor,
-        height: 1.6,
-      ),
-      bodySmall: TextStyle(
-        fontSize: 12,
-        color: colors.textMuted,
-        height: 1.6,
-      ),
-      labelLarge: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: colors.textColor,
-      ),
-      labelMedium: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: colors.textColor,
-      ),
-      labelSmall: TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: colors.textMuted,
-      ),
+      bodyMedium: TextStyle(fontSize: 14, color: colors.textColor, height: 1.6),
+      bodySmall: TextStyle(fontSize: 12, color: colors.textMuted, height: 1.6),
+      labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: colors.textColor),
+      labelMedium: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: colors.textColor),
+      labelSmall: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: colors.textMuted),
     );
   }
 }

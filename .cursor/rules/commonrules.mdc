@@ -86,6 +86,16 @@ PERFORMANCE BEST PRACTICES:
 ✅ Make local variables final when not reassigned (prefer_final_locals)
 ✅ Use const for immutable collections (prefer_const_literals_to_create_immutables)
 ✅ Remove redundant explicit default values (avoid_redundant_argument_values)
+✅ Use context.colors instead of context.colorsListening to avoid rebuilds
+✅ Avoid unnecessary widget wrappers (SelectionArea, ScrollConfiguration)
+✅ Use RepaintBoundary sparingly - only for expensive widgets
+✅ Minimize widget tree depth - keep layout structure simple
+
+CRITICAL WEB PERFORMANCE:
+❌ NEVER use WidgetsBinding.instance.ensureSemantics() on web - causes constant semantics tree updates (~20% FPS drop)
+❌ AVOID InteractionTrackerBinding.configure() on web - tracks all interactions including scroll (~15% FPS drop)
+✅ Disable semantics for web unless absolutely needed for accessibility testing
+✅ Disable interaction tracking for web unless needed for analytics
 
 QUALITY ASSURANCE PROCESS:
 1. Before committing: Run "flutter analyze" and ensure 0 issues
@@ -186,8 +196,8 @@ FORBIDDEN ANTI-PATTERNS:
 ❌ Passing ThemeColorSet colors as widget parameters
 
 REQUIRED PATTERNS:
-✅ final colors = context.colors;
-✅ final colors = context.colorsListening; // for reactive updates
+✅ final colors = context.colors; // PREFERRED - no rebuilds on theme change
+✅ final colors = context.colorsListening; // ONLY when theme switching must trigger rebuild
 ✅ final isDarkMode = context.isDarkMode;
 ✅ Use ThemeContext extension for all theme access
 ✅ Access theme within widgets, don't pass as parameters
@@ -195,19 +205,72 @@ REQUIRED PATTERNS:
 IMPORT: import 'package:dmtools_styleguide/dmtools_styleguide.dart';
 
 Examples:
-✅ Container(color: context.colors.cardBg)
+✅ Container(color: context.colors.cardBg) // GOOD - reads once
 ✅ Text('Hello', style: TextStyle(color: context.colors.textColor))
 ✅ if (context.isDarkMode) { /* dark mode logic */ }
+❌ Container(color: context.colorsListening.cardBg) // BAD - rebuilds on theme change
 ❌ Container(color: isDarkMode ? AppColors.dark.cardBg : AppColors.light.cardBg)
 ❌ Text('Hello', style: TextStyle(color: themeProvider.isDarkMode ? AppColors.dark.textColor : AppColors.light.textColor))
 ❌ Widget _buildItem(context, data, colors) - don't pass colors as parameter
 
 ARCHITECTURE RULES:
 - ThemeContext extension provides automatic fallback to Theme.of(context)
-- Use context.colors for non-reactive theme access
-- Use context.colorsListening for reactive theme updates
+- Use context.colors for non-reactive theme access (DEFAULT, PREFERRED)
+- Use context.colorsListening ONLY when you need reactive theme updates
 - Never bypass the extension with direct Provider access
 - Maintain consistency between main app and styleguide
+
+PERFORMANCE IMPACT:
+- context.colors → reads theme once, NO rebuilds on theme change
+- context.colorsListening → rebuilds widget on EVERY theme change
+- Excessive use of colorsListening can cause 50% FPS drop
+- Default to context.colors unless reactive updates are required
+
+** PROVIDER MANAGEMENT RULES **
+CRITICAL: Proper Provider.of usage to prevent performance degradation.
+
+FORBIDDEN ANTI-PATTERNS:
+❌ Provider.of<SomeProvider>(context) inside Consumer<AnotherProvider> - causes double listening
+❌ Provider.of without listen: false when only reading values once
+❌ Nested Consumers without proper listen control
+
+REQUIRED PATTERNS:
+✅ Provider.of<SomeProvider>(context, listen: false) - when reading values without listening
+✅ Use listen: false inside Consumer blocks to prevent double rebuilds
+✅ Only one active listener per widget (either Consumer OR Provider.of with listen: true)
+
+PERFORMANCE IMPACT:
+- Missing listen: false can cause 50% FPS drop (60 FPS → 30 FPS)
+- Double listening triggers rebuilds on EVERY provider change
+- Especially critical in root app widgets with multiple providers
+
+Examples:
+✅ GOOD - No double listening:
+```dart
+Consumer<ThemeProvider>(
+  builder: (context, themeProvider, child) {
+    final authProvider = Provider.of<EnhancedAuthProvider>(context, listen: false);
+    // Using authProvider only for initialization, not listening to changes
+    return MaterialApp.router(...);
+  }
+)
+```
+
+❌ BAD - Double listening causes performance issues:
+```dart
+Consumer<ThemeProvider>(
+  builder: (context, themeProvider, child) {
+    final authProvider = Provider.of<EnhancedAuthProvider>(context); // Missing listen: false!
+    // This widget now rebuilds on BOTH ThemeProvider AND EnhancedAuthProvider changes
+    return MaterialApp.router(...);
+  }
+)
+```
+
+DEBUGGING TIPS:
+- If app performance suddenly drops, check for Provider.of without listen: false
+- Use Flutter DevTools Performance tab to identify excessive rebuilds
+- Add comments explaining why listen: false is used in each case
 
 ** RESPONSIVE DESIGN RULES **
 CRITICAL: Use centralized responsive components instead of manual MediaQuery checks.
