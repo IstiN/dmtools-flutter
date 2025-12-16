@@ -86,7 +86,7 @@ final devService = WorkspaceApiService(
 
 // Production
 final prodService = WorkspaceApiService(
-  baseUrl: 'https://dmtools-431977789017.us-central1.run.app/api',
+  baseUrl: 'https://ai-native.cloud/api',
   authToken: userToken,
   enableLogging: false,
 );

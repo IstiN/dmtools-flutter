@@ -7,6 +7,6 @@ class AppConfig {
   /// flutter run --dart-define=BACKEND_BASE_URL=https://api.example.com
   static const String backendBaseUrl = String.fromEnvironment(
     'BACKEND_BASE_URL',
-    defaultValue: 'https://dmtools-431977789017.us-central1.run.app',
+    defaultValue: 'https://ai-native.cloud',
   );
 }
